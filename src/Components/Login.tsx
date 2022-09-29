@@ -1,36 +1,53 @@
 import React from "react";
-import { Button, VStack, Icon, Input, InputGroup, InputRightElement, IconButton } from "@chakra-ui/react";
-import { MICIcon, ShowPasswordIcon } from "../Icons/Icons";
+import { Button, VStack, Icon, Input, InputGroup, InputRightElement, IconButton, HStack, Text, Radio, RadioGroup, Flex } from "@chakra-ui/react";
+import { MICIcon, ShowPasswordIcon, RemoteWorkingIcon } from "../Icons/Icons";
+import Background from "../Images/LoginBackground.svg"
 
 export default function Login(props: { handleLogin: Function }) {
 
     const [show, setShow] = React.useState(false)
+    const [version, setVersion] = React.useState("desktop")
+
 
     function showPassword() {
         setShow(!show)
     }
 
     return (
-        <VStack w="30vw" maxW="30vw" h="100vh" align="center" justify="center" m="auto">
-            <Icon as={MICIcon}></Icon>
-            <VStack w="60%" maxW="60%" align="center" justify="center" m="auto" spacing="20px" pt="42px">
-                <Input type="email" placeholder="Account" border="2px solid #919AA9" borderRadius="4px"></Input>
-                <InputGroup>
-                    <Input type={show ? "text" : "password"} placeholder="Password" border="2px solid #919AA9" borderRadius="4px"></Input>
-                    <InputRightElement>
-                        <IconButton
-                            aria-label='Show Password'
-                            icon={<ShowPasswordIcon />}
-                            onClick={showPassword}
-                            background="transparent"
-                            _active={{ background: "transparent" }}
-                            _focus={{ background: "transparent" }}
-                        >
-                        </IconButton>
-                    </InputRightElement>
-                </InputGroup>
-                <Button w="100%" background="#4C7DE7" borderRadius="20px" color="#FFFFFF" onClick={() => props.handleLogin()}>log in</Button>
-            </VStack>
-        </VStack>
+        <Flex w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
+            <Flex w="67%" h="58%" m="auto" borderRadius="30px" background="#FFFFFF">
+                <VStack w="47%" align="center" justify="center">
+                    <Icon as={MICIcon}></Icon>
+                    <Text>帆宣系統科技股份有限公司<br />Marketech International Corp.</Text>
+                    <RadioGroup pt="25px" onChange={setVersion} value={version}>
+                        <HStack >
+                            <Radio value="desktop">桌面版</Radio>
+                            <Radio value="mobile">手機版</Radio>
+                        </HStack>
+                    </RadioGroup>
+                    <VStack w="52%" align="center" justify="center" m="auto" spacing="20px" pt="25px">
+                        <Input type="email" placeholder="Account" border="2px solid #919AA9" borderRadius="4px"></Input>
+                        <InputGroup>
+                            <Input type={show ? "text" : "password"} placeholder="Password" border="2px solid #919AA9" borderRadius="4px"></Input>
+                            <InputRightElement>
+                                <IconButton
+                                    aria-label='Show Password'
+                                    icon={<ShowPasswordIcon />}
+                                    onClick={showPassword}
+                                    background="transparent"
+                                    _active={{ background: "transparent" }}
+                                    _focus={{ background: "transparent" }}
+                                >
+                                </IconButton>
+                            </InputRightElement>
+                        </InputGroup>
+                        <Button w="100%" background="#4C7DE7" borderRadius="20px" color="#FFFFFF" onClick={() => props.handleLogin()}>log in</Button>
+                    </VStack>
+                </VStack>
+                <VStack w="53%" align="center" justify="center" borderRadius="0px 30px 30px 0px" background="rgba(229, 229, 229, 0.2)">
+                    <Icon as={RemoteWorkingIcon}></Icon>
+                </VStack>
+            </Flex>
+        </Flex>
     )
 }

@@ -5,11 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { ChakraProvider } from '@chakra-ui/react'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+
+const link = createHttpLink({
+  uri: 'https://e999-140-116-247-114.jp.ngrok.io/graphql/',
+  // credentials: "include",
+})
 
 const client = new ApolloClient({
-  uri: 'https://0e53-122-146-250-197.jp.ngrok.io/graphql/',
   cache: new InMemoryCache(),
+  link,
 });
 
 const root = ReactDOM.createRoot(
