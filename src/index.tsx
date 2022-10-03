@@ -8,7 +8,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 
 const link = createHttpLink({
-  uri: 'https://e999-140-116-247-114.jp.ngrok.io/graphql/',
+  uri: 'https://6b1d-140-116-247-114.ngrok.io/graphql/',
   // credentials: "include",
 })
 

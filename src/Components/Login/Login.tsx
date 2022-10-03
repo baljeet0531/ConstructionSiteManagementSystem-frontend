@@ -1,17 +1,41 @@
 import React from "react";
 import { Button, VStack, Icon, Input, InputGroup, InputRightElement, IconButton, HStack, Text, Radio, RadioGroup, Flex } from "@chakra-ui/react";
-import { MICIcon, ShowPasswordIcon, RemoteWorkingIcon } from "../Icons/Icons";
-import Background from "../Images/LoginBackground.svg"
+import { MICIcon, ShowPasswordIcon, RemoteWorkingIcon } from "../../Icons/Icons";
+import Background from "../../Images/BlueLoginBackground.svg"
 
-export default function Login(props: { handleLogin: Function }) {
+import { useLazyQuery, gql } from '@apollo/client';
+
+const QUERY_LOGIN = gql`
+  query{
+    auth(username:"johndoe",password:"secret"){
+      accessToken
+      role
+    }
+  } 
+`
+
+export default function Login() {
 
     const [show, setShow] = React.useState(false)
     const [version, setVersion] = React.useState("desktop")
 
-
     function showPassword() {
         setShow(!show)
     }
+
+    const [queryLogin, loginResult] = useLazyQuery(QUERY_LOGIN)
+
+    const [login, setLogin] = React.useState(false)
+
+    if (loginResult) {
+        if (loginResult.loading) console.log("loading login")
+        if (loginResult.error) console.log(loginResult.error)
+    }
+
+    React.useEffect(() => {
+        if (loginResult && loginResult.data && loginResult.data.auth)
+            setLogin(true)
+    }, [loginResult.data, loginResult])
 
     return (
         <Flex w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
@@ -41,7 +65,7 @@ export default function Login(props: { handleLogin: Function }) {
                                 </IconButton>
                             </InputRightElement>
                         </InputGroup>
-                        <Button w="100%" background="#4C7DE7" borderRadius="20px" color="#FFFFFF" onClick={() => props.handleLogin()}>log in</Button>
+                        <Button w="100%" background="#4C7DE7" borderRadius="20px" color="#FFFFFF">log in</Button>
                     </VStack>
                 </VStack>
                 <VStack w="53%" align="center" justify="center" borderRadius="0px 30px 30px 0px" background="rgba(229, 229, 229, 0.2)">
