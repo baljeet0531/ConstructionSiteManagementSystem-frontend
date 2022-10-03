@@ -4,10 +4,11 @@ import { MICIcon, ShowPasswordIcon, RemoteWorkingIcon } from "../../Icons/Icons"
 import Background from "../../Images/BlueLoginBackground.svg"
 
 import { useLazyQuery, gql } from '@apollo/client';
+import { Navigate } from "react-router-dom";
 
 const QUERY_LOGIN = gql`
-  query{
-    auth(username:"johndoe",password:"secret"){
+  query Login($username: String!, $password: String!){
+    auth(username: $username,password: $password){
       accessToken
       role
     }
@@ -18,27 +19,33 @@ export default function Login() {
 
     const [show, setShow] = React.useState(false)
     const [version, setVersion] = React.useState("desktop")
+    const [isLoading, setisLoading] = React.useState(false)
+    const [userName, setUserName] = React.useState("")
+    const [password, setPassword] = React.useState("")
 
     function showPassword() {
         setShow(!show)
     }
 
-    const [queryLogin, loginResult] = useLazyQuery(QUERY_LOGIN)
+    const [queryLogin, { loading, error, data }] = useLazyQuery(QUERY_LOGIN)
 
-    const [login, setLogin] = React.useState(false)
-
-    if (loginResult) {
-        if (loginResult.loading) console.log("loading login")
-        if (loginResult.error) console.log(loginResult.error)
+    if (loading) {
+        if (!isLoading) setisLoading(true)
+        console.log("loading")
+    }
+    if (error) {
+        if (isLoading) setisLoading(false)
+        console.log(error)
     }
 
-    React.useEffect(() => {
-        if (loginResult && loginResult.data && loginResult.data.auth)
-            setLogin(true)
-    }, [loginResult.data, loginResult])
+
+    if (data && data.auth) {
+        console.log(data.auth.role)
+    }
 
     return (
         <Flex w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
+            {data?.auth && <Navigate to="/home" replace={true} />}
             <Flex w="67%" h="58%" m="auto" borderRadius="30px" background="#FFFFFF">
                 <VStack w="47%" align="center" justify="center">
                     <Icon as={MICIcon}></Icon>
@@ -50,9 +57,11 @@ export default function Login() {
                         </HStack>
                     </RadioGroup>
                     <VStack w="52%" align="center" justify="center" m="auto" spacing="20px" pt="25px">
-                        <Input type="email" placeholder="Account" border="2px solid #919AA9" borderRadius="4px"></Input>
+                        <Input type="email" placeholder="Account" border="2px solid #919AA9" borderRadius="4px"
+                            value={userName} onChange={(event) => (setUserName(event.target.value))}></Input>
                         <InputGroup>
-                            <Input type={show ? "text" : "password"} placeholder="Password" border="2px solid #919AA9" borderRadius="4px"></Input>
+                            <Input type={show ? "text" : "password"} placeholder="Password" border="2px solid #919AA9" borderRadius="4px"
+                                value={password} onChange={(event) => (setPassword(event.target.value))}></Input>
                             <InputRightElement>
                                 <IconButton
                                     aria-label='Show Password'
@@ -65,7 +74,11 @@ export default function Login() {
                                 </IconButton>
                             </InputRightElement>
                         </InputGroup>
-                        <Button w="100%" background="#4C7DE7" borderRadius="20px" color="#FFFFFF">log in</Button>
+                        <Button
+                            w="100%" borderRadius="20px" color="#FFFFFF" background="#4C7DE7" _active={{ background: "#4C7DE7" }} _focus={{ background: "#4C7DE7" }}
+                            isLoading={isLoading} onClick={() => queryLogin({ variables: { username: userName, password: password } })}>
+                            log in
+                        </Button>
                     </VStack>
                 </VStack>
                 <VStack w="53%" align="center" justify="center" borderRadius="0px 30px 30px 0px" background="rgba(229, 229, 229, 0.2)">
