@@ -6,15 +6,34 @@ import reportWebVitals from './reportWebVitals';
 
 import { ChakraProvider } from '@chakra-ui/react'
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
+
 
 const link = createHttpLink({
-  uri: 'https://8316-140-116-247-114.jp.ngrok.io/graphql/',
-  // credentials: "include",
+  uri: 'https://dcf3-140-116-247-244.jp.ngrok.io/graphql/',
+  credentials: "include",
+  fetchOptions: {
+    credentials: "include",
+  },
 })
+
+const authLink = setContext((_, { headers }) => {
+
+  const cookieValue = document.cookie.split('; ').find((row) => row.startsWith('jwt='))?.split('=')[1];
+
+  return {
+    headers: {
+      ...headers,
+      Authorization: `Bearer ${cookieValue}`,
+    }
+  }
+});
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link,
+  credentials: "include",
+  link: authLink.concat(link),
 });
 
 const root = ReactDOM.createRoot(
@@ -23,9 +42,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
+      <CookiesProvider>
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
+      </CookiesProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

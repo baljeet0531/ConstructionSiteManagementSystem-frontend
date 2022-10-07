@@ -5,6 +5,7 @@ import Background from "../../Images/BlueLoginBackground.svg"
 
 import { useLazyQuery, gql } from '@apollo/client';
 import { Navigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const QUERY_LOGIN = gql`
   query Login($username: String!, $password: String!){
@@ -23,6 +24,8 @@ export default function Login() {
     const [userName, setUserName] = React.useState("")
     const [password, setPassword] = React.useState("")
 
+    const [cookie, setCookie] = useCookies(["jwt"])
+
     function showPassword() {
         setShow(!show)
     }
@@ -38,8 +41,12 @@ export default function Login() {
         console.log(error)
     }
 
-
     if (data && data.auth) {
+        setCookie("jwt", data.auth.accessToken, {
+            path: "/",
+            secure: true,
+            sameSite: "strict",
+        })
         console.log(data.auth.role)
     }
 
