@@ -6,18 +6,9 @@ import Background from "../Images/WhiteLoginBackground.svg"
 
 export default function Layout(props: { page: React.ReactNode }) {
 
-  const features = [
-    "工地管理",
-    "排程管理",
-    "人才管理",
-    "工安表單",
-    "進度報表",
-    "照片管理",
-    "總覽"
-  ]
   return (
     <HStack align="top" backgroundImage={`url(${Background})`}>
-      <Sidebar features={features} />
+      <Sidebar />
       <MainScreen>{props.page}</MainScreen>
     </HStack>
   )

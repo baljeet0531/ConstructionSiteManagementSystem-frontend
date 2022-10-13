@@ -24,7 +24,7 @@ export default function Login() {
     const [userName, setUserName] = React.useState("")
     const [password, setPassword] = React.useState("")
 
-    const [cookie, setCookie] = useCookies(["jwt"])
+    const [cookie, setCookie] = useCookies(["jwt", "role"])
 
     function showPassword() {
         setShow(!show)
@@ -41,18 +41,22 @@ export default function Login() {
         console.log(error)
     }
 
-    if (data && data.auth) {
+    if (data?.auth) {
         setCookie("jwt", data.auth.accessToken, {
             path: "/",
             secure: true,
             sameSite: "strict",
         })
-        console.log(data.auth.role)
+        setCookie("role", data.auth.role, {
+            path: "/",
+            secure: true,
+            sameSite: "strict",
+        })
     }
 
     return (
         <Flex w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
-            {data?.auth && <Navigate to="/home" replace={true} />}
+            {data?.auth && <Navigate to="/" replace={true} />}
             <Flex w="67%" h="58%" m="auto" borderRadius="30px" background="#FFFFFF">
                 <VStack w="47%" align="center" justify="center">
                     <Icon as={MICIcon}></Icon>

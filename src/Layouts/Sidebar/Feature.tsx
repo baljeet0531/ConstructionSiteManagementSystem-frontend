@@ -12,41 +12,41 @@ import {
     DashboardIcon,
 } from "../../Icons/Icons";
 
-export function Feature(props: { children: string }) {
+export function Feature(props: { feature: string }) {
 
-    let route = "/home"
+    let featureName = ""
     let icon = PlaceIcon
-    switch (props.children) {
-        case "工地管理":
-            route = "/place"
+    switch (props.feature) {
+        case "place":
+            featureName = "工地管理"
             icon = PlaceIcon
             break
-        case "排程管理":
-            route = "/schedule"
+        case "schedule":
+            featureName = "排程管理"
             icon = ScheduleIcon
             break
-        case "人才管理":
-            route = "/people"
+        case "people":
+            featureName = "人才管理"
             icon = PeopleIcon
             break
-        case "工安表單":
-            route = "/security"
+        case "security":
+            featureName = "工安表單"
             icon = SecurityIcon
             break
-        case "進度報表":
-            route = "/report"
+        case "report":
+            featureName = "進度報表"
             icon = ReportIcon
             break
-        case "照片管理":
-            route = "/photo"
+        case "photo":
+            featureName = "照片管理"
             icon = PhotoIcon
             break
-        case "總覽":
-            route = "/dashboard"
+        case "dashboard":
+            featureName = "總覽"
             icon = DashboardIcon
             break
         default:
-            route = "/home"
+            featureName = ""
             icon = PlaceIcon
     }
 
@@ -74,11 +74,11 @@ export function Feature(props: { children: string }) {
     }
 
     return (
-        <NavLink to={route} style={({ isActive }) =>
+        <NavLink to={`/${props.feature}`} style={({ isActive }) =>
             isActive ? activeStyle : inActiveStyle
         }>
             <Icon as={icon}></Icon>
-            {props.children}
+            {featureName}
         </NavLink>
     )
 }
