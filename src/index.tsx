@@ -8,31 +8,29 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
+import { Cookies } from "react-cookie";
+
+
 
 
 const link = createHttpLink({
-  uri: 'https://dcf3-140-116-247-244.jp.ngrok.io/graphql/',
-  credentials: "include",
-  fetchOptions: {
-    credentials: "include",
-  },
+  uri: 'https://e924-140-116-247-114.jp.ngrok.io/graphql/',
 })
 
 const authLink = setContext((_, { headers }) => {
 
-  const cookieValue = document.cookie.split('; ').find((row) => row.startsWith('jwt='))?.split('=')[1];
+  const cookieValue = new Cookies().get("jwt")
 
-  return {
+  return cookieValue ? {
     headers: {
       ...headers,
       Authorization: `Bearer ${cookieValue}`,
     }
-  }
+  } : headers
 });
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  credentials: "include",
   link: authLink.concat(link),
 });
 
