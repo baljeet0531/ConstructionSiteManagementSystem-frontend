@@ -9,11 +9,10 @@ import { useCookies } from "react-cookie";
 
 const QUERY_LOGIN = gql`
   query Login($username: String!, $password: String!){
-    auth(username: $username,password: $password){
-      accessToken
-      role
+    login(username: $username,password: $password){
+        accessToken
     }
-  } 
+  }
 `
 
 export default function Login() {
@@ -21,10 +20,10 @@ export default function Login() {
     const [show, setShow] = React.useState(false)
     const [version, setVersion] = React.useState("desktop")
     const [isLoading, setisLoading] = React.useState(false)
-    const [userName, setUserName] = React.useState("")
-    const [password, setPassword] = React.useState("")
+    const userName = React.useRef<HTMLInputElement>(null)
+    const password = React.useRef<HTMLInputElement>(null)
 
-    const [cookie, setCookie] = useCookies(["jwt", "role"])
+    const [cookie, setCookie] = useCookies(["jwt"])
 
     function showPassword() {
         setShow(!show)
@@ -39,15 +38,11 @@ export default function Login() {
     if (error) {
         if (isLoading) setisLoading(false)
         console.log(error)
+        console.log(JSON.stringify(error))
     }
 
-    if (data?.auth) {
-        setCookie("jwt", data.auth.accessToken, {
-            path: "/",
-            secure: true,
-            sameSite: "strict",
-        })
-        setCookie("role", data.auth.role, {
+    if (data?.login) {
+        setCookie("jwt", data.login, {
             path: "/",
             secure: true,
             sameSite: "strict",
@@ -69,10 +64,10 @@ export default function Login() {
                     </RadioGroup>
                     <VStack w="52%" align="center" justify="center" m="auto" spacing="20px" pt="25px">
                         <Input type="email" placeholder="Account" border="2px solid #919AA9" borderRadius="4px"
-                            value={userName} onChange={(event) => (setUserName(event.target.value))}></Input>
+                            ref={userName} ></Input>
                         <InputGroup>
                             <Input type={show ? "text" : "password"} placeholder="Password" border="2px solid #919AA9" borderRadius="4px"
-                                value={password} onChange={(event) => (setPassword(event.target.value))}></Input>
+                                ref={password} ></Input>
                             <InputRightElement>
                                 <IconButton
                                     aria-label='Show Password'
@@ -87,7 +82,10 @@ export default function Login() {
                         </InputGroup>
                         <Button
                             w="100%" borderRadius="20px" color="#FFFFFF" background="#4C7DE7" _active={{ background: "#4C7DE7" }} _focus={{ background: "#4C7DE7" }}
-                            isLoading={isLoading} onClick={() => queryLogin({ variables: { username: userName, password: password } })}>
+                            isLoading={isLoading} onClick={() => {
+                                queryLogin({ variables: { username: userName.current?.value, password: password.current?.value } })
+                            }
+                            }>
                             log in
                         </Button>
                     </VStack>

@@ -9,7 +9,8 @@ import { PERMISSION } from '../../Mockdata/Mockdata';
 import { Cookies } from "react-cookie";
 
 export default function Sidebar() {
-    const ROLE = new Cookies().get("role") as keyof typeof PERMISSION
+    const ROLE = "admin"
+
     const { name, "chinese name": chineseName } = PERMISSION[ROLE]
 
     return (

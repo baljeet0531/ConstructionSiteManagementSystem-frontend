@@ -1,7 +1,7 @@
 import { Cookies } from "react-cookie";
 
 export type features = {
-    "place"?: string;
+    "site"?: string;
     "schedule"?: string;
     "people"?: string;
     "security"?: string;
@@ -32,7 +32,7 @@ export const PERMISSION = {
         "name": "admin",
         "chinese name": "系統管理員",
         "features": {
-            "place": "rw",
+            "site": "rw",
             "schedule": "rw",
             "people": "rw",
             "security": "rw",
@@ -45,7 +45,7 @@ export const PERMISSION = {
         "name": "project manager",
         "chinese name": "專案經理",
         "features": {
-            "place": "rw",
+            "site": "rw",
             "schedule": "rw",
             "people": "rw",
             "security": "r",
@@ -58,7 +58,7 @@ export const PERMISSION = {
         "name": "working manager",
         "chinese name": "工地經理",
         "features": {
-            "place": "rw",
+            "site": "rw",
             "schedule": "rw",
             "people": "rw",
             "security": "r",
@@ -123,7 +123,7 @@ export const PERMISSION = {
 }
 
 export function IsPermit(feature: keyof features) {
-    const ROLE = new Cookies().get("role") as keyof Permission
-    console.log(feature in PERMISSION[ROLE].features)
+    const ROLE = "admin"
+
     return feature in PERMISSION[ROLE].features
 }

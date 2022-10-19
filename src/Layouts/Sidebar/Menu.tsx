@@ -8,9 +8,10 @@ import { Cookies } from "react-cookie";
 
 export default function Menu() {
 
-    const ROLE = new Cookies().get("role") as keyof typeof PERMISSION
+    const ROLE = "admin"
+
     const {
-        place,
+        site,
         schedule,
         people,
         security,
@@ -21,7 +22,7 @@ export default function Menu() {
 
     return (
         <VStack borderRadius="30px" pt="24px" pb="24px" w="80%" m="auto" pl="12px" pr="12px" spacing="24px" align="left" background="#FFFFFF">
-            {place && <Feature feature="place"></Feature>}
+            {site && <Feature feature="site"></Feature>}
             {schedule && <Feature feature="schedule"></Feature>}
             {people && <Feature feature="people"></Feature>}
             {security && <Feature feature="security"></Feature>}

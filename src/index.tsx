@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { ChakraProvider } from '@chakra-ui/react'
+import myTheme from './Chakra/Themes/themes';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
@@ -12,21 +13,26 @@ import { Cookies } from "react-cookie";
 
 
 
-
 const link = createHttpLink({
-  uri: 'https://e924-140-116-247-114.jp.ngrok.io/graphql/',
+  uri: 'https://2de6-122-146-250-197.jp.ngrok.io/graphql',
 })
 
 const authLink = setContext((_, { headers }) => {
 
   const cookieValue = new Cookies().get("jwt")
 
-  return cookieValue ? {
+  return {
     headers: {
       ...headers,
-      Authorization: `Bearer ${cookieValue}`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrZW5ueSIsImV4cCI6MTY2NjQ2NjY5OX0.Ks-6HqRMdbiBtypLdk3DRXMlcpI5t-wEE1OXbTyHp0M`,
     }
-  } : headers
+  }
+  // return cookieValue ? {
+  //   headers: {
+  //     ...headers,
+  //     Authorization: `Bearer ${cookieValue}`,
+  //   }
+  // } : headers
 });
 
 const client = new ApolloClient({
@@ -37,11 +43,14 @@ const client = new ApolloClient({
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+console.log(myTheme)
+
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <CookiesProvider>
-        <ChakraProvider>
+        <ChakraProvider theme={myTheme}>
           <App />
         </ChakraProvider>
       </CookiesProvider>
