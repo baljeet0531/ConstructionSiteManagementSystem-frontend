@@ -87,6 +87,7 @@ dev_deployment:
   image: registry.19gale.ai/tap/ansible:2.9
   variables:
     PORT: 80
+    REACT_APP_BACKEND_URL: https://backend.mic.dev.19gale.ai/
   script:
     - chmod -v 700 $(pwd)
     - mv ./deploy/.ansible.cfg ~/
@@ -106,6 +107,7 @@ prod_deployment:
   image: registry.19gale.ai/tap/ansible:2.9
   variables:
     PORT: 443
+    REACT_APP_BACKEND_URL: https://backend.mic.19gale.ai/
   script:
     - chmod -v 700 $(pwd)
     - mv ./deploy/.ansible.cfg ~/

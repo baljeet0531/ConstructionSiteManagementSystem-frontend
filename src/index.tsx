@@ -10,11 +10,12 @@ import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@ap
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
 import { Cookies } from "react-cookie";
+import BACKEND from './Constants/EnvConstants'
 
 
 
 const link = createHttpLink({
-  uri: 'https://2de6-122-146-250-197.jp.ngrok.io/graphql',
+  uri: BACKEND,
 })
 
 const authLink = setContext((_, { headers }) => {
