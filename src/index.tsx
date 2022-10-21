@@ -15,7 +15,8 @@ import BACKEND from './Constants/EnvConstants'
 
 
 const link = createHttpLink({
-  uri: BACKEND,
+  uri: BACKEND + "/graphql",
+  // uri: "http://backend.mic.dev.19gale.ai/graphql",
 })
 
 const authLink = setContext((_, { headers }) => {
@@ -25,7 +26,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrZW5ueSIsImV4cCI6MTY2NjQ2NjY5OX0.Ks-6HqRMdbiBtypLdk3DRXMlcpI5t-wEE1OXbTyHp0M`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huZG9lIiwiZXhwIjoxNjY2MjU0MTM0fQ.6X24zKFaLzZsM1u7E13VmTwnUtILxEElSmMkr3OYMr8`,
     }
   }
   // return cookieValue ? {
@@ -39,6 +40,7 @@ const authLink = setContext((_, { headers }) => {
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: authLink.concat(link),
+  // credentials: "include",
 });
 
 const root = ReactDOM.createRoot(
