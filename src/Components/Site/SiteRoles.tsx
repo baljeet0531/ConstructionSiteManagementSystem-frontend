@@ -8,6 +8,7 @@ import {
     Td,
     TableContainer,
     Icon,
+    IconButton,
     Flex,
     Center,
 } from '@chakra-ui/react'
@@ -64,8 +65,9 @@ const Mock_Roles = {
 
 
 
-export default function SiteRoles(props: { siteId: keyof typeof Mock_Roles }) {
+export default function SiteRoles(props: { siteId: keyof typeof Mock_Roles, handlePopup: Function }) {
 
+    const { handlePopup } = props
 
     const rolesData = Mock_Roles[props.siteId]
 
@@ -80,12 +82,12 @@ export default function SiteRoles(props: { siteId: keyof typeof Mock_Roles }) {
                 <Td>{username}</Td>
                 <Td>
                     <Center>
-                        <Icon as={EditIcon}></Icon>
+                        <IconButton aria-label="EditRole" icon={<EditIcon />} bg={"none"} onClick={() => { handlePopup("editRole") }}></IconButton>
                     </Center>
                 </Td>
                 <Td>
                     <Center>
-                        <Icon as={DeleteIcon}></Icon>
+                        <IconButton aria-label="DeleteRole" icon={<DeleteIcon />} bg={"none"} onClick={() => { handlePopup("deleteRole") }}></IconButton>
                     </Center>
                 </Td>
             </Tr>

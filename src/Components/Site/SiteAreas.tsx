@@ -7,9 +7,10 @@ import {
     Th,
     Td,
     TableContainer,
-    Icon,
+    IconButton,
     Flex,
     Center,
+    Text
 } from '@chakra-ui/react'
 import { EditIcon, DeleteIcon } from "../../Icons/Icons";
 
@@ -36,9 +37,9 @@ const Mock_Area = {
             ]
         },
         {
-            area_name: "工務所預定地aaaaaaaaa",
+            area_name: "工務所預定地aaaaaaaabbbbbbbbbbaaaaaaaaaaa",
             zone: [
-                "aaaaaaa南側aaaaaaaaaa",
+                "aaaaaaa南側aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "北側",
                 "東側",
                 "西側",
@@ -76,7 +77,9 @@ const Mock_Area = {
     ],
 }
 
-export default function SiteAreas(props: { siteId: keyof typeof Mock_Area }) {
+export default function SiteAreas(props: { siteId: keyof typeof Mock_Area, handlePopup: Function }) {
+
+    const { handlePopup } = props
 
     const areaDetalis = Mock_Area[props.siteId]
 
@@ -92,8 +95,6 @@ export default function SiteAreas(props: { siteId: keyof typeof Mock_Area }) {
                 <Tr key={index}>
                     <Td textAlign="center">{index + 1}.</Td>
                     <Td overflowX={"auto"}>{zoneName}</Td>
-                    <Td></Td>
-                    <Td></Td>
                 </Tr>
             )
         })
@@ -105,16 +106,16 @@ export default function SiteAreas(props: { siteId: keyof typeof Mock_Area }) {
                     <Thead position={"sticky"} top={0} zIndex={1}>
                         <Tr>
                             <Th w={"23%"} textAlign="center">廠區</Th>
-                            <Th w={"37%"} overflowX={"auto"}>{area_name}</Th>
-                            <Th w={"20%"}>
-                                <Center>
-                                    <Icon as={EditIcon}></Icon>
-                                </Center>
-                            </Th>
-                            <Th w={"20%"}>
-                                <Center>
-                                    <Icon as={DeleteIcon}></Icon>
-                                </Center>
+                            <Th w={"77%"}>
+                                <Flex columnGap={"16px"}>
+                                    <Text flex={1} overflowX={"auto"} lineHeight={"20px"}>{area_name}</Text>
+                                    <Center w={"20px"}>
+                                        <IconButton size={"xs"} h={"20px"} aria-label="EditArea" icon={<EditIcon />} bg={"none"} onClick={() => { handlePopup("editArea") }}></IconButton>
+                                    </Center>
+                                    <Center w={"20px"}>
+                                        <IconButton size={"xs"} h={"20px"} aria-label="DeleteArea" icon={<DeleteIcon />} bg={"none"} onClick={() => { handlePopup("deleteArea") }}></IconButton>
+                                    </Center>
+                                </Flex>
                             </Th>
                         </Tr>
                     </Thead>
