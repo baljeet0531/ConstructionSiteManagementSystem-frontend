@@ -1,14 +1,13 @@
-import React from "react";
-import { Feature } from "./Feature";
+import React from 'react';
+import { Feature } from './Feature';
 
-import { VStack } from "@chakra-ui/react";
+import { VStack } from '@chakra-ui/react';
 
 import { features, PERMISSION } from '../../Mockdata/Mockdata';
-import { Cookies } from "react-cookie";
+// import { Cookies } from "react-cookie";
 
 export default function Menu() {
-
-    const ROLE = "admin"
+    const ROLE = 'admin';
 
     const {
         site,
@@ -18,10 +17,21 @@ export default function Menu() {
         report,
         photo,
         dashboard,
-    }: features = PERMISSION[ROLE].features
+    }: features = PERMISSION[ROLE].features;
 
     return (
-        <VStack borderRadius="30px" pt="24px" pb="24px" w="80%" m="auto" pl="12px" pr="12px" spacing="24px" align="left" background="#FFFFFF">
+        <VStack
+            borderRadius="30px"
+            pt="24px"
+            pb="24px"
+            w="80%"
+            m="auto"
+            pl="12px"
+            pr="12px"
+            spacing="24px"
+            align="left"
+            background="#FFFFFF"
+        >
             {site && <Feature feature="site"></Feature>}
             {schedule && <Feature feature="schedule"></Feature>}
             {people && <Feature feature="people"></Feature>}
@@ -30,5 +40,5 @@ export default function Menu() {
             {photo && <Feature feature="photo"></Feature>}
             {dashboard && <Feature feature="dashboard"></Feature>}
         </VStack>
-    )
+    );
 }
