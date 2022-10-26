@@ -1,8 +1,8 @@
-import { theme } from '@chakra-ui/react';
+// import { theme } from '@chakra-ui/react';
 
 const Text = {
     baseStyle: {
-        fontFamily: "Inter",
+        fontFamily: 'Inter',
     },
 };
 
