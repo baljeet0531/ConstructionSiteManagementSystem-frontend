@@ -17,7 +17,7 @@ export function Feature(props: { feature: string }) {
     let featureName = ""
     let icon = PlaceIcon
     switch (props.feature) {
-        case "place":
+        case "site":
             featureName = "工地管理"
             icon = PlaceIcon
             break

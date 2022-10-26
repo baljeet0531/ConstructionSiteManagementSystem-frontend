@@ -1,0 +1,9 @@
+FROM  node:16-slim
+ENV LANG=C.UTF-8
+RUN apt update \
+    && apt upgrade -y \
+    && apt install git python3 make g++ -y\
+    && rm -rf /var/cache/apk/*-y
+COPY package.json /root
+WORKDIR /root
+RUN yarn install --network-timeout 100000

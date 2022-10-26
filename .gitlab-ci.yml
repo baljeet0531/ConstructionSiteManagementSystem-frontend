@@ -1,0 +1,121 @@
+default:
+  tags: [amd64]
+
+stages:
+# - preparation
+  - delivery
+  - deployment
+
+# build_base_image:
+#   stage: preparation
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+#       changes:
+#         - requirements.txt
+#   image: jonoh/docker-buildx-qemu
+#   script:
+#     - docker buildx create --platform linux/amd64,linux/arm64/v8 --driver docker-container --use --name builder
+#     - docker buildx inspect --bootstrap
+#     - update-binfmts --enable # Important: Ensures execution of other binary formats is enabled in the kernel
+#     - docker buildx build --platform linux/amd64,linux/arm64/v8 --pull --push -f Dockerfile.base -t registry.${CI_PROJECT_PATH}:base .
+
+dev_build:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "develop"
+  image: registry.${CI_PROJECT_PATH}:base
+  script:
+    # node_modules already in /root/ of the image
+    # If new package is added, the image should be rebuild
+    - mv /root/* .
+    - yarn build
+    - tar zcvf build.tar.gz build
+  artifacts:
+    paths:
+    - build.tar.gz
+    expire_in: 1 day
+
+prod_build:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
+  image: registry.${CI_PROJECT_PATH}:base
+  script:
+    # node_modules already in /root/ of the image
+    # If new package is added, the image should be rebuild
+    - mv /root/* .
+    - yarn build
+    - tar zcvf build.tar.gz build
+  artifacts:
+    paths:
+    - build.tar.gz
+    expire_in: 1 day
+
+tag_verification:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+  image: 
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - git tag -l | xargs git tag -d
+    - git fetch --all --tags -f
+    - if [ $(git tag -l "`cat version`") ]; then echo "Tag Exists"; exit 1; else echo "Tag not found"; fi;
+
+tagging:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+  image: 
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - git remote set-url origin https://ci:${CI_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+    - git tag -f `cat version`
+    - git push origin `cat version`
+
+dev_deployment:
+  stage: deployment
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "develop"
+  image: registry.19gale.ai/tap/ansible:2.9
+  variables:
+    PORT: 80
+    REACT_APP_BACKEND_URL: http://backend.mic.dev.19gale.ai/
+  script:
+    - chmod -v 700 $(pwd)
+    - mv ./deploy/.ansible.cfg ~/
+    - ansible-config view
+    # Make private key
+    - echo "$PRIVATE_KEY" | base64 --decode > "/private.pem"
+    - chmod 400 /private.pem
+    # Make .env file
+    - envsubst < sample.env > .env
+    # deploy services
+    - ansible-playbook -i ./deploy/hosts ./deploy/develop.yml
+
+prod_deployment:
+  stage: deployment
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "main"
+  image: registry.19gale.ai/tap/ansible:2.9
+  variables:
+    PORT: 443
+    REACT_APP_BACKEND_URL: https://backend.mic.19gale.ai/
+  script:
+    - chmod -v 700 $(pwd)
+    - mv ./deploy/.ansible.cfg ~/
+    - ansible-config view
+    # Make private key
+    - echo "$PRIVATE_KEY" | base64 --decode > "/private.pem"
+    - chmod 400 /private.pem
+    # Make .env file
+    - envsubst < sample.env > .env
+    # deploy services
+    - ansible-playbook -i ./deploy/hosts ./deploy/production.yml
