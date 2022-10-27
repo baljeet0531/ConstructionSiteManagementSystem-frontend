@@ -14,7 +14,7 @@ import {
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
-// import { Cookies } from "react-cookie";
+import { Cookies } from 'react-cookie';
 import BACKEND from './Constants/EnvConstants';
 
 const link = createHttpLink({
@@ -23,20 +23,13 @@ const link = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-    // const cookieValue = new Cookies().get("jwt")
-
+    const cookieValue = new Cookies().get('jwt');
     return {
         headers: {
             ...headers,
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huZG9lIiwiZXhwIjoxNjY2MjU0MTM0fQ.6X24zKFaLzZsM1u7E13VmTwnUtILxEElSmMkr3OYMr8`,
+            Authorization: `Bearer ${cookieValue}`,
         },
     };
-    // return cookieValue ? {
-    //   headers: {
-    //     ...headers,
-    //     Authorization: `Bearer ${cookieValue}`,
-    //   }
-    // } : headers
 });
 
 const client = new ApolloClient({
