@@ -12,6 +12,7 @@ import {
     Radio,
     RadioGroup,
     Flex,
+    useToast,
 } from '@chakra-ui/react';
 import {
     MICIcon,
@@ -19,18 +20,8 @@ import {
     RemoteWorkingIcon,
 } from '../../Icons/Icons';
 import Background from '../../Images/BlueLoginBackground.svg';
-
-import { useLazyQuery, gql } from '@apollo/client';
-import { Navigate } from 'react-router-dom';
-// import { useCookies } from 'react-cookie';
-
-const QUERY_LOGIN = gql`
-    query Login($username: String!, $password: String!) {
-        login(username: $username, password: $password) {
-            accessToken
-        }
-    }
-`;
+import { useCookies } from 'react-cookie';
+import BACKEND from '../../Constants/EnvConstants';
 
 export default function Login() {
     const [show, setShow] = React.useState(false);
@@ -38,36 +29,58 @@ export default function Login() {
     const [isLoading, setisLoading] = React.useState(false);
     const userName = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
+    // eslint-disable-next-line no-unused-vars
+    const [cookie, setCookie] = useCookies(['jwt']);
 
-    // const [cookie, setCookie] = useCookies(['jwt']);
+    const toast = useToast();
+
+    async function fetchLogin() {
+        let response = await fetch(BACKEND + '/login', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: userName.current?.value,
+                password: password.current?.value,
+            }),
+            method: 'POST',
+        });
+
+        if (response.status >= 400) {
+            console.log(response.statusText);
+            setisLoading(false);
+            if (response.statusText == 'Unauthorized') {
+                toast({
+                    title: '錯誤',
+                    description: `帳號或密碼錯誤`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } else {
+                toast({
+                    title: '錯誤',
+                    description: `${response.statusText}`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+        } else {
+            setCookie('jwt', await response.text(), {
+                path: '/',
+                secure: true,
+                sameSite: 'strict',
+            });
+            window.location.href = '/';
+        }
+    }
 
     function showPassword() {
         setShow(!show);
     }
-
-    const [queryLogin, { loading, error, data }] = useLazyQuery(QUERY_LOGIN);
-
-    if (loading) {
-        if (!isLoading) setisLoading(true);
-        console.log('loading');
-    }
-    if (error) {
-        if (isLoading) setisLoading(false);
-        console.log(error);
-        console.log(JSON.stringify(error));
-    }
-
-    if (data?.login) {
-        // setCookie('jwt', data.login, {
-        //     path: '/',
-        //     secure: true,
-        //     sameSite: 'strict',
-        // });
-    }
-
     return (
         <Flex w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
-            {data?.auth && <Navigate to="/" replace={true} />}
             <Flex
                 w="67%"
                 h="58%"
@@ -119,6 +132,7 @@ export default function Login() {
                                     background="transparent"
                                     _active={{ background: 'transparent' }}
                                     _focus={{ background: 'transparent' }}
+                                    _hover={{ background: 'transparent' }}
                                 ></IconButton>
                             </InputRightElement>
                         </InputGroup>
@@ -129,14 +143,24 @@ export default function Login() {
                             background="#4C7DE7"
                             _active={{ background: '#4C7DE7' }}
                             _focus={{ background: '#4C7DE7' }}
+                            _hover={{ background: '#4C7DE7' }}
                             isLoading={isLoading}
                             onClick={() => {
-                                queryLogin({
-                                    variables: {
-                                        username: userName.current?.value,
-                                        password: password.current?.value,
-                                    },
-                                });
+                                if (
+                                    !userName.current?.value ||
+                                    !password.current?.value
+                                ) {
+                                    toast({
+                                        title: '錯誤',
+                                        description: '帳號或密碼不能為空',
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
+                                    return;
+                                }
+                                setisLoading(true);
+                                fetchLogin();
                             }}
                         >
                             log in

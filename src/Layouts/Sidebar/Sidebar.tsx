@@ -5,7 +5,6 @@ import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
 import { AvatarIcon } from '../../Icons/Icons';
 
 import { PERMISSION } from '../../Mockdata/Mockdata';
-// import { Cookies } from "react-cookie";
 
 export default function Sidebar() {
     const ROLE = 'admin';
