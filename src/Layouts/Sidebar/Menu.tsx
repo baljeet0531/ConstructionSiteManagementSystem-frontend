@@ -1,19 +1,44 @@
-import React from "react";
-import { Feature } from "./Feature";
+import React from 'react';
+import { Feature } from './Feature';
 
-import { VStack } from "@chakra-ui/react";
+import { VStack } from '@chakra-ui/react';
 
-export default function Menu(props: { features: string[] }) {
+import { features, PERMISSION } from '../../Mockdata/Mockdata';
+// import { Cookies } from "react-cookie";
 
-    const features = props.features.map((feature, index) => {
-        return (
-            <Feature key={index}>{feature}</Feature>
-        )
-    })
+export default function Menu() {
+    const ROLE = 'admin';
+
+    const {
+        site,
+        schedule,
+        people,
+        security,
+        report,
+        photo,
+        dashboard,
+    }: features = PERMISSION[ROLE].features;
 
     return (
-        <VStack borderRadius="30px" pt="24px" pb="24px" w="80%" m="auto" pl="12px" pr="12px" spacing="24px" align="left" background="#FFFFFF">
-            {features}
+        <VStack
+            borderRadius="30px"
+            pt="24px"
+            pb="24px"
+            w="80%"
+            m="auto"
+            pl="12px"
+            pr="12px"
+            spacing="24px"
+            align="left"
+            background="#FFFFFF"
+        >
+            {site && <Feature feature="site"></Feature>}
+            {schedule && <Feature feature="schedule"></Feature>}
+            {people && <Feature feature="people"></Feature>}
+            {security && <Feature feature="security"></Feature>}
+            {report && <Feature feature="report"></Feature>}
+            {photo && <Feature feature="photo"></Feature>}
+            {dashboard && <Feature feature="dashboard"></Feature>}
         </VStack>
-    )
+    );
 }

@@ -1,7 +1,9 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { IsPermit } from '../../Mockdata/Mockdata';
 
 export default function Photo() {
-    return (
-        <p>Photo</p>
-    )
+    if (!IsPermit('photo')) return <Navigate to="/" replace={true} />;
+
+    return <p>Photo</p>;
 }
