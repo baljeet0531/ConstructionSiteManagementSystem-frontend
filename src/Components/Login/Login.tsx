@@ -68,7 +68,6 @@ export default function Login() {
             }
         } else {
             let token = await response.text();
-            console.log(token);
             setCookie('jwt', token, {
                 path: '/',
                 secure: false,
