@@ -97,7 +97,6 @@ dev_deployment:
     - chmod 400 /private.pem
     # Make .env file
     - envsubst < sample.env > .env
-    - ls
     # deploy services
     - ansible-playbook -i ./deploy/hosts ./deploy/develop.yml
 
