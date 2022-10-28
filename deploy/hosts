@@ -1,7 +1,7 @@
 mic-iem:
   hosts:
     dev:
-      ansible_host: 10.8.2.195
+      ansible_host: 10.8.2.194
       ansible_user: ubuntu
       ansible_ssh_private_key_file: /private.pem
       ansible_python_interpreter: /usr/bin/python3
