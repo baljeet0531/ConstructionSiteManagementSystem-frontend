@@ -19,7 +19,7 @@
         
     - name: Extract build.tar.gz into /home/ubuntu/mic-iem-frontend/
       ansible.builtin.unarchive:
-        src: build.tar.gz
+        src: ../build.tar.gz
         dest: /home/ubuntu/mic-iem-frontend/
 
     - name: copy nginx directory to remote server
