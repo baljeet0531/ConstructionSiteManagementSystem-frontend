@@ -67,10 +67,11 @@ export default function Login() {
                 });
             }
         } else {
-            setCookie('jwt', await response.text(), {
+            let token = await response.text();
+            console.log(token);
+            setCookie('jwt', token, {
                 path: '/',
-                secure: true,
-                sameSite: 'strict',
+                secure: false,
             });
             window.location.href = '/';
         }
