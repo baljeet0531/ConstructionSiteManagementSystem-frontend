@@ -15,10 +15,11 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
 import { Cookies } from 'react-cookie';
-import BACKEND from './Constants/EnvConstants';
+// import BACKEND from './Constants/EnvConstants';
 
 const link = createHttpLink({
-    uri: BACKEND + '/graphql',
+    uri: 'https://04c4-140-116-247-114.jp.ngrok.io/graphql',
+    // uri: BACKEND + '/graphql',
     // uri: "http://backend.mic.dev.19gale.ai/graphql",
 });
 

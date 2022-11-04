@@ -15,7 +15,7 @@ import {
 import { EditIcon, DeleteIcon } from '../../Icons/Icons';
 
 const Mock_Area = {
-    'A-1': [
+    'TEST-1': [
         {
             area_name: 'CUB棟',
             zone: ['2F', '3F', '4F', '5F', '6F', '7F', '8F'],
@@ -25,20 +25,15 @@ const Mock_Area = {
             zone: ['A區', 'B區', 'C區'],
         },
         {
-            area_name: '工務所預定地aaaaaaaabbbbbbbbbbaaaaaaaaaaa',
-            zone: [
-                'aaaaaaa南側aaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-                '北側',
-                '東側',
-                '西側',
-            ],
+            area_name: '工務所預定地',
+            zone: ['南側', '北側', '東側', '西側'],
         },
         {
-            area_name: '工務所預定地aaaaaa',
+            area_name: '工務所預定地',
             zone: ['南側', '北側', '東側', '西側'],
         },
     ],
-    'A-2': [
+    'TEST-2': [
         {
             area_name: 'CUB棟',
             zone: ['2F', '3F', '4F', '5F', '6F'],
@@ -57,6 +52,9 @@ export default function SiteAreas(props: {
     const { handlePopup } = props;
 
     const areaDetalis = Mock_Area[props.siteId];
+    if (!areaDetalis) {
+        return <></>;
+    }
 
     const areaElements = areaDetalis.map((area, index) => {
         const { area_name, zone } = area;

@@ -13,16 +13,16 @@ import {
 export default function SiteInfo(props: {
     handlePopup: Function;
     siteDetails: {
-        id: any;
+        siteId: any;
         name: string;
         avatar: string;
         start: string;
         end: string;
-        line_id: string;
+        lineId: string;
     };
 }) {
     const { handlePopup, siteDetails } = props;
-    const { id, name, avatar, start, end, line_id } = siteDetails;
+    const { siteId, name, avatar, start, end, lineId } = siteDetails;
 
     return (
         <Flex
@@ -50,7 +50,7 @@ export default function SiteInfo(props: {
                             fontSize={'14px'}
                             lineHeight={'20px'}
                         >
-                            {id}
+                            {siteId}
                         </Text>
                         <Text
                             p={'8px 12px'}
@@ -92,7 +92,7 @@ export default function SiteInfo(props: {
                             fontSize={'14px'}
                             lineHeight={'20px'}
                         >
-                            {`Line Notify ID: ${line_id}`}
+                            {`Line Notify ID: ${lineId}`}
                         </Text>
                     </Flex>
                 </Flex>
