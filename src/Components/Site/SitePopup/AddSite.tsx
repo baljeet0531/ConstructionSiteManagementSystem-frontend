@@ -1,9 +1,40 @@
 import React from 'react';
+import { useMutation, gql } from '@apollo/client';
 
 import { Center, Flex, Text, Input, Button } from '@chakra-ui/react';
 
+import { QUERY_SITE } from '../SitePage';
+
+const ADD_SITE = gql`
+    mutation CreateSite {
+        createSite(
+            siteId: "TEST-111"
+            name: "測試工地-1"
+            avatar: "/images/avatar/test_1.jpg"
+            start: "2021/01/01"
+            end: "2025-07-07"
+            lineId: "@testIJK"
+        ) {
+            site {
+                siteId
+            }
+        }
+    }
+`;
+
 export default function AddSite(props: { setShowPopup: Function }) {
     const { setShowPopup } = props;
+    const siteId = React.useRef<HTMLInputElement>(null);
+    const siteName = React.useRef<HTMLInputElement>(null);
+
+    const [addSite, { data, loading, error }] = useMutation(ADD_SITE, {
+        refetchQueries: [
+            { query: QUERY_SITE }, // DocumentNode object parsed with gql
+        ],
+    });
+    if (loading) console.log('Submitting...');
+    if (error) console.log(`Submission error! ${error.message}`);
+    if (data) console.log(data);
 
     return (
         <Center
@@ -70,6 +101,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
+                                ref={siteId}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -87,6 +119,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
+                                ref={siteName}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -153,6 +186,21 @@ export default function AddSite(props: { setShowPopup: Function }) {
                         </Button>
                         <Button
                             onClick={() => {
+                                // if (
+                                //     siteId.current?.value &&
+                                //     siteName.current?.value
+                                // ) {
+                                //     console.log(siteId.current.value);
+                                //     console.log(siteName.current.value);
+                                //     addSite({
+                                //         variables: {
+                                //             siteId: 'TEST-444',
+                                //         },
+                                //     });
+                                // } else {
+                                //     console.log('編號或名稱不能為空');
+                                // }
+                                addSite();
                                 setShowPopup(false);
                             }}
                         >

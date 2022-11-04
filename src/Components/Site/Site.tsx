@@ -8,21 +8,20 @@ import { Box, Flex, IconButton } from '@chakra-ui/react';
 
 export default function Site(props: {
     siteDetails: {
-        id: any;
+        siteId: any;
         name: string;
         avatar: string;
         start: string;
         end: string;
-        line_id: string;
+        lineId: string;
     };
     handlePopup: Function;
 }) {
     const { handlePopup, siteDetails } = props;
-    const { id } = siteDetails;
+    const { siteId } = siteDetails;
 
     return (
         <Box
-            minH={'500px'}
             w={'100%'}
             border={'1px solid #667080'}
             borderRadius={'10px'}
@@ -53,8 +52,14 @@ export default function Site(props: {
                     handlePopup={handlePopup}
                     siteDetails={siteDetails}
                 ></SiteInfo>
-                <SiteRoles handlePopup={handlePopup} siteId={id}></SiteRoles>
-                <SiteAreas handlePopup={handlePopup} siteId={id}></SiteAreas>
+                <SiteRoles
+                    handlePopup={handlePopup}
+                    siteId={siteId}
+                ></SiteRoles>
+                <SiteAreas
+                    handlePopup={handlePopup}
+                    siteId={siteId}
+                ></SiteAreas>
             </Flex>
         </Box>
     );
