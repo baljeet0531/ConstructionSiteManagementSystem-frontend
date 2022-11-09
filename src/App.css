@@ -37,14 +37,3 @@
         transform: rotate(360deg);
     }
 }
-
-main {
-    border-left: 1px solid black;
-    width: 80vw;
-    height: 100vh;
-}
-
-input::-ms-clear,
-input::-ms-reveal {
-    display: none;
-}
