@@ -1,6 +1,3 @@
-// import { theme } from '@chakra-ui/react';
-// import { StyleFunctionProps } from '@chakra-ui/react';
-
 const Table = {
     variants: {
         iemgray: {
