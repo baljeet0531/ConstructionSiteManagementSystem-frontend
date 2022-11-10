@@ -21,7 +21,7 @@ export const QUERY_SITE = gql`
         role(username: "kenny") {
             username
             role
-            site {
+            siteRef {
                 name
             }
         }
@@ -33,7 +33,6 @@ export const QUERY_SITE = gql`
                     avatar
                     start
                     end
-                    lineId
                 }
             }
         }
@@ -128,7 +127,6 @@ export default function SitePage() {
             <Box>
                 <Flex
                     direction={'column'}
-                    w={'80vw'}
                     h={'100vh'}
                     pl={'30px'}
                     pr={'30px'}
@@ -148,7 +146,7 @@ export default function SitePage() {
                             fontFamily={'Inter'}
                             color={'#667080'}
                         >
-                            工地管理
+                            專案管理
                         </Text>
                         <Spacer />
                         <Button
@@ -157,7 +155,7 @@ export default function SitePage() {
                             color={'#FFFFFF'}
                             onClick={() => handlePopup('addSite')}
                         >
-                            新增工地
+                            新增專案
                         </Button>
                     </Flex>
                     <Flex direction={'column'}>{allSites}</Flex>
