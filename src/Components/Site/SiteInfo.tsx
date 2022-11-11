@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { EditIcon, AddIcon, AddPeopleIcon, LinkIcon } from '../../Icons/Icons';
+import BACKEND from '../../Constants/EnvConstants';
+import { Cookies } from 'react-cookie';
 
 import {
     Flex,
@@ -25,11 +27,42 @@ export default function SiteInfo(props: {
 }) {
     const { handlePopup, siteDetails } = props;
     const { siteId, name, avatar, start, end } = siteDetails;
+    const [img, setImg] = React.useState<string>('');
+
+    async function getAvatar(avatar: string) {
+        const cookieValue = new Cookies().get('jwt');
+        const response = await fetch(BACKEND + `/static/${avatar}`, {
+            headers: {
+                Authorization: `Bearer ${cookieValue}`,
+            },
+            method: 'GET',
+        });
+        if (response.status >= 400) {
+            console.log(response);
+        } else {
+            const imageBlob = await response.blob();
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            setImg(imageObjectURL);
+        }
+    }
+
+    React.useEffect(() => {
+        getAvatar(avatar);
+    }, []);
 
     return (
         <Flex w={'100%'} direction={'row'}>
             <Center w={'129px'} h={'77px'} bg={'#E3ECFF'} borderRadius={'4px'}>
-                <Image src={avatar} />
+                <Image
+                    h={'100%'}
+                    w={'100%'}
+                    objectFit={'contain'}
+                    src={img}
+                    onLoad={(e) => {
+                        const image = e.target as HTMLImageElement;
+                        URL.revokeObjectURL(image.src);
+                    }}
+                />
             </Center>
             <Flex direction={'column'} gap={'5px'} ml={'5px'} flexGrow={1}>
                 <Flex direction={'row'} gap={'5px'} h={'36px'}>
