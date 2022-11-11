@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import Table from '../Components/Table';
 import Text from '../Components/Text';
+import Select from '../Components/Select';
 
 const myTheme = extendTheme({
     styles: {
@@ -13,6 +14,7 @@ const myTheme = extendTheme({
     components: {
         Table,
         Text,
+        Select,
     },
 });
 

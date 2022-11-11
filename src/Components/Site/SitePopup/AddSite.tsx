@@ -9,10 +9,12 @@ import {
     Button,
     Box,
     Image,
+    Select,
 } from '@chakra-ui/react';
 
 import { QUERY_SITE } from '../SitePage';
 import { AddFileIcon } from '../../../Icons/Icons';
+import { CityData } from '../../../Constants/CityData';
 
 const ADD_SITE = gql`
     mutation CreateSite($siteId: String!, $name: String!, $avatar: Upload!) {
@@ -33,6 +35,7 @@ const ADD_SITE = gql`
 export default function AddSite(props: { setShowPopup: Function }) {
     const { setShowPopup } = props;
     const [file, setFile] = React.useState<File>();
+    const [city, setCity] = React.useState<string>('新北市');
     const siteId = React.useRef<HTMLInputElement>(null);
     const siteName = React.useRef<HTMLInputElement>(null);
 
@@ -42,6 +45,24 @@ export default function AddSite(props: { setShowPopup: Function }) {
     if (loading) console.log('Submitting...');
     if (error) console.log(`Submission error! ${error.message}`);
     if (data) console.log(data);
+
+    const citySelect = Object.keys(CityData).map((cityName, index) => {
+        return (
+            <option key={index} value={cityName}>
+                {cityName}
+            </option>
+        );
+    });
+
+    const districtSelect =
+        city &&
+        CityData[city as keyof typeof CityData].map((districtName, index) => {
+            return (
+                <option key={index} value={districtName}>
+                    {districtName}
+                </option>
+            );
+        });
 
     return (
         <Center
@@ -55,7 +76,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
         >
             <Center
                 border={'1px solid #667080'}
-                w={'32%'}
+                w={'40%'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
@@ -78,16 +99,17 @@ export default function AddSite(props: { setShowPopup: Function }) {
                     >
                         <Flex justify={'space-between'}>
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
                                 p="8px 12px"
+                                whiteSpace={'nowrap'}
                             >
                                 業主商標
                             </Text>
                             <Box
-                                w={'60%'}
+                                flexGrow={1}
                                 h={'108px'}
                                 bg={'#FFFFFF'}
                                 borderRadius={'0.375rem'}
@@ -95,9 +117,10 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 <Center w={'100%'} h={'100%'} pos={'relative'}>
                                     {file ? (
                                         <Image
-                                            className="avatar"
-                                            w={'100%'}
                                             h={'100%'}
+                                            w={'100%'}
+                                            objectFit={'contain'}
+                                            className="avatar"
                                             src={URL.createObjectURL(file)}
                                             onLoad={(e) => {
                                                 const image =
@@ -127,7 +150,8 @@ export default function AddSite(props: { setShowPopup: Function }) {
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
+                                whiteSpace={'nowrap'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
@@ -136,7 +160,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 專案編號
                             </Text>
                             <Input
-                                width={'60%'}
+                                flexGrow={1}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
@@ -145,7 +169,8 @@ export default function AddSite(props: { setShowPopup: Function }) {
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
+                                whiteSpace={'nowrap'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
@@ -154,7 +179,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 專案名稱
                             </Text>
                             <Input
-                                width={'60%'}
+                                flexGrow={1}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
@@ -163,7 +188,8 @@ export default function AddSite(props: { setShowPopup: Function }) {
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
+                                whiteSpace={'nowrap'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
@@ -172,15 +198,17 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 工期開始
                             </Text>
                             <Input
-                                width={'60%'}
+                                flexGrow={1}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'date'}
+                                onKeyDown={(e) => e.preventDefault()}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
+                                whiteSpace={'nowrap'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
@@ -189,30 +217,51 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 工期結束
                             </Text>
                             <Input
-                                width={'60%'}
+                                flexGrow={1}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'date'}
+                                onKeyDown={(e) => e.preventDefault()}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
                             <Text
-                                width={'35%'}
+                                width={'fit-content'}
+                                whiteSpace={'nowrap'}
                                 fontWeight={'400'}
                                 fontSize={'14px'}
                                 lineHeight={'20px'}
                                 p="8px 12px"
                             >
-                                Line ID
+                                專案地址
                             </Text>
-                            <Input
-                                width={'60%'}
-                                variant="outline"
-                                bg={'#FFFFFF'}
-                                type={'text'}
-                                disabled
-                                value="12345678"
-                            ></Input>
+                            <Flex
+                                flexGrow={1}
+                                gap={'5%'}
+                                justifyContent={'space-between'}
+                            >
+                                <Select
+                                    variant="outline"
+                                    bg={'#FFFFFF'}
+                                    fontWeight={'400'}
+                                    fontSize={'14px'}
+                                    lineHeight={'20px'}
+                                    onChange={(e) => {
+                                        setCity(e.target.value);
+                                    }}
+                                >
+                                    {citySelect}
+                                </Select>
+                                <Select
+                                    variant="outline"
+                                    bg={'#FFFFFF'}
+                                    fontWeight={'400'}
+                                    fontSize={'14px'}
+                                    lineHeight={'20px'}
+                                >
+                                    {districtSelect}
+                                </Select>
+                            </Flex>
                         </Flex>
                     </Flex>
                     <Flex justify={'space-between'} h="36px" mt={'20px'}>

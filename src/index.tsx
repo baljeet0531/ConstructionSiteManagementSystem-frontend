@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -14,7 +15,7 @@ import { Cookies } from 'react-cookie';
 import BACKEND from './Constants/EnvConstants';
 
 const link: any = createUploadLink({
-    // uri: 'https://23ef-140-116-247-114.jp.ngrok.io/graphql',
+    // uri: 'https://a981-140-116-247-114.jp.ngrok.io/graphql',
     uri: BACKEND + '/graphql',
 });
 
