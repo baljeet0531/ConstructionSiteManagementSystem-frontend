@@ -10,6 +10,7 @@ import {
     Box,
     Image,
     Select,
+    useToast,
 } from '@chakra-ui/react';
 
 import { QUERY_SITE } from '../SitePage';
@@ -17,12 +18,26 @@ import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
 
 const ADD_SITE = gql`
-    mutation CreateSite($siteId: String!, $name: String!, $avatar: Upload!) {
-        createSite(siteId: $siteId, name: $name, avatar: $avatar) {
+    mutation CreateSite(
+        $avatar: Upload!
+        $siteId: String!
+        $name: String!
+        $start: String!
+        $end: String!
+        $city: String!
+    ) {
+        createSite(
+            avatar: $avatar
+            siteId: $siteId
+            name: $name
+            start: $start
+            end: $end
+            city: $city
+        ) {
             site {
+                avatar
                 siteId
                 name
-                avatar
                 start
                 end
                 city
@@ -33,11 +48,15 @@ const ADD_SITE = gql`
 `;
 
 export default function AddSite(props: { setShowPopup: Function }) {
+    const toast = useToast();
     const { setShowPopup } = props;
-    const [file, setFile] = React.useState<File>();
+    const [avatar, setAvatar] = React.useState<File>();
     const [city, setCity] = React.useState<string>('新北市');
+    const [district, setDistrict] = React.useState<string>('板橋區');
     const siteId = React.useRef<HTMLInputElement>(null);
     const siteName = React.useRef<HTMLInputElement>(null);
+    const startTime = React.useRef<HTMLInputElement>(null);
+    const endTime = React.useRef<HTMLInputElement>(null);
 
     const [addSite, { data, loading, error }] = useMutation(ADD_SITE, {
         refetchQueries: [{ query: QUERY_SITE }],
@@ -115,13 +134,13 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 borderRadius={'0.375rem'}
                             >
                                 <Center w={'100%'} h={'100%'} pos={'relative'}>
-                                    {file ? (
+                                    {avatar ? (
                                         <Image
                                             h={'100%'}
                                             w={'100%'}
                                             objectFit={'contain'}
                                             className="avatar"
-                                            src={URL.createObjectURL(file)}
+                                            src={URL.createObjectURL(avatar)}
                                             onLoad={(e) => {
                                                 const image =
                                                     e.target as HTMLImageElement;
@@ -141,7 +160,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                         accept={'image/*'}
                                         onChange={(e) => {
                                             if (e.target.files) {
-                                                setFile(e.target.files[0]);
+                                                setAvatar(e.target.files[0]);
                                             }
                                         }}
                                     ></Input>
@@ -202,6 +221,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'date'}
+                                ref={startTime}
                                 onKeyDown={(e) => e.preventDefault()}
                             ></Input>
                         </Flex>
@@ -221,6 +241,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'date'}
+                                ref={endTime}
                                 onKeyDown={(e) => e.preventDefault()}
                             ></Input>
                         </Flex>
@@ -241,23 +262,31 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                 justifyContent={'space-between'}
                             >
                                 <Select
+                                    value={city}
                                     variant="outline"
                                     bg={'#FFFFFF'}
                                     fontWeight={'400'}
                                     fontSize={'14px'}
                                     lineHeight={'20px'}
                                     onChange={(e) => {
-                                        setCity(e.target.value);
+                                        const cityInput = e.target
+                                            .value as keyof typeof CityData;
+                                        setCity(cityInput);
+                                        setDistrict(CityData[cityInput][0]);
                                     }}
                                 >
                                     {citySelect}
                                 </Select>
                                 <Select
+                                    value={district}
                                     variant="outline"
                                     bg={'#FFFFFF'}
                                     fontWeight={'400'}
                                     fontSize={'14px'}
                                     lineHeight={'20px'}
+                                    onChange={(e) => {
+                                        setDistrict(e.target.value);
+                                    }}
                                 >
                                     {districtSelect}
                                 </Select>
@@ -275,24 +304,41 @@ export default function AddSite(props: { setShowPopup: Function }) {
                         <Button
                             onClick={() => {
                                 if (
+                                    avatar &&
                                     siteId.current?.value &&
                                     siteName.current?.value &&
-                                    file
+                                    startTime.current?.value &&
+                                    endTime.current?.value &&
+                                    city &&
+                                    district
                                 ) {
-                                    console.log(siteId.current.value);
-                                    console.log(siteName.current.value);
-                                    console.log(file);
+                                    console.log(avatar);
+                                    console.log(siteId.current?.value);
+                                    console.log(siteName.current?.value);
+                                    console.log(startTime.current?.value);
+                                    console.log(endTime.current?.value);
+                                    console.log(city);
+                                    console.log(district);
                                     addSite({
                                         variables: {
+                                            avatar: avatar,
                                             siteId: siteId.current.value,
                                             name: siteName.current.value,
-                                            avatar: file,
+                                            start: startTime.current.value,
+                                            end: endTime.current.value,
+                                            city: city + district,
                                         },
                                     });
+                                    setShowPopup(false);
                                 } else {
-                                    console.log('欄位不能為空');
+                                    toast({
+                                        title: '錯誤',
+                                        description: '欄位不能為空',
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
                                 }
-                                setShowPopup(false);
                             }}
                         >
                             確定新增
