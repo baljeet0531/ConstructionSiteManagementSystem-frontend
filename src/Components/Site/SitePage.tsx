@@ -39,27 +39,6 @@ export const QUERY_SITE = gql`
     }
 `;
 
-// const MOCK_SITE = {
-//     allsites: [
-//         {
-//             siteId: 'TEST-1',
-//             name: '穩懋南科路竹廠機電一期新建工程',
-//             avatar: '/SiteIcons/A-1.svg',
-//             start: '2022/01/02',
-//             end: '2022/06/30',
-//             lineId: '12345678',
-//         },
-//         {
-//             siteId: 'TEST-2',
-//             name: '穩懋龜山廠P3/3F擴建工程',
-//             avatar: '/SiteIcons/A-1.svg',
-//             start: '2022/05/15',
-//             end: '2022/12/30',
-//             lineId: '56789012',
-//         },
-//     ],
-// };
-
 export default function SitePage() {
     const [showPopup, setShowPopup] = React.useState(false);
     const [popupComponent, setPopupComponent] = React.useState(<></>);
@@ -113,15 +92,6 @@ export default function SitePage() {
                 ></Site>
             );
         });
-        // const allSites = MOCK_SITE.allsites.map((siteDetails, index) => {
-        //     return (
-        //         <Site
-        //             key={index}
-        //             siteDetails={siteDetails}
-        //             handlePopup={handlePopup}
-        //         ></Site>
-        //     );
-        // });
 
         return (
             <Box>
