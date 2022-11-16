@@ -88,8 +88,6 @@ export default function SitePage() {
             };
         }[] = data.allSites.edges;
 
-        console.log(site);
-
         const allSites = site.map((siteDetails, index) => {
             return (
                 <Site
