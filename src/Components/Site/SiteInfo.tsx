@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 
 export default function SiteInfo(props: {
+    refetch: Boolean;
     handlePopup: Function;
     siteDetails: {
         siteId: any;
@@ -24,13 +25,15 @@ export default function SiteInfo(props: {
         lineId: string;
     };
 }) {
-    const { handlePopup, siteDetails } = props;
+    // eslint-disable-next-line no-unused-vars
+    const { handlePopup, siteDetails, refetch } = props;
     const { siteId, name, avatar, start, end } = siteDetails;
     const [img, setImg] = React.useState<string>();
 
     async function getAvatar(avatar: string) {
+        console.log(avatar);
         const cookieValue = new Cookies().get('jwt');
-        const response = await fetch(BACKEND + `/static/${avatar}`, {
+        const response = await fetch(BACKEND + `/static${avatar}`, {
             headers: {
                 Authorization: `Bearer ${cookieValue}`,
             },
@@ -38,7 +41,9 @@ export default function SiteInfo(props: {
         });
         if (response.status >= 400) {
             console.log(response);
+            setImg('');
         } else {
+            console.log(response);
             const imageBlob = await response.blob();
             const imageObjectURL = URL.createObjectURL(imageBlob);
             setImg(imageObjectURL);
@@ -46,8 +51,9 @@ export default function SiteInfo(props: {
     }
 
     React.useEffect(() => {
-        getAvatar(avatar);
-    }, []);
+        console.log('refetch');
+        if (avatar) getAvatar(avatar);
+    }, [avatar, refetch]);
 
     return (
         <Flex w={'100%'} direction={'row'}>

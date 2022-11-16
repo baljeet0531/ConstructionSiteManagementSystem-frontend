@@ -42,9 +42,16 @@ export const QUERY_SITE = gql`
 export default function SitePage() {
     const [showPopup, setShowPopup] = React.useState(false);
     const [popupComponent, setPopupComponent] = React.useState(<></>);
+    const [refetch, setRefetch] = React.useState(false);
+
     if (!IsPermit('site')) return <Navigate to="/" replace={true} />;
     const popupList = {
-        addSite: <AddSite setShowPopup={setShowPopup}></AddSite>,
+        addSite: (
+            <AddSite
+                setRefetch={setRefetch}
+                setShowPopup={setShowPopup}
+            ></AddSite>
+        ),
         editSite: <EditSite setShowPopup={setShowPopup}></EditSite>,
         addArea: <AddArea setShowPopup={setShowPopup}></AddArea>,
         addRole: <AddRole setShowPopup={setShowPopup}></AddRole>,
@@ -88,6 +95,7 @@ export default function SitePage() {
                 <Site
                     key={index}
                     siteDetails={siteDetails.node}
+                    refetch={refetch}
                     handlePopup={handlePopup}
                 ></Site>
             );

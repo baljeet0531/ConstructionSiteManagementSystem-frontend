@@ -22,8 +22,8 @@ const ADD_SITE = gql`
         $avatar: Upload!
         $siteId: String!
         $name: String!
-        $start: String!
-        $end: String!
+        $start: Date!
+        $end: Date!
         $city: String!
     ) {
         createSite(
@@ -47,9 +47,12 @@ const ADD_SITE = gql`
     }
 `;
 
-export default function AddSite(props: { setShowPopup: Function }) {
+export default function AddSite(props: {
+    setShowPopup: Function;
+    setRefetch: Function;
+}) {
     const toast = useToast();
-    const { setShowPopup } = props;
+    const { setShowPopup, setRefetch } = props;
     const [avatar, setAvatar] = React.useState<File>();
     const [city, setCity] = React.useState<string>('新北市');
     const [district, setDistrict] = React.useState<string>('板橋區');
@@ -329,6 +332,7 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                             city: city + district,
                                         },
                                     });
+                                    setRefetch((refetch: boolean) => !refetch);
                                     setShowPopup(false);
                                 } else {
                                     toast({

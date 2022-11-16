@@ -15,9 +15,10 @@ export default function Site(props: {
         end: string;
         lineId: string;
     };
+    refetch: Boolean;
     handlePopup: Function;
 }) {
-    const { handlePopup, siteDetails } = props;
+    const { handlePopup, siteDetails, refetch } = props;
     const { siteId } = siteDetails;
 
     return (
@@ -49,6 +50,7 @@ export default function Site(props: {
                 justify={'start'}
             >
                 <SiteInfo
+                    refetch={refetch}
                     handlePopup={handlePopup}
                     siteDetails={siteDetails}
                 ></SiteInfo>
