@@ -31,7 +31,6 @@ export default function SiteInfo(props: {
     const [img, setImg] = React.useState<string>();
 
     async function getAvatar(avatar: string) {
-        console.log(avatar);
         const cookieValue = new Cookies().get('jwt');
         const response = await fetch(BACKEND + `/static${avatar}`, {
             headers: {
@@ -40,10 +39,8 @@ export default function SiteInfo(props: {
             method: 'GET',
         });
         if (response.status >= 400) {
-            console.log(response);
             setImg('');
         } else {
-            console.log(response);
             const imageBlob = await response.blob();
             const imageObjectURL = URL.createObjectURL(imageBlob);
             setImg(imageObjectURL);
@@ -51,7 +48,6 @@ export default function SiteInfo(props: {
     }
 
     React.useEffect(() => {
-        console.log('refetch');
         if (avatar) getAvatar(avatar);
     }, [avatar, refetch]);
 

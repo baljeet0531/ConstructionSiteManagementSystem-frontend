@@ -315,13 +315,6 @@ export default function AddSite(props: {
                                     city &&
                                     district
                                 ) {
-                                    console.log(avatar);
-                                    console.log(siteId.current?.value);
-                                    console.log(siteName.current?.value);
-                                    console.log(startTime.current?.value);
-                                    console.log(endTime.current?.value);
-                                    console.log(city);
-                                    console.log(district);
                                     addSite({
                                         variables: {
                                             avatar: avatar,
