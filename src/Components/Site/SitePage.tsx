@@ -6,58 +6,59 @@ import { Button, Flex, Spacer, Text, Box } from '@chakra-ui/react';
 import { AddIcon } from '../../Icons/Icons';
 
 import AddSite from './SitePopup/AddSite';
-import EditSite from './SitePopup/EditSite';
 import AddArea from './SitePopup/AddArea';
 import AddRole from './SitePopup/AddRole';
 import EditRole from './SitePopup/EditRole';
 import EditArea from './SitePopup/EditArea';
-import DeleteSite from './SitePopup/DeleteSite';
 import DeleteRole from './SitePopup/DeleteRole';
 import DeleteArea from './SitePopup/DeleteArea';
 import { useQuery, gql } from '@apollo/client';
 
 export const QUERY_SITE = gql`
     query {
-        role(username: "kenny") {
-            username
-            role
-            siteRef {
-                name
-            }
-        }
-        allSites {
-            edges {
-                node {
-                    siteId
-                    name
-                    avatar
-                    start
-                    end
-                }
-            }
+        validSites {
+            siteId
+            name
+            avatar
+            start
+            end
+            city
+            lineNotifyToken
         }
     }
 `;
+// export const QUERY_SITE = gql`
+//     query {
+//         role(username: "kenny") {
+//             username
+//             role
+//             siteRef {
+//                 name
+//             }
+//         }
+//         validSites {
+//             siteId
+//             name
+//             avatar
+//             start
+//             end
+//             city
+//             lineNotifyToken
+//         }
+//     }
+// `;
 
 export default function SitePage() {
     const [showPopup, setShowPopup] = React.useState(false);
     const [popupComponent, setPopupComponent] = React.useState(<></>);
-    const [refetch, setRefetch] = React.useState(false);
 
     if (!IsPermit('site')) return <Navigate to="/" replace={true} />;
     const popupList = {
-        addSite: (
-            <AddSite
-                setRefetch={setRefetch}
-                setShowPopup={setShowPopup}
-            ></AddSite>
-        ),
-        editSite: <EditSite setShowPopup={setShowPopup}></EditSite>,
+        addSite: <AddSite setShowPopup={setShowPopup}></AddSite>,
         addArea: <AddArea setShowPopup={setShowPopup}></AddArea>,
         addRole: <AddRole setShowPopup={setShowPopup}></AddRole>,
         editRole: <EditRole setShowPopup={setShowPopup}></EditRole>,
         editArea: <EditArea setShowPopup={setShowPopup}></EditArea>,
-        deleteSite: <DeleteSite setShowPopup={setShowPopup}></DeleteSite>,
         deleteRole: <DeleteRole setShowPopup={setShowPopup}></DeleteRole>,
         deleteArea: <DeleteArea setShowPopup={setShowPopup}></DeleteArea>,
     };
@@ -78,22 +79,21 @@ export default function SitePage() {
 
     if (data) {
         const site: {
-            node: {
-                siteId: any;
-                name: string;
-                avatar: string;
-                start: string;
-                end: string;
-                lineId: string;
-            };
-        }[] = data.allSites.edges;
+            siteId: any;
+            name: string;
+            avatar: string;
+            start: string;
+            end: string;
+            city: string;
+        }[] = data.validSites;
 
         const allSites = site.map((siteDetails, index) => {
             return (
                 <Site
                     key={index}
-                    siteDetails={siteDetails.node}
-                    refetch={refetch}
+                    siteDetails={siteDetails}
+                    setPopupComponent={setPopupComponent}
+                    setShowPopup={setShowPopup}
                     handlePopup={handlePopup}
                 ></Site>
             );

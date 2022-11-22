@@ -6,6 +6,8 @@ import { CloseIcon } from '../../Icons/Icons';
 
 import { Box, Flex, IconButton } from '@chakra-ui/react';
 
+import DeleteSite from './SitePopup/DeleteSite';
+
 export default function Site(props: {
     siteDetails: {
         siteId: any;
@@ -13,13 +15,14 @@ export default function Site(props: {
         avatar: string;
         start: string;
         end: string;
-        lineId: string;
+        city: string;
     };
-    refetch: Boolean;
+    setPopupComponent: Function;
+    setShowPopup: Function;
     handlePopup: Function;
 }) {
-    const { handlePopup, siteDetails, refetch } = props;
-    const { siteId } = siteDetails;
+    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
+    const { siteId, name } = siteDetails;
 
     return (
         <Box
@@ -40,7 +43,14 @@ export default function Site(props: {
                 top={0}
                 right={0}
                 onClick={() => {
-                    handlePopup('deleteSite');
+                    setPopupComponent(
+                        <DeleteSite
+                            setShowPopup={setShowPopup}
+                            siteName={name}
+                            siteId={siteId}
+                        ></DeleteSite>
+                    );
+                    setShowPopup(true);
                 }}
             ></IconButton>
             <Flex
@@ -50,7 +60,8 @@ export default function Site(props: {
                 justify={'start'}
             >
                 <SiteInfo
-                    refetch={refetch}
+                    setPopupComponent={setPopupComponent}
+                    setShowPopup={setShowPopup}
                     handlePopup={handlePopup}
                     siteDetails={siteDetails}
                 ></SiteInfo>
