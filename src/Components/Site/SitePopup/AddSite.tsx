@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useMutation, gql } from '@apollo/client';
 
@@ -19,7 +20,7 @@ import { CityData } from '../../../Constants/CityData';
 
 const ADD_SITE = gql`
     mutation CreateSite(
-        $avatar: Upload!
+        $avatar: Upload
         $siteId: String!
         $name: String!
         $start: Date!
@@ -47,12 +48,9 @@ const ADD_SITE = gql`
     }
 `;
 
-export default function AddSite(props: {
-    setShowPopup: Function;
-    setRefetch: Function;
-}) {
+export default function AddSite(props: { setShowPopup: Function }) {
     const toast = useToast();
-    const { setShowPopup, setRefetch } = props;
+    const { setShowPopup } = props;
     const [avatar, setAvatar] = React.useState<File>();
     const [city, setCity] = React.useState<string>('新北市');
     const [district, setDistrict] = React.useState<string>('板橋區');
@@ -307,7 +305,6 @@ export default function AddSite(props: {
                         <Button
                             onClick={() => {
                                 if (
-                                    avatar &&
                                     siteId.current?.value &&
                                     siteName.current?.value &&
                                     startTime.current?.value &&
@@ -315,18 +312,35 @@ export default function AddSite(props: {
                                     city &&
                                     district
                                 ) {
-                                    addSite({
-                                        variables: {
-                                            avatar: avatar,
-                                            siteId: siteId.current.value,
-                                            name: siteName.current.value,
-                                            start: startTime.current.value,
-                                            end: endTime.current.value,
-                                            city: city + district,
-                                        },
-                                    });
-                                    setRefetch((refetch: boolean) => !refetch);
-                                    setShowPopup(false);
+                                    if (
+                                        new Date(
+                                            startTime.current?.value
+                                        ).getTime() >
+                                        new Date(
+                                            endTime.current?.value
+                                        ).getTime()
+                                    ) {
+                                        toast({
+                                            title: '錯誤',
+                                            description:
+                                                '開始日期不能超過結束日期',
+                                            status: 'error',
+                                            duration: 3000,
+                                            isClosable: true,
+                                        });
+                                    } else {
+                                        addSite({
+                                            variables: {
+                                                avatar: avatar,
+                                                siteId: siteId.current.value,
+                                                name: siteName.current.value,
+                                                start: startTime.current.value,
+                                                end: endTime.current.value,
+                                                city: city + district,
+                                            },
+                                        });
+                                        setShowPopup(false);
+                                    }
                                 } else {
                                     toast({
                                         title: '錯誤',

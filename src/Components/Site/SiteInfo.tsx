@@ -2,6 +2,7 @@ import React from 'react';
 import { EditIcon, AddIcon, AddPeopleIcon, LinkIcon } from '../../Icons/Icons';
 import BACKEND from '../../Constants/EnvConstants';
 import { Cookies } from 'react-cookie';
+import EditSite from './SitePopup/EditSite';
 
 import {
     Flex,
@@ -11,10 +12,12 @@ import {
     IconButton,
     Button,
     Link,
+    Spinner,
 } from '@chakra-ui/react';
 
 export default function SiteInfo(props: {
-    refetch: Boolean;
+    setPopupComponent: Function;
+    setShowPopup: Function;
     handlePopup: Function;
     siteDetails: {
         siteId: any;
@@ -22,44 +25,52 @@ export default function SiteInfo(props: {
         avatar: string;
         start: string;
         end: string;
-        lineId: string;
+        city: string;
     };
 }) {
-    // eslint-disable-next-line no-unused-vars
-    const { handlePopup, siteDetails, refetch } = props;
+    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
     const { siteId, name, avatar, start, end } = siteDetails;
-    const [img, setImg] = React.useState<string>();
+    const [imgBlob, setImgBlob] = React.useState<Blob>();
+    const [loading, setLoading] = React.useState<Boolean>(true);
 
-    async function getAvatar(avatar: string) {
+    async function getAvatar(avatar: string, signal: AbortSignal) {
         const cookieValue = new Cookies().get('jwt');
-        const response = await fetch(BACKEND + `/static${avatar}`, {
+        const response = await fetch(BACKEND + `/${avatar}`, {
+            signal,
+            cache: 'no-cache',
             headers: {
                 Authorization: `Bearer ${cookieValue}`,
             },
             method: 'GET',
         });
         if (response.status >= 400) {
-            setImg('');
+            setImgBlob(undefined);
         } else {
             const imageBlob = await response.blob();
-            const imageObjectURL = URL.createObjectURL(imageBlob);
-            setImg(imageObjectURL);
+            setImgBlob(imageBlob);
+            setLoading(false);
         }
     }
 
     React.useEffect(() => {
-        if (avatar) getAvatar(avatar);
-    }, [avatar, refetch]);
+        const controller = new AbortController();
+        const signal = controller.signal;
+        if (!loading) setLoading(true);
+        if (avatar) getAvatar(avatar, signal);
+        return () => controller.abort();
+    }, [avatar]);
 
     return (
         <Flex w={'100%'} direction={'row'}>
             <Center w={'129px'} h={'77px'} bg={'#E3ECFF'} borderRadius={'4px'}>
-                {img ? (
+                {loading ? (
+                    <Spinner />
+                ) : imgBlob ? (
                     <Image
                         h={'100%'}
                         w={'100%'}
                         objectFit={'contain'}
-                        src={img}
+                        src={URL.createObjectURL(imgBlob)}
                         onLoad={(e) => {
                             const image = e.target as HTMLImageElement;
                             URL.revokeObjectURL(image.src);
@@ -97,7 +108,16 @@ export default function SiteInfo(props: {
                             icon={<EditIcon />}
                             bg={'none'}
                             onClick={() => {
-                                handlePopup('editSite');
+                                setPopupComponent(
+                                    <EditSite
+                                        setShowPopup={setShowPopup}
+                                        siteDetails={{
+                                            ...siteDetails,
+                                            avatar: imgBlob,
+                                        }}
+                                    ></EditSite>
+                                );
+                                setShowPopup(true);
                             }}
                         ></IconButton>
                     </Center>
