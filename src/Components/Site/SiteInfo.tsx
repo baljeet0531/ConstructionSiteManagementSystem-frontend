@@ -48,34 +48,40 @@ export default function SiteInfo(props: {
         } else {
             const imageBlob = await response.blob();
             setImgBlob(imageBlob);
-            setLoading(false);
         }
+        setLoading(false);
     }
 
     React.useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
-        if (!loading) setLoading(true);
-        if (avatar) getAvatar(avatar, signal);
+        if (avatar) {
+            if (!loading) setLoading(true);
+            getAvatar(avatar, signal);
+        }
         return () => controller.abort();
     }, [avatar]);
 
     return (
         <Flex w={'100%'} direction={'row'}>
             <Center w={'129px'} h={'77px'} bg={'#E3ECFF'} borderRadius={'4px'}>
-                {loading ? (
-                    <Spinner />
-                ) : imgBlob ? (
-                    <Image
-                        h={'100%'}
-                        w={'100%'}
-                        objectFit={'contain'}
-                        src={URL.createObjectURL(imgBlob)}
-                        onLoad={(e) => {
-                            const image = e.target as HTMLImageElement;
-                            URL.revokeObjectURL(image.src);
-                        }}
-                    />
+                {avatar ? (
+                    loading ? (
+                        <Spinner />
+                    ) : imgBlob ? (
+                        <Image
+                            h={'100%'}
+                            w={'100%'}
+                            objectFit={'contain'}
+                            src={URL.createObjectURL(imgBlob)}
+                            onLoad={(e) => {
+                                const image = e.target as HTMLImageElement;
+                                URL.revokeObjectURL(image.src);
+                            }}
+                        />
+                    ) : (
+                        <Text color={'#13398D80'}>圖片錯誤</Text>
+                    )
                 ) : (
                     <Text color={'#13398D80'}>尚無照片</Text>
                 )}
