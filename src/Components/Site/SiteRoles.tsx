@@ -16,7 +16,7 @@ import {
 import { SortIcon, EditIcon, DeleteIcon } from '../../Icons/Icons';
 
 const Mock_Roles = {
-    'A-1': [
+    'TEST-1': [
         {
             name: '梁樂謙',
             role: '專案經理',
@@ -38,7 +38,7 @@ const Mock_Roles = {
             username: 'ＸＸＸ',
         },
     ],
-    'A-2': [
+    'TEST-2': [
         {
             name: '梁樂謙',
             role: '專案經理',
@@ -69,6 +69,9 @@ export default function SiteRoles(props: {
     const { handlePopup } = props;
 
     const rolesData = Mock_Roles[props.siteId];
+    if (!rolesData) {
+        return <></>;
+    }
 
     const rolesElement = rolesData.map((roleDetails, index) => {
         const { name, role, username } = roleDetails;

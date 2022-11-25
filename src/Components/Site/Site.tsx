@@ -6,23 +6,26 @@ import { CloseIcon } from '../../Icons/Icons';
 
 import { Box, Flex, IconButton } from '@chakra-ui/react';
 
+import DeleteSite from './SitePopup/DeleteSite';
+
 export default function Site(props: {
     siteDetails: {
-        id: any;
+        siteId: any;
         name: string;
         avatar: string;
         start: string;
         end: string;
-        line_id: string;
+        city: string;
     };
+    setPopupComponent: Function;
+    setShowPopup: Function;
     handlePopup: Function;
 }) {
-    const { handlePopup, siteDetails } = props;
-    const { id } = siteDetails;
+    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
+    const { siteId, name } = siteDetails;
 
     return (
         <Box
-            minH={'500px'}
             w={'100%'}
             border={'1px solid #667080'}
             borderRadius={'10px'}
@@ -40,7 +43,14 @@ export default function Site(props: {
                 top={0}
                 right={0}
                 onClick={() => {
-                    handlePopup('deleteSite');
+                    setPopupComponent(
+                        <DeleteSite
+                            setShowPopup={setShowPopup}
+                            siteName={name}
+                            siteId={siteId}
+                        ></DeleteSite>
+                    );
+                    setShowPopup(true);
                 }}
             ></IconButton>
             <Flex
@@ -50,11 +60,19 @@ export default function Site(props: {
                 justify={'start'}
             >
                 <SiteInfo
+                    setPopupComponent={setPopupComponent}
+                    setShowPopup={setShowPopup}
                     handlePopup={handlePopup}
                     siteDetails={siteDetails}
                 ></SiteInfo>
-                <SiteRoles handlePopup={handlePopup} siteId={id}></SiteRoles>
-                <SiteAreas handlePopup={handlePopup} siteId={id}></SiteAreas>
+                <SiteRoles
+                    handlePopup={handlePopup}
+                    siteId={siteId}
+                ></SiteRoles>
+                <SiteAreas
+                    handlePopup={handlePopup}
+                    siteId={siteId}
+                ></SiteAreas>
             </Flex>
         </Box>
     );

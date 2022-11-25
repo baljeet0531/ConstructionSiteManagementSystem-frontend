@@ -6,20 +6,15 @@ import reportWebVitals from './reportWebVitals';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import myTheme from './Chakra/Themes/themes';
-import {
-    ApolloClient,
-    InMemoryCache,
-    ApolloProvider,
-    createHttpLink,
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
 import CookiesProvider from 'react-cookie/cjs/CookiesProvider';
 import { Cookies } from 'react-cookie';
 import BACKEND from './Constants/EnvConstants';
 
-const link = createHttpLink({
+const link: any = createUploadLink({
     uri: BACKEND + '/graphql',
-    // uri: "http://backend.mic.dev.19gale.ai/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -33,9 +28,8 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const client = new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({ addTypename: false }),
     link: authLink.concat(link),
-    // credentials: "include",
 });
 
 const root = ReactDOM.createRoot(

@@ -1,10 +1,29 @@
 import React from 'react';
 
 import { Center, Flex, Text, Button } from '@chakra-ui/react';
+import { gql, useMutation } from '@apollo/client';
+import { QUERY_SITE } from '../SitePage';
 
-export default function DeleteSite(props: { setShowPopup: Function }) {
-    const { setShowPopup } = props;
+const DELETE_SITE = gql`
+    mutation deleteSite($siteId: String!) {
+        deleteSite(siteId: $siteId) {
+            ok
+        }
+    }
+`;
 
+export default function DeleteSite(props: {
+    setShowPopup: Function;
+    siteName: string;
+    siteId: string;
+}) {
+    const { setShowPopup, siteName, siteId } = props;
+    const [deleteSite, { loading, error, data }] = useMutation(DELETE_SITE, {
+        refetchQueries: [{ query: QUERY_SITE }],
+    });
+    if (loading) console.log('Submitting...');
+    if (error) console.log(`Submission error! ${error.message}`);
+    if (data) console.log(data);
     return (
         <Center
             position={'absolute'}
@@ -22,7 +41,12 @@ export default function DeleteSite(props: { setShowPopup: Function }) {
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
             >
-                <Flex h={'100%'} direction={'column'} color={'#667080'}>
+                <Flex
+                    h={'100%'}
+                    direction={'column'}
+                    color={'#667080'}
+                    maxW={'70%'}
+                >
                     <Text
                         fontWeight={700}
                         fontSize={'20px'}
@@ -30,8 +54,7 @@ export default function DeleteSite(props: { setShowPopup: Function }) {
                     >
                         確定刪除以下工地？
                     </Text>
-                    <Flex
-                        justify={'flex-start'}
+                    <Center
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
                         mt={'20px'}
@@ -41,10 +64,11 @@ export default function DeleteSite(props: { setShowPopup: Function }) {
                             fontWeight={400}
                             fontSize={'14px'}
                             lineHeight={'20px'}
+                            wordBreak={'break-word'}
                         >
-                            穩懋南科路竹廠機電一期新建工程
+                            {siteName}
                         </Text>
-                    </Flex>
+                    </Center>
                     <Flex justify={'space-between'} h="36px" mt={'20px'}>
                         <Button
                             onClick={() => {
@@ -55,6 +79,7 @@ export default function DeleteSite(props: { setShowPopup: Function }) {
                         </Button>
                         <Button
                             onClick={() => {
+                                deleteSite({ variables: { siteId: siteId } });
                                 setShowPopup(false);
                             }}
                         >

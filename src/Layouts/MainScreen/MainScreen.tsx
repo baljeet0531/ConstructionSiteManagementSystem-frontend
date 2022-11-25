@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/react';
 
 export default function MainScreen(props: { children: React.ReactNode }) {
     return (
-        <Box h={'100vh'} m={'0px'} w={'80vw'} borderLeft={'1px solid #000000'}>
+        <Box h={'100vh'} w={'80vw'} borderLeft={'1px solid #000000'}>
             {props.children}
         </Box>
     );
