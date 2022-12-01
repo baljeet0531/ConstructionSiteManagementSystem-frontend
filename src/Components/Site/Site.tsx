@@ -66,10 +66,14 @@ export default function Site(props: {
                     siteDetails={siteDetails}
                 ></SiteInfo>
                 <SiteRoles
+                    setPopupComponent={setPopupComponent}
+                    setShowPopup={setShowPopup}
                     handlePopup={handlePopup}
                     siteId={siteId}
                 ></SiteRoles>
                 <SiteAreas
+                    setPopupComponent={setPopupComponent}
+                    setShowPopup={setShowPopup}
                     handlePopup={handlePopup}
                     siteId={siteId}
                 ></SiteAreas>

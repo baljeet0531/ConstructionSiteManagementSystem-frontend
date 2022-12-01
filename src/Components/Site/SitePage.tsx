@@ -6,12 +6,7 @@ import { Button, Flex, Spacer, Text, Box } from '@chakra-ui/react';
 import { AddIcon } from '../../Icons/Icons';
 
 import AddSite from './SitePopup/AddSite';
-import AddArea from './SitePopup/AddArea';
 import AddRole from './SitePopup/AddRole';
-import EditRole from './SitePopup/EditRole';
-import EditArea from './SitePopup/EditArea';
-import DeleteRole from './SitePopup/DeleteRole';
-import DeleteArea from './SitePopup/DeleteArea';
 import { useQuery, gql } from '@apollo/client';
 
 export const QUERY_SITE = gql`
@@ -55,12 +50,7 @@ export default function SitePage() {
     if (!IsPermit('site')) return <Navigate to="/" replace={true} />;
     const popupList = {
         addSite: <AddSite setShowPopup={setShowPopup}></AddSite>,
-        addArea: <AddArea setShowPopup={setShowPopup}></AddArea>,
         addRole: <AddRole setShowPopup={setShowPopup}></AddRole>,
-        editRole: <EditRole setShowPopup={setShowPopup}></EditRole>,
-        editArea: <EditArea setShowPopup={setShowPopup}></EditArea>,
-        deleteRole: <DeleteRole setShowPopup={setShowPopup}></DeleteRole>,
-        deleteArea: <DeleteArea setShowPopup={setShowPopup}></DeleteArea>,
     };
     function handlePopup(popupFunction: keyof typeof popupList) {
         setPopupComponent(popupList[popupFunction]);
