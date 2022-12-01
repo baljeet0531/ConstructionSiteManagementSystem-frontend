@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useMutation, gql } from '@apollo/client';
 import {
     Center,
     Flex,
@@ -9,13 +10,45 @@ import {
     InputRightElement,
     Button,
     IconButton,
+    useToast,
 } from '@chakra-ui/react';
 import { CloseIcon } from '../../../Icons/Icons';
+import { QUERY_SITE_AREAS } from '../SiteAreas';
 
-export default function AddArea(props: { setShowPopup: Function }) {
-    const { setShowPopup } = props;
+const ADD_SITE_AREA = gql`
+    mutation CreateSiteArea(
+        $siteId: String!
+        $name: String!
+        $zone: [String!]
+    ) {
+        createSiteArea(siteId: $siteId, name: $name, zone: $zone) {
+            siteArea {
+                name
+                zone
+            }
+        }
+    }
+`;
 
-    const [zoneList, setZoneList] = React.useState(['']);
+export default function AddArea(props: {
+    setShowPopup: Function;
+    siteId: string;
+}) {
+    const toast = useToast();
+    const { setShowPopup, siteId } = props;
+
+    const areaName = React.useRef<HTMLInputElement>(null);
+    const [zoneList, setZoneList] = React.useState<string[]>(['']);
+
+    const [addSiteArea, { data, loading, error }] = useMutation(ADD_SITE_AREA, {
+        refetchQueries: [
+            { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
+        ],
+    });
+
+    if (loading) console.log('Submitting...');
+    if (error) console.log(`Submission error! ${error.message}`);
+    if (data) console.log(data);
 
     const zoneElements = zoneList.map((zonename, index) => {
         return (
@@ -127,6 +160,7 @@ export default function AddArea(props: { setShowPopup: Function }) {
                                 廠區
                             </Text>
                             <Input
+                                ref={areaName}
                                 width={'60%'}
                                 variant="outline"
                                 bg={'#FFFFFF'}
@@ -145,7 +179,30 @@ export default function AddArea(props: { setShowPopup: Function }) {
                         </Button>
                         <Button
                             onClick={() => {
-                                setShowPopup(false);
+                                const zoneListFiltered: string[] = [];
+                                for (let i = 0; i < zoneList.length; i++) {
+                                    const zone = zoneList[i].trim();
+                                    if (zone !== '')
+                                        zoneListFiltered.push(zone);
+                                }
+                                if (areaName.current?.value) {
+                                    addSiteArea({
+                                        variables: {
+                                            siteId: siteId,
+                                            name: areaName.current.value.trim(),
+                                            zone: zoneListFiltered,
+                                        },
+                                    });
+                                    setShowPopup(false);
+                                } else {
+                                    toast({
+                                        title: '錯誤',
+                                        description: `廠區名稱不能為空`,
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
+                                }
                             }}
                         >
                             確定新增

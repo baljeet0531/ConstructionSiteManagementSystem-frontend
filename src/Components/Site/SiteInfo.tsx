@@ -14,6 +14,7 @@ import {
     Link,
     Spinner,
 } from '@chakra-ui/react';
+import AddArea from './SitePopup/AddArea';
 
 export default function SiteInfo(props: {
     setPopupComponent: Function;
@@ -169,7 +170,13 @@ export default function SiteInfo(props: {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                handlePopup('addArea');
+                                setPopupComponent(
+                                    <AddArea
+                                        siteId={siteId}
+                                        setShowPopup={setShowPopup}
+                                    ></AddArea>
+                                );
+                                setShowPopup(true);
                             }}
                         >
                             新增廠區

@@ -1,4 +1,7 @@
 import React from 'react';
+
+import { useQuery, gql } from '@apollo/client';
+
 import {
     Table,
     Thead,
@@ -13,123 +16,140 @@ import {
     Text,
 } from '@chakra-ui/react';
 import { EditIcon, DeleteIcon } from '../../Icons/Icons';
+import EditArea from './SitePopup/EditArea';
+import DeleteArea from './SitePopup/DeleteArea';
 
-const Mock_Area = {
-    'TEST-1': [
-        {
-            area_name: 'CUB棟',
-            zone: ['2F', '3F', '4F', '5F', '6F', '7F', '8F'],
-        },
-        {
-            area_name: '貨櫃屋前',
-            zone: ['A區', 'B區', 'C區'],
-        },
-        {
-            area_name: '工務所預定地',
-            zone: ['南側', '北側', '東側', '西側'],
-        },
-        {
-            area_name: '工務所預定地',
-            zone: ['南側', '北側', '東側', '西側'],
-        },
-    ],
-    'TEST-2': [
-        {
-            area_name: 'CUB棟',
-            zone: ['2F', '3F', '4F', '5F', '6F'],
-        },
-        {
-            area_name: '貨櫃屋前',
-            zone: ['A區', 'B區', 'C區'],
-        },
-    ],
-};
+export const QUERY_SITE_AREAS = gql`
+    query siteAreas($siteId: String!) {
+        siteAreas(siteId: $siteId) {
+            name
+            zone
+        }
+    }
+`;
 
 export default function SiteAreas(props: {
-    siteId: keyof typeof Mock_Area;
+    siteId: string;
+    setPopupComponent: Function;
+    setShowPopup: Function;
     handlePopup: Function;
 }) {
-    const { handlePopup } = props;
+    const { siteId, setPopupComponent, setShowPopup } = props;
+    const { data, loading, error } = useQuery(QUERY_SITE_AREAS, {
+        variables: {
+            siteId: siteId,
+        },
+    });
+    if (loading) console.log('loading');
+    if (error) console.log(error);
 
-    const areaDetalis = Mock_Area[props.siteId];
-    if (!areaDetalis) {
-        return <></>;
-    }
+    let areaElements: any = <></>;
+    if (data) {
+        const siteAreasData: { name: string; zone: string }[] = data.siteAreas;
+        let siteAreasObject: { [key: string]: string[] } = {};
 
-    const areaElements = areaDetalis.map((area, index) => {
-        const { area_name, zone } = area;
+        for (let i = 0; i < siteAreasData.length; i++) {
+            const { name, zone } = siteAreasData[i];
+            const zoneTrimmed = zone.trim();
 
-        while (zone.length < 5) zone.push('');
+            if (!siteAreasObject[name]) siteAreasObject[name] = [];
+            if (zoneTrimmed != '') siteAreasObject[name].push(zoneTrimmed);
+        }
+        areaElements = Object.entries(siteAreasObject).map((area, index) => {
+            const [areaName, zone] = area;
 
-        const zoneElements = zone.map((zoneName, index) => {
+            const zoneData = [...zone];
+            while (zoneData.length < 5) zoneData.push('');
+            const zoneElements = zoneData.map((zoneName, index) => {
+                return (
+                    <Tr key={index}>
+                        <Td textAlign="center">{index + 1}.</Td>
+                        <Td overflowX={'auto'} whiteSpace={'pre'}>
+                            {zoneName}
+                        </Td>
+                    </Tr>
+                );
+            });
+
             return (
-                <Tr key={index}>
-                    <Td textAlign="center">{index + 1}.</Td>
-                    <Td overflowX={'auto'}>{zoneName}</Td>
-                </Tr>
+                <TableContainer
+                    flexBasis={'32%'}
+                    mt={'16px'}
+                    h={'265.5px'}
+                    maxH={'265.5px'}
+                    overflowY={'auto'}
+                    key={index}
+                    border={'1px solid #919AA9'}
+                    borderBottom={'none'}
+                >
+                    <Table>
+                        <Thead position={'sticky'} top={0} zIndex={1}>
+                            <Tr>
+                                <Th w={'23%'} textAlign="center">
+                                    廠區
+                                </Th>
+                                <Th w={'77%'}>
+                                    <Flex columnGap={'16px'}>
+                                        <Text
+                                            flex={1}
+                                            overflowX={'auto'}
+                                            lineHeight={'20px'}
+                                        >
+                                            {areaName}
+                                        </Text>
+                                        <Center w={'20px'}>
+                                            <IconButton
+                                                size={'xs'}
+                                                h={'20px'}
+                                                aria-label="EditArea"
+                                                icon={<EditIcon />}
+                                                bg={'none'}
+                                                onClick={() => {
+                                                    setPopupComponent(
+                                                        <EditArea
+                                                            setShowPopup={
+                                                                setShowPopup
+                                                            }
+                                                            areaName={areaName}
+                                                            siteId={siteId}
+                                                            zone={zone}
+                                                        ></EditArea>
+                                                    );
+                                                    setShowPopup(true);
+                                                }}
+                                            ></IconButton>
+                                        </Center>
+                                        <Center w={'20px'}>
+                                            <IconButton
+                                                size={'xs'}
+                                                h={'20px'}
+                                                aria-label="DeleteArea"
+                                                icon={<DeleteIcon />}
+                                                bg={'none'}
+                                                onClick={() => {
+                                                    setPopupComponent(
+                                                        <DeleteArea
+                                                            setShowPopup={
+                                                                setShowPopup
+                                                            }
+                                                            areaName={areaName}
+                                                            siteId={siteId}
+                                                        ></DeleteArea>
+                                                    );
+                                                    setShowPopup(true);
+                                                }}
+                                            ></IconButton>
+                                        </Center>
+                                    </Flex>
+                                </Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>{zoneElements}</Tbody>
+                    </Table>
+                </TableContainer>
             );
         });
-
-        return (
-            <TableContainer
-                flexBasis={'32%'}
-                mt={'16px'}
-                h={'265.5px'}
-                maxH={'265.5px'}
-                overflowY={'auto'}
-                key={index}
-                border={'1px solid #919AA9'}
-                borderBottom={'none'}
-            >
-                <Table>
-                    <Thead position={'sticky'} top={0} zIndex={1}>
-                        <Tr>
-                            <Th w={'23%'} textAlign="center">
-                                廠區
-                            </Th>
-                            <Th w={'77%'}>
-                                <Flex columnGap={'16px'}>
-                                    <Text
-                                        flex={1}
-                                        overflowX={'auto'}
-                                        lineHeight={'20px'}
-                                    >
-                                        {area_name}
-                                    </Text>
-                                    <Center w={'20px'}>
-                                        <IconButton
-                                            size={'xs'}
-                                            h={'20px'}
-                                            aria-label="EditArea"
-                                            icon={<EditIcon />}
-                                            bg={'none'}
-                                            onClick={() => {
-                                                handlePopup('editArea');
-                                            }}
-                                        ></IconButton>
-                                    </Center>
-                                    <Center w={'20px'}>
-                                        <IconButton
-                                            size={'xs'}
-                                            h={'20px'}
-                                            aria-label="DeleteArea"
-                                            icon={<DeleteIcon />}
-                                            bg={'none'}
-                                            onClick={() => {
-                                                handlePopup('deleteArea');
-                                            }}
-                                        ></IconButton>
-                                    </Center>
-                                </Flex>
-                            </Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>{zoneElements}</Tbody>
-                </Table>
-            </TableContainer>
-        );
-    });
-
+    }
     return (
         <Flex w={'100%'} flexWrap="wrap" columnGap={'2%'}>
             {areaElements}
