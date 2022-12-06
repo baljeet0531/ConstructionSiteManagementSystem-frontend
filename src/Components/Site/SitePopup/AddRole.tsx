@@ -110,14 +110,7 @@ export default function AddRole(props: {
                 ? setStep('addAccountToSite')
                 : setStep('createAccount');
         },
-        onError: ({ message, graphQLErrors }) => {
-            toast({
-                title: '錯誤',
-                description: message,
-                status: 'error',
-                duration: null,
-                isClosable: true,
-            });
+        onError: ({ graphQLErrors }) => {
             for (let i = 0; i < graphQLErrors.length; i++) {
                 toast({
                     title: '錯誤',
@@ -148,14 +141,7 @@ export default function AddRole(props: {
                 });
             }
         },
-        onError: ({ message, graphQLErrors }) => {
-            toast({
-                title: '錯誤',
-                description: message,
-                status: 'error',
-                duration: null,
-                isClosable: true,
-            });
+        onError: ({ graphQLErrors }) => {
             for (let i = 0; i < graphQLErrors.length; i++) {
                 toast({
                     title: '錯誤',
@@ -172,14 +158,7 @@ export default function AddRole(props: {
         onCompleted: () => {
             setShowPopup(false);
         },
-        onError: ({ message, graphQLErrors }) => {
-            toast({
-                title: '錯誤',
-                description: message,
-                status: 'error',
-                duration: null,
-                isClosable: true,
-            });
+        onError: ({ graphQLErrors }) => {
             for (let i = 0; i < graphQLErrors.length; i++) {
                 toast({
                     title: '錯誤',
