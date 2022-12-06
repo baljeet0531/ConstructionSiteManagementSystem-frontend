@@ -32,7 +32,6 @@ export const QUERY_SITE_ROLES = gql`
 `;
 
 export const rolesList = [
-    '系統管理員',
     '專案經理',
     '工地經理',
     '專案工程師',
@@ -44,13 +43,20 @@ export const rolesList = [
 
 export default function SiteRoles(props: {
     siteId: string;
+    siteName: string;
     setPopupComponent: Function;
     setShowPopup: Function;
     rerender: Boolean;
     setRerender: Function;
 }) {
-    const { siteId, setPopupComponent, setShowPopup, rerender, setRerender } =
-        props;
+    const {
+        siteId,
+        siteName,
+        setPopupComponent,
+        setShowPopup,
+        rerender,
+        setRerender,
+    } = props;
     const { data, error, refetch } = useQuery(QUERY_SITE_ROLES, {
         variables: {
             siteId: siteId,
@@ -90,6 +96,7 @@ export default function SiteRoles(props: {
                                     setPopupComponent(
                                         <EditRole
                                             siteId={siteId}
+                                            siteName={siteName}
                                             roleDetails={{
                                                 name: name,
                                                 role: role,
@@ -114,6 +121,7 @@ export default function SiteRoles(props: {
                                     setPopupComponent(
                                         <DeleteRole
                                             siteId={siteId}
+                                            siteName={siteName}
                                             name={name}
                                             username={username}
                                             setShowPopup={setShowPopup}

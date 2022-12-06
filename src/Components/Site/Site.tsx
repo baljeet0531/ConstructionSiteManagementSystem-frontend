@@ -29,7 +29,7 @@ export default function Site(props: {
         setRerender,
         rerender,
     } = props;
-    const { siteId, name } = siteDetails;
+    const { siteId, name: siteName } = siteDetails;
     return (
         <Box
             w={'100%'}
@@ -52,7 +52,7 @@ export default function Site(props: {
                     setPopupComponent(
                         <DeleteSite
                             setShowPopup={setShowPopup}
-                            siteName={name}
+                            siteName={siteName}
                             siteId={siteId}
                         ></DeleteSite>
                     );
@@ -72,6 +72,7 @@ export default function Site(props: {
                 ></SiteInfo>
                 <SiteRoles
                     siteId={siteId}
+                    siteName={siteName}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
                     rerender={rerender}
@@ -79,6 +80,7 @@ export default function Site(props: {
                 ></SiteRoles>
                 <SiteAreas
                     siteId={siteId}
+                    siteName={siteName}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
                 ></SiteAreas>

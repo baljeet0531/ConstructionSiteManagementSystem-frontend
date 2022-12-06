@@ -31,7 +31,7 @@ export default function SiteInfo(props: {
     };
 }) {
     const { siteDetails, setPopupComponent, setShowPopup } = props;
-    const { siteId, name, avatar, start, end } = siteDetails;
+    const { siteId, name: siteName, avatar, start, end } = siteDetails;
     const [imgBlob, setImgBlob] = React.useState<Blob>();
     const [loading, setLoading] = React.useState<Boolean>(true);
 
@@ -108,7 +108,7 @@ export default function SiteInfo(props: {
                         fontSize={'14px'}
                         lineHeight={'20px'}
                     >
-                        {name}
+                        {siteName}
                     </Text>
                     <Center color={'#667080'}>
                         <IconButton
@@ -174,6 +174,7 @@ export default function SiteInfo(props: {
                                 setPopupComponent(
                                     <AddArea
                                         siteId={siteId}
+                                        siteName={siteName}
                                         setShowPopup={setShowPopup}
                                     ></AddArea>
                                 );
@@ -195,6 +196,7 @@ export default function SiteInfo(props: {
                                 setPopupComponent(
                                     <AddRole
                                         siteId={siteId}
+                                        siteName={siteName}
                                         setShowPopup={setShowPopup}
                                     ></AddRole>
                                 );

@@ -16,7 +16,6 @@ import {
 import { ShowPasswordIcon } from '../../../Icons/Icons';
 import { rolesList } from '../SiteRoles';
 import { gql, useMutation } from '@apollo/client';
-import { QUERY_SITE } from '../SitePage';
 
 const UPDATE_SITE_ROLE = gql`
     mutation updateSiteRole(
@@ -42,6 +41,7 @@ const UPDATE_SITE_ROLE = gql`
 
 export default function EditRole(props: {
     siteId: string;
+    siteName: string;
     roleDetails: {
         name: string;
         role: string;
@@ -50,7 +50,7 @@ export default function EditRole(props: {
     setShowPopup: Function;
     setRerender: Function;
 }) {
-    const { siteId, roleDetails, setShowPopup, setRerender } = props;
+    const { siteId, siteName, roleDetails, setShowPopup, setRerender } = props;
     const { username } = roleDetails;
 
     const toast = useToast();
@@ -71,7 +71,6 @@ export default function EditRole(props: {
         onError: (error) => {
             console.log(error);
         },
-        refetchQueries: [{ query: QUERY_SITE, fetchPolicy: 'no-cache' }],
     });
 
     function showPassword() {
@@ -113,9 +112,16 @@ export default function EditRole(props: {
                     >
                         編輯人員
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
                         direction={'column'}
-                        mt={'20px'}
                         rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}

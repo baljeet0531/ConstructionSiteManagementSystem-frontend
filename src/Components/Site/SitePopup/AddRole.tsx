@@ -18,6 +18,8 @@ import {
 import { ShowPasswordIcon } from '../../../Icons/Icons';
 import { QUERY_SITE_ROLES } from '../SiteRoles';
 
+import { rolesList } from '../SiteRoles';
+
 const QUERY_ACCOUNT_LIST = gql`
     query AccountList($name: String!) {
         account(name: $name) {
@@ -69,8 +71,9 @@ const ADD_SITE_ROLE = gql`
 export default function AddRole(props: {
     setShowPopup: Function;
     siteId: string;
+    siteName: string;
 }) {
-    const { setShowPopup, siteId } = props;
+    const { setShowPopup, siteId, siteName } = props;
     const toast = useToast();
 
     const [step, setStep] = React.useState<
@@ -223,6 +226,14 @@ export default function AddRole(props: {
         setShowAgain(!showAgain);
     }
 
+    const roleOptions = rolesList.map((role, index) => {
+        return (
+            <option key={index} value={role}>
+                {role}
+            </option>
+        );
+    });
+
     if (step == 'checkAccountExist') {
         return (
             <Center
@@ -254,9 +265,16 @@ export default function AddRole(props: {
                         >
                             新增人員
                         </Text>
+                        <Text
+                            fontWeight={500}
+                            fontSize={'12px'}
+                            lineHeight={'20px'}
+                            textAlign={'end'}
+                        >
+                            {siteName}
+                        </Text>
                         <Flex
                             direction={'column'}
-                            mt={'20px'}
                             rowGap={'20px'}
                             bg={'#E3ECFF'}
                             borderRadius={'10px'}
@@ -343,17 +361,7 @@ export default function AddRole(props: {
                                         setRole(e.target.value);
                                     }}
                                 >
-                                    <option value="專案經理">專案經理</option>
-                                    <option value="工地經理">工地經理</option>
-                                    <option value="專案工程師">
-                                        專案工程師
-                                    </option>
-                                    <option value="系統工程師">
-                                        系統工程師
-                                    </option>
-                                    <option value="工安人員">工安人員</option>
-                                    <option value="外包商">外包商</option>
-                                    <option value="業主">業主</option>
+                                    {roleOptions}
                                 </Select>
                             </Flex>
                             <Flex justify={'flex-start'} h="36px">
@@ -440,10 +448,17 @@ export default function AddRole(props: {
                         >
                             新增人員
                         </Text>
+                        <Text
+                            fontWeight={500}
+                            fontSize={'12px'}
+                            lineHeight={'20px'}
+                            textAlign={'end'}
+                        >
+                            {siteName}
+                        </Text>
                         {step == 'addAccountToSite' ? (
                             <Flex
                                 direction={'column'}
-                                mt={'20px'}
                                 rowGap={'20px'}
                                 bg={'#E3ECFF'}
                                 borderRadius={'10px'}
@@ -455,13 +470,12 @@ export default function AddRole(props: {
                                         {name}({account})
                                     </b>{' '}
                                     以 <b>{role}</b> 身份新增至{' '}
-                                    <b>穩懋南科路竹廠機電一期新建工程</b> 嗎？
+                                    <b>{siteName}</b> 嗎？
                                 </Text>
                             </Flex>
                         ) : (
                             <Flex
                                 direction={'column'}
-                                mt={'20px'}
                                 rowGap={'20px'}
                                 bg={'#E3ECFF'}
                                 borderRadius={'10px'}

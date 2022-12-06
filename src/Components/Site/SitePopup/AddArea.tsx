@@ -33,9 +33,10 @@ const ADD_SITE_AREA = gql`
 export default function AddArea(props: {
     setShowPopup: Function;
     siteId: string;
+    siteName: string;
 }) {
     const toast = useToast();
-    const { setShowPopup, siteId } = props;
+    const { setShowPopup, siteId, siteName } = props;
 
     const areaName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>(['']);
@@ -140,9 +141,16 @@ export default function AddArea(props: {
                     >
                         新增廠區
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
                         direction={'column'}
-                        mt={'20px'}
                         rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}

@@ -30,10 +30,11 @@ export const QUERY_SITE_AREAS = gql`
 
 export default function SiteAreas(props: {
     siteId: string;
+    siteName: string;
     setPopupComponent: Function;
     setShowPopup: Function;
 }) {
-    const { siteId, setPopupComponent, setShowPopup } = props;
+    const { siteId, siteName, setPopupComponent, setShowPopup } = props;
     const { data, error } = useQuery(QUERY_SITE_AREAS, {
         variables: {
             siteId: siteId,
@@ -105,12 +106,13 @@ export default function SiteAreas(props: {
                                                 onClick={() => {
                                                     setPopupComponent(
                                                         <EditArea
+                                                            siteId={siteId}
+                                                            siteName={siteName}
+                                                            areaName={areaName}
+                                                            zone={zone}
                                                             setShowPopup={
                                                                 setShowPopup
                                                             }
-                                                            areaName={areaName}
-                                                            siteId={siteId}
-                                                            zone={zone}
                                                         ></EditArea>
                                                     );
                                                     setShowPopup(true);
@@ -127,11 +129,12 @@ export default function SiteAreas(props: {
                                                 onClick={() => {
                                                     setPopupComponent(
                                                         <DeleteArea
+                                                            siteId={siteId}
+                                                            siteName={siteName}
+                                                            areaName={areaName}
                                                             setShowPopup={
                                                                 setShowPopup
                                                             }
-                                                            areaName={areaName}
-                                                            siteId={siteId}
                                                         ></DeleteArea>
                                                     );
                                                     setShowPopup(true);
