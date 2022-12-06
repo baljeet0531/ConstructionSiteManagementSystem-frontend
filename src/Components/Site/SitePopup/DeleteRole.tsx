@@ -83,8 +83,8 @@ export default function DeleteRole(props: {
                         {siteName}
                     </Text>
                     <Flex
-                        direction={'column'}
-                        rowGap={'20px'}
+                        justify={'flex-start'}
+                        columnGap={'30px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
                         p={'41px 20px'}

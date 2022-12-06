@@ -101,6 +101,7 @@ export default function AddRole(props: {
         onError: (error) => {
             console.log(error);
         },
+        fetchPolicy: 'cache-and-network',
     });
 
     const [accountExists] = useLazyQuery(QUERY_ACCOUNT_EXIST, {
