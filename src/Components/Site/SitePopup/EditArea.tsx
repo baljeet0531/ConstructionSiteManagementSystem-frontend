@@ -47,16 +47,12 @@ export default function EditArea(props: {
     const areaNewName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>([...zone, '']);
 
-    const [updateSiteArea, { data, loading, error }] = useMutation(
-        UPDATE_SITE_AREA,
-        {
-            refetchQueries: [
-                { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
-            ],
-        }
-    );
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    const [updateSiteArea, { data, error }] = useMutation(UPDATE_SITE_AREA, {
+        refetchQueries: [
+            { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
+        ],
+    });
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
 
     const zoneElements = zoneList.map((zonename, index) => {
@@ -138,6 +134,7 @@ export default function EditArea(props: {
             <Center
                 border={'1px solid #667080'}
                 w={'32%'}
+                maxH={'80%'} //
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
@@ -185,7 +182,7 @@ export default function EditArea(props: {
                                 setShowPopup(false);
                             }}
                         >
-                            取消新增
+                            取消修改
                         </Button>
                         <Button
                             onClick={() => {
@@ -220,7 +217,7 @@ export default function EditArea(props: {
                                 setShowPopup(false);
                             }}
                         >
-                            確定新增
+                            確定修改
                         </Button>
                     </Flex>
                 </Flex>

@@ -10,24 +10,83 @@ import {
     Button,
     Select,
     IconButton,
+    useToast,
 } from '@chakra-ui/react';
 
 import { ShowPasswordIcon } from '../../../Icons/Icons';
+import { rolesList } from '../SiteRoles';
+import { gql, useMutation } from '@apollo/client';
+import { QUERY_SITE } from '../SitePage';
 
-export default function EditRole(props: { setShowPopup: Function }) {
-    const { setShowPopup } = props;
+const UPDATE_SITE_ROLE = gql`
+    mutation updateSiteRole(
+        $siteId: String!
+        $name: String!
+        $role: String!
+        $username: String!
+        $password: String
+    ) {
+        updateSiteRole(
+            siteId: $siteId
+            name: $name
+            role: $role
+            username: $username
+            password: $password
+        ) {
+            siteRole {
+                username
+            }
+        }
+    }
+`;
 
+export default function EditRole(props: {
+    siteId: string;
+    roleDetails: {
+        name: string;
+        role: string;
+        username: string;
+    };
+    setShowPopup: Function;
+    setRerender: Function;
+}) {
+    const { siteId, roleDetails, setShowPopup, setRerender } = props;
+    const { username } = roleDetails;
+
+    const toast = useToast();
+    // const nameInput = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
     const passwordAgain = React.useRef<HTMLInputElement>(null);
 
+    const [name, setName] = React.useState<string>(roleDetails.name);
+    const [role, setRole] = React.useState<string>(roleDetails.role);
     const [show, setShow] = React.useState(false);
     const [showAgain, setShowAgain] = React.useState(false);
+
+    const [updateSiteRole] = useMutation(UPDATE_SITE_ROLE, {
+        onCompleted: () => {
+            setShowPopup(false);
+            setRerender((rerender: Boolean) => !rerender);
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        refetchQueries: [{ query: QUERY_SITE, fetchPolicy: 'no-cache' }],
+    });
+
     function showPassword() {
         setShow(!show);
     }
     function showPasswordAgain() {
         setShowAgain(!showAgain);
     }
+    const roleOptions = rolesList.map((role, index) => {
+        return (
+            <option key={index} value={role}>
+                {role}
+            </option>
+        );
+    });
 
     return (
         <Center
@@ -73,10 +132,14 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                 姓名
                             </Text>
                             <Input
+                                defaultValue={name}
                                 width={'60%'}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
+                                onBlur={(e) => {
+                                    setName(e.target.value.trim());
+                                }}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -90,18 +153,15 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                 職稱
                             </Text>
                             <Select
+                                defaultValue={role}
                                 width={'60%'}
                                 variant="outline"
                                 bg={'#FFFFFF'}
+                                onChange={(e) => {
+                                    setRole(e.target.value);
+                                }}
                             >
-                                <option value="">系統管理員</option>
-                                <option value="">專案經理</option>
-                                <option value="">工地經理</option>
-                                <option value="">專案工程師</option>
-                                <option value="">系統工程師</option>
-                                <option value="">工安人員</option>
-                                <option value="">外包商</option>
-                                <option value="">業主</option>
+                                {roleOptions}
                             </Select>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -115,10 +175,12 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                 帳號
                             </Text>
                             <Input
+                                defaultValue={username}
                                 width={'60%'}
                                 variant="outline"
                                 bg={'#FFFFFF'}
                                 type={'text'}
+                                disabled
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -129,7 +191,7 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                 lineHeight={'20px'}
                                 p="8px 12px"
                             >
-                                密碼
+                                新密碼
                             </Text>
                             <InputGroup width={'60%'}>
                                 <Input
@@ -137,6 +199,9 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                     variant="outline"
                                     bg={'#FFFFFF'}
                                     ref={password}
+                                    onBlur={(e) => {
+                                        e.target.value = e.target.value.trim();
+                                    }}
                                 ></Input>
                                 <InputRightElement>
                                     <IconButton
@@ -166,6 +231,9 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                     variant="outline"
                                     bg={'#FFFFFF'}
                                     ref={passwordAgain}
+                                    onBlur={(e) => {
+                                        e.target.value = e.target.value.trim();
+                                    }}
                                 ></Input>
                                 <InputRightElement>
                                     <IconButton
@@ -186,14 +254,52 @@ export default function EditRole(props: { setShowPopup: Function }) {
                                 setShowPopup(false);
                             }}
                         >
-                            取消新增
+                            取消修改
                         </Button>
                         <Button
                             onClick={() => {
-                                setShowPopup(false);
+                                if (!name) {
+                                    toast({
+                                        title: '錯誤',
+                                        description: '姓名不能為空',
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
+                                } else if (!password.current?.value) {
+                                    updateSiteRole({
+                                        variables: {
+                                            siteId: siteId,
+                                            name: name,
+                                            role: role,
+                                            username: username,
+                                        },
+                                    });
+                                } else if (
+                                    password.current?.value !==
+                                    passwordAgain.current?.value
+                                ) {
+                                    toast({
+                                        title: '錯誤',
+                                        description: '再輸入與新密碼不合',
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
+                                } else {
+                                    updateSiteRole({
+                                        variables: {
+                                            siteId: siteId,
+                                            name: name,
+                                            role: role,
+                                            username: username,
+                                            password: password.current.value,
+                                        },
+                                    });
+                                }
                             }}
                         >
-                            確定新增
+                            確定修改
                         </Button>
                     </Flex>
                 </Flex>

@@ -32,15 +32,13 @@ export default function SiteAreas(props: {
     siteId: string;
     setPopupComponent: Function;
     setShowPopup: Function;
-    handlePopup: Function;
 }) {
     const { siteId, setPopupComponent, setShowPopup } = props;
-    const { data, loading, error } = useQuery(QUERY_SITE_AREAS, {
+    const { data, error } = useQuery(QUERY_SITE_AREAS, {
         variables: {
             siteId: siteId,
         },
     });
-    if (loading) console.log('loading');
     if (error) console.log(error);
 
     let areaElements: any = <></>;

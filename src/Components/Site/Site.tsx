@@ -19,11 +19,17 @@ export default function Site(props: {
     };
     setPopupComponent: Function;
     setShowPopup: Function;
-    handlePopup: Function;
+    rerender: Boolean;
+    setRerender: Function;
 }) {
-    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
+    const {
+        siteDetails,
+        setPopupComponent,
+        setShowPopup,
+        setRerender,
+        rerender,
+    } = props;
     const { siteId, name } = siteDetails;
-
     return (
         <Box
             w={'100%'}
@@ -62,20 +68,19 @@ export default function Site(props: {
                 <SiteInfo
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
-                    handlePopup={handlePopup}
                     siteDetails={siteDetails}
                 ></SiteInfo>
                 <SiteRoles
+                    siteId={siteId}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
-                    handlePopup={handlePopup}
-                    siteId={siteId}
+                    rerender={rerender}
+                    setRerender={setRerender}
                 ></SiteRoles>
                 <SiteAreas
+                    siteId={siteId}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
-                    handlePopup={handlePopup}
-                    siteId={siteId}
                 ></SiteAreas>
             </Flex>
         </Box>
