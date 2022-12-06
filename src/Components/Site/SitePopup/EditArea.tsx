@@ -38,11 +38,12 @@ const UPDATE_SITE_AREA = gql`
 
 export default function EditArea(props: {
     setShowPopup: Function;
-    siteId: String;
+    siteId: string;
+    siteName: string;
     areaName: string;
     zone: string[];
 }) {
-    const { setShowPopup, siteId, areaName, zone } = props;
+    const { setShowPopup, siteId, siteName, areaName, zone } = props;
 
     const areaNewName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>([...zone, '']);
@@ -147,9 +148,16 @@ export default function EditArea(props: {
                     >
                         編輯廠區
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
                         direction={'column'}
-                        mt={'20px'}
                         rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}

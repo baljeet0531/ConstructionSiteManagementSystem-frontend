@@ -16,8 +16,9 @@ export default function DeleteArea(props: {
     setShowPopup: Function;
     areaName: string;
     siteId: string;
+    siteName: string;
 }) {
-    const { setShowPopup, areaName, siteId } = props;
+    const { setShowPopup, areaName, siteId, siteName } = props;
     const [deleteSiteArea, { data, error }] = useMutation(DELETE_AREA, {
         refetchQueries: [
             { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
@@ -51,11 +52,19 @@ export default function DeleteArea(props: {
                     >
                         確定刪除以下廠區資料？
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
-                        justify={'flex-start'}
+                        direction={'column'}
+                        rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
-                        mt={'20px'}
                         p={'41px 20px'}
                     >
                         <Text

@@ -15,10 +15,11 @@ const DELETE_SITE_ROLE = gql`
 export default function DeleteRole(props: {
     setShowPopup: Function;
     siteId: string;
+    siteName: string;
     name: string;
     username: string;
 }) {
-    const { setShowPopup, siteId, name, username } = props;
+    const { setShowPopup, siteId, siteName, name, username } = props;
 
     const toast = useToast();
     const [deleteSiteRole] = useMutation(DELETE_SITE_ROLE, {
@@ -73,12 +74,19 @@ export default function DeleteRole(props: {
                     >
                         確定刪除以下人員資料？
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
-                        justify={'flex-start'}
-                        columnGap={'30px'}
+                        direction={'column'}
+                        rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
-                        mt={'20px'}
                         p={'41px 20px'}
                     >
                         <Text

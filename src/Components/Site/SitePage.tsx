@@ -53,7 +53,6 @@ export default function SitePage() {
     const { loading } = useQuery(QUERY_SITE, {
         onCompleted: (data) => {
             setSites(data.validSites);
-            console.log('query site');
         },
         onError: (error) => {
             toast({
@@ -64,7 +63,6 @@ export default function SitePage() {
                 isClosable: true,
             });
         },
-        fetchPolicy: 'no-cache',
     });
 
     if (loading) {
