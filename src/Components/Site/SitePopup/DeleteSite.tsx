@@ -18,11 +18,10 @@ export default function DeleteSite(props: {
     siteId: string;
 }) {
     const { setShowPopup, siteName, siteId } = props;
-    const [deleteSite, { loading, error, data }] = useMutation(DELETE_SITE, {
+    const [deleteSite, { error, data }] = useMutation(DELETE_SITE, {
         refetchQueries: [{ query: QUERY_SITE }],
     });
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
     return (
         <Center

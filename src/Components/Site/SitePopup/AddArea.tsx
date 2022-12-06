@@ -40,14 +40,13 @@ export default function AddArea(props: {
     const areaName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>(['']);
 
-    const [addSiteArea, { data, loading, error }] = useMutation(ADD_SITE_AREA, {
+    const [addSiteArea, { data, error }] = useMutation(ADD_SITE_AREA, {
         refetchQueries: [
             { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
         ],
     });
 
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
 
     const zoneElements = zoneList.map((zonename, index) => {

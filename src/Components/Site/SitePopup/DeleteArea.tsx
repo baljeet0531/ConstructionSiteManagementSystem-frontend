@@ -18,16 +18,12 @@ export default function DeleteArea(props: {
     siteId: string;
 }) {
     const { setShowPopup, areaName, siteId } = props;
-    const [deleteSiteArea, { data, loading, error }] = useMutation(
-        DELETE_AREA,
-        {
-            refetchQueries: [
-                { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
-            ],
-        }
-    );
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    const [deleteSiteArea, { data, error }] = useMutation(DELETE_AREA, {
+        refetchQueries: [
+            { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
+        ],
+    });
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
 
     return (

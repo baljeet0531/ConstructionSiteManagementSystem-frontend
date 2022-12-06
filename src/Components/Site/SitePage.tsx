@@ -2,11 +2,19 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import Site from './Site';
-import { Button, Flex, Spacer, Text, Box } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Spacer,
+    Text,
+    Box,
+    Center,
+    Spinner,
+    useToast,
+} from '@chakra-ui/react';
 import { AddIcon } from '../../Icons/Icons';
 
 import AddSite from './SitePopup/AddSite';
-import AddRole from './SitePopup/AddRole';
 import { useQuery, gql } from '@apollo/client';
 
 export const QUERY_SITE = gql`
@@ -22,69 +30,61 @@ export const QUERY_SITE = gql`
         }
     }
 `;
-// export const QUERY_SITE = gql`
-//     query {
-//         role(username: "kenny") {
-//             username
-//             role
-//             siteRef {
-//                 name
-//             }
-//         }
-//         validSites {
-//             siteId
-//             name
-//             avatar
-//             start
-//             end
-//             city
-//             lineNotifyToken
-//         }
-//     }
-// `;
 
 export default function SitePage() {
+    const toast = useToast();
+
+    const [rerender, setRerender] = React.useState<Boolean>(true);
     const [showPopup, setShowPopup] = React.useState(false);
     const [popupComponent, setPopupComponent] = React.useState(<></>);
-
-    if (!IsPermit('site')) return <Navigate to="/" replace={true} />;
-    const popupList = {
-        addSite: <AddSite setShowPopup={setShowPopup}></AddSite>,
-        addRole: <AddRole setShowPopup={setShowPopup}></AddRole>,
-    };
-    function handlePopup(popupFunction: keyof typeof popupList) {
-        setPopupComponent(popupList[popupFunction]);
-        setShowPopup(true);
-    }
-    const { loading, error, data } = useQuery(QUERY_SITE);
-
-    if (loading) {
-        console.log('loading');
-        return <p>loading</p>;
-    }
-    if (error) {
-        console.log(`Error! ${error}`);
-        return <p>{`Error! ${error}`}</p>;
-    }
-
-    if (data) {
-        const site: {
+    const [sites, setSites] = React.useState<
+        {
             siteId: any;
             name: string;
             avatar: string;
             start: string;
             end: string;
             city: string;
-        }[] = data.validSites;
+        }[]
+    >([]);
 
-        const allSites = site.map((siteDetails, index) => {
+    if (!IsPermit('site')) return <Navigate to="/" replace={true} />;
+
+    const { loading } = useQuery(QUERY_SITE, {
+        onCompleted: (data) => {
+            setSites(data.validSites);
+            console.log('query site');
+        },
+        onError: (error) => {
+            toast({
+                title: '錯誤',
+                description: error.message,
+                status: 'error',
+                duration: null,
+                isClosable: true,
+            });
+        },
+        fetchPolicy: 'no-cache',
+    });
+
+    if (loading) {
+        return (
+            <Center w={'100%'} h={'100%'}>
+                <Spinner size={'xl'} />
+            </Center>
+        );
+    }
+
+    if (sites.length != 0) {
+        const allSites = sites.map((siteDetails, index) => {
             return (
                 <Site
                     key={index}
                     siteDetails={siteDetails}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
-                    handlePopup={handlePopup}
+                    rerender={rerender}
+                    setRerender={setRerender}
                 ></Site>
             );
         });
@@ -119,7 +119,14 @@ export default function SitePage() {
                             leftIcon={<AddIcon />}
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
-                            onClick={() => handlePopup('addSite')}
+                            onClick={() => {
+                                setPopupComponent(
+                                    <AddSite
+                                        setShowPopup={setShowPopup}
+                                    ></AddSite>
+                                );
+                                setShowPopup(true);
+                            }}
                         >
                             新增專案
                         </Button>
@@ -129,6 +136,11 @@ export default function SitePage() {
                 {showPopup && popupComponent}
             </Box>
         );
+    } else {
+        return (
+            <Center w={'100%'} h={'100%'}>
+                <Text>尚無資料</Text>
+            </Center>
+        );
     }
-    return <></>;
 }

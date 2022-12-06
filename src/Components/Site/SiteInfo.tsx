@@ -2,7 +2,10 @@ import React from 'react';
 import { EditIcon, AddIcon, AddPeopleIcon, LinkIcon } from '../../Icons/Icons';
 import BACKEND from '../../Constants/EnvConstants';
 import { Cookies } from 'react-cookie';
+
 import EditSite from './SitePopup/EditSite';
+import AddArea from './SitePopup/AddArea';
+import AddRole from './SitePopup/AddRole';
 
 import {
     Flex,
@@ -14,12 +17,10 @@ import {
     Link,
     Spinner,
 } from '@chakra-ui/react';
-import AddArea from './SitePopup/AddArea';
 
 export default function SiteInfo(props: {
     setPopupComponent: Function;
     setShowPopup: Function;
-    handlePopup: Function;
     siteDetails: {
         siteId: any;
         name: string;
@@ -29,7 +30,7 @@ export default function SiteInfo(props: {
         city: string;
     };
 }) {
-    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
+    const { siteDetails, setPopupComponent, setShowPopup } = props;
     const { siteId, name, avatar, start, end } = siteDetails;
     const [imgBlob, setImgBlob] = React.useState<Blob>();
     const [loading, setLoading] = React.useState<Boolean>(true);
@@ -191,7 +192,13 @@ export default function SiteInfo(props: {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                handlePopup('addRole');
+                                setPopupComponent(
+                                    <AddRole
+                                        siteId={siteId}
+                                        setShowPopup={setShowPopup}
+                                    ></AddRole>
+                                );
+                                setShowPopup(true);
                             }}
                         >
                             新增人員
