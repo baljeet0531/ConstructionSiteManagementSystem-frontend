@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Center, Flex, Text, Button } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
-import { QUERY_SITE } from '../SitePage';
+import { QUERY_SITE } from '../Site';
 
 const DELETE_SITE = gql`
     mutation deleteSite($siteId: String!) {

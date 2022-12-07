@@ -13,7 +13,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { QUERY_SITE } from '../SitePage';
+import { QUERY_SITE } from '../Site';
 import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
 
