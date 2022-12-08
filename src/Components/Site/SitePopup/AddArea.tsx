@@ -129,11 +129,17 @@ export default function AddArea(props: {
             <Center
                 border={'1px solid #667080'}
                 w={'32%'}
+                maxH={'80%'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
             >
-                <Flex h={'100%'} direction={'column'} color={'#667080'}>
+                <Flex
+                    h={'100%'}
+                    maxH={'100%'}
+                    direction={'column'}
+                    color={'#667080'}
+                >
                     <Text
                         fontWeight={700}
                         fontSize={'20px'}
@@ -155,6 +161,9 @@ export default function AddArea(props: {
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
                         p={'41px 20px'}
+                        flex={'1 1 auto'}
+                        maxH={'400px'}
+                        overflow={'hidden auto'}
                     >
                         <Flex justify={'flex-start'} h="36px">
                             <Text

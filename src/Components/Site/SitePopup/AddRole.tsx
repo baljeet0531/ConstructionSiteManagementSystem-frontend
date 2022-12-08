@@ -121,6 +121,7 @@ export default function AddRole(props: {
                 });
             }
         },
+        fetchPolicy: 'cache-and-network',
     });
 
     const [createAccount] = useMutation(CREATE_ACCOUNT, {

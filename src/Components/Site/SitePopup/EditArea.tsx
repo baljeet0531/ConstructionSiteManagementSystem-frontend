@@ -135,7 +135,7 @@ export default function EditArea(props: {
             <Center
                 border={'1px solid #667080'}
                 w={'32%'}
-                maxH={'80%'} //
+                maxH={'80%'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
@@ -162,6 +162,9 @@ export default function EditArea(props: {
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
                         p={'41px 20px'}
+                        flex={'1 1 auto'}
+                        maxH={'400px'}
+                        overflow={'hidden auto'}
                     >
                         <Flex justify={'flex-start'} h="36px">
                             <Text
