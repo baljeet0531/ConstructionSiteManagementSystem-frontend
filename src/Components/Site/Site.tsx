@@ -63,6 +63,7 @@ export default function SitePage() {
                 isClosable: true,
             });
         },
+        fetchPolicy: 'cache-and-network',
     });
 
     if (loading) {
