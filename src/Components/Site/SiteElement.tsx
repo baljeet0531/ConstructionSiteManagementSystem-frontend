@@ -4,7 +4,7 @@ import SiteRoles from './SiteRoles';
 import SiteInfo from './SiteInfo';
 import { CloseIcon } from '../../Icons/Icons';
 
-import { Box, Flex, IconButton } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, IconButton } from '@chakra-ui/react';
 
 import DeleteSite from './SitePopup/DeleteSite';
 
@@ -16,6 +16,7 @@ export default function Site(props: {
         start: string;
         end: string;
         city: string;
+        archived: Boolean;
     };
     setPopupComponent: Function;
     setShowPopup: Function;
@@ -29,7 +30,7 @@ export default function Site(props: {
         setRerender,
         rerender,
     } = props;
-    const { siteId, name: siteName } = siteDetails;
+    const { siteId, name: siteName, archived } = siteDetails;
     return (
         <Box
             w={'100%'}
@@ -85,6 +86,20 @@ export default function Site(props: {
                     setShowPopup={setShowPopup}
                 ></SiteAreas>
             </Flex>
+            {archived && (
+                <Center
+                    w={'100%'}
+                    h={'100%'}
+                    zIndex={1}
+                    bg={'#919AA9C0'}
+                    position={'absolute'}
+                    left={0}
+                    top={0}
+                    borderRadius={'10px'}
+                >
+                    <Button>解除凍結</Button>
+                </Center>
+            )}
         </Box>
     );
 }

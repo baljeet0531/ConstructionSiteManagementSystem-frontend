@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import Site from './SiteElement';
+import SiteElement from './SiteElement';
 import {
     Button,
     Flex,
@@ -19,14 +19,19 @@ import { useQuery, gql } from '@apollo/client';
 
 export const QUERY_SITE = gql`
     query {
-        validSites {
-            siteId
-            name
-            avatar
-            start
-            end
-            city
-            lineNotifyToken
+        allSites {
+            edges {
+                node {
+                    siteId
+                    name
+                    avatar
+                    start
+                    end
+                    city
+                    lineNotifyToken
+                    archived
+                }
+            }
         }
     }
 `;
@@ -45,6 +50,7 @@ export default function SitePage() {
             start: string;
             end: string;
             city: string;
+            archived: boolean;
         }[]
     >([]);
 
@@ -52,7 +58,12 @@ export default function SitePage() {
 
     const { loading } = useQuery(QUERY_SITE, {
         onCompleted: (data) => {
-            setSites(data.validSites);
+            const sitesMapped = data.allSites.edges.map(
+                (element: { ['node']: typeof sites }) => {
+                    return element['node'];
+                }
+            );
+            setSites(sitesMapped);
         },
         onError: (error) => {
             toast({
@@ -77,14 +88,14 @@ export default function SitePage() {
     if (sites.length != 0) {
         const allSites = sites.map((siteDetails, index) => {
             return (
-                <Site
+                <SiteElement
                     key={index}
                     siteDetails={siteDetails}
                     setPopupComponent={setPopupComponent}
                     setShowPopup={setShowPopup}
                     rerender={rerender}
                     setRerender={setRerender}
-                ></Site>
+                ></SiteElement>
             );
         });
 

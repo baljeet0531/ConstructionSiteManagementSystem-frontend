@@ -51,7 +51,7 @@ export default function DeleteSite(props: {
                         fontSize={'20px'}
                         lineHeight={'20px'}
                     >
-                        確定刪除以下專案？
+                        確定凍結以下專案？
                     </Text>
                     <Center
                         bg={'#E3ECFF'}
