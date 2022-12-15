@@ -33,6 +33,7 @@ const Table = {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '20px',
+                tableLayout: 'fixed',
             },
             thead: {
                 bg: '#919AA9',

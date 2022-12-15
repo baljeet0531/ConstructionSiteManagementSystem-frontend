@@ -7,15 +7,54 @@ import {
     Tbody,
     Tr,
     Th,
-    Td,
     Text,
     Flex,
     Button,
 } from '@chakra-ui/react';
 import { BackIcon, ReplyIcon } from '../../Icons/Icons';
+import { gql, useMutation } from '@apollo/client';
+import { QUERY_SCHEDULE } from './Schedule';
 
-export default function Preview(props: { setPreview: Function }) {
-    const { setPreview } = props;
+const CREATE_SCHEDULE = gql`
+    mutation createSchedule($siteId: String!, $srcFile: Upload!) {
+        createSchedule(siteId: $siteId, srcFile: $srcFile) {
+            ok
+            message
+        }
+    }
+`;
+
+export default function Preview(props: {
+    siteId: string;
+    srcFile: File;
+    onOpen: Function;
+    setPreview: Function;
+    setPreviewData: Function;
+    // eslint-disable-next-line no-undef
+    previewTableElements: JSX.Element[] | undefined;
+}) {
+    const {
+        siteId,
+        srcFile,
+        onOpen,
+        setPreview,
+        setPreviewData,
+        previewTableElements,
+    } = props;
+
+    const [createSchedule] = useMutation(CREATE_SCHEDULE, {
+        onCompleted: () => {
+            setPreview(false);
+            setPreviewData([]);
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        refetchQueries: [
+            { query: QUERY_SCHEDULE, variables: { siteId: siteId } },
+        ],
+        fetchPolicy: 'network-only',
+    });
 
     return (
         <Flex w={'100%'} h={'fit-content'} direction={'column'}>
@@ -38,6 +77,7 @@ export default function Preview(props: { setPreview: Function }) {
                     color={'#667080'}
                     onClick={() => {
                         setPreview(false);
+                        onOpen();
                     }}
                 >
                     上一頁
@@ -47,41 +87,44 @@ export default function Preview(props: { setPreview: Function }) {
                     bg={'#4C7DE7'}
                     color={'#FFFFFF'}
                     onClick={() => {
-                        setPreview(false);
+                        createSchedule({
+                            variables: {
+                                siteId: siteId,
+                                srcFile: srcFile,
+                            },
+                        });
                     }}
                 >
                     確定匯入
                 </Button>
             </Flex>
             <TableContainer
+                margin={'auto'}
                 mt={'11px'}
                 maxH={'76vh'}
+                w={'100%'}
+                maxW={'100%'}
                 overflowY={'auto'}
                 bg={'#FFFFFF'}
                 border={'1px solid #919AA9'}
                 borderBottom={'none'}
             >
-                <Table variant={'iemGraySchedule'} h={'100%'}>
+                <Table variant={'iemGraySchedule'}>
                     <Thead position={'sticky'} top={0} zIndex={1}>
                         <Tr h={'36px'}>
-                            <Th width={'8.5%'}>識別碼</Th>
-                            <Th width={'8.5%'}>工作類型</Th>
-                            <Th>工作名稱</Th>
-                            <Th width={'12%'}>工期（天數）</Th>
-                            <Th width={'20%'}>開始時間</Th>
-                            <Th width={'20%'}>結束時間</Th>
+                            <Th w={'8.5%'} textAlign={'center'}>
+                                識別碼
+                            </Th>
+                            <Th w={'8.5%'} textAlign={'center'}>
+                                工作類型
+                            </Th>
+                            <Th w={'30%'}>工作名稱</Th>
+                            <Th w={'13%'}>工期（天數）</Th>
+                            <Th w={'20%'}>開始時間</Th>
+                            <Th w={'20%'}>結束時間</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>Data</Td>
-                            <Td>Data</Td>
-                            <Td>Data</Td>
-                            <Td>Data</Td>
-                            <Td>Data</Td>
-                            <Td>Data</Td>
-                        </Tr>
-                    </Tbody>
+                    <Tbody>{previewTableElements}</Tbody>
                 </Table>
             </TableContainer>
         </Flex>

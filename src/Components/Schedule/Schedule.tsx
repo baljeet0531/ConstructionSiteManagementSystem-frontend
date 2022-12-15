@@ -27,13 +27,144 @@ import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import FullCalendarElement from './FullCalenderElement';
 import Preview from './Preview';
+import { gql, useQuery, useMutation } from '@apollo/client';
+
+export const QUERY_SCHEDULE = gql`
+    query Schedule($siteId: String!) {
+        schedule(siteId: $siteId) {
+            serialNo
+            parent
+            title
+            duration
+            start
+            end
+        }
+    }
+`;
+
+const CREATE_SCHEDULE = gql`
+    mutation CreateSchedule(
+        $dryRun: Boolean!
+        $srcFile: Upload!
+        $siteId: String!
+    ) {
+        createSchedule(dryRun: $dryRun, siteId: $siteId, srcFile: $srcFile) {
+            ok
+            message
+            preview {
+                serialNo
+                parent
+                title
+                duration
+                start
+                end
+            }
+        }
+    }
+`;
 
 export default function Schedule() {
     if (!IsPermit('schedule')) return <Navigate to="/" replace={true} />;
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const siteId = 'TEST-2';
 
     const [preview, setPreview] = React.useState<Boolean>(false);
+    const [srcFile, setSrcFile] = React.useState<File>();
+    const [data, setData] = React.useState<[]>();
+    const [previewData, setPreviewData] = React.useState<[]>();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const { loading } = useQuery(QUERY_SCHEDULE, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ schedule }) => {
+            setData(schedule);
+        },
+    });
+
+    const [createSchedule] = useMutation(CREATE_SCHEDULE, {
+        onCompleted: ({ createSchedule }) => {
+            console.log(createSchedule);
+            setPreviewData(createSchedule.preview);
+            setPreview(true);
+            onClose();
+        },
+        onError: (error) => console.log(error),
+    });
+
+    const tableElements =
+        data &&
+        data.map(({ serialNo, parent, title, duration, start, end }, index) => {
+            return (
+                <Tr key={index}>
+                    <Td overflowX={'auto'} textAlign={'center'}>
+                        {serialNo}
+                    </Td>
+                    <Td overflowX={'auto'} textAlign={'center'}>
+                        {parent}
+                    </Td>
+                    <Td
+                        overflowX={'auto'}
+                        color={parent ? 'currentcolor' : '#4C7DE7'}
+                        fontWeight={parent ? '400' : '600'}
+                    >
+                        {title}
+                    </Td>
+                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
+                        {duration} 工作日
+                    </Td>
+                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
+                        {start}
+                    </Td>
+                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
+                        {end}
+                    </Td>
+                </Tr>
+            );
+        });
+    const previewTableElements =
+        previewData &&
+        previewData.map(
+            ({ serialNo, parent, title, duration, start, end }, index) => {
+                return (
+                    <Tr key={index}>
+                        <Td overflowX={'auto'} textAlign={'center'}>
+                            {serialNo}
+                        </Td>
+                        <Td overflowX={'auto'} textAlign={'center'}>
+                            {parent}
+                        </Td>
+                        <Td
+                            overflowX={'auto'}
+                            color={parent ? 'currentcolor' : '#4C7DE7'}
+                            fontWeight={parent ? '400' : '600'}
+                        >
+                            {title}
+                        </Td>
+                        <Td
+                            overflowX={'auto'}
+                            fontWeight={parent ? '400' : '600'}
+                        >
+                            {duration} 工作日
+                        </Td>
+                        <Td
+                            overflowX={'auto'}
+                            fontWeight={parent ? '400' : '600'}
+                        >
+                            {start}
+                        </Td>
+                        <Td
+                            overflowX={'auto'}
+                            fontWeight={parent ? '400' : '600'}
+                        >
+                            {end}
+                        </Td>
+                    </Tr>
+                );
+            }
+        );
+
     return (
         <Flex
             direction={'column'}
@@ -78,14 +209,11 @@ export default function Schedule() {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={onOpen}
-                            // onClick={() => {
-                            //     setShowPopup(true);
-                            // }}
                         >
                             匯入
                         </Button>
                     </Flex>
-                    <FullCalendarElement />
+                    <FullCalendarElement event={data} />
                 </Flex>
             )}
             {!preview && (
@@ -124,22 +252,21 @@ export default function Schedule() {
                                     <Th width={'20%'}>結束時間</Th>
                                 </Tr>
                             </Thead>
-                            <Tbody>
-                                <Tr>
-                                    <Td>Data</Td>
-                                    <Td>Data</Td>
-                                    <Td>Data</Td>
-                                    <Td>Data</Td>
-                                    <Td>Data</Td>
-                                    <Td>Data</Td>
-                                </Tr>
-                            </Tbody>
+                            <Tbody>{tableElements}</Tbody>
                         </Table>
                     </TableContainer>
                 </Flex>
             )}
-            {preview && <Preview setPreview={setPreview}></Preview>}
-
+            {preview && srcFile && (
+                <Preview
+                    siteId={siteId}
+                    srcFile={srcFile}
+                    onOpen={onOpen}
+                    setPreview={setPreview}
+                    setPreviewData={setPreviewData}
+                    previewTableElements={previewTableElements}
+                ></Preview>
+            )}
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
@@ -191,7 +318,7 @@ export default function Schedule() {
                                 color={'#4C7DE7'}
                                 border={'2px solid #4C7DE7'}
                             >
-                                選取檔案
+                                {srcFile ? srcFile.name : '選取檔案'}
                                 <Input
                                     type={'file'}
                                     accept={'.csv'}
@@ -199,6 +326,11 @@ export default function Schedule() {
                                     h={'100%'}
                                     w={'100%'}
                                     opacity={0}
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            setSrcFile(e.target.files[0]);
+                                        }
+                                    }}
                                 ></Input>
                             </Button>
                             <Text
@@ -223,8 +355,16 @@ export default function Schedule() {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                onClose();
-                                setPreview(true);
+                                console.log(srcFile);
+                                if (srcFile) {
+                                    createSchedule({
+                                        variables: {
+                                            dryRun: true,
+                                            siteId: siteId,
+                                            srcFile: srcFile,
+                                        },
+                                    });
+                                }
                             }}
                         >
                             預覽
