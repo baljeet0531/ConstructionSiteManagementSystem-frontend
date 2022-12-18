@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useMutation, gql } from '@apollo/client';
 import {
     Center,
     Flex,
@@ -9,13 +10,45 @@ import {
     InputRightElement,
     Button,
     IconButton,
+    useToast,
 } from '@chakra-ui/react';
 import { CloseIcon } from '../../../Icons/Icons';
+import { QUERY_SITE_AREAS } from '../SiteAreas';
 
-export default function AddArea(props: { setShowPopup: Function }) {
-    const { setShowPopup } = props;
+const ADD_SITE_AREA = gql`
+    mutation CreateSiteArea(
+        $siteId: String!
+        $name: String!
+        $zone: [String!]
+    ) {
+        createSiteArea(siteId: $siteId, name: $name, zone: $zone) {
+            siteArea {
+                name
+                zone
+            }
+        }
+    }
+`;
 
-    const [zoneList, setZoneList] = React.useState(['']);
+export default function AddArea(props: {
+    setShowPopup: Function;
+    siteId: string;
+    siteName: string;
+}) {
+    const toast = useToast();
+    const { setShowPopup, siteId, siteName } = props;
+
+    const areaName = React.useRef<HTMLInputElement>(null);
+    const [zoneList, setZoneList] = React.useState<string[]>(['']);
+
+    const [addSiteArea, { data, error }] = useMutation(ADD_SITE_AREA, {
+        refetchQueries: [
+            { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
+        ],
+    });
+
+    if (error) console.log(`${error.message}`);
+    if (data) console.log(data);
 
     const zoneElements = zoneList.map((zonename, index) => {
         return (
@@ -96,11 +129,17 @@ export default function AddArea(props: { setShowPopup: Function }) {
             <Center
                 border={'1px solid #667080'}
                 w={'32%'}
+                maxH={'80%'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
             >
-                <Flex h={'100%'} direction={'column'} color={'#667080'}>
+                <Flex
+                    h={'100%'}
+                    maxH={'100%'}
+                    direction={'column'}
+                    color={'#667080'}
+                >
                     <Text
                         fontWeight={700}
                         fontSize={'20px'}
@@ -108,13 +147,23 @@ export default function AddArea(props: { setShowPopup: Function }) {
                     >
                         新增廠區
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
                         direction={'column'}
-                        mt={'20px'}
                         rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
                         p={'41px 20px'}
+                        flex={'1 1 auto'}
+                        maxH={'400px'}
+                        overflow={'hidden auto'}
                     >
                         <Flex justify={'flex-start'} h="36px">
                             <Text
@@ -127,6 +176,7 @@ export default function AddArea(props: { setShowPopup: Function }) {
                                 廠區
                             </Text>
                             <Input
+                                ref={areaName}
                                 width={'60%'}
                                 variant="outline"
                                 bg={'#FFFFFF'}
@@ -145,7 +195,30 @@ export default function AddArea(props: { setShowPopup: Function }) {
                         </Button>
                         <Button
                             onClick={() => {
-                                setShowPopup(false);
+                                const zoneListFiltered: string[] = [];
+                                for (let i = 0; i < zoneList.length; i++) {
+                                    const zone = zoneList[i].trim();
+                                    if (zone !== '')
+                                        zoneListFiltered.push(zone);
+                                }
+                                if (areaName.current?.value) {
+                                    addSiteArea({
+                                        variables: {
+                                            siteId: siteId,
+                                            name: areaName.current.value.trim(),
+                                            zone: zoneListFiltered,
+                                        },
+                                    });
+                                    setShowPopup(false);
+                                } else {
+                                    toast({
+                                        title: '錯誤',
+                                        description: `廠區名稱不能為空`,
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    });
+                                }
                             }}
                         >
                             確定新增

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useQuery, gql } from '@apollo/client';
+
 import {
     Table,
     Thead,
@@ -12,103 +14,128 @@ import {
     Flex,
     Center,
 } from '@chakra-ui/react';
-
 import { SortIcon, EditIcon, DeleteIcon } from '../../Icons/Icons';
 
-const Mock_Roles = {
-    'TEST-1': [
-        {
-            name: '梁樂謙',
-            role: '專案經理',
-            username: 'lhleung',
-        },
-        {
-            name: '黃家琳',
-            role: '工安人員',
-            username: 'jlhuang',
-        },
-        {
-            name: 'OOO',
-            role: '外包商',
-            username: 'ＯＯＯ',
-        },
-        {
-            name: 'ＸＸＸ',
-            role: '業主',
-            username: 'ＸＸＸ',
-        },
-    ],
-    'TEST-2': [
-        {
-            name: '梁樂謙',
-            role: '專案經理',
-            username: 'lhleung',
-        },
-        {
-            name: '黃家琳',
-            role: '工安人員',
-            username: 'jlhuang',
-        },
-        {
-            name: 'OOO',
-            role: '外包商',
-            username: 'ＯＯＯ',
-        },
-        {
-            name: 'ＸＸＸ',
-            role: '業主',
-            username: 'ＸＸＸ',
-        },
-    ],
-};
+import EditRole from './SitePopup/EditRole';
+import DeleteRole from './SitePopup/DeleteRole';
+
+export const QUERY_SITE_ROLES = gql`
+    query siteRoles($siteId: String!) {
+        role(siteId: $siteId) {
+            username
+            role
+            accountRef {
+                name
+            }
+        }
+    }
+`;
+
+export const rolesList = [
+    '專案經理',
+    '工地經理',
+    '專案工程師',
+    '系統工程師',
+    '工安人員',
+    '外包商',
+    '業主',
+];
 
 export default function SiteRoles(props: {
-    siteId: keyof typeof Mock_Roles;
-    handlePopup: Function;
+    siteId: string;
+    siteName: string;
+    setPopupComponent: Function;
+    setShowPopup: Function;
+    rerender: Boolean;
+    setRerender: Function;
 }) {
-    const { handlePopup } = props;
-
-    const rolesData = Mock_Roles[props.siteId];
-    if (!rolesData) {
-        return <></>;
-    }
-
-    const rolesElement = rolesData.map((roleDetails, index) => {
-        const { name, role, username } = roleDetails;
-
-        return (
-            <Tr key={index}>
-                <Td>{name}</Td>
-                <Td>{role}</Td>
-                <Td>{username}</Td>
-                <Td>
-                    <Center>
-                        <IconButton
-                            aria-label="EditRole"
-                            icon={<EditIcon />}
-                            bg={'none'}
-                            onClick={() => {
-                                handlePopup('editRole');
-                            }}
-                        ></IconButton>
-                    </Center>
-                </Td>
-                <Td>
-                    <Center>
-                        <IconButton
-                            aria-label="DeleteRole"
-                            icon={<DeleteIcon />}
-                            bg={'none'}
-                            onClick={() => {
-                                handlePopup('deleteRole');
-                            }}
-                        ></IconButton>
-                    </Center>
-                </Td>
-            </Tr>
-        );
+    const {
+        siteId,
+        siteName,
+        setPopupComponent,
+        setShowPopup,
+        rerender,
+        setRerender,
+    } = props;
+    const { data, error, refetch } = useQuery(QUERY_SITE_ROLES, {
+        variables: {
+            siteId: siteId,
+        },
     });
 
+    if (error) console.log(error);
+
+    React.useEffect(() => {
+        refetch();
+    }, [rerender]);
+    let rolesElement: any = <></>;
+    if (data) {
+        const rolesData: {
+            accountRef: {
+                name: string;
+            };
+            role: string;
+            username: string;
+        }[] = data.role;
+
+        rolesElement = rolesData.map((roleDetails, index) => {
+            const { accountRef, role, username } = roleDetails;
+            const { name } = accountRef;
+            return (
+                <Tr key={index}>
+                    <Td>{name}</Td>
+                    <Td>{role}</Td>
+                    <Td>{username}</Td>
+                    <Td>
+                        <Center>
+                            <IconButton
+                                aria-label="EditRole"
+                                icon={<EditIcon />}
+                                bg={'none'}
+                                onClick={() => {
+                                    setPopupComponent(
+                                        <EditRole
+                                            siteId={siteId}
+                                            siteName={siteName}
+                                            roleDetails={{
+                                                name: name,
+                                                role: role,
+                                                username: username,
+                                            }}
+                                            setShowPopup={setShowPopup}
+                                            setRerender={setRerender}
+                                        ></EditRole>
+                                    );
+                                    setShowPopup(true);
+                                }}
+                            ></IconButton>
+                        </Center>
+                    </Td>
+                    <Td>
+                        <Center>
+                            <IconButton
+                                aria-label="DeleteRole"
+                                icon={<DeleteIcon />}
+                                bg={'none'}
+                                onClick={() => {
+                                    setPopupComponent(
+                                        <DeleteRole
+                                            siteId={siteId}
+                                            siteName={siteName}
+                                            name={name}
+                                            username={username}
+                                            setShowPopup={setShowPopup}
+                                        ></DeleteRole>
+                                    );
+                                    setShowPopup(true);
+                                }}
+                            ></IconButton>
+                        </Center>
+                    </Td>
+                </Tr>
+            );
+        });
+    }
     return (
         <TableContainer
             w={'100%'}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Button,
@@ -95,12 +96,12 @@ export default function Login() {
                         <br />
                         Marketech International Corp.
                     </Text>
-                    <RadioGroup pt="25px" onChange={setVersion} value={version}>
+                    {/* <RadioGroup pt="25px" onChange={setVersion} value={version}>
                         <HStack>
                             <Radio value="desktop">桌面版</Radio>
                             <Radio value="mobile">手機版</Radio>
                         </HStack>
-                    </RadioGroup>
+                    </RadioGroup> */}
                     <VStack
                         w="52%"
                         align="center"
