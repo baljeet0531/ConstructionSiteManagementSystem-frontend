@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Center, Flex, Text, Button } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
-import { QUERY_SITE } from '../SitePage';
+import { QUERY_SITE } from '../Site';
 
 const DELETE_SITE = gql`
     mutation deleteSite($siteId: String!) {
@@ -18,11 +18,10 @@ export default function DeleteSite(props: {
     siteId: string;
 }) {
     const { setShowPopup, siteName, siteId } = props;
-    const [deleteSite, { loading, error, data }] = useMutation(DELETE_SITE, {
+    const [deleteSite, { error, data }] = useMutation(DELETE_SITE, {
         refetchQueries: [{ query: QUERY_SITE }],
     });
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
     return (
         <Center
@@ -52,7 +51,7 @@ export default function DeleteSite(props: {
                         fontSize={'20px'}
                         lineHeight={'20px'}
                     >
-                        確定刪除以下工地？
+                        確定凍結以下專案？
                     </Text>
                     <Center
                         bg={'#E3ECFF'}
