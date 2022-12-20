@@ -1,9 +1,31 @@
 import React from 'react';
+import { gql, useMutation } from '@apollo/client';
 
 import { Center, Flex, Text, Button } from '@chakra-ui/react';
+import { QUERY_SITE_AREAS } from '../SiteAreas';
 
-export default function DeleteArea(props: { setShowPopup: Function }) {
-    const { setShowPopup } = props;
+const DELETE_AREA = gql`
+    mutation DeleteSiteArea($siteId: String!, $name: String!) {
+        deleteSiteArea(siteId: $siteId, name: $name) {
+            ok
+        }
+    }
+`;
+
+export default function DeleteArea(props: {
+    setShowPopup: Function;
+    areaName: string;
+    siteId: string;
+    siteName: string;
+}) {
+    const { setShowPopup, areaName, siteId, siteName } = props;
+    const [deleteSiteArea, { data, error }] = useMutation(DELETE_AREA, {
+        refetchQueries: [
+            { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
+        ],
+    });
+    if (error) console.log(`${error.message}`);
+    if (data) console.log(data);
 
     return (
         <Center
@@ -30,11 +52,19 @@ export default function DeleteArea(props: { setShowPopup: Function }) {
                     >
                         確定刪除以下廠區資料？
                     </Text>
+                    <Text
+                        fontWeight={500}
+                        fontSize={'12px'}
+                        lineHeight={'20px'}
+                        textAlign={'end'}
+                    >
+                        {siteName}
+                    </Text>
                     <Flex
-                        justify={'flex-start'}
+                        direction={'column'}
+                        rowGap={'20px'}
                         bg={'#E3ECFF'}
                         borderRadius={'10px'}
-                        mt={'20px'}
                         p={'41px 20px'}
                     >
                         <Text
@@ -42,7 +72,7 @@ export default function DeleteArea(props: { setShowPopup: Function }) {
                             fontSize={'14px'}
                             lineHeight={'20px'}
                         >
-                            CUB棟
+                            {areaName}
                         </Text>
                     </Flex>
                     <Flex justify={'space-between'} h="36px" mt={'20px'}>
@@ -55,6 +85,12 @@ export default function DeleteArea(props: { setShowPopup: Function }) {
                         </Button>
                         <Button
                             onClick={() => {
+                                deleteSiteArea({
+                                    variables: {
+                                        siteId: siteId,
+                                        name: areaName,
+                                    },
+                                });
                                 setShowPopup(false);
                             }}
                         >

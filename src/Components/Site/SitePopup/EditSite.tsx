@@ -13,7 +13,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 
-import { QUERY_SITE } from '../SitePage';
+import { QUERY_SITE } from '../Site';
 import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
 
@@ -73,11 +73,10 @@ export default function EditSite(props: {
     const startTime = React.useRef<HTMLInputElement>(null);
     const endTime = React.useRef<HTMLInputElement>(null);
 
-    const [editSite, { data, loading, error }] = useMutation(UPDATE_SITE, {
+    const [editSite, { data, error }] = useMutation(UPDATE_SITE, {
         refetchQueries: [{ query: QUERY_SITE }],
     });
-    if (loading) console.log('Submitting...');
-    if (error) console.log(`Submission error! ${error.message}`);
+    if (error) console.log(`${error.message}`);
     if (data) console.log(data);
 
     const citySelect = Object.keys(CityData).map((cityName, index) => {
