@@ -1,10 +1,13 @@
 import React from 'react';
 
+import { Flex, IconButton, Text, Input } from '@chakra-ui/react';
+
 import FullCalendar, { EventSourceInput } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import momentPlugin from '@fullcalendar/moment';
 import moment from 'moment';
 import 'moment/locale/zh-tw'; //must add
+import { NextIcon, PrevIcon } from '../../Icons/Icons';
 moment.locale('zh-tw');
 
 const EVENT_GENERAL_PROPS = {
@@ -27,6 +30,9 @@ export default function FullCalendarElement(props: {
     }[];
 }) {
     const { event } = props;
+    const calendarRef = React.useRef<FullCalendar>(null);
+    const monthPickerRef = React.useRef<HTMLInputElement>(null);
+    const [date, setDate] = React.useState<Date>(new Date());
     const eventElements =
         event &&
         event.map(({ serialNo, parent, title, start, end }) => {
@@ -65,31 +71,83 @@ export default function FullCalendarElement(props: {
                 background: background,
             };
         });
-
     return (
-        <FullCalendar
-            height={'80vh'}
-            locale={'zh'}
-            plugins={[dayGridPlugin, momentPlugin]}
-            headerToolbar={{
-                start: '',
-                center: 'prev title next',
-                end: '',
-            }}
-            fixedWeekCount={false}
-            titleFormat={'MMM, YYYY'}
-            dayMaxEvents={3}
-            dayHeaderFormat={'dd'}
-            dayCellContent={(cell) => moment(cell.date).format('D')}
-            viewDidMount={(info) => {
-                info.el.style.background = '#FFFFFF';
-            }}
-            events={eventElements as EventSourceInput}
-            eventDidMount={(info) => {
-                Object.keys(info.event.extendedProps).map((attr: any) => {
-                    info.el.style[attr] = info.event.extendedProps[attr];
-                });
-            }}
-        />
+        <>
+            <Flex justify={'center'} align={'center'}>
+                <IconButton
+                    size={'xs'}
+                    aria-label="prevMonth"
+                    icon={<PrevIcon />}
+                    bg={'none'}
+                    onClick={() => {
+                        const newDate = new Date(
+                            date.setMonth(date.getMonth() - 1)
+                        );
+                        setDate(newDate);
+                        calendarRef.current?.getApi().gotoDate(newDate);
+                    }}
+                ></IconButton>
+                <Text
+                    w={'30%'}
+                    textAlign={'center'}
+                    onClick={() => {
+                        monthPickerRef.current?.showPicker();
+                    }}
+                >
+                    {moment(date).format('MMM, YYYY')}
+                </Text>
+                <Input
+                    ref={monthPickerRef}
+                    type={'month'}
+                    w={0}
+                    p={0}
+                    opacity={0}
+                    onChange={(e) => {
+                        const newDate = e.target.value
+                            ? new Date(e.target.value)
+                            : new Date();
+                        setDate(newDate);
+                        calendarRef.current?.getApi().gotoDate(newDate);
+                    }}
+                ></Input>
+                <IconButton
+                    size={'xs'}
+                    aria-label="nextMonth"
+                    icon={<NextIcon />}
+                    bg={'none'}
+                    onClick={() => {
+                        const newDate = new Date(
+                            date.setMonth(date.getMonth() + 1)
+                        );
+                        setDate(newDate);
+                        calendarRef.current?.getApi().gotoDate(newDate);
+                    }}
+                ></IconButton>
+            </Flex>
+            <FullCalendar
+                ref={calendarRef}
+                height={'80vh'}
+                locale={'zh'}
+                plugins={[dayGridPlugin, momentPlugin]}
+                headerToolbar={{
+                    start: '',
+                    center: '',
+                    end: '',
+                }}
+                fixedWeekCount={false}
+                dayMaxEvents={3}
+                dayHeaderFormat={'dd'}
+                dayCellContent={(cell) => moment(cell.date).format('D')}
+                viewDidMount={(info) => {
+                    info.el.style.background = '#FFFFFF';
+                }}
+                events={eventElements as EventSourceInput}
+                eventDidMount={(info) => {
+                    Object.keys(info.event.extendedProps).map((attr: any) => {
+                        info.el.style[attr] = info.event.extendedProps[attr];
+                    });
+                }}
+            />
+        </>
     );
 }
