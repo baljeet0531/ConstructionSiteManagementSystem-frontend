@@ -2,7 +2,10 @@ import React from 'react';
 import { EditIcon, AddIcon, AddPeopleIcon, LinkIcon } from '../../Icons/Icons';
 import BACKEND from '../../Constants/EnvConstants';
 import { Cookies } from 'react-cookie';
+
 import EditSite from './SitePopup/EditSite';
+import AddArea from './SitePopup/AddArea';
+import AddRole from './SitePopup/AddRole';
 
 import {
     Flex,
@@ -18,7 +21,6 @@ import {
 export default function SiteInfo(props: {
     setPopupComponent: Function;
     setShowPopup: Function;
-    handlePopup: Function;
     siteDetails: {
         siteId: any;
         name: string;
@@ -28,8 +30,8 @@ export default function SiteInfo(props: {
         city: string;
     };
 }) {
-    const { handlePopup, siteDetails, setPopupComponent, setShowPopup } = props;
-    const { siteId, name, avatar, start, end } = siteDetails;
+    const { siteDetails, setPopupComponent, setShowPopup } = props;
+    const { siteId, name: siteName, avatar, start, end } = siteDetails;
     const [imgBlob, setImgBlob] = React.useState<Blob>();
     const [loading, setLoading] = React.useState<Boolean>(true);
 
@@ -106,7 +108,7 @@ export default function SiteInfo(props: {
                         fontSize={'14px'}
                         lineHeight={'20px'}
                     >
-                        {name}
+                        {siteName}
                     </Text>
                     <Center color={'#667080'}>
                         <IconButton
@@ -169,7 +171,14 @@ export default function SiteInfo(props: {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                handlePopup('addArea');
+                                setPopupComponent(
+                                    <AddArea
+                                        siteId={siteId}
+                                        siteName={siteName}
+                                        setShowPopup={setShowPopup}
+                                    ></AddArea>
+                                );
+                                setShowPopup(true);
                             }}
                         >
                             新增廠區
@@ -184,7 +193,14 @@ export default function SiteInfo(props: {
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                handlePopup('addRole');
+                                setPopupComponent(
+                                    <AddRole
+                                        siteId={siteId}
+                                        siteName={siteName}
+                                        setShowPopup={setShowPopup}
+                                    ></AddRole>
+                                );
+                                setShowPopup(true);
                             }}
                         >
                             新增人員
