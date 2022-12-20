@@ -65,10 +65,10 @@ const CREATE_SCHEDULE = gql`
     }
 `;
 
-export default function Schedule() {
+export default function Schedule(props: { siteId: string }) {
     if (!IsPermit('schedule')) return <Navigate to="/" replace={true} />;
 
-    const siteId = 'TEST-14';
+    const siteId = props.siteId;
 
     const [preview, setPreview] = React.useState<Boolean>(false);
     const [srcFile, setSrcFile] = React.useState<File>();
