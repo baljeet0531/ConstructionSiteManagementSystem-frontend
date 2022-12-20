@@ -12,7 +12,7 @@ import Home from '../Components/Home/Home';
 import Dashboard from '../Components/Dashboard/Dashboard';
 import People from '../Components/People/People';
 import Photo from '../Components/Photo/Photo';
-import Site from '../Components/Site/SitePage';
+import Site from '../Components/Site/Site';
 import Report from '../Components/Report/Report';
 import Schedule from '../Components/Schedule/Schedule';
 import Security from '../Components/Security/Security';
