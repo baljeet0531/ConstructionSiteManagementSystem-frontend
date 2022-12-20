@@ -10,6 +10,8 @@ import {
     Text,
     Flex,
     Button,
+    Center,
+    Spinner,
 } from '@chakra-ui/react';
 import { BackIcon, ReplyIcon } from '../../Icons/Icons';
 import { gql, useMutation } from '@apollo/client';
@@ -28,6 +30,7 @@ export default function Preview(props: {
     siteId: string;
     srcFile: File;
     onOpen: Function;
+    setSrcFile: Function;
     setPreview: Function;
     setPreviewData: Function;
     // eslint-disable-next-line no-undef
@@ -37,15 +40,17 @@ export default function Preview(props: {
         siteId,
         srcFile,
         onOpen,
+        setSrcFile,
         setPreview,
         setPreviewData,
         previewTableElements,
     } = props;
 
-    const [createSchedule] = useMutation(CREATE_SCHEDULE, {
+    const [createSchedule, { loading }] = useMutation(CREATE_SCHEDULE, {
         onCompleted: () => {
             setPreview(false);
             setPreviewData([]);
+            setSrcFile(undefined);
         },
         onError: (error) => {
             console.log(error);
@@ -53,6 +58,7 @@ export default function Preview(props: {
         refetchQueries: [
             { query: QUERY_SCHEDULE, variables: { siteId: siteId } },
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
         fetchPolicy: 'network-only',
     });
 
@@ -127,6 +133,19 @@ export default function Preview(props: {
                     <Tbody>{previewTableElements}</Tbody>
                 </Table>
             </TableContainer>
+            {loading && (
+                <Center
+                    position={'absolute'}
+                    top={0}
+                    left={0}
+                    w={'100vw'}
+                    h={'100vh'}
+                    bg={'#D9D9D980'}
+                    zIndex={2}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
         </Flex>
     );
 }

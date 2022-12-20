@@ -21,6 +21,8 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
+    Center,
+    Spinner,
 } from '@chakra-ui/react';
 import { ReplyIcon } from '../../Icons/Icons';
 import { Navigate } from 'react-router-dom';
@@ -66,7 +68,7 @@ const CREATE_SCHEDULE = gql`
 export default function Schedule() {
     if (!IsPermit('schedule')) return <Navigate to="/" replace={true} />;
 
-    const siteId = 'TEST-2';
+    const siteId = 'TEST-14';
 
     const [preview, setPreview] = React.useState<Boolean>(false);
     const [srcFile, setSrcFile] = React.useState<File>();
@@ -83,86 +85,112 @@ export default function Schedule() {
         },
     });
 
-    const [createSchedule] = useMutation(CREATE_SCHEDULE, {
-        onCompleted: ({ createSchedule }) => {
-            console.log(createSchedule);
-            setPreviewData(createSchedule.preview);
-            setPreview(true);
-            onClose();
-        },
-        onError: (error) => console.log(error),
-    });
+    const [createSchedule, { loading: createScheduleLoading }] = useMutation(
+        CREATE_SCHEDULE,
+        {
+            onCompleted: ({ createSchedule }) => {
+                console.log(createSchedule);
+                setPreviewData(createSchedule.preview);
+                setPreview(true);
+                onClose();
+            },
+            onError: (error) => console.log(error),
+        }
+    );
 
-    const tableElements =
-        data &&
-        data.map(({ serialNo, parent, title, duration, start, end }, index) => {
-            return (
-                <Tr key={index}>
-                    <Td overflowX={'auto'} textAlign={'center'}>
-                        {serialNo}
-                    </Td>
-                    <Td overflowX={'auto'} textAlign={'center'}>
-                        {parent}
-                    </Td>
-                    <Td
-                        overflowX={'auto'}
-                        color={parent ? 'currentcolor' : '#4C7DE7'}
-                        fontWeight={parent ? '400' : '600'}
-                    >
-                        {title}
-                    </Td>
-                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
-                        {duration} 工作日
-                    </Td>
-                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
-                        {start}
-                    </Td>
-                    <Td overflowX={'auto'} fontWeight={parent ? '400' : '600'}>
-                        {end}
-                    </Td>
-                </Tr>
+    const tableElements = React.useMemo(() => {
+        if (data) {
+            return data.map(
+                ({ serialNo, parent, title, duration, start, end }, index) => {
+                    return (
+                        <Tr key={index}>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {serialNo}
+                            </Td>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {parent}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                color={parent ? 'currentcolor' : '#4C7DE7'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {title}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {duration} 工作日
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {start}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {end}
+                            </Td>
+                        </Tr>
+                    );
+                }
             );
-        });
-    const previewTableElements =
-        previewData &&
-        previewData.map(
-            ({ serialNo, parent, title, duration, start, end }, index) => {
-                return (
-                    <Tr key={index}>
-                        <Td overflowX={'auto'} textAlign={'center'}>
-                            {serialNo}
-                        </Td>
-                        <Td overflowX={'auto'} textAlign={'center'}>
-                            {parent}
-                        </Td>
-                        <Td
-                            overflowX={'auto'}
-                            color={parent ? 'currentcolor' : '#4C7DE7'}
-                            fontWeight={parent ? '400' : '600'}
-                        >
-                            {title}
-                        </Td>
-                        <Td
-                            overflowX={'auto'}
-                            fontWeight={parent ? '400' : '600'}
-                        >
-                            {duration} 工作日
-                        </Td>
-                        <Td
-                            overflowX={'auto'}
-                            fontWeight={parent ? '400' : '600'}
-                        >
-                            {start}
-                        </Td>
-                        <Td
-                            overflowX={'auto'}
-                            fontWeight={parent ? '400' : '600'}
-                        >
-                            {end}
-                        </Td>
-                    </Tr>
-                );
-            }
+        }
+    }, [data]);
+    const previewTableElements = React.useMemo(() => {
+        return (
+            previewData &&
+            previewData.map(
+                ({ serialNo, parent, title, duration, start, end }, index) => {
+                    return (
+                        <Tr key={index}>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {serialNo}
+                            </Td>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {parent}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                color={parent ? 'currentcolor' : '#4C7DE7'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {title}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {duration} 工作日
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {start}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {end}
+                            </Td>
+                        </Tr>
+                    );
+                }
+            )
+        );
+    }, [previewData]);
+
+    if (loading)
+        return (
+            <Center h={'100vh'}>
+                <Spinner size={'xl'} />
+            </Center>
         );
 
     return (
@@ -261,11 +289,25 @@ export default function Schedule() {
                 <Preview
                     siteId={siteId}
                     srcFile={srcFile}
+                    setSrcFile={setSrcFile}
                     onOpen={onOpen}
                     setPreview={setPreview}
                     setPreviewData={setPreviewData}
                     previewTableElements={previewTableElements}
                 ></Preview>
+            )}
+            {createScheduleLoading && (
+                <Center
+                    position={'absolute'}
+                    top={0}
+                    left={0}
+                    w={'100vw'}
+                    h={'100vh'}
+                    bg={'#D9D9D980'}
+                    zIndex={2}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
             )}
             <Modal
                 isOpen={isOpen}
@@ -310,7 +352,7 @@ export default function Schedule() {
                                 或
                             </Text>
                             <Button
-                                width={'64px'}
+                                width={'fit-content'}
                                 fontWeight={400}
                                 fontSize={'12px'}
                                 lineHeight={'20px'}
@@ -319,19 +361,6 @@ export default function Schedule() {
                                 border={'2px solid #4C7DE7'}
                             >
                                 {srcFile ? srcFile.name : '選取檔案'}
-                                <Input
-                                    type={'file'}
-                                    accept={'.csv'}
-                                    pos={'absolute'}
-                                    h={'100%'}
-                                    w={'100%'}
-                                    opacity={0}
-                                    onChange={(e) => {
-                                        if (e.target.files) {
-                                            setSrcFile(e.target.files[0]);
-                                        }
-                                    }}
-                                ></Input>
                             </Button>
                             <Text
                                 fontWeight={400}
@@ -341,6 +370,21 @@ export default function Schedule() {
                             >
                                 上傳檔案格式:.csv
                             </Text>
+                            <Input
+                                type={'file'}
+                                accept={'.csv'}
+                                pos={'absolute'}
+                                h={'100%'}
+                                w={'100%'}
+                                opacity={0}
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        setSrcFile(e.target.files[0]);
+                                    } else {
+                                        setSrcFile(undefined);
+                                    }
+                                }}
+                            ></Input>
                         </Flex>
                     </ModalBody>
 
@@ -350,13 +394,20 @@ export default function Schedule() {
                         p={0}
                         justifyContent={'space-between'}
                     >
-                        <Button onClick={onClose}>取消</Button>
+                        <Button
+                            onClick={() => {
+                                onClose();
+                                setSrcFile(undefined);
+                            }}
+                        >
+                            取消
+                        </Button>
                         <Button
                             bg={'#4C7DE7'}
                             color={'#FFFFFF'}
                             onClick={() => {
-                                console.log(srcFile);
                                 if (srcFile) {
+                                    onClose();
                                     createSchedule({
                                         variables: {
                                             dryRun: true,
