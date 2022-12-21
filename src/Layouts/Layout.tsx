@@ -29,41 +29,6 @@ export const QUERY_ACCOUNT_SITES = gql`
     }
 `;
 
-const nameMap = {
-    系統管理員: {
-        name: 'admin',
-        'chinese name': '系統管理員',
-    },
-    專案經理: {
-        name: 'project manager',
-        'chinese name': '專案經理',
-    },
-    工地經理: {
-        name: 'site manager',
-        'chinese name': '工地經理',
-    },
-    專案工程師: {
-        name: 'project engineer',
-        'chinese name': '專案工程師',
-    },
-    系統工程師: {
-        name: 'system engineer',
-        'chinese name': '系統工程師',
-    },
-    工安人員: {
-        name: 'secure staff',
-        'chinese name': '工安人員',
-    },
-    外包商: {
-        name: 'out sourcer',
-        'chinese name': '外包商',
-    },
-    業主: {
-        name: 'owner',
-        'chinese name': '業主',
-    },
-};
-
 export default function Layout(props: { page: keyof typeof layoutMap }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
@@ -134,17 +99,8 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
     return (
         <HStack align="top" backgroundImage={`url(${Background})`}>
             <Sidebar
-                role={
-                    selectedSite?.role
-                        ? {
-                              english:
-                                  nameMap[
-                                      selectedSite.role as keyof typeof nameMap
-                                  ]['name'],
-                              chinese: selectedSite.role,
-                          }
-                        : { english: '', chinese: '' }
-                }
+                username={username}
+                role={selectedSite?.role || ''}
                 sitesList={sitesList}
                 setSelectedSite={setSelectedSite}
             />
