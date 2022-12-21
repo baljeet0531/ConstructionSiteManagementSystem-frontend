@@ -10,8 +10,8 @@ export default function Menu(props: {
     }[];
     setSelectedSite: Function;
 }) {
+    const [selectValue, setSelectValue] = React.useState(0);
     const { sitesList, setSelectedSite } = props;
-
     const siteSelectElements = sitesList.map(({ siteName }, index) => {
         return (
             <option key={index} value={index}>
@@ -19,6 +19,15 @@ export default function Menu(props: {
             </option>
         );
     });
+
+    if (selectValue > sitesList.length - 1) {
+        setSelectValue(0);
+    }
+    React.useEffect(() => {
+        setSelectedSite({
+            ...sitesList[selectValue],
+        });
+    }, [sitesList, selectValue]);
 
     return (
         <VStack
@@ -35,9 +44,8 @@ export default function Menu(props: {
         >
             <Feature feature="site"></Feature>
             <Select
-                onChange={(e) => {
-                    setSelectedSite({ ...sitesList[Number(e.target.value)] });
-                }}
+                value={selectValue}
+                onChange={(e) => setSelectValue(Number(e.currentTarget.value))}
             >
                 {siteSelectElements}
             </Select>
