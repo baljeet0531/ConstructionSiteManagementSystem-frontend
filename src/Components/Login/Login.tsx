@@ -31,7 +31,7 @@ export default function Login() {
     const userName = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
     // eslint-disable-next-line no-unused-vars
-    const [cookie, setCookie] = useCookies(['jwt']);
+    const [cookie, setCookie] = useCookies(['jwt', 'username']);
 
     const toast = useToast();
 
@@ -70,6 +70,10 @@ export default function Login() {
         } else {
             let token = await response.text();
             setCookie('jwt', token, {
+                path: '/',
+                secure: false,
+            });
+            setCookie('username', userName.current?.value, {
                 path: '/',
                 secure: false,
             });

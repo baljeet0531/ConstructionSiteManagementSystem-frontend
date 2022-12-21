@@ -17,7 +17,7 @@ import Report from '../Components/Report/Report';
 import Schedule from '../Components/Schedule/Schedule';
 import Security from '../Components/Security/Security';
 
-const QUERY_ACCOUNT_SITES = gql`
+export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!) {
         accountSite(username: $username) {
             siteId
@@ -66,7 +66,9 @@ const nameMap = {
 
 export default function Layout(props: { page: keyof typeof layoutMap }) {
     const cookieValue = new Cookies().get('jwt');
-    if (!cookieValue) return <Navigate to={'/login'} replace={true}></Navigate>;
+    const username: string = new Cookies().get('username');
+    if (!cookieValue || !username)
+        return <Navigate to={'/login'} replace={true}></Navigate>;
 
     const { page } = props;
 
@@ -124,7 +126,7 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
             console.log(error);
         },
         variables: {
-            username: 'kenny', ///////////////todo
+            username: username,
         },
         fetchPolicy: 'cache-and-network',
     });
@@ -133,7 +135,7 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
         <HStack align="top" backgroundImage={`url(${Background})`}>
             <Sidebar
                 role={
-                    selectedSite
+                    selectedSite?.role
                         ? {
                               english:
                                   nameMap[
