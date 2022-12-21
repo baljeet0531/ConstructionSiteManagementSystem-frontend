@@ -10,7 +10,7 @@ export default function Menu(props: {
     }[];
     setSelectedSite: Function;
 }) {
-    const [selectValue, setSelectValue] = React.useState(0);
+    const [selectValue, setSelectValue] = React.useState<number>(0);
     const { sitesList, setSelectedSite } = props;
     const siteSelectElements = sitesList.map(({ siteName }, index) => {
         return (
@@ -20,10 +20,14 @@ export default function Menu(props: {
         );
     });
 
-    if (selectValue > sitesList.length - 1) {
-        setSelectValue(0);
-    }
     React.useEffect(() => {
+        if (sitesList.length == 0) {
+            setSelectValue(-1);
+        } else if (sitesList.length != 0 && selectValue == -1) {
+            setSelectValue(0);
+        } else if (selectValue > sitesList.length - 1) {
+            setSelectValue(0);
+        }
         setSelectedSite({
             ...sitesList[selectValue],
         });
