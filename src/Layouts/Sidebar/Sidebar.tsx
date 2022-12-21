@@ -5,10 +5,8 @@ import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
 import { AvatarIcon } from '../../Icons/Icons';
 
 export default function Sidebar(props: {
-    role: {
-        english: string;
-        chinese: string;
-    };
+    username: string;
+    role: string;
     sitesList: {
         siteId: string;
         siteName: string;
@@ -16,7 +14,7 @@ export default function Sidebar(props: {
     }[];
     setSelectedSite: Function;
 }) {
-    const { role, sitesList, setSelectedSite } = props;
+    const { username, role, sitesList, setSelectedSite } = props;
 
     return (
         <VStack mt="50px" w="20vw" maxW="20vw">
@@ -29,9 +27,9 @@ export default function Sidebar(props: {
                 fontSize="20px"
                 textAlign="center"
             >
-                {role.english}
+                {username}
                 <br />
-                {role.chinese}
+                {role}
             </Text>
 
             <Menu
