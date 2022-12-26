@@ -1,122 +1,428 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
+
+import {
+    Button,
+    Spacer,
+    Text,
+    Flex,
+    TableContainer,
+    Table,
+    Thead,
+    Tbody,
+    Th,
+    Tr,
+    Td,
+    Input,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    Center,
+    Spinner,
+} from '@chakra-ui/react';
+import { ReplyIcon } from '../../Icons/Icons';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import FullCalendarElement from './FullCalenderElement';
+import Preview from './Preview';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import momentPlugin from '@fullcalendar/moment';
-import moment from 'moment';
-import 'moment/locale/zh-tw'; //must add
-// import interactionPlugin from '@fullcalendar/interaction';
-moment.locale('zh-tw');
+export const QUERY_SCHEDULE = gql`
+    query Schedule($siteId: String!) {
+        schedule(siteId: $siteId) {
+            serialNo
+            parent
+            title
+            duration
+            start
+            end
+        }
+    }
+`;
 
-const EVENT_GENERAL_PROPS = {
-    textColor: '#667080',
-    //extendProps
-    border: 'none',
-    borderRadius: '2.6px',
-    margin: '5px',
-    padding: '2px 2.6px',
-};
+const CREATE_SCHEDULE = gql`
+    mutation CreateSchedule(
+        $dryRun: Boolean!
+        $srcFile: Upload!
+        $siteId: String!
+    ) {
+        createSchedule(dryRun: $dryRun, siteId: $siteId, srcFile: $srcFile) {
+            ok
+            message
+            preview {
+                serialNo
+                parent
+                title
+                duration
+                start
+                end
+            }
+        }
+    }
+`;
 
-const EVENTS = [
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '1',
-        title: '第一階段使照發行',
-        start: '2022-11-01',
-        end: '2022-11-13',
-        //extendProps
-        background:
-            'linear-gradient(0deg, rgba(0, 186, 52, 0.1), rgba(0, 186, 52, 0.1)), #FFFFFF',
-    },
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '2',
-        title: '管架施工',
-        start: '2022-11-08',
-        end: '2022-11-20',
-        //extendProps
-        background:
-            'linear-gradient(0deg, rgba(0, 133, 255, 0.1), rgba(0, 133, 255, 0.1)),linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-    },
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '3',
-        title: '空調系統',
-        start: '2022-11-08',
-        end: '2022-11-11',
-        //extendProps
-        background:
-            'linear-gradient(0deg, rgba(255, 150, 27, 0.1), rgba(255, 150, 27, 0.1)),linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-    },
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '4',
-        title: 'MEP系統',
-        start: '2022-11-16',
-        end: '2022-11-28',
-        //extendProps
-        background:
-            'linear-gradient(0deg, rgba(255, 59, 59, 0.1), rgba(255, 59, 59, 0.1)),linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-    },
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '5',
-        title: '第二階段消檢掛件',
-        start: '2022-11-21',
-        end: '2022-11-27',
-        //extendProps
-        background: '#E8E8E8',
-    },
-    {
-        ...EVENT_GENERAL_PROPS,
-        id: '6',
-        title: '管路焊接',
-        start: '2022-11-24',
-        end: '2022-12-01',
-        //extendProps
-        background:
-            'linear-gradient(0deg, rgba(0, 133, 255, 0.1), rgba(0, 133, 255, 0.1)),linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-    },
-];
-
-export default function Schedule() {
+export default function Schedule(props: { siteId: string }) {
     if (!IsPermit('schedule')) return <Navigate to="/" replace={true} />;
 
-    return (
-        <FullCalendar
-            height={'100%'}
-            locale={'zh'}
-            plugins={[dayGridPlugin, momentPlugin]}
-            headerToolbar={{
-                start: '',
-                center: 'prev title next',
-                end: '',
-            }}
-            fixedWeekCount={false}
-            titleFormat={'MMM, YYYY'}
-            dayHeaderFormat={'dd'}
-            dayCellContent={(cell) => moment(cell.date).format('D')}
-            viewDidMount={(info) => {
-                info.el.style.background = '#FFFFFF';
-            }}
-            events={EVENTS}
-            eventDidMount={(info) => {
-                Object.keys(info.event.extendedProps).map((attr: any) => {
-                    info.el.style[attr] = info.event.extendedProps[attr];
-                });
-            }}
-        />
-    );
-}
+    const siteId = props.siteId;
 
-// eslint-disable-next-line no-unused-vars
-function renderEventContent(eventInfo: any) {
+    const [preview, setPreview] = React.useState<Boolean>(false);
+    const [srcFile, setSrcFile] = React.useState<File>();
+    const [data, setData] = React.useState<[]>();
+    const [previewData, setPreviewData] = React.useState<[]>();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const { loading } = useQuery(QUERY_SCHEDULE, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ schedule }) => {
+            setData(schedule);
+        },
+    });
+
+    const [createSchedule, { loading: createScheduleLoading }] = useMutation(
+        CREATE_SCHEDULE,
+        {
+            onCompleted: ({ createSchedule }) => {
+                console.log(createSchedule);
+                setPreviewData(createSchedule.preview);
+                setPreview(true);
+                onClose();
+            },
+            onError: (error) => console.log(error),
+        }
+    );
+
+    const tableElements = React.useMemo(() => {
+        if (data) {
+            return data.map(
+                ({ serialNo, parent, title, duration, start, end }, index) => {
+                    return (
+                        <Tr key={index}>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {serialNo}
+                            </Td>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {parent}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                color={parent ? 'currentcolor' : '#4C7DE7'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {title}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {duration} 工作日
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {start}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {end}
+                            </Td>
+                        </Tr>
+                    );
+                }
+            );
+        }
+    }, [data]);
+    const previewTableElements = React.useMemo(() => {
+        return (
+            previewData &&
+            previewData.map(
+                ({ serialNo, parent, title, duration, start, end }, index) => {
+                    return (
+                        <Tr key={index}>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {serialNo}
+                            </Td>
+                            <Td overflowX={'auto'} textAlign={'center'}>
+                                {parent}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                color={parent ? 'currentcolor' : '#4C7DE7'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {title}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {duration} 工作日
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {start}
+                            </Td>
+                            <Td
+                                overflowX={'auto'}
+                                fontWeight={parent ? '400' : '600'}
+                            >
+                                {end}
+                            </Td>
+                        </Tr>
+                    );
+                }
+            )
+        );
+    }, [previewData]);
+
+    if (loading)
+        return (
+            <Center h={'100vh'}>
+                <Spinner size={'xl'} />
+            </Center>
+        );
+
     return (
-        <>
-            <b>{eventInfo.timeText}</b>
-            <i>{eventInfo.event.title}</i>
-        </>
+        <Flex
+            direction={'column'}
+            h={'100vh'}
+            w={'100%'}
+            pl={'30px'}
+            pr={'30px'}
+            pt={'47px'}
+            pb={'20px'}
+            overflowY={'auto'}
+        >
+            <Text
+                fontWeight={500}
+                fontSize={'14px'}
+                lineHeight={'20px'}
+                position={'absolute'}
+                top={'20px'}
+                right={'30px'}
+            >
+                穩懋南科路竹廠機電一期新建工程
+            </Text>
+            {!preview && (
+                <Flex w={'100%'} h={'fit-content'} direction={'column'}>
+                    <Flex
+                        w={'100%'}
+                        direction={'row'}
+                        justify="space-between"
+                        align={'end'}
+                        mb={'5px'}
+                    >
+                        <Text
+                            fontSize={'36px'}
+                            fontWeight={400}
+                            fontFamily={'Inter'}
+                            color={'#667080'}
+                        >
+                            排程管理
+                        </Text>
+                        <Spacer />
+                        <Button
+                            leftIcon={<ReplyIcon />}
+                            bg={'#4C7DE7'}
+                            color={'#FFFFFF'}
+                            onClick={onOpen}
+                        >
+                            匯入
+                        </Button>
+                    </Flex>
+                    <FullCalendarElement event={data} />
+                </Flex>
+            )}
+            {!preview && (
+                <Flex
+                    w={'100%'}
+                    h={'fit-content'}
+                    mt={'51px'}
+                    direction={'column'}
+                >
+                    <Text
+                        w={'100%'}
+                        fontSize={'36px'}
+                        lineHeight={'44px'}
+                        fontWeight={400}
+                        fontFamily={'Inter'}
+                        color={'#667080'}
+                    >
+                        總進度表
+                    </Text>
+                    <TableContainer
+                        mt={'30px'}
+                        maxH={'76vh'}
+                        overflowY={'auto'}
+                        bg={'#FFFFFF'}
+                        border={'1px solid #919AA9'}
+                        borderBottom={'none'}
+                    >
+                        <Table variant={'iemGraySchedule'} h={'100%'}>
+                            <Thead position={'sticky'} top={0} zIndex={1}>
+                                <Tr h={'36px'}>
+                                    <Th width={'8.5%'}>識別碼</Th>
+                                    <Th width={'8.5%'}>工作類型</Th>
+                                    <Th>工作名稱</Th>
+                                    <Th width={'12%'}>工期（天數）</Th>
+                                    <Th width={'20%'}>開始時間</Th>
+                                    <Th width={'20%'}>結束時間</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>{tableElements}</Tbody>
+                        </Table>
+                    </TableContainer>
+                </Flex>
+            )}
+            {preview && srcFile && (
+                <Preview
+                    siteId={siteId}
+                    srcFile={srcFile}
+                    setSrcFile={setSrcFile}
+                    onOpen={onOpen}
+                    setPreview={setPreview}
+                    setPreviewData={setPreviewData}
+                    previewTableElements={previewTableElements}
+                ></Preview>
+            )}
+            {createScheduleLoading && (
+                <Center
+                    position={'absolute'}
+                    top={0}
+                    left={0}
+                    w={'100vw'}
+                    h={'100vh'}
+                    bg={'#D9D9D980'}
+                    zIndex={2}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                isCentered
+                closeOnOverlayClick={false}
+            >
+                <ModalOverlay />
+                <ModalContent
+                    border={'1px solid #667080'}
+                    w={'47%'}
+                    borderRadius={'10px'}
+                    bg={'#FFFFFF'}
+                    p={'30px 45px'}
+                >
+                    <ModalHeader p={0}>匯入排程資料</ModalHeader>
+                    <ModalBody p={0}>
+                        <Flex
+                            direction={'column'}
+                            justify={'center'}
+                            align={'center'}
+                            border={'1px dashed #667080'}
+                            borderRadius={'10px'}
+                            gap={'10px'}
+                            mt={'17px'}
+                            p={'41px 20px'}
+                        >
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                請將資料拖拉到這裡上傳
+                            </Text>
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                或
+                            </Text>
+                            <Button
+                                width={'fit-content'}
+                                fontWeight={400}
+                                fontSize={'12px'}
+                                lineHeight={'20px'}
+                                variant={'outline'}
+                                color={'#4C7DE7'}
+                                border={'2px solid #4C7DE7'}
+                            >
+                                {srcFile ? srcFile.name : '選取檔案'}
+                            </Button>
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                上傳檔案格式:.csv
+                            </Text>
+                            <Input
+                                type={'file'}
+                                accept={'.csv'}
+                                pos={'absolute'}
+                                h={'100%'}
+                                w={'100%'}
+                                opacity={0}
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        setSrcFile(e.target.files[0]);
+                                    } else {
+                                        setSrcFile(undefined);
+                                    }
+                                }}
+                            ></Input>
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter
+                        h="36px"
+                        mt={'17px'}
+                        p={0}
+                        justifyContent={'space-between'}
+                    >
+                        <Button
+                            onClick={() => {
+                                onClose();
+                                setSrcFile(undefined);
+                            }}
+                        >
+                            取消
+                        </Button>
+                        <Button
+                            bg={'#4C7DE7'}
+                            color={'#FFFFFF'}
+                            onClick={() => {
+                                if (srcFile) {
+                                    onClose();
+                                    createSchedule({
+                                        variables: {
+                                            dryRun: true,
+                                            siteId: siteId,
+                                            srcFile: srcFile,
+                                        },
+                                    });
+                                }
+                            }}
+                        >
+                            預覽
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </Flex>
     );
 }
