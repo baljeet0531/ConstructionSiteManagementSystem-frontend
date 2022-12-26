@@ -44,5 +44,15 @@ export const styles = {
         '.fc th': {
             textAlign: 'left',
         },
+        '.fc .fc-scrollgrid, .fc .fc-scrollgrid-liquid': {
+            borderColor: '#667080',
+        },
+        '.fc-theme-standard th, .fc-theme-standard td': {
+            borderColor: '#667080',
+        },
+        '.fc .fc-more-popover .fc-popover-body': {
+            maxHeight: '50vh',
+            overflowY: 'auto',
+        },
     },
 };

@@ -16,6 +16,8 @@ import {
 import { QUERY_SITE } from '../Site';
 import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
+import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
+import { Cookies } from 'react-cookie';
 
 const UPDATE_SITE = gql`
     mutation updateSite(
@@ -74,7 +76,15 @@ export default function EditSite(props: {
     const endTime = React.useRef<HTMLInputElement>(null);
 
     const [editSite, { data, error }] = useMutation(UPDATE_SITE, {
-        refetchQueries: [{ query: QUERY_SITE }],
+        refetchQueries: [
+            { query: QUERY_SITE },
+            {
+                query: QUERY_ACCOUNT_SITES,
+                variables: {
+                    username: new Cookies().get('username'),
+                },
+            },
+        ],
     });
     if (error) console.log(`${error.message}`);
     if (data) console.log(data);

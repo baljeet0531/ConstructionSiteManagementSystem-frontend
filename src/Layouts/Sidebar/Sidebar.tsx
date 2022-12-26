@@ -4,12 +4,17 @@ import Menu from './Menu';
 import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
 import { AvatarIcon } from '../../Icons/Icons';
 
-import { PERMISSION } from '../../Mockdata/Mockdata';
-
-export default function Sidebar() {
-    const ROLE = 'admin';
-
-    const { name, 'chinese name': chineseName } = PERMISSION[ROLE];
+export default function Sidebar(props: {
+    username: string;
+    role: string;
+    sitesList: {
+        siteId: string;
+        siteName: string;
+        role: string;
+    }[];
+    setSelectedSite: Function;
+}) {
+    const { username, role, sitesList, setSelectedSite } = props;
 
     return (
         <VStack mt="50px" w="20vw" maxW="20vw">
@@ -22,11 +27,15 @@ export default function Sidebar() {
                 fontSize="20px"
                 textAlign="center"
             >
-                {name}
+                {username}
                 <br />
-                {chineseName}
+                {role}
             </Text>
-            <Menu></Menu>
+
+            <Menu
+                sitesList={sitesList}
+                setSelectedSite={setSelectedSite}
+            ></Menu>
         </VStack>
     );
 }

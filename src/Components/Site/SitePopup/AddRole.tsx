@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMutation, useLazyQuery, gql } from '@apollo/client';
+import { Cookies } from 'react-cookie';
 
 import {
     Center,
@@ -19,6 +20,7 @@ import { ShowPasswordIcon } from '../../../Icons/Icons';
 import { QUERY_SITE_ROLES } from '../SiteRoles';
 
 import { rolesList } from '../SiteRoles';
+import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
 
 const QUERY_ACCOUNT_LIST = gql`
     query AccountList($name: String!) {
@@ -172,6 +174,12 @@ export default function AddRole(props: {
         },
         refetchQueries: [
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },
+            {
+                query: QUERY_ACCOUNT_SITES,
+                variables: {
+                    username: new Cookies().get('username'),
+                },
+            },
         ],
     });
 
