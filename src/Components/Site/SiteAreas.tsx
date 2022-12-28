@@ -39,6 +39,7 @@ export default function SiteAreas(props: {
         variables: {
             siteId: siteId,
         },
+        fetchPolicy: 'cache-and-network',
     });
     if (error) console.log(error);
 
