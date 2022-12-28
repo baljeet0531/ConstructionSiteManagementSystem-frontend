@@ -19,7 +19,7 @@ import { useQuery, gql } from '@apollo/client';
 
 export const QUERY_SITE = gql`
     query {
-        allSites {
+        allSites(sort: [ARCHIVED_ASC, SITE_ID_ASC]) {
             edges {
                 node {
                     siteId
