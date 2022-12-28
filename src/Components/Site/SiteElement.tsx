@@ -7,6 +7,16 @@ import { CloseIcon } from '../../Icons/Icons';
 import { Box, Button, Center, Flex, IconButton } from '@chakra-ui/react';
 
 import DeleteSite from './SitePopup/DeleteSite';
+import { gql, useMutation } from '@apollo/client';
+import { QUERY_SITE } from './Site';
+
+const ACTIVE_SITE = gql`
+    mutation ActiveSite($siteId: String!) {
+        activeSite(siteId: $siteId) {
+            ok
+        }
+    }
+`;
 
 export default function Site(props: {
     siteDetails: {
@@ -31,6 +41,14 @@ export default function Site(props: {
         rerender,
     } = props;
     const { siteId, name: siteName, archived } = siteDetails;
+
+    const [activeSite] = useMutation(ACTIVE_SITE, {
+        onError: (error) => {
+            console.log(error);
+        },
+        refetchQueries: [{ query: QUERY_SITE }],
+    });
+
     return (
         <Box
             w={'100%'}
@@ -97,7 +115,17 @@ export default function Site(props: {
                     top={0}
                     borderRadius={'10px'}
                 >
-                    <Button>解除凍結</Button>
+                    <Button
+                        onClick={() =>
+                            activeSite({
+                                variables: {
+                                    siteId: siteId,
+                                },
+                            })
+                        }
+                    >
+                        解除凍結
+                    </Button>
                 </Center>
             )}
         </Box>
