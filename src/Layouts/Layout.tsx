@@ -8,14 +8,25 @@ import Sidebar from './Sidebar/Sidebar';
 import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
 
-import Home from '../Components/Home/Home';
 import Dashboard from '../Components/Dashboard/Dashboard';
-import People from '../Components/People/People';
-import Photo from '../Components/Photo/Photo';
 import Site from '../Components/Site/Site';
-import Report from '../Components/Report/Report';
+import Organization from '../Components/Organization/Organization';
+import PeopleOverview from '../Components/PeopleOverview/PeopleOverview';
+import PeopleApproval from '../Components/PeopleApproval/PeopleApproval';
+import PeopleEstablishment from '../Components/PeopleEstablishment/PeopleEstablishment';
 import Schedule from '../Components/Schedule/Schedule';
-import Security from '../Components/Security/Security';
+import Report from '../Components/Report/Report';
+import Photo from '../Components/Photo/Photo';
+import WorkPermitForm from '../Components/WorkPermitForm/WorkPermitForm';
+import ToolboxForm from '../Components/ToolboxForm/ToolboxForm';
+import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
+import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
+import SpecialForm from '../Components/SpecialForm/SpecialForm';
+import EHSForm from '../Components/EHSForm/EHSForm';
+import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
+import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
+import MachineryEstablishment from '../Components/MachineryEstablishment/MachineryEstablishment';
+import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
 
 export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!) {
@@ -51,14 +62,25 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
     }>();
 
     const layoutMap = {
-        Home: <Home />,
+        Dashboard: <Dashboard />,
         Site: <Site />,
+        Organization: <Organization />,
+        PeopleOverview: <PeopleOverview />,
+        PeopleApproval: <PeopleApproval />,
+        PeopleEstablishment: <PeopleEstablishment />,
         Schedule: <Schedule siteId={selectedSite ? selectedSite.siteId : ''} />,
-        People: <People />,
-        Security: <Security />,
         Report: <Report />,
         Photo: <Photo />,
-        Dashboard: <Dashboard />,
+        WorkPermitForm: <WorkPermitForm />,
+        ToolboxForm: <ToolboxForm />,
+        EngFaultForm: <EngFaultForm />,
+        EnvSecurityForm: <EnvSecurityForm />,
+        SpecialForm: <SpecialForm />,
+        EHSForm: <EHSForm />,
+        EHSFaultForm: <EHSFaultForm />,
+        MachineryManagement: <MachineryManagement />,
+        MachineryEstablishment: <MachineryEstablishment />,
+        OutsourceFaultForm: <OutsourceFaultForm />
     };
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {

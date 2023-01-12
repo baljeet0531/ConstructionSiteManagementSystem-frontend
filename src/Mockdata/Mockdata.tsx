@@ -1,13 +1,25 @@
 // import { Cookies } from "react-cookie";
 
 export type features = {
+    dashboard?: string;
     site?: string;
+    organization?: string;
+    people_overview?: string;
+    people_approval?: string;
+    people_establishment?: string;
     schedule?: string;
-    people?: string;
-    security?: string;
     report?: string;
     photo?: string;
-    dashboard?: string;
+    work_permit_form?: string;
+    toolbox_form?: string;
+    eng_fault_form?: string;
+    env_security_form?: string;
+    special_form?: string;
+    ehs_form?: string;
+    ehs_fault_form?: string;
+    machinery_management?: string;
+    machinery_establishment?: string;
+    outsource_fault_form?: string;
 };
 
 // type details = {
