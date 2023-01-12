@@ -1,25 +1,31 @@
 // import { Cookies } from "react-cookie";
 
 export type features = {
-    dashboard?: string;
-    site?: string;
-    organization?: string;
-    people_overview?: string;
-    people_approval?: string;
-    people_establishment?: string;
-    schedule?: string;
-    report?: string;
-    photo?: string;
-    work_permit_form?: string;
-    toolbox_form?: string;
-    eng_fault_form?: string;
-    env_security_form?: string;
-    special_form?: string;
-    ehs_form?: string;
-    ehs_fault_form?: string;
-    machinery_management?: string;
-    machinery_establishment?: string;
-    outsource_fault_form?: string;
+    dashboard?: string
+    site?: string
+    organization?: string
+    people_overview?: string
+    people_approval?: string
+    people_establishment?: string
+    project_schedule?: string
+    project_report?: string
+    project_photo?: string
+    eng_work_permit_form?: string
+    eng_toolbox_form?: string
+    eng_fault_form?: string
+    eng_env_security_form?: string
+    eng_special_form?: string
+    eng_photo?: string
+    ehs_form?: string
+    ehs_fault_form?: string
+    ehs_machinery_management?: string
+    ehs_photo?: string
+    outsource_work_permit_form?: string
+    outsource_toolbox_form?: string
+    outsource_env_security_form?: string
+    outsource_special_form?: string
+    outsource_machinery_establishment?: string
+    outsource_fault_form?: string
 };
 
 // type details = {
@@ -50,19 +56,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'project manager': {
@@ -75,19 +87,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'working manager': {
@@ -100,19 +118,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'project engineer': {
@@ -125,19 +149,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'system engineer': {
@@ -150,19 +180,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'secure staff': {
@@ -175,19 +211,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     'out sourcer': {
@@ -200,19 +242,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
     owner: {
@@ -225,19 +273,25 @@ export const PERMISSION = {
             people_overview: 'crud',
             people_approval: 'crud',
             people_establishment: 'crud',
-            schedule: 'crud',
-            report: 'crud',
-            photo: 'crud',
-            work_permit_form: 'crud',
-            toolbox_form: 'crud',
+            project_schedule: 'crud',
+            project_report: 'crud',
+            project_photo: 'crud',
+            eng_work_permit_form: 'crud',
+            eng_toolbox_form: 'crud',
             eng_fault_form: 'crud',
-            env_security_form: 'crud',
-            special_form: 'crud',
+            eng_env_security_form: 'crud',
+            eng_special_form: 'crud',
+            eng_photo: 'crud',
             ehs_form: 'crud',
             ehs_fault_form: 'crud',
-            machinery_management: 'crud',
-            machinery_establishment: 'crud',
-            outsource_fault_form: 'crud'
+            ehs_machinery_management: 'crud',
+            ehs_photo: 'crud',
+            outsource_work_permit_form: 'crud',
+            outsource_toolbox_form: 'crud',
+            outsource_env_security_form: 'crud',
+            outsource_special_form: 'crud',
+            outsource_machinery_establishment: 'crud',
+            outsource_fault_form: 'crud',
         },
     },
 };
