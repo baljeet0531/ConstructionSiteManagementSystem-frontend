@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 
 export default function Report() {
-    if (!IsPermit('report')) return <Navigate to="/" replace={true} />;
+    if (!IsPermit('project_report')) return <Navigate to="/" replace={true} />;
 
     return <p>Report</p>;
 }
