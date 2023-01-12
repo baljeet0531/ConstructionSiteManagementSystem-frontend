@@ -4,29 +4,11 @@ import { HStack } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
+import { featureName, getFeatureMap } from './FeatureMap';
 import Sidebar from './Sidebar/Sidebar';
 import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
 
-import Dashboard from '../Components/Dashboard/Dashboard';
-import Site from '../Components/Site/Site';
-import Organization from '../Components/Organization/Organization';
-import PeopleOverview from '../Components/PeopleOverview/PeopleOverview';
-import PeopleApproval from '../Components/PeopleApproval/PeopleApproval';
-import PeopleEstablishment from '../Components/PeopleEstablishment/PeopleEstablishment';
-import Schedule from '../Components/Schedule/Schedule';
-import Report from '../Components/Report/Report';
-import Photo from '../Components/Photo/Photo';
-import WorkPermitForm from '../Components/WorkPermitForm/WorkPermitForm';
-import ToolboxForm from '../Components/ToolboxForm/ToolboxForm';
-import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
-import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
-import SpecialForm from '../Components/SpecialForm/SpecialForm';
-import EHSForm from '../Components/EHSForm/EHSForm';
-import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
-import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
-import MachineryEstablishment from '../Components/MachineryEstablishment/MachineryEstablishment';
-import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
 
 export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!) {
@@ -40,7 +22,7 @@ export const QUERY_ACCOUNT_SITES = gql`
     }
 `;
 
-export default function Layout(props: { page: keyof typeof layoutMap }) {
+export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
     if (!cookieValue || !username)
@@ -61,27 +43,10 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
         role: string;
     }>();
 
-    const layoutMap = {
-        Dashboard: <Dashboard />,
-        Site: <Site />,
-        Organization: <Organization />,
-        PeopleOverview: <PeopleOverview />,
-        PeopleApproval: <PeopleApproval />,
-        PeopleEstablishment: <PeopleEstablishment />,
-        Schedule: <Schedule siteId={selectedSite ? selectedSite.siteId : ''} />,
-        Report: <Report />,
-        Photo: <Photo />,
-        WorkPermitForm: <WorkPermitForm />,
-        ToolboxForm: <ToolboxForm />,
-        EngFaultForm: <EngFaultForm />,
-        EnvSecurityForm: <EnvSecurityForm />,
-        SpecialForm: <SpecialForm />,
-        EHSForm: <EHSForm />,
-        EHSFaultForm: <EHSFaultForm />,
-        MachineryManagement: <MachineryManagement />,
-        MachineryEstablishment: <MachineryEstablishment />,
-        OutsourceFaultForm: <OutsourceFaultForm />
-    };
+    const featureMap = getFeatureMap({
+        siteId: selectedSite ? selectedSite.siteId : ''
+    });
+
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {
             const sitesListFormatted = accountSite.map(
@@ -125,8 +90,9 @@ export default function Layout(props: { page: keyof typeof layoutMap }) {
                 role={selectedSite?.role || ''}
                 sitesList={sitesList}
                 setSelectedSite={setSelectedSite}
+                featureMap={featureMap}
             />
-            <MainScreen>{layoutMap[page]}</MainScreen>
+            <MainScreen>{featureMap[page].page}</MainScreen>
         </HStack>
     );
 }
