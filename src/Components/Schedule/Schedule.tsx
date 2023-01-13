@@ -66,7 +66,7 @@ const CREATE_SCHEDULE = gql`
 `;
 
 export default function Schedule(props: { siteId: string }) {
-    if (!IsPermit('schedule')) return <Navigate to="/" replace={true} />;
+    if (!IsPermit('project_schedule')) return <Navigate to="/" replace={true} />;
 
     const siteId = props.siteId;
 
