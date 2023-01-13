@@ -159,7 +159,7 @@ export default function FromPage(props: {
                             gridRange={[3, 4, 1, 3]}
                             fieldName="tel"
                             formlabel="連絡電話"
-                            inputComponent={<Input type={'number'} />}
+                            inputComponent={<Input type={'tel'} />}
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[3, 4, 3, 5]}
@@ -171,7 +171,7 @@ export default function FromPage(props: {
                             gridRange={[3, 4, 5, 7]}
                             fieldName="emergencyTel"
                             formlabel={`緊急聯絡\n電話`}
-                            inputComponent={<Input type={'number'} />}
+                            inputComponent={<Input type={'tel'} />}
                         ></FormGridInputItem>
 
                         <FormGridInputItem
@@ -383,7 +383,7 @@ export default function FromPage(props: {
                                             e,
                                             'aCertificationDate',
                                             'aCertificationStatus',
-                                            0
+                                            3
                                         );
                                     }}
                                 />
@@ -414,7 +414,7 @@ export default function FromPage(props: {
                                             e,
                                             'wahCertificationDate',
                                             'wahCertificationStatus',
-                                            0
+                                            3
                                         );
                                     }}
                                 />
@@ -843,74 +843,36 @@ export default function FromPage(props: {
                                                         opacity={0}
                                                         type={'file'}
                                                         accept={'image/*'}
-                                                        // onChange={(e) => {
-                                                        //     if (
-                                                        //         e.target
-                                                        //             .files &&
-                                                        //         e.target
-                                                        //             .files[0]
-                                                        //     ) {
-                                                        //         setFileStates({
-                                                        //             ...fileStates,
-                                                        //             HImgs: file
-                                                        //                 ? [
-                                                        //                       ...fileStates.HImgs.slice(
-                                                        //                           0,
-                                                        //                           index
-                                                        //                       ),
-                                                        //                       e
-                                                        //                           .target
-                                                        //                           .files[0],
-                                                        //                       ...fileStates.HImgs.slice(
-                                                        //                           index +
-                                                        //                               1
-                                                        //                       ),
-                                                        //                   ]
-                                                        //                 : [
-                                                        //                       ...fileStates.HImgs,
-                                                        //                       e
-                                                        //                           .target
-                                                        //                           .files[0],
-                                                        //                   ],
-                                                        //         });
-                                                        //         e.target.value =
-                                                        //             '';
-                                                        //     }
-                                                        // }}
                                                         onChange={(e) => {
                                                             if (
-                                                                e.target.files
+                                                                e.target
+                                                                    .files &&
+                                                                e.target
+                                                                    .files[0]
                                                             ) {
-                                                                const reader =
-                                                                    new FileReader();
-                                                                reader.onloadend =
-                                                                    () => {
-                                                                        setFileStates(
-                                                                            {
-                                                                                ...fileStates,
-                                                                                HImgs: file
-                                                                                    ? [
-                                                                                          ...fileStates.HImgs.slice(
-                                                                                              0,
-                                                                                              index
-                                                                                          ),
-                                                                                          reader.result,
-                                                                                          ...fileStates.HImgs.slice(
-                                                                                              index +
-                                                                                                  1
-                                                                                          ),
-                                                                                      ]
-                                                                                    : [
-                                                                                          ...fileStates.HImgs,
-                                                                                          reader.result,
-                                                                                      ],
-                                                                            }
-                                                                        );
-                                                                    };
-                                                                reader.readAsDataURL(
-                                                                    e.target
-                                                                        .files[0]
-                                                                );
+                                                                setFileStates({
+                                                                    ...fileStates,
+                                                                    HImgs: file
+                                                                        ? [
+                                                                              ...fileStates.HImgs.slice(
+                                                                                  0,
+                                                                                  index
+                                                                              ),
+                                                                              e
+                                                                                  .target
+                                                                                  .files[0],
+                                                                              ...fileStates.HImgs.slice(
+                                                                                  index +
+                                                                                      1
+                                                                              ),
+                                                                          ]
+                                                                        : [
+                                                                              ...fileStates.HImgs,
+                                                                              e
+                                                                                  .target
+                                                                                  .files[0],
+                                                                          ],
+                                                                });
                                                                 e.target.value =
                                                                     '';
                                                             }

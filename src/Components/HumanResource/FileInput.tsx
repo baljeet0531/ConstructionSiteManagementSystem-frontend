@@ -17,6 +17,7 @@ export default function FileInput(props: {
     fieldName: keyof formFiles;
 }) {
     const { fileStates, setFileStates, height, fieldName } = props;
+
     return (
         <Box
             flexGrow={1}
@@ -31,7 +32,11 @@ export default function FileInput(props: {
                         h={'100%'}
                         w={'100%'}
                         objectFit={'contain'}
-                        src={fileStates[fieldName] as any}
+                        src={URL.createObjectURL(fileStates[fieldName] as File)}
+                        onLoad={(e) => {
+                            const image = e.target as HTMLImageElement;
+                            URL.revokeObjectURL(image.src);
+                        }}
                     />
                 ) : (
                     <Button
@@ -54,14 +59,10 @@ export default function FileInput(props: {
                     accept={'image/*'}
                     onChange={(e) => {
                         if (e.target.files) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                                setFileStates({
-                                    ...fileStates,
-                                    [fieldName]: reader.result,
-                                });
-                            };
-                            reader.readAsDataURL(e.target.files[0]);
+                            setFileStates({
+                                ...fileStates,
+                                [fieldName]: e.target.files[0],
+                            });
                             e.target.value = '';
                         }
                     }}
