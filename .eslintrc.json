@@ -6,6 +6,9 @@
         "jest": true
     },
     "extends": ["eslint:recommended", "prettier"],
+    "globals": {
+        "JSX": true
+    },
     "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
