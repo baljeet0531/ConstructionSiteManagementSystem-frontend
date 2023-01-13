@@ -1,6 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import FormPage from './FormPage';
+import { gql, useMutation } from '@apollo/client';
 
 interface humanInfoValues {
     aCertificationDate: Date | string | undefined;
@@ -58,7 +59,7 @@ export interface formValues extends humanInfoValues {
 export interface formFiles {
     F6Img: File | undefined;
     GImg: File | undefined;
-    HImgs: (string | ArrayBuffer | File | null)[];
+    HImgs: (File | undefined)[];
     IDFImg: File | undefined;
     IDRImg: File | undefined;
     LImg: File | undefined;
@@ -66,7 +67,104 @@ export interface formFiles {
     R6Img: File | undefined;
 }
 
-export default function () {
+const CREATE_HUMAN_RESOURCE = gql`
+    mutation createHumanResource(
+        $F6Img: Upload
+        $GImg: Upload
+        $HImgs: [Upload]
+        $IDFImg: Upload
+        $IDRImg: Upload
+        $LImg: Upload
+        $PImg: Upload
+        $R6Img: Upload
+        $aCertificationDate: Date
+        $accidentInsuranceAmount: String
+        $accidentInsuranceCompanyName: String
+        $accidentInsuranceEnd: Date
+        $accidentInsuranceSignDate: Date
+        $accidentInsuranceStart: Date
+        $address: String
+        $birthday: Date
+        $bloodType: String
+        $cCertificationDate: Date
+        $certificationIssue: Date
+        $certificationName: String
+        $certificationWithdraw: Date
+        $contractingCompanyName: String
+        $emergencyTel: String
+        $exCertificationDate: Date
+        $gender: String
+        $hCertificationDate: Date
+        $hazardNotifyDate: Date
+        $idno: String!
+        $lCertificationDate: Date
+        $laborAssociationDate: Date
+        $laborInsuranceApplyDate: Date
+        $liaison: String
+        $name: String!
+        $o2CertificationDate: Date
+        $osCertificationDate: Date
+        $sCertificationDate: Date
+        $saCertificationDate: Date
+        $safetyHealthyEducationIssue: Date
+        $safetyHealthyEducationWithdraw: Date
+        $supplierIndustrialSafetyNumber: String
+        $tel: String
+        $viceContractingCompanyName: String
+        $wahCertificationDate: Date
+    ) {
+        createHumanResource(
+            F6Img: $F6Img
+            GImg: $GImg
+            HImgs: $HImgs
+            IDFImg: $IDFImg
+            IDRImg: $IDRImg
+            LImg: $LImg
+            PImg: $PImg
+            R6Img: $R6Img
+            aCertificationDate: $aCertificationDate
+            accidentInsuranceAmount: $accidentInsuranceAmount
+            accidentInsuranceCompanyName: $accidentInsuranceCompanyName
+            accidentInsuranceEnd: $accidentInsuranceEnd
+            accidentInsuranceSignDate: $accidentInsuranceSignDate
+            accidentInsuranceStart: $accidentInsuranceStart
+            address: $address
+            birthday: $birthday
+            bloodType: $bloodType
+            cCertificationDate: $cCertificationDate
+            certificationIssue: $certificationIssue
+            certificationName: $certificationName
+            certificationWithdraw: $certificationWithdraw
+            contractingCompanyName: $contractingCompanyName
+            emergencyTel: $emergencyTel
+            exCertificationDate: $exCertificationDate
+            gender: $gender
+            hCertificationDate: $hCertificationDate
+            hazardNotifyDate: $hazardNotifyDate
+            idno: $idno
+            lCertificationDate: $lCertificationDate
+            laborAssociationDate: $laborAssociationDate
+            laborInsuranceApplyDate: $laborInsuranceApplyDate
+            liaison: $liaison
+            name: $name
+            o2CertificationDate: $o2CertificationDate
+            osCertificationDate: $osCertificationDate
+            sCertificationDate: $sCertificationDate
+            saCertificationDate: $saCertificationDate
+            safetyHealthyEducationIssue: $safetyHealthyEducationIssue
+            safetyHealthyEducationWithdraw: $safetyHealthyEducationWithdraw
+            supplierIndustrialSafetyNumber: $supplierIndustrialSafetyNumber
+            tel: $tel
+            viceContractingCompanyName: $viceContractingCompanyName
+            wahCertificationDate: $wahCertificationDate
+        ) {
+            ok
+            message
+        }
+    }
+`;
+
+export default function BuildFormik() {
     const initialValues: formValues = {
         idno: '',
         name: '',
@@ -82,7 +180,7 @@ export default function () {
 
         safetyHealthyEducationIssue: '',
         safetyHealthyEducationWithdraw: '',
-        safetyHealthyEducationStatus: '', //
+        safetyHealthyEducationStatus: '',
 
         laborInsuranceApplyDate: '',
         laborAssociationDate: '',
@@ -133,17 +231,39 @@ export default function () {
         R6Img: undefined,
     });
 
+    const [createHumanResource] = useMutation(CREATE_HUMAN_RESOURCE, {
+        // onCompleted: () => {
+        //     console.log();
+        // },
+        onCompleted: (data) => {
+            console.log(data);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+    });
+
     return (
         <Formik
             initialValues={initialValues}
             onSubmit={(values, actions) => {
-                setTimeout(() => {
-                    actions.setSubmitting(true);
-                    console.log(
-                        JSON.stringify({ ...values, ...fileStates }, null, 2)
-                    );
-                    actions.setSubmitting(false);
-                }, 1000);
+                actions.setSubmitting(true);
+
+                let filteredValues: any = {};
+                for (let props in values) {
+                    if (
+                        values[props as keyof formValues] != '' &&
+                        props.slice(-6, 0) != 'Status'
+                    ) {
+                        filteredValues[props] =
+                            values[props as keyof formValues];
+                    }
+                }
+
+                createHumanResource({
+                    variables: { ...filteredValues, ...fileStates },
+                });
+                actions.setSubmitting(false);
             }}
         >
             {(props) => (
