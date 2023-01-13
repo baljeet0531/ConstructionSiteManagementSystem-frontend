@@ -3,6 +3,7 @@ import { styles } from '../styles';
 import Table from '../Components/Table';
 import Text from '../Components/Text';
 import Select from '../Components/Select';
+import Input from '../Components/Input';
 
 const myTheme = extendTheme({
     styles,
@@ -10,6 +11,7 @@ const myTheme = extendTheme({
         Table,
         Text,
         Select,
+        Input,
     },
 });
 

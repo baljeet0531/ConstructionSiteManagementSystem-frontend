@@ -1381,18 +1381,22 @@ export function RemoteWorkingIcon() {
     );
 }
 
-export function AddIcon() {
+export function AddIcon(props: {
+    width?: string | number | undefined;
+    height?: string | number | undefined;
+}) {
+    const { width, height } = props;
     return (
         <svg
-            width="20"
-            height="20"
+            width={width || '20'}
+            height={height || '20'}
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
         >
             <path
                 d="M15 10.8333H10.8333V15C10.8333 15.4583 10.4583 15.8333 9.99996 15.8333C9.54163 15.8333 9.16663 15.4583 9.16663 15V10.8333H4.99996C4.54163 10.8333 4.16663 10.4583 4.16663 9.99996C4.16663 9.54163 4.54163 9.16663 4.99996 9.16663H9.16663V4.99996C9.16663 4.54163 9.54163 4.16663 9.99996 4.16663C10.4583 4.16663 10.8333 4.54163 10.8333 4.99996V9.16663H15C15.4583 9.16663 15.8333 9.54163 15.8333 9.99996C15.8333 10.4583 15.4583 10.8333 15 10.8333Z"
-                fill="white"
+                fill="currentColor"
             />
         </svg>
     );
