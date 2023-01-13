@@ -72,7 +72,7 @@ export default function Preview(props: {
                 fontFamily={'Inter'}
                 color={'#667080'}
             >
-                總進度表
+                預覽
             </Text>
             <Flex w={'100%'} justify={'space-between'} mt={'11px'}>
                 <Button

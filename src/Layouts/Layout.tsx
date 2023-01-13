@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React from 'react';
 import { HStack } from '@chakra-ui/react';
@@ -10,7 +11,7 @@ import Background from '../Images/WhiteLoginBackground.svg';
 
 import Home from '../Components/Home/Home';
 import Dashboard from '../Components/Dashboard/Dashboard';
-import People from '../Components/People/People';
+import People from '../Components/HumanResource/HumanResource';
 import Photo from '../Components/Photo/Photo';
 import Site from '../Components/Site/Site';
 import Report from '../Components/Report/Report';
@@ -32,8 +33,8 @@ export const QUERY_ACCOUNT_SITES = gql`
 export default function Layout(props: { page: keyof typeof layoutMap }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
-    if (!cookieValue || !username)
-        return <Navigate to={'/login'} replace={true}></Navigate>;
+    // if (!cookieValue || !username)
+    //     return <Navigate to={'/login'} replace={true}></Navigate>;
 
     const { page } = props;
 

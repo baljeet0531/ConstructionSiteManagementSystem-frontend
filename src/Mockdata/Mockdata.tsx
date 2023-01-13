@@ -3,7 +3,7 @@
 export type features = {
     site?: string;
     schedule?: string;
-    people?: string;
+    humanResource?: string;
     security?: string;
     report?: string;
     photo?: string;
@@ -34,7 +34,7 @@ export const PERMISSION = {
         features: {
             site: 'rw',
             schedule: 'rw',
-            people: 'rw',
+            humanResource: 'rw',
             security: 'rw',
             report: 'rw',
             photo: 'rw',
@@ -47,7 +47,7 @@ export const PERMISSION = {
         features: {
             site: 'rw',
             schedule: 'rw',
-            people: 'rw',
+            humanResource: 'rw',
             security: 'r',
             report: 'rw',
             photo: 'rw',
@@ -60,7 +60,7 @@ export const PERMISSION = {
         features: {
             site: 'rw',
             schedule: 'rw',
-            people: 'rw',
+            humanResource: 'rw',
             security: 'r',
             report: 'rw',
             photo: 'rw',
@@ -72,7 +72,7 @@ export const PERMISSION = {
         'chinese name': '專案工程師',
         features: {
             schedule: 'r',
-            people: 'rw',
+            humanResource: 'rw',
             security: 'rw',
             report: 'rw',
             photo: 'r',
@@ -84,7 +84,7 @@ export const PERMISSION = {
         'chinese name': '系統工程師',
         features: {
             schedule: 'r',
-            people: 'rw',
+            humanResource: 'rw',
             security: 'rw',
             report: 'rw',
             photo: 'r',
@@ -96,7 +96,7 @@ export const PERMISSION = {
         'chinese name': '工安人員',
         features: {
             schedule: 'r',
-            people: 'r',
+            humanResource: 'r',
             security: 'rw',
             report: 'rw',
             photo: 'rW',
@@ -107,7 +107,7 @@ export const PERMISSION = {
         name: 'out sourcer',
         'chinese name': '外包商',
         features: {
-            people: 'rw',
+            humanResource: 'rw',
             security: 'rw',
             report: 'rw',
         },
