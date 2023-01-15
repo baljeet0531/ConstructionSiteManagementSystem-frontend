@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import React from 'react';
 import FormPage from './FormPage';
 import { gql, useMutation } from '@apollo/client';
+import { useToast } from '@chakra-ui/react';
 
 interface humanInfoValues {
     aCertificationDate: Date | string | undefined;
@@ -231,12 +232,17 @@ export default function BuildFormik() {
         R6Img: undefined,
     });
 
+    const toast = useToast();
     const [createHumanResource] = useMutation(CREATE_HUMAN_RESOURCE, {
-        // onCompleted: () => {
-        //     console.log();
-        // },
-        onCompleted: (data) => {
-            console.log(data);
+        onCompleted: ({ createHumanResource }) => {
+            if (createHumanResource.ok) {
+                toast({
+                    title: createHumanResource.message,
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
         },
         onError: (err) => {
             console.log(err);
