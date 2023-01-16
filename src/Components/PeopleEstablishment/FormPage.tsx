@@ -12,6 +12,13 @@ import {
     Center,
     Image,
     IconButton,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    useDisclosure,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { formFiles, formValues } from './BuildFormik';
@@ -19,6 +26,19 @@ import { AddIcon, CloseIcon, EditIcon, ReplyIcon } from '../../Icons/Icons';
 import FormGridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
 import FileInput from './FileInput';
+import { gql, useMutation } from '@apollo/client';
+
+const UPLOAD_HR_ZIP = gql`
+    mutation UploadHRZip($file: Upload!) {
+        uploadHRZip(file: $file) {
+            ok
+            message
+            failList
+            correct
+            failure
+        }
+    }
+`;
 
 export default function FromPage(props: {
     formProps: FormikProps<formValues>;
@@ -26,6 +46,9 @@ export default function FromPage(props: {
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
 }) {
     const { formProps, fileStates, setFileStates } = props;
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [zipFile, setZipFile] = React.useState<File>();
+
     function checkStatus(
         e: React.ChangeEvent<HTMLInputElement>,
         target: string,
@@ -33,30 +56,42 @@ export default function FromPage(props: {
         year: number,
         withdraw?: string
     ) {
-        const date = new Date(e.target.value + 'T00:00:00.000+08:00');
+        const date = new Date(e.target.value);
         const withDrawDate = new Date(
             date.getFullYear() + year,
             date.getMonth(),
-            date.getDate() - 1,
+            date.getDate() +
+                (target == 'certificationWithdraw' ||
+                target == 'safetyHealthyEducationWithdraw'
+                    ? 1
+                    : 0),
             0,
             0,
             0,
-            0
+            -1
         );
+
         const now = new Date();
-        const diff =
-            now.valueOf() -
-            withDrawDate.valueOf() -
-            (year == 0 ? 2 * 86400000 : 86400000);
+        const diff = now.valueOf() - withDrawDate.valueOf();
         formProps.setValues({
             ...formProps.values,
             [target]: date.toISOString().split('T')[0],
             ...(withdraw && {
                 [withdraw]: withDrawDate.toISOString().split('T')[0],
             }),
-            [status]: diff < 0 ? 'OK' : `已過期${Math.ceil(diff / 86400000)}天`,
+            [status]:
+                diff <= 0 ? 'OK' : `已過期${Math.ceil(diff / 86400000)}天`,
         });
     }
+
+    const [uploadHRZip] = useMutation(UPLOAD_HR_ZIP, {
+        onCompleted: (data) => {
+            console.log(data);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+    });
 
     return (
         <Flex direction={'column'} h={'100%'}>
@@ -74,13 +109,13 @@ export default function FromPage(props: {
                         bg={'rgba(102, 112, 128, 0.1)'}
                         color={'#667080'}
                         border={'2px solid #919AA9'}
+                        onClick={onOpen}
                     >
                         匯入
                     </Button>
                     <Button
                         leftIcon={<EditIcon />}
-                        bg={'#4C7DE7'}
-                        color={'#FFFFFF'}
+                        variant={'buttonBlueOutline'}
                         isLoading={formProps.isSubmitting}
                         onClick={formProps.submitForm}
                         type="submit"
@@ -922,6 +957,118 @@ export default function FromPage(props: {
                     </Grid>
                 </Form>
             </Flex>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                isCentered
+                closeOnOverlayClick={false}
+            >
+                <ModalOverlay />
+                <ModalContent
+                    border={'1px solid #667080'}
+                    w={'47%'}
+                    borderRadius={'10px'}
+                    bg={'#FFFFFF'}
+                    p={'30px 45px'}
+                >
+                    <ModalHeader p={0}>匯入人員資料</ModalHeader>
+                    <ModalBody p={0}>
+                        <Flex
+                            direction={'column'}
+                            justify={'center'}
+                            align={'center'}
+                            border={'1px dashed #667080'}
+                            borderRadius={'10px'}
+                            gap={'10px'}
+                            mt={'17px'}
+                            p={'41px 20px'}
+                        >
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                請將資料拖拉到這裡上傳
+                            </Text>
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                或
+                            </Text>
+                            <Button
+                                width={'fit-content'}
+                                fontWeight={400}
+                                fontSize={'12px'}
+                                lineHeight={'20px'}
+                                variant={'outline'}
+                                color={'#4C7DE7'}
+                                border={'2px solid #4C7DE7'}
+                            >
+                                {zipFile ? zipFile.name : '選取檔案'}
+                            </Button>
+                            <Text
+                                fontWeight={400}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                textAlign={'center'}
+                            >
+                                上傳檔案格式:.zip
+                            </Text>
+                            <Input
+                                type={'file'}
+                                accept={'.zip'}
+                                pos={'absolute'}
+                                h={'100%'}
+                                w={'100%'}
+                                opacity={0}
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        setZipFile(e.target.files[0]);
+                                    } else {
+                                        setZipFile(undefined);
+                                    }
+                                }}
+                            ></Input>
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter
+                        h="36px"
+                        mt={'17px'}
+                        p={0}
+                        justifyContent={'space-between'}
+                    >
+                        <Button
+                            onClick={() => {
+                                onClose();
+                                setZipFile(undefined);
+                            }}
+                        >
+                            取消
+                        </Button>
+                        <Button
+                            bg={'#4C7DE7'}
+                            color={'#FFFFFF'}
+                            onClick={() => {
+                                if (zipFile) {
+                                    onClose();
+                                    uploadHRZip({
+                                        variables: {
+                                            file: zipFile,
+                                        },
+                                    });
+                                }
+                            }}
+                        >
+                            確認
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Flex>
     );
 }
