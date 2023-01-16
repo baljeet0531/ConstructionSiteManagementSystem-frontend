@@ -20,6 +20,7 @@ import {
     ModalBody,
     useDisclosure,
     useToast,
+    Spinner,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { formFiles, formValues } from './BuildFormik';
@@ -85,7 +86,7 @@ export default function FromPage(props: {
         });
     }
 
-    const [uploadHRZip] = useMutation(UPLOAD_HR_ZIP, {
+    const [uploadHRZip, { loading }] = useMutation(UPLOAD_HR_ZIP, {
         onCompleted: ({ uploadHRZip }) => {
             if (uploadHRZip.ok) {
                 toast({
@@ -94,6 +95,7 @@ export default function FromPage(props: {
                     duration: 3000,
                     isClosable: true,
                 });
+                setZipFile(undefined);
             }
         },
         onError: (err) => {
@@ -851,19 +853,19 @@ export default function FromPage(props: {
                                                             objectFit={
                                                                 'contain'
                                                             }
-                                                            src={
+                                                            src={URL.createObjectURL(
                                                                 fileStates
                                                                     .HImgs[
                                                                     index
-                                                                ] as any
-                                                            }
-                                                            // onLoad={(e) => {
-                                                            //     const image =
-                                                            //         e.target as HTMLImageElement;
-                                                            //     URL.revokeObjectURL(
-                                                            //         image.src
-                                                            //     );
-                                                            // }}
+                                                                ] as File
+                                                            )}
+                                                            onLoad={(e) => {
+                                                                const image =
+                                                                    e.target as HTMLImageElement;
+                                                                URL.revokeObjectURL(
+                                                                    image.src
+                                                                );
+                                                            }}
                                                         />
                                                     ) : (
                                                         <Button
@@ -1084,6 +1086,19 @@ export default function FromPage(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            {loading && (
+                <Center
+                    position={'absolute'}
+                    top={0}
+                    left={0}
+                    w={'100vw'}
+                    h={'100vh'}
+                    bg={'#D9D9D980'}
+                    zIndex={2}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
         </Flex>
     );
 }
