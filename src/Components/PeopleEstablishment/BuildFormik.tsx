@@ -246,6 +246,13 @@ export default function BuildFormik() {
         },
         onError: (err) => {
             console.log(err);
+            toast({
+                title: '錯誤',
+                description: `${err}`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
         },
     });
 

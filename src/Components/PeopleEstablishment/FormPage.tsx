@@ -19,6 +19,7 @@ import {
     ModalFooter,
     ModalBody,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { formFiles, formValues } from './BuildFormik';
@@ -48,7 +49,7 @@ export default function FromPage(props: {
     const { formProps, fileStates, setFileStates } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [zipFile, setZipFile] = React.useState<File>();
-
+    const toast = useToast();
     function checkStatus(
         e: React.ChangeEvent<HTMLInputElement>,
         target: string,
@@ -85,11 +86,25 @@ export default function FromPage(props: {
     }
 
     const [uploadHRZip] = useMutation(UPLOAD_HR_ZIP, {
-        onCompleted: (data) => {
-            console.log(data);
+        onCompleted: ({ uploadHRZip }) => {
+            if (uploadHRZip.ok) {
+                toast({
+                    title: uploadHRZip.message,
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
         },
         onError: (err) => {
             console.log(err);
+            toast({
+                title: '錯誤',
+                description: `${err}`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
         },
     });
 
