@@ -4,6 +4,7 @@ import Table from '../Components/Table';
 import Text from '../Components/Text';
 import Select from '../Components/Select';
 import Input from '../Components/Input';
+import Button from '../Components/Button';
 
 const myTheme = extendTheme({
     styles,
@@ -12,6 +13,7 @@ const myTheme = extendTheme({
         Text,
         Select,
         Input,
+        Button,
     },
 });
 
