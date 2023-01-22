@@ -28,7 +28,8 @@ import { AddIcon, CloseIcon, EditIcon, ReplyIcon } from '../../Icons/Icons';
 import FormGridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
 import FileInput from './FileInput';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 
 const UPLOAD_HR_ZIP = gql`
     mutation UploadHRZip($file: Upload!) {
@@ -42,12 +43,87 @@ const UPLOAD_HR_ZIP = gql`
     }
 `;
 
+export const SEARCH_HUMAN_RESOURCE = gql`
+    query Humanresource($idno: String!) {
+        humanresource(idno: $idno) {
+            name
+            gender
+            birthday
+            bloodType
+            tel
+            liaison
+            emergencyTel
+            address
+            hazardNotifyDate
+            supplierIndustrialSafetyNumber
+            safetyHealthyEducationIssue
+            safetyHealthyEducationWithdraw
+            laborInsuranceApplyDate
+            laborAssociationDate
+            certificationName
+            certificationIssue
+            certificationWithdraw
+            accidentInsuranceStart
+            accidentInsuranceEnd
+            accidentInsuranceAmount
+            accidentInsuranceSignDate
+            accidentInsuranceCompanyName
+            contractingCompanyName
+            viceContractingCompanyName
+            aCertificationDate
+            wahCertificationDate
+            lCertificationDate
+            cCertificationDate
+            hCertificationDate
+            exCertificationDate
+            sCertificationDate
+            saCertificationDate
+            osCertificationDate
+            o2CertificationDate
+            idno
+            sixStatus
+            certificationStatus
+            aStatus
+            wahStatus
+            lStatus
+            cStatus
+            hStatus
+            exStatus
+            sStatus
+            saStatus
+            osStatus
+            o2Status
+            F6Img
+            GImg
+            HImgs
+            IDFImg
+            IDRImg
+            LImg
+            PImg
+            R6Img
+        }
+    }
+`;
+
 export default function FromPage(props: {
     formProps: FormikProps<formValues>;
     fileStates: formFiles;
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
+    idnoToBeUpdated?: string;
+    setIdnoToBeUpdated?: React.Dispatch<
+        React.SetStateAction<string | undefined>
+    >;
+    createLoading?: boolean;
 }) {
-    const { formProps, fileStates, setFileStates } = props;
+    const {
+        formProps,
+        fileStates,
+        setFileStates,
+        idnoToBeUpdated,
+        // eslint-disable-next-line no-unused-vars
+        setIdnoToBeUpdated,
+        createLoading = false,
+    } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [zipFile, setZipFile] = React.useState<File>();
     const toast = useToast();
@@ -108,7 +184,80 @@ export default function FromPage(props: {
                 isClosable: true,
             });
         },
+        refetchQueries: [
+            {
+                query: ALL_HUMAN_RESOURCE,
+                variables: { errlist: true },
+                fetchPolicy: 'network-only',
+            },
+            {
+                query: ALL_HUMAN_RESOURCE,
+                variables: { errlist: false },
+                fetchPolicy: 'network-only',
+            },
+        ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
     });
+
+    // eslint-disable-next-line no-unused-vars
+    const [filePath, setFilePath] = React.useState<{
+        F6Img: string;
+        GImg: string;
+        HImgs: string[];
+        IDFImg: string;
+        IDRImg: string;
+        LImg: string;
+        PImg: string;
+        R6Img: string;
+    }>({
+        F6Img: '',
+        GImg: '',
+        HImgs: [''],
+        IDFImg: '',
+        IDRImg: '',
+        LImg: '',
+        PImg: '',
+        R6Img: '',
+    });
+    const [searchHumanresource] = useLazyQuery(SEARCH_HUMAN_RESOURCE, {
+        onCompleted: ({ humanresource }) => {
+            const {
+                F6Img,
+                GImg,
+                HImgs,
+                IDFImg,
+                IDRImg,
+                LImg,
+                PImg,
+                R6Img,
+                ...rest
+            } = humanresource[0];
+            setFilePath({
+                ...F6Img,
+                ...GImg,
+                ...HImgs,
+                ...IDFImg,
+                ...IDRImg,
+                ...LImg,
+                ...PImg,
+                ...R6Img,
+            });
+            Object.keys(rest).forEach((key) => {
+                if (rest[key] == null) {
+                    rest[key] = '';
+                }
+            });
+            formProps.setValues(rest);
+        },
+    });
+
+    React.useEffect(() => {
+        if (idnoToBeUpdated) {
+            searchHumanresource({
+                variables: { idno: idnoToBeUpdated },
+            });
+        }
+    }, [idnoToBeUpdated]);
 
     return (
         <Flex direction={'column'} h={'100%'}>
@@ -132,7 +281,7 @@ export default function FromPage(props: {
                     </Button>
                     <Button
                         leftIcon={<EditIcon />}
-                        variant={'buttonBlueOutline'}
+                        variant={'buttonBlueSolid'}
                         isLoading={formProps.isSubmitting}
                         onClick={formProps.submitForm}
                         type="submit"
@@ -195,14 +344,14 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[2, 3, 3, 5]}
-                            fieldName="bloodtype"
+                            fieldName="bloodType"
                             formlabel="血型"
                             inputComponent={
                                 <Select>
-                                    <option value={'A型'}>A型</option>
-                                    <option value={'B型'}>B型</option>
-                                    <option value={'AB型'}>AB型</option>
-                                    <option value={'O型'}>O型</option>
+                                    <option value={'A'}>A型</option>
+                                    <option value={'B'}>B型</option>
+                                    <option value={'AB'}>AB型</option>
+                                    <option value={'O'}>O型</option>
                                 </Select>
                             }
                         ></FormGridInputItem>
@@ -264,7 +413,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'safetyHealthyEducationIssue',
-                                            'safetyHealthyEducationStatus',
+                                            'sixStatus',
                                             3,
                                             'safetyHealthyEducationWithdraw'
                                         );
@@ -283,7 +432,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'safetyHealthyEducationWithdraw',
-                                            'safetyHealthyEducationStatus',
+                                            'sixStatus',
                                             0
                                         );
                                     }}
@@ -293,7 +442,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[7, 8, 5, 7]}
-                            fieldName="safetyHealthyEducationStatus"
+                            fieldName="sixStatus"
                             formlabel="6小時效期狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -434,7 +583,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'aCertificationDate',
-                                            'aCertificationStatus',
+                                            'aStatus',
                                             3
                                         );
                                     }}
@@ -443,7 +592,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[18, 19, 1, 3]}
-                            fieldName="aCertificationStatus"
+                            fieldName="aStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -465,7 +614,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'wahCertificationDate',
-                                            'wahCertificationStatus',
+                                            'wahStatus',
                                             3
                                         );
                                     }}
@@ -474,7 +623,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[18, 19, 3, 5]}
-                            fieldName="wahCertificationStatus"
+                            fieldName="wahStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -496,7 +645,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'lCertificationDate',
-                                            'lCertificationStatus',
+                                            'lStatus',
                                             3
                                         );
                                     }}
@@ -505,7 +654,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[18, 19, 5, 7]}
-                            fieldName="lCertificationStatus"
+                            fieldName="lStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -527,7 +676,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'cCertificationDate',
-                                            'cCertificationStatus',
+                                            'cStatus',
                                             3
                                         );
                                     }}
@@ -536,7 +685,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[21, 22, 1, 3]}
-                            fieldName="cCertificationStatus"
+                            fieldName="cStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -558,7 +707,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'hCertificationDate',
-                                            'hCertificationStatus',
+                                            'hStatus',
                                             3
                                         );
                                     }}
@@ -567,7 +716,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[21, 22, 3, 5]}
-                            fieldName="hCertificationStatus"
+                            fieldName="hStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -589,7 +738,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'exCertificationDate',
-                                            'exCertificationStatus',
+                                            'exStatus',
                                             3
                                         );
                                     }}
@@ -598,7 +747,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[21, 22, 5, 7]}
-                            fieldName="exCertificationStatus"
+                            fieldName="exStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -620,7 +769,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'sCertificationDate',
-                                            'sCertificationStatus',
+                                            'sStatus',
                                             3
                                         );
                                     }}
@@ -629,7 +778,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[24, 25, 1, 3]}
-                            fieldName="sCertificationStatus"
+                            fieldName="sStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -651,7 +800,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'saCertificationDate',
-                                            'saCertificationStatus',
+                                            'sStatus',
                                             3
                                         );
                                     }}
@@ -660,7 +809,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[24, 25, 3, 5]}
-                            fieldName="saCertificationStatus"
+                            fieldName="sStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -682,7 +831,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'osCertificationDate',
-                                            'osCertificationStatus',
+                                            'osStatus',
                                             3
                                         );
                                     }}
@@ -691,7 +840,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[24, 25, 5, 7]}
-                            fieldName="osCertificationStatus"
+                            fieldName="osStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -713,7 +862,7 @@ export default function FromPage(props: {
                                         checkStatus(
                                             e,
                                             'o2CertificationDate',
-                                            'o2CertificationStatus',
+                                            'o2Status',
                                             3
                                         );
                                     }}
@@ -722,7 +871,7 @@ export default function FromPage(props: {
                         ></FormGridInputItem>
                         <FormGridInputItem
                             gridRange={[27, 28, 1, 3]}
-                            fieldName="o2CertificationStatus"
+                            fieldName="o2Status"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
                             helpText="*期效3年"
@@ -1086,7 +1235,7 @@ export default function FromPage(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {loading && (
+            {(createLoading || loading) && (
                 <Center
                     position={'absolute'}
                     top={0}

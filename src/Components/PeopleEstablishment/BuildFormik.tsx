@@ -3,6 +3,7 @@ import React from 'react';
 import FormPage from './FormPage';
 import { gql, useMutation } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
+import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 
 interface humanInfoValues {
     aCertificationDate: Date | string | undefined;
@@ -43,18 +44,18 @@ interface humanInfoValues {
 }
 
 export interface formValues extends humanInfoValues {
-    safetyHealthyEducationStatus: string | undefined;
+    sixStatus: string | undefined;
     certificationStatus: string | undefined;
-    aCertificationStatus: string | undefined;
-    wahCertificationStatus: string | undefined;
-    lCertificationStatus: string | undefined;
-    cCertificationStatus: string | undefined;
-    hCertificationStatus: string | undefined;
-    exCertificationStatus: string | undefined;
-    sCertificationStatus: string | undefined;
-    saCertificationStatus: string | undefined;
-    osCertificationStatus: string | undefined;
-    o2CertificationStatus: string | undefined;
+    aStatus: string | undefined;
+    wahStatus: string | undefined;
+    lStatus: string | undefined;
+    cStatus: string | undefined;
+    hStatus: string | undefined;
+    exStatus: string | undefined;
+    sStatus: string | undefined;
+    saStatus: string | undefined;
+    osStatus: string | undefined;
+    o2Status: string | undefined;
 }
 
 export interface formFiles {
@@ -165,13 +166,19 @@ const CREATE_HUMAN_RESOURCE = gql`
     }
 `;
 
-export default function BuildFormik() {
+export default function BuildFormik(props: { initialIdno?: string }) {
+    const { initialIdno } = props;
+
+    const [idnoToBeUpdated, setIdnoToBeUpdated] = React.useState<
+        string | undefined
+    >(initialIdno);
+
     const initialValues: formValues = {
         idno: '',
         name: '',
         gender: '男',
         birthday: '',
-        bloodType: 'A型',
+        bloodType: 'A',
         tel: '',
         liaison: '',
         emergencyTel: '',
@@ -181,7 +188,7 @@ export default function BuildFormik() {
 
         safetyHealthyEducationIssue: '',
         safetyHealthyEducationWithdraw: '',
-        safetyHealthyEducationStatus: '',
+        sixStatus: '',
 
         laborInsuranceApplyDate: '',
         laborAssociationDate: '',
@@ -201,25 +208,25 @@ export default function BuildFormik() {
         viceContractingCompanyName: '',
 
         aCertificationDate: '',
-        aCertificationStatus: '',
+        aStatus: '',
         wahCertificationDate: '',
-        wahCertificationStatus: '',
+        wahStatus: '',
         lCertificationDate: '',
-        lCertificationStatus: '',
+        lStatus: '',
         cCertificationDate: '',
-        cCertificationStatus: '',
+        cStatus: '',
         hCertificationDate: '',
-        hCertificationStatus: '',
+        hStatus: '',
         exCertificationDate: '',
-        exCertificationStatus: '',
+        exStatus: '',
         sCertificationDate: '',
-        sCertificationStatus: '',
+        sStatus: '',
         saCertificationDate: '',
-        saCertificationStatus: '',
+        saStatus: '',
         osCertificationDate: '',
-        osCertificationStatus: '',
+        osStatus: '',
         o2CertificationDate: '',
-        o2CertificationStatus: '',
+        o2Status: '',
     };
     const [fileStates, setFileStates] = React.useState<formFiles>({
         F6Img: undefined,
@@ -233,28 +240,44 @@ export default function BuildFormik() {
     });
 
     const toast = useToast();
-    const [createHumanResource] = useMutation(CREATE_HUMAN_RESOURCE, {
-        onCompleted: ({ createHumanResource }) => {
-            if (createHumanResource.ok) {
+    const [createHumanResource, { loading }] = useMutation(
+        CREATE_HUMAN_RESOURCE,
+        {
+            onCompleted: ({ createHumanResource }) => {
+                if (createHumanResource.ok) {
+                    toast({
+                        title: createHumanResource.message,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                }
+            },
+            onError: (err) => {
+                console.log(err);
                 toast({
-                    title: createHumanResource.message,
-                    status: 'success',
+                    title: '錯誤',
+                    description: `${err}`,
+                    status: 'error',
                     duration: 3000,
                     isClosable: true,
                 });
-            }
-        },
-        onError: (err) => {
-            console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
-        },
-    });
+            },
+            refetchQueries: [
+                {
+                    query: ALL_HUMAN_RESOURCE,
+                    variables: { errlist: true },
+                    fetchPolicy: 'network-only',
+                },
+                {
+                    query: ALL_HUMAN_RESOURCE,
+                    variables: { errlist: false },
+                    fetchPolicy: 'network-only',
+                },
+            ],
+            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        }
+    );
 
     return (
         <Formik
@@ -279,13 +302,18 @@ export default function BuildFormik() {
                 actions.setSubmitting(false);
             }}
         >
-            {(props) => (
-                <FormPage
-                    formProps={props}
-                    fileStates={fileStates}
-                    setFileStates={setFileStates}
-                ></FormPage>
-            )}
+            {(props) => {
+                return (
+                    <FormPage
+                        formProps={props}
+                        fileStates={fileStates}
+                        setFileStates={setFileStates}
+                        idnoToBeUpdated={idnoToBeUpdated}
+                        setIdnoToBeUpdated={setIdnoToBeUpdated}
+                        createLoading={loading}
+                    ></FormPage>
+                );
+            }}
         </Formik>
     );
 }
