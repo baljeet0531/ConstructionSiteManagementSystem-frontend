@@ -19,6 +19,7 @@
         "@types/node": "^16.11.62",
         "@types/react": "^18.0.24",
         "@types/react-dom": "^18.0.6",
+        "@types/react-signature-canvas": "^1.0.2",
         "apollo-upload-client": "^17.0.0",
         "eslint": "^8.0.1",
         "formik": "^2.2.9",
@@ -30,6 +31,7 @@
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.4.1",
         "react-scripts": "5.0.1",
+        "react-signature-canvas": "^1.0.6",
         "typescript": "*",
         "web-vitals": "^2.1.4"
     },
