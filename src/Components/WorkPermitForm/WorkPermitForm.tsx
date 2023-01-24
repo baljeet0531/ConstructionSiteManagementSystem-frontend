@@ -8,8 +8,8 @@ export default function WorkPermitForm() {
         return <Navigate to="/" replace={true} />;
 
     const [signature, setSignature] = useState<Signature>({
-        imageURL: undefined,
-        createdTime: undefined,
+        image: undefined,
+        createdTime: new Date(),
     });
 
     return (
@@ -17,6 +17,7 @@ export default function WorkPermitForm() {
             <p>工作許可單</p>
             <SignaturePad
                 title="測試"
+                signatureName="test.png"
                 signature={signature}
                 setSignature={setSignature}
             />
