@@ -1,4 +1,10 @@
-import React, { useRef, Dispatch, SetStateAction } from 'react';
+import React, {
+    useState,
+    useRef,
+    Dispatch,
+    SetStateAction,
+    useEffect,
+} from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -16,28 +22,35 @@ import {
 import SignatureCanvas from 'react-signature-canvas';
 
 export interface Signature {
-    imageURL: string | undefined;
+    image: File | undefined;
     createdTime: Date | undefined;
 }
 
 export default function SignaturePad({
     title,
+    signatureName,
     signature,
     setSignature,
+    Disable = false,
 }: {
     title: string;
+    signatureName: string;
     signature: Signature;
     setSignature: Dispatch<SetStateAction<Signature>>;
+    Disable?: boolean;
 }) {
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
+    const [imageURL, setImageURL] = useState<string>('');
     const { isOpen, onOpen, onClose } = useDisclosure();
     const clear = () => sigCanvas.current.clear();
-    const save = () => {
+    const save = async () => {
+        const base64string = sigCanvas.current
+            .getTrimmedCanvas()
+            .toDataURL('image/png');
+        const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
-            imageURL: sigCanvas.current
-                .getTrimmedCanvas()
-                .toDataURL('image/png'),
-            createdTime: new Date(),
+            image: new File([blob], signatureName),
+            createdTime: undefined,
         });
         onClose();
     };
@@ -48,15 +61,21 @@ export default function SignaturePad({
         size: 'sm',
     };
 
+    useEffect(() => {
+        if (signature.image) {
+            setImageURL(URL.createObjectURL(signature.image));
+        }
+    }, [signature]);
+
     return (
         <VStack border={'1px'} borderColor={'#919AA9'}>
             <Box
-                backgroundImage={signature.imageURL || 'none'}
+                backgroundImage={imageURL || 'none'}
                 backgroundSize={'contain'}
                 backgroundRepeat={'no-repeat'}
                 w={'fill-available'}
                 h={'fill-available'}
-                onClick={onOpen}
+                onClick={Disable ? () => {} : onOpen}
             />
             <Text
                 w={'fill-available'}
