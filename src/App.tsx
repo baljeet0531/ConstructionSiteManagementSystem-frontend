@@ -68,7 +68,10 @@ function App() {
                     path="/eng/photo"
                     element={<Layout page="eng_photo" />}
                 />
-                <Route path="/ehs/form" element={<Layout page="ehs_form" />} />
+                <Route
+                    path="/ehs/form/ehs-form"
+                    element={<Layout page="ehs_form" />}
+                />
                 <Route
                     path="/ehs/form/fault"
                     element={<Layout page="ehs_fault_form" />}

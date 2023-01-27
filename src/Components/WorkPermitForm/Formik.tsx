@@ -106,9 +106,10 @@ const CREATE_WORK_PERMIT = gql`
 `;
 
 export default function WorkPermitFormik() {
-    // const { siteId, value }: { siteId: string, value?: IWorkPermit; } = state;
     const siteId = localStorage.getItem('siteId') as string;
-    const value = undefined;
+    const value = JSON.parse(
+        localStorage.getItem('singleWorkPermit') as string
+    ) as IWorkPermit;
     const username: string = new Cookies().get('username');
     console.log(siteId);
     const initialValues: IWorkPermit = value || {
