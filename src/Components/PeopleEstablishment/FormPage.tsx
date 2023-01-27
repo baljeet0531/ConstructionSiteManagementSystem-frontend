@@ -1,5 +1,5 @@
 import React from 'react';
-
+import BACKEND from '../../Constants/EnvConstants';
 import {
     Button,
     Flex,
@@ -8,10 +8,7 @@ import {
     GridItem,
     Input,
     Select,
-    Box,
     Center,
-    Image,
-    IconButton,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -24,13 +21,23 @@ import {
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { formFiles, formValues } from './BuildFormik';
-import { AddIcon, CloseIcon, EditIcon, ReplyIcon } from '../../Icons/Icons';
+import { EditIcon, ReplyIcon } from '../../Icons/Icons';
 import GridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
 import GridTitle from './GridTitle';
-import FileInput from './FileInput';
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
+import { Cookies } from 'react-cookie';
+
+type imageType =
+    | 'F6Img'
+    | 'GImg'
+    | 'HImgs'
+    | 'IDFImg'
+    | 'IDRImg'
+    | 'LImg'
+    | 'PImg'
+    | 'R6Img';
 
 const UPLOAD_HR_ZIP = gql`
     mutation UploadHRZip($file: Upload!) {
@@ -121,12 +128,11 @@ export default function FromPage(props: {
         fileStates,
         setFileStates,
         idnoToBeUpdated,
-        // eslint-disable-next-line no-unused-vars
-        setIdnoToBeUpdated,
         createLoading = false,
     } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [zipFile, setZipFile] = React.useState<File>();
+    const [imgLoading, setImgLoading] = React.useState<boolean>(true);
     const toast = useToast();
     function checkStatus(
         e: React.ChangeEvent<HTMLInputElement>,
@@ -185,22 +191,9 @@ export default function FromPage(props: {
                 isClosable: true,
             });
         },
-        refetchQueries: [
-            {
-                query: ALL_HUMAN_RESOURCE,
-                variables: { errlist: true },
-                fetchPolicy: 'network-only',
-            },
-            {
-                query: ALL_HUMAN_RESOURCE,
-                variables: { errlist: false },
-                fetchPolicy: 'network-only',
-            },
-        ],
-        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        refetchQueries: [ALL_HUMAN_RESOURCE],
     });
 
-    // eslint-disable-next-line no-unused-vars
     const [filePath, setFilePath] = React.useState<{
         F6Img: string;
         GImg: string;
@@ -233,15 +226,16 @@ export default function FromPage(props: {
                 R6Img,
                 ...rest
             } = humanresource[0];
+
             setFilePath({
-                ...F6Img,
-                ...GImg,
-                ...HImgs,
-                ...IDFImg,
-                ...IDRImg,
-                ...LImg,
-                ...PImg,
-                ...R6Img,
+                F6Img: F6Img || '',
+                GImg: GImg || '',
+                HImgs: [...HImgs, ''],
+                IDFImg: IDFImg || '',
+                IDRImg: IDRImg || '',
+                LImg: LImg || '',
+                PImg: PImg || '',
+                R6Img: R6Img || '',
             });
             Object.keys(rest).forEach((key) => {
                 if (rest[key] == null) {
@@ -252,6 +246,86 @@ export default function FromPage(props: {
         },
     });
 
+    async function fetchAllImgs(signal: AbortSignal) {
+        for (const items of Object.entries(filePath)) {
+            const [type, path] = items as [imageType, any];
+            if (type == 'HImgs') {
+                for (const path of filePath.HImgs) {
+                    await fetchImg(type, path, signal);
+                }
+            } else {
+                await fetchImg(type, path, signal);
+            }
+        }
+    }
+
+    async function fetchImg(
+        imageType: imageType,
+        imgPath: string,
+        signal: AbortSignal
+    ) {
+        if (imgPath !== '') {
+            const cookieValue = new Cookies().get('jwt');
+            const response = await fetch(BACKEND + `/${imgPath}`, {
+                signal,
+                cache: 'no-cache',
+                headers: {
+                    Authorization: `Bearer ${cookieValue}`,
+                },
+                method: 'GET',
+            });
+            if (response.status >= 400) {
+                if (imageType == 'HImgs') {
+                    setFileStates((prevState) => ({
+                        ...prevState,
+                        [imageType]: [...prevState['HImgs'], undefined],
+                    }));
+                } else {
+                    setFileStates((prevState) => ({
+                        ...prevState,
+                        [imageType]: undefined,
+                    }));
+                }
+            } else {
+                const imageBlob = await response.blob();
+                const filename = imgPath.slice(imgPath.lastIndexOf('/') + 1);
+                const imageFile = new File([imageBlob], filename);
+                if (imageType == 'HImgs') {
+                    setFileStates((prevState) => ({
+                        ...prevState,
+                        [imageType]: [...prevState['HImgs'], imageFile],
+                    }));
+                } else {
+                    setFileStates((prevState) => ({
+                        ...prevState,
+                        [imageType]: imageFile,
+                    }));
+                }
+            }
+        } else {
+            if (imageType == 'HImgs') {
+                setFileStates((prevState) => ({
+                    ...prevState,
+                    [imageType]: [...prevState['HImgs'], undefined],
+                }));
+            } else {
+                setFileStates((prevState) => ({
+                    ...prevState,
+                    [imageType]: undefined,
+                }));
+            }
+        }
+    }
+
+    React.useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        setFileStates((prevState) => ({ ...prevState, HImgs: [] }));
+        fetchAllImgs(signal);
+        setImgLoading(false);
+        return () => controller.abort();
+    }, [filePath]);
+
     React.useEffect(() => {
         if (idnoToBeUpdated) {
             searchHumanresource({
@@ -259,6 +333,8 @@ export default function FromPage(props: {
             });
         }
     }, [idnoToBeUpdated]);
+
+    console.log(fileStates);
 
     return (
         <Flex direction={'column'} h={'100%'}>
@@ -887,240 +963,81 @@ export default function FromPage(props: {
                             gridRange={[29, 30, 1, 4]}
                             fieldName="PImg"
                             formlabel="個人照"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    fieldName={'PImg'}
-                                ></FileInput>
-                            }
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
                         <GridFileItem
                             gridRange={[29, 30, 4, 7]}
                             fieldName="LImg"
                             formlabel="勞保"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    fieldName={'LImg'}
-                                ></FileInput>
-                            }
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
 
                         <GridFileItem
                             gridRange={[30, 31, 1, 4]}
                             fieldName="IDFImg"
                             formlabel="身分證影本(正面)"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    height={'210px'}
-                                    fieldName={'IDFImg'}
-                                ></FileInput>
-                            }
+                            height={'210px'}
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
                         <GridFileItem
                             gridRange={[30, 31, 4, 7]}
                             fieldName="IDRImg"
                             formlabel="身分證影本(反面)"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    height={'210px'}
-                                    fieldName={'IDRImg'}
-                                ></FileInput>
-                            }
+                            height={'210px'}
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
 
                         <GridFileItem
                             gridRange={[31, 32, 1, 4]}
                             fieldName="F6Img"
                             formlabel="一般安全衛生教育訓練證明(正面)"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    fieldName={'F6Img'}
-                                ></FileInput>
-                            }
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
+
                         <GridFileItem
                             gridRange={[31, 32, 4, 7]}
                             fieldName="R6Img"
                             formlabel="一般安全衛生教育訓練證明(反面)"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    fieldName={'R6Img'}
-                                ></FileInput>
-                            }
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
 
                         <GridFileItem
                             gridRange={[32, 33, 1, 4]}
                             fieldName="GImg"
                             formlabel="團保"
-                            inputComponent={
-                                <FileInput
-                                    fileStates={fileStates}
-                                    setFileStates={setFileStates}
-                                    fieldName={'GImg'}
-                                ></FileInput>
-                            }
+                            fileStates={fileStates}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
                         ></GridFileItem>
 
                         <GridItem colSpan={4} rowSpan={3}></GridItem>
-                        {[...fileStates.HImgs, undefined]?.map(
-                            (file, index) => {
-                                return (
-                                    <GridFileItem
-                                        key={index}
-                                        colSpan={3}
-                                        height={'388px'}
-                                        fieldName={'HImgs'}
-                                        formlabel={'個人健康檢查資料'}
-                                        inputComponent={
-                                            <Box
-                                                flexGrow={1}
-                                                h={'374px'}
-                                                bg={'#FFFFFF'}
-                                                borderRadius={'0.375rem'}
-                                                border={'2px solid #919AA9'}
-                                            >
-                                                <Center
-                                                    w={'100%'}
-                                                    h={'100%'}
-                                                    pos={'relative'}
-                                                >
-                                                    {file ? (
-                                                        <Image
-                                                            h={'100%'}
-                                                            w={'100%'}
-                                                            objectFit={
-                                                                'contain'
-                                                            }
-                                                            src={URL.createObjectURL(
-                                                                fileStates
-                                                                    .HImgs[
-                                                                    index
-                                                                ] as File
-                                                            )}
-                                                            onLoad={(e) => {
-                                                                const image =
-                                                                    e.target as HTMLImageElement;
-                                                                URL.revokeObjectURL(
-                                                                    image.src
-                                                                );
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <Button
-                                                            leftIcon={
-                                                                <AddIcon
-                                                                    width={'14'}
-                                                                    height={
-                                                                        '14'
-                                                                    }
-                                                                />
-                                                            }
-                                                            bg={'#4C7DE7'}
-                                                            color={'#FFFFFF'}
-                                                            borderRadius={'3px'}
-                                                            size={'xs'}
-                                                            fontSize={
-                                                                '0.625rem'
-                                                            }
-                                                        >
-                                                            上傳照片
-                                                        </Button>
-                                                    )}
-                                                    <Input
-                                                        pos={'absolute'}
-                                                        h={'100%'}
-                                                        w={'100%'}
-                                                        opacity={0}
-                                                        type={'file'}
-                                                        accept={'image/*'}
-                                                        onChange={(e) => {
-                                                            if (
-                                                                e.target
-                                                                    .files &&
-                                                                e.target
-                                                                    .files[0]
-                                                            ) {
-                                                                setFileStates({
-                                                                    ...fileStates,
-                                                                    HImgs: file
-                                                                        ? [
-                                                                              ...fileStates.HImgs.slice(
-                                                                                  0,
-                                                                                  index
-                                                                              ),
-                                                                              e
-                                                                                  .target
-                                                                                  .files[0],
-                                                                              ...fileStates.HImgs.slice(
-                                                                                  index +
-                                                                                      1
-                                                                              ),
-                                                                          ]
-                                                                        : [
-                                                                              ...fileStates.HImgs,
-                                                                              e
-                                                                                  .target
-                                                                                  .files[0],
-                                                                          ],
-                                                                });
-                                                                e.target.value =
-                                                                    '';
-                                                            }
-                                                        }}
-                                                    ></Input>
-                                                    {file && (
-                                                        <IconButton
-                                                            size={'xs'}
-                                                            aria-label="DeletePhoto"
-                                                            icon={<CloseIcon />}
-                                                            bg={'none'}
-                                                            position={
-                                                                'absolute'
-                                                            }
-                                                            top={0}
-                                                            right={0}
-                                                            onClick={() => {
-                                                                if (
-                                                                    fileStates.HImgs
-                                                                ) {
-                                                                    setFileStates(
-                                                                        {
-                                                                            ...fileStates,
-                                                                            HImgs: [
-                                                                                ...fileStates.HImgs.slice(
-                                                                                    0,
-                                                                                    index
-                                                                                ),
-                                                                                ...fileStates.HImgs.slice(
-                                                                                    index +
-                                                                                        1
-                                                                                ),
-                                                                            ],
-                                                                        }
-                                                                    );
-                                                                }
-                                                            }}
-                                                        ></IconButton>
-                                                    )}
-                                                </Center>
-                                            </Box>
-                                        }
-                                    ></GridFileItem>
-                                );
-                            }
-                        )}
+                        {fileStates.HImgs.map((file, index) => {
+                            return (
+                                <GridFileItem
+                                    key={index}
+                                    colSpan={3}
+                                    height={'388px'}
+                                    fieldName={'HImgs'}
+                                    formlabel={'個人健康檢查資料'}
+                                    fileStates={fileStates}
+                                    setFileStates={setFileStates}
+                                    imgLoading={imgLoading}
+                                    index={index}
+                                ></GridFileItem>
+                            );
+                        })}
                     </Grid>
                 </Form>
             </Flex>
@@ -1240,8 +1157,8 @@ export default function FromPage(props: {
                 <Center
                     position={'absolute'}
                     top={0}
-                    left={0}
-                    w={'100vw'}
+                    left={'20vw'}
+                    w={'80vw'}
                     h={'100vh'}
                     bg={'#D9D9D980'}
                     zIndex={2}

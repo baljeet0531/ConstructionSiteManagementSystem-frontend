@@ -614,6 +614,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const timeout = React.useRef<any>();
 
     const { loading } = useQuery(ALL_HUMAN_RESOURCE, {
+        notifyOnNetworkStatusChange: true,
         variables: {
             errlist: errorOnly,
         },
@@ -634,8 +635,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         onError: (err) => {
             console.log(err);
         },
+        fetchPolicy: 'cache-and-network',
     });
-
     const [deleteHumanResource, { loading: deleteLoading }] = useMutation(
         DELETE_HUMAN_RESOURCE,
         {
@@ -659,19 +660,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     isClosable: true,
                 });
             },
-            refetchQueries: [
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: true },
-                    fetchPolicy: 'network-only',
-                },
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: false },
-                    fetchPolicy: 'network-only',
-                },
-            ],
-            onQueryUpdated: (observableQuery) => observableQuery.refetch(), //wait for refetchQueries, then exectue onCompeleted function
+            refetchQueries: [ALL_HUMAN_RESOURCE],
             fetchPolicy: 'network-only',
         }
     );
@@ -835,8 +824,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 <Center
                     position={'absolute'}
                     top={0}
-                    left={0}
-                    w={'100vw'}
+                    left={'20vw'}
+                    w={'80vw'}
                     h={'100vh'}
                     bg={'#D9D9D980'}
                     zIndex={2}

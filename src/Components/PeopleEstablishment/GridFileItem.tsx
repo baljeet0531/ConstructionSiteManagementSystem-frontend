@@ -7,6 +7,8 @@ import {
     Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import { formFiles } from './BuildFormik';
+import FileInput from './FileInput';
 
 export default function GridFileItem(props: {
     gridRange?: [
@@ -17,10 +19,13 @@ export default function GridFileItem(props: {
     ];
     colSpan?: ResponsiveValue<number | 'auto'> | undefined;
     height?: any;
-    fieldName?: string;
-    formlabel?: string;
-    inputComponent?: React.ReactElement;
+    fieldName: keyof formFiles;
+    formlabel: string;
     helpText?: String;
+    fileStates: formFiles;
+    setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
+    imgLoading: boolean;
+    index?: number;
 }) {
     const {
         gridRange,
@@ -28,8 +33,11 @@ export default function GridFileItem(props: {
         height,
         fieldName,
         formlabel,
-        inputComponent,
         helpText,
+        imgLoading,
+        fileStates,
+        setFileStates,
+        index = 0,
     } = props;
 
     return (
@@ -41,17 +49,22 @@ export default function GridFileItem(props: {
             colStart={gridRange && gridRange[2]}
             colEnd={gridRange && gridRange[3]}
         >
-            {fieldName && inputComponent && formlabel && (
+            {
                 <FormControl>
                     <Flex align={'flex-start'}>
                         <Text variant={'formlabel'}>{formlabel}</Text>
-                        {
-                            <inputComponent.type
-                                {...inputComponent.props}
-                                ml={'8px'}
-                                variant={'formOutline'}
-                            />
-                        }
+                        <FileInput
+                            height={height}
+                            setFileStates={setFileStates}
+                            imgLoading={imgLoading}
+                            file={
+                                fieldName == 'HImgs'
+                                    ? fileStates[fieldName][index]
+                                    : fileStates[fieldName]
+                            }
+                            fieldName={fieldName}
+                            index={index}
+                        ></FileInput>
                     </Flex>
                     <FormHelperText
                         fontSize={'0.625rem'}
@@ -62,7 +75,7 @@ export default function GridFileItem(props: {
                         {helpText || '_'}
                     </FormHelperText>
                 </FormControl>
-            )}
+            }
         </GridItem>
     );
 }

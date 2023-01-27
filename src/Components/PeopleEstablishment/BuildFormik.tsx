@@ -68,7 +68,6 @@ export interface formFiles {
     PImg: File | undefined;
     R6Img: File | undefined;
 }
-
 const CREATE_HUMAN_RESOURCE = gql`
     mutation createHumanResource(
         $F6Img: Upload
@@ -228,10 +227,11 @@ export default function BuildFormik(props: { initialIdno?: string }) {
         o2CertificationDate: '',
         o2Status: '',
     };
+
     const [fileStates, setFileStates] = React.useState<formFiles>({
         F6Img: undefined,
         GImg: undefined,
-        HImgs: [],
+        HImgs: [undefined],
         IDFImg: undefined,
         IDRImg: undefined,
         LImg: undefined,
@@ -263,19 +263,7 @@ export default function BuildFormik(props: { initialIdno?: string }) {
                     isClosable: true,
                 });
             },
-            refetchQueries: [
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: true },
-                    fetchPolicy: 'network-only',
-                },
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: false },
-                    fetchPolicy: 'network-only',
-                },
-            ],
-            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+            refetchQueries: [ALL_HUMAN_RESOURCE],
         }
     );
 
@@ -295,9 +283,13 @@ export default function BuildFormik(props: { initialIdno?: string }) {
                             values[props as keyof formValues];
                     }
                 }
-
+                const { HImgs, ...rest } = fileStates;
                 createHumanResource({
-                    variables: { ...filteredValues, ...fileStates },
+                    variables: {
+                        ...filteredValues,
+                        ...rest,
+                        HImgs: HImgs.slice(0, -1),
+                    },
                 });
                 actions.setSubmitting(false);
             }}
