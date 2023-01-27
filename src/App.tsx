@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Layout from './Layouts/Layout';
 import Login from './Components/Login/Login';
+import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 
 function App() {
     return (
@@ -107,6 +108,10 @@ function App() {
                     element={<Layout page="outsource_fault_form" />}
                 />
                 <Route path="/login" element={<Login />}></Route>
+                <Route
+                    path="/form/work-permit"
+                    element={<WorkPermitFormik />}
+                />
             </Routes>
         </BrowserRouter>
     );
