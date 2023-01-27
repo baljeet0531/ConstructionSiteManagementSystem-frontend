@@ -11,7 +11,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem('siteId', siteId);
         // TODO: Save the workPermit item in localStorage
-        // localStorage.setItem('singleWorkPermit', valueList[e.currentTarget.id])
+        // localStorage.setItem('singleWorkPermit', JSON.stringify(valueList[e.currentTarget.id]))
         window.open(url, '_blank');
     };
 
