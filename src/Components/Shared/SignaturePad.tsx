@@ -68,21 +68,21 @@ export default function SignaturePad({
     }, [signature]);
 
     return (
-        <VStack border={'1px'} borderColor={'#919AA9'}>
+        <VStack w="100%" h="100%">
             <Box
+                w="100%"
+                h="100%"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
                 backgroundImage={imageURL || 'none'}
                 backgroundSize={'contain'}
                 backgroundRepeat={'no-repeat'}
-                w={'fill-available'}
-                h={'fill-available'}
                 onClick={Disable ? () => {} : onOpen}
-            />
-            <Text
-                w={'fill-available'}
-                pr={1}
-                fontSize={'0.8vw'}
-                align={'right'}
             >
+                {signature.image ? '' : <Text color="#66708080">請簽核</Text>}
+            </Box>
+            <Text pr={1} w="100%" fontSize="1.2vw" align="right">
                 {signature.createdTime
                     ? signature.createdTime.toLocaleString()
                     : null}
