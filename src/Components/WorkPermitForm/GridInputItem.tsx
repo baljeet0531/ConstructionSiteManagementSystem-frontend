@@ -1,11 +1,17 @@
-import { GridItem, ResponsiveValue } from '@chakra-ui/react';
-import { FastField, FieldInputProps, FormikState } from 'formik';
+import {
+    GridItem,
+    ResponsiveValue,
+    InputGroup,
+    InputRightElement,
+} from '@chakra-ui/react';
+import { Field, FieldInputProps, FormikProps } from 'formik';
 import React from 'react';
 
 export default function GridInputItem({
     gridRange,
     fieldName,
     inputComponent,
+    inputRightComponent,
     handleValidate,
     style,
     invalidStyle,
@@ -18,7 +24,8 @@ export default function GridInputItem({
     ];
     fieldName: string;
     inputComponent: React.ReactElement;
-    handleValidate: Function;
+    inputRightComponent?: React.ReactElement;
+    handleValidate?: Function;
     style?: object;
     invalidStyle?: object;
 }) {
@@ -28,31 +35,42 @@ export default function GridInputItem({
             rowEnd={gridRange[1]}
             colStart={gridRange[2]}
             colEnd={gridRange[3]}
+            {...style}
         >
-            <FastField name={fieldName} validate={handleValidate}>
+            <Field name={fieldName} validate={handleValidate}>
                 {({
                     field,
                     form,
                 }: {
                     field: FieldInputProps<any>;
-                    form: FormikState<any>;
+                    form: FormikProps<any>;
                 }) => {
-                    form.errors[fieldName] && form.touched[fieldName] ? (
-                        <inputComponent.type
-                            {...field}
-                            {...style}
-                            {...invalidStyle}
-                            {...inputComponent.props}
-                        />
-                    ) : (
-                        <inputComponent.type
-                            {...field}
-                            {...style}
-                            {...inputComponent.props}
-                        />
+                    return (
+                        <InputGroup w='100%' h='100%'>
+                            {form.errors[fieldName] &&
+                            form.touched[fieldName] ? (
+                                <inputComponent.type
+                                    {...field}
+                                    {...inputComponent.props}
+                                />
+                            ) : (
+                                <inputComponent.type
+                                    {...field}
+                                    {...inputComponent.props}
+                                    {...invalidStyle}
+                                />
+                            )}
+                            {inputRightComponent && (
+                                <InputRightElement pointerEvents="none">
+                                    <inputRightComponent.type
+                                        {...inputRightComponent.props}
+                                    />
+                                </InputRightElement>
+                            )}
+                        </InputGroup>
                     );
                 }}
-            </FastField>
+            </Field>
         </GridItem>
     );
 }
