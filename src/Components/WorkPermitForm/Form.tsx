@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { FormikProps } from 'formik';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import { IWorkPermit } from './Formik';
 import SignaturePad, { Signature } from '../Shared/SignaturePad';
 
-export default function WorkPermitForm() {
+export default function WorkPermitForm({
+    formProps,
+}: {
+    formProps: FormikProps<IWorkPermit>;
+}) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
@@ -11,6 +17,8 @@ export default function WorkPermitForm() {
         image: undefined,
         createdTime: new Date(),
     });
+
+    console.log(formProps);
 
     return (
         <>
