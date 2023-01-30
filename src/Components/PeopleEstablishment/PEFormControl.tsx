@@ -25,20 +25,19 @@ export default function PEFormControl(props: {
         inputComponent,
         helpText,
     } = props;
+
     return (
         <FormControl
             isInvalid={form.errors[fieldName] && form.touched[fieldName]}
         >
             <Flex align={labelAlign || 'center'}>
                 <Text variant={'formlabel'}>{formlabel}</Text>
-                {
-                    <inputComponent.type
-                        {...field}
-                        {...inputComponent.props} //put this below {...field} to overwrite onChange event
-                        ml={'8px'}
-                        variant={'formOutline'}
-                    />
-                }
+                <inputComponent.type
+                    {...field}
+                    {...inputComponent.props} //put this below {...field} to overwrite onChange event
+                    ml={'8px'}
+                    variant={'formOutline'}
+                />
             </Flex>
             {form.errors[fieldName] && form.touched[fieldName] ? (
                 <FormErrorMessage fontSize={'0.625rem'} m={0} ml={'85px'}>

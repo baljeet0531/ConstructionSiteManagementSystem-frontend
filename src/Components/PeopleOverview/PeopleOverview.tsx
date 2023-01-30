@@ -76,6 +76,7 @@ export const ALL_HUMAN_RESOURCE = gql`
             saStatus
             osStatus
             o2Status
+            no
         }
     }
 `;
@@ -89,87 +90,15 @@ const DELETE_HUMAN_RESOURCE = gql`
     }
 `;
 
-const SEARCH_HUMAN = gql`
-    query SearchHuman($context: String!) {
-        searchHuman(context: $context) {
+export const SEARCH_HUMAN = gql`
+    query SearchHuman($context: String!, $errlist: Boolean!) {
+        searchHuman(context: $context, errlist: $errlist) {
             idno
+            name
+            no
         }
     }
 `;
-
-// const tablist = [
-//     '個資',
-//     '相關資料1',
-//     '相關資料2',
-//     '主管證照',
-//     '保險',
-//     '證照期限1',
-//     '證照期限2',
-//     '證照期限3',
-//     '證照期限4',
-//     '證照期限5',
-// ];
-
-// interface ItabMap {
-//     tabName: | '個資'
-//     | '相關資料1'
-//     | '相關資料2'
-//     | '主管證照'
-//     | '保險'
-//     | '證照期限1'
-//     | '證照期限2'
-//     | '證照期限3'
-//     | '證照期限4'
-//     | '證照期限5';
-//     headerName:| '編號'
-//     | '姓名'
-//     | '身分證字號'
-//     | '出生日期'
-//     | '性別'
-//     | '血型'
-//     | '聯絡電話'
-//     | '家屬\n聯絡人'
-//     | '緊急\n聯絡電話'
-//     | '聯絡地址'
-//     | '"checkBox"'
-//     | '危害告知日期\n(須有存查資料)'
-//     | '供應商\n工安認證編號\n(須有存查資料)'
-//     | '一般安全衛生教育訓練(6小時)\n發證/回訓日期'
-//     | '一般安全衛生教育訓練(6小時)應回訓期限\n(三年減一天)'
-//     | '6小時期效狀況\n(期效3年)';
-// }
-
-// type tabName =
-//     | '個資'
-//     | '相關資料1'
-//     | '相關資料2'
-//     | '主管證照'
-//     | '保險'
-//     | '證照期限1'
-//     | '證照期限2'
-//     | '證照期限3'
-//     | '證照期限4'
-//     | '證照期限5';
-
-// type headerName =
-//     | '編號'
-//     | '姓名'
-//     | '身分證字號'
-//     | '出生日期'
-//     | '性別'
-//     | '血型'
-//     | '聯絡電話'
-//     | '家屬\n聯絡人'
-//     | '緊急\n聯絡電話'
-//     | '聯絡地址'
-//     | '"checkBox"'
-//     | '危害告知日期\n(須有存查資料)'
-//     | '供應商\n工安認證編號\n(須有存查資料)'
-//     | '一般安全衛生教育訓練(6小時)\n發證/回訓日期'
-//     | '一般安全衛生教育訓練(6小時)應回訓期限\n(三年減一天)'
-//     | '6小時期效狀況\n(期效3年)'
-
-// type tabItem = {[x: headerName]: headerProps}
 
 export const tabMap = {
     個資: {
@@ -593,25 +522,21 @@ export interface humanTableValues {
     R6Img: string | null | undefined;
     HImgs: string | null | undefined;
 
+    no: number | null | undefined;
     index: number | undefined;
     isCheck: boolean | undefined;
 }
 
 export default function PeopleOverview(props: { errorOnly?: boolean }) {
-    const { errorOnly = false } = props;
-
     if (!IsPermit('people_overview')) return <Navigate to="/" replace={true} />;
+    const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
 
     const [tableValue, setTableValue] = React.useState<{
-        [idno: string]: humanTableValues;
+        [primaryKey: string]: humanTableValues;
     }>();
     const [selectAll, setSelectAll] = React.useState<boolean>(false);
-    const [searchIdno, setSearchIdno] = React.useState<string[]>();
-
-    const searchInputRef = React.useRef<HTMLInputElement>(null);
-    const timeout = React.useRef<any>();
 
     const { loading } = useQuery(ALL_HUMAN_RESOURCE, {
         notifyOnNetworkStatusChange: true,
@@ -620,9 +545,14 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         },
         onCompleted: ({ allHumanresource }) => {
             const appendedHumanTable = allHumanresource.map(
-                (info: humanTableValues, index: number) => {
+                (info: any, index: number) => {
+                    const primaryKey = errorOnly ? info.no : info.idno;
+                    Object.keys(info).forEach((key) => {
+                        if (info[key] == '0001-01-01') info[key] = '日期錯誤';
+                        else if (info[key] === null) info[key] = '';
+                    });
                     return {
-                        [info.idno as string]: {
+                        [primaryKey as string]: {
                             ...info,
                             index: index + 1,
                             isCheck: false,
@@ -635,8 +565,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         onError: (err) => {
             console.log(err);
         },
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
     });
+
     const [deleteHumanResource, { loading: deleteLoading }] = useMutation(
         DELETE_HUMAN_RESOURCE,
         {
@@ -665,25 +596,33 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         }
     );
 
-    const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
+    const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
+        fetchPolicy: 'cache-and-network',
+    });
 
+    const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const timeout = React.useRef<any>();
     const handleDebounceSearch = () => {
         clearTimeout(timeout.current);
 
         if (!searchInputRef.current?.value.trim()) {
-            setSearchIdno(undefined);
+            setSearchPrimaryKey(undefined);
             return;
         }
         timeout.current = setTimeout(() => {
             searchHuman({
-                variables: { context: searchInputRef.current?.value },
+                variables: {
+                    context: searchInputRef.current?.value,
+                    errlist: errorOnly,
+                },
                 onCompleted: ({ searchHuman }) => {
                     const searchResult = searchHuman.map(
                         (info: humanTableValues) => {
-                            return info['idno'];
+                            return errorOnly ? info['no'] : info['idno'];
                         }
                     );
-                    setSearchIdno(searchResult);
+                    setSearchPrimaryKey(searchResult);
                 },
                 onError: (err) => {
                     console.log(err);
@@ -692,15 +631,20 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         }, 300);
     };
 
-    const [selectedIdno, setSelectedIdno] = React.useState<
-        (string | undefined)[]
+    const [selectedHuman, setSelectedHuman] = React.useState<
+        (
+            | { no: number | null | undefined; idno: string | undefined }
+            | undefined
+        )[]
     >([]);
 
     React.useEffect(() => {
         if (tableValue) {
-            setSelectedIdno(
+            setSelectedHuman(
                 Object.values(tableValue).flatMap((info) =>
-                    info['isCheck'] ? info['idno'] : []
+                    info['isCheck']
+                        ? { no: info['no'], idno: info['idno'] }
+                        : []
                 ) || []
             );
         }
@@ -755,13 +699,13 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     />
                 </InputGroup>
                 <Flex gap={'10px'}>
-                    {selectedIdno.length == 1 && (
+                    {selectedHuman.length == 1 && (
                         <Button
                             leftIcon={<EditIcon />}
                             variant={'buttonGrayOutline'}
                             onClick={() => {
                                 navigate('/people/establishment', {
-                                    state: { idno: selectedIdno[0] },
+                                    state: { human: selectedHuman[0] },
                                 });
                             }}
                         >
@@ -780,15 +724,12 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         leftIcon={<DeleteIcon />}
                         variant={'buttonGrayOutline'}
                         onClick={() => {
-                            const selectedIdno =
-                                tableValue &&
-                                Object.values(tableValue).flatMap((info) =>
-                                    info['isCheck'] ? info['idno'] : []
-                                );
-                            if (selectedIdno) {
+                            if (selectedHuman) {
                                 deleteHumanResource({
                                     variables: {
-                                        idno: selectedIdno,
+                                        idno: Object.values(selectedHuman).map(
+                                            (info) => info?.idno
+                                        ),
                                     },
                                 });
                             }
@@ -812,9 +753,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                                 tabItem={tabItem}
                                 tableValue={tableValue}
                                 setTableValue={setTableValue}
-                                searchIdno={searchIdno}
+                                searchPrimaryKey={searchPrimaryKey}
                                 selectAll={selectAll}
                                 setSelectAll={setSelectAll}
+                                errorOnly={errorOnly}
                             />
                         );
                     })}

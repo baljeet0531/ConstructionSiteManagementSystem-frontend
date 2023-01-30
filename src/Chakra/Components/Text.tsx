@@ -35,6 +35,13 @@ const Text = {
             wordBreak: 'keep-all',
             overflowWrap: 'break-word',
         },
+        searchResult: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '14px',
+            lineHeight: '20px',
+            color: '#667080',
+        },
     },
 };
 

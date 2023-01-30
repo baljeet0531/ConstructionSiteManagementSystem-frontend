@@ -7,7 +7,7 @@ export type ValueOf<T> = T[keyof T];
 
 export default function OverViewTable(props: {
     tabItem: ValueOf<typeof tabMap>;
-    tableValue: { [idno: string]: humanTableValues } | undefined;
+    tableValue: { [primaryKey: string]: humanTableValues } | undefined;
     setTableValue: React.Dispatch<
         React.SetStateAction<
             | {
@@ -16,17 +16,19 @@ export default function OverViewTable(props: {
             | undefined
         >
     >;
-    searchIdno: string[] | undefined;
+    searchPrimaryKey: string[] | undefined;
     selectAll: boolean;
     setSelectAll: React.Dispatch<React.SetStateAction<boolean>>;
+    errorOnly: boolean;
 }) {
     const {
         tabItem,
         tableValue,
         setTableValue,
-        searchIdno,
+        searchPrimaryKey,
         selectAll,
         setSelectAll,
+        errorOnly,
     } = props;
 
     const tableCellStyle: ChakraProps = {
@@ -63,7 +65,7 @@ export default function OverViewTable(props: {
         whiteSpace: 'nowrap',
     };
 
-    const expiredDataCellStyle: ChakraProps = {
+    const errorDataCellStyle: ChakraProps = {
         ...dataCellStyle,
         bg: '#FDFFE3',
     };
@@ -79,20 +81,23 @@ export default function OverViewTable(props: {
     // const scrollbarWidth = 12;
 
     const tableViewData: {
-        [idno: string]: humanTableValues;
+        [primaryKey: string]: humanTableValues;
     } =
-        tableValue && searchIdno && searchIdno.length != 0
-            ? Object.assign(
-                  {},
-                  ...searchIdno.map((idno: string) => {
-                      return {
-                          [idno]: {
-                              ...tableValue[idno],
-                          },
-                      };
-                  })
-              )
+        tableValue && searchPrimaryKey
+            ? searchPrimaryKey.length != 0
+                ? Object.assign(
+                      {},
+                      ...searchPrimaryKey.map((primaryKey) => {
+                          return {
+                              [primaryKey]: {
+                                  ...tableValue[primaryKey],
+                              },
+                          };
+                      })
+                  )
+                : {}
             : tableValue;
+
     return (
         <TabPanel
             p={0}
@@ -114,7 +119,7 @@ export default function OverViewTable(props: {
                 width={window.innerWidth * pageRatio - 2 * pagePadding}
                 columnWidth={(index) => {
                     const tableViewWidth =
-                        window.innerWidth * pageRatio - 2 * pagePadding; //12 is scroll bar size
+                        window.innerWidth * pageRatio - 2 * pagePadding; //TODO:scroll bar size
                     const columnRatio =
                         Object.values(tabItem)[index]['w'] / tableWidth;
                     return tableViewWidth * columnRatio;
@@ -131,12 +136,12 @@ export default function OverViewTable(props: {
                                         setSelectAll(e.target.checked);
                                         if (tableValue) {
                                             Object.keys(tableViewData).forEach(
-                                                (idno) =>
-                                                    (tableValue[idno][
+                                                (primaryKey) =>
+                                                    (tableValue[primaryKey][
                                                         'isCheck'
                                                     ] = e.target.checked)
                                             );
-                                            setTableValue(tableValue);
+                                            setTableValue({ ...tableValue });
                                         }
                                     }}
                                 ></Checkbox>
@@ -186,9 +191,12 @@ export default function OverViewTable(props: {
                                         value={info['idno']}
                                         isChecked={info['isCheck']}
                                         onChange={(e) => {
+                                            const primaryKey = errorOnly
+                                                ? info['no']
+                                                : info['idno'];
                                             setTableValue({
                                                 ...tableValue,
-                                                [info['idno'] as string]: {
+                                                [primaryKey as string]: {
                                                     ...info,
                                                     isCheck: e.target.checked,
                                                 },
@@ -201,11 +209,13 @@ export default function OverViewTable(props: {
                                 </Box>
                             );
                         } else if (
-                            header.slice(-6) == 'Status' &&
-                            info[header as keyof humanTableValues] != 'OK'
+                            info[header as keyof humanTableValues] ==
+                                '日期錯誤' ||
+                            (header.slice(-6) == 'Status' &&
+                                info[header as keyof humanTableValues] != 'OK')
                         ) {
                             return (
-                                <Box style={style} {...expiredDataCellStyle}>
+                                <Box style={style} {...errorDataCellStyle}>
                                     {info[header as keyof humanTableValues]}
                                 </Box>
                             );

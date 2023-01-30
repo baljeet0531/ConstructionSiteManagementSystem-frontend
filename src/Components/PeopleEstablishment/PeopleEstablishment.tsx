@@ -10,6 +10,8 @@ export default function PeopleEstablishment() {
     const { state } = useLocation();
 
     return (
-        <BuildFormik {...(state && { initialIdno: state.idno })}></BuildFormik>
+        <BuildFormik
+            {...(state && { initialHuman: state.human })}
+        ></BuildFormik>
     );
 }

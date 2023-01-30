@@ -26,8 +26,12 @@ import GridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
 import GridTitle from './GridTitle';
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
-import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
+import {
+    ALL_HUMAN_RESOURCE,
+    SEARCH_HUMAN,
+} from '../PeopleOverview/PeopleOverview';
 import { Cookies } from 'react-cookie';
+import GridIdnoItem from './GridIdnoItem';
 
 type imageType =
     | 'F6Img'
@@ -51,9 +55,9 @@ const UPLOAD_HR_ZIP = gql`
     }
 `;
 
-export const SEARCH_HUMAN_RESOURCE = gql`
-    query Humanresource($idno: String!) {
-        humanresource(idno: $idno) {
+export const GET_HUMAN_RESOURCE = gql`
+    query Humanresource($idno: String, $no: Int) {
+        humanresource(idno: $idno, no: $no) {
             name
             gender
             birthday
@@ -117,18 +121,30 @@ export default function FromPage(props: {
     formProps: FormikProps<formValues>;
     fileStates: formFiles;
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
-    idnoToBeUpdated?: string;
-    setIdnoToBeUpdated?: React.Dispatch<
-        React.SetStateAction<string | undefined>
+    humanToBeUpdated:
+        | {
+              no: string;
+              idno: string;
+          }
+        | undefined;
+    setHumanToBeUpdated: React.Dispatch<
+        React.SetStateAction<
+            | {
+                  no: string;
+                  idno: string;
+              }
+            | undefined
+        >
     >;
-    createLoading?: boolean;
+    submitLoading?: boolean;
 }) {
     const {
         formProps,
         fileStates,
         setFileStates,
-        idnoToBeUpdated,
-        createLoading = false,
+        humanToBeUpdated,
+        setHumanToBeUpdated,
+        submitLoading = false,
     } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [zipFile, setZipFile] = React.useState<File>();
@@ -169,30 +185,73 @@ export default function FromPage(props: {
         });
     }
 
-    const [uploadHRZip, { loading }] = useMutation(UPLOAD_HR_ZIP, {
-        onCompleted: ({ uploadHRZip }) => {
-            if (uploadHRZip.ok) {
+    const validateExpired = (value: string) =>
+        value.slice(0, 3) == '已過期' && '已過期';
+    const validateEmpty = (value: string) => !value && '欄位不能為空';
+
+    const [uploadHRZip, { loading: uploadLoading }] = useMutation(
+        UPLOAD_HR_ZIP,
+        {
+            onCompleted: ({ uploadHRZip }) => {
+                if (uploadHRZip.ok) {
+                    toast({
+                        title: uploadHRZip.message,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    setZipFile(undefined);
+                }
+            },
+            onError: (err) => {
+                console.log(err);
                 toast({
-                    title: uploadHRZip.message,
-                    status: 'success',
+                    title: '錯誤',
+                    description: `${err}`,
+                    status: 'error',
                     duration: 3000,
                     isClosable: true,
                 });
-                setZipFile(undefined);
-            }
-        },
-        onError: (err) => {
-            console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
-        },
-        refetchQueries: [ALL_HUMAN_RESOURCE],
+            },
+            refetchQueries: [ALL_HUMAN_RESOURCE],
+        }
+    );
+
+    const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
+        fetchPolicy: 'cache-and-network',
     });
+    const [searchResult, setSearchResult] =
+        React.useState<{ idno: string; name: string }[]>();
+    const timeout = React.useRef<any>();
+
+    const handleDebounceSearch = (searchInput: string) => {
+        clearTimeout(timeout.current);
+        if (!searchInput.trim()) {
+            setSearchResult(undefined);
+            return;
+        }
+        timeout.current = setTimeout(() => {
+            searchHuman({
+                variables: {
+                    context: searchInput,
+                    errlist: false,
+                },
+                onCompleted: ({
+                    searchHuman,
+                }: {
+                    searchHuman: typeof searchResult;
+                }) => {
+                    const searchMap = searchHuman?.map((info) => {
+                        return { idno: info['idno'], name: info['name'] };
+                    });
+                    setSearchResult(searchMap);
+                },
+                onError: (err) => {
+                    console.log(err);
+                },
+            });
+        }, 300);
+    };
 
     const [filePath, setFilePath] = React.useState<{
         F6Img: string;
@@ -213,7 +272,8 @@ export default function FromPage(props: {
         PImg: '',
         R6Img: '',
     });
-    const [searchHumanresource] = useLazyQuery(SEARCH_HUMAN_RESOURCE, {
+
+    const [getHumanresource] = useLazyQuery(GET_HUMAN_RESOURCE, {
         onCompleted: ({ humanresource }) => {
             const {
                 F6Img,
@@ -230,7 +290,7 @@ export default function FromPage(props: {
             setFilePath({
                 F6Img: F6Img || '',
                 GImg: GImg || '',
-                HImgs: [...HImgs, ''],
+                HImgs: HImgs ? [...HImgs, ''] : [''],
                 IDFImg: IDFImg || '',
                 IDRImg: IDRImg || '',
                 LImg: LImg || '',
@@ -238,103 +298,129 @@ export default function FromPage(props: {
                 R6Img: R6Img || '',
             });
             Object.keys(rest).forEach((key) => {
-                if (rest[key] == null) {
+                if (
+                    rest[key] == null ||
+                    rest[key] == '0001-01-01' ||
+                    rest[key] == '無法判斷：發證/回訓 月/日 輸入不合理'
+                )
                     rest[key] = '';
-                }
             });
-            formProps.setValues(rest);
+            formProps.setValues({ ...rest });
         },
-    });
-
-    async function fetchAllImgs(signal: AbortSignal) {
-        for (const items of Object.entries(filePath)) {
-            const [type, path] = items as [imageType, any];
-            if (type == 'HImgs') {
-                for (const path of filePath.HImgs) {
-                    await fetchImg(type, path, signal);
-                }
-            } else {
-                await fetchImg(type, path, signal);
-            }
-        }
-    }
-
-    async function fetchImg(
-        imageType: imageType,
-        imgPath: string,
-        signal: AbortSignal
-    ) {
-        if (imgPath !== '') {
-            const cookieValue = new Cookies().get('jwt');
-            const response = await fetch(BACKEND + `/${imgPath}`, {
-                signal,
-                cache: 'no-cache',
-                headers: {
-                    Authorization: `Bearer ${cookieValue}`,
-                },
-                method: 'GET',
+        onError: (err) => {
+            console.log(err);
+            toast({
+                title: '錯誤',
+                description: `${err}`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
             });
-            if (response.status >= 400) {
-                if (imageType == 'HImgs') {
-                    setFileStates((prevState) => ({
-                        ...prevState,
-                        [imageType]: [...prevState['HImgs'], undefined],
-                    }));
-                } else {
-                    setFileStates((prevState) => ({
-                        ...prevState,
-                        [imageType]: undefined,
-                    }));
-                }
-            } else {
-                const imageBlob = await response.blob();
-                const filename = imgPath.slice(imgPath.lastIndexOf('/') + 1);
-                const imageFile = new File([imageBlob], filename);
-                if (imageType == 'HImgs') {
-                    setFileStates((prevState) => ({
-                        ...prevState,
-                        [imageType]: [...prevState['HImgs'], imageFile],
-                    }));
-                } else {
-                    setFileStates((prevState) => ({
-                        ...prevState,
-                        [imageType]: imageFile,
-                    }));
-                }
-            }
-        } else {
-            if (imageType == 'HImgs') {
-                setFileStates((prevState) => ({
-                    ...prevState,
-                    [imageType]: [...prevState['HImgs'], undefined],
-                }));
-            } else {
-                setFileStates((prevState) => ({
-                    ...prevState,
-                    [imageType]: undefined,
-                }));
-            }
-        }
-    }
+        },
+        fetchPolicy: 'network-only',
+    });
 
     React.useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
-        setFileStates((prevState) => ({ ...prevState, HImgs: [] }));
-        fetchAllImgs(signal);
-        setImgLoading(false);
-        return () => controller.abort();
+        let setFiles = true;
+        let newFileStates: formFiles = {
+            F6Img: undefined,
+            GImg: undefined,
+            HImgs: [],
+            IDFImg: undefined,
+            IDRImg: undefined,
+            LImg: undefined,
+            PImg: undefined,
+            R6Img: undefined,
+        };
+        const fetchImg = async (imageType: imageType, imgPath: string) => {
+            if (imgPath !== '') {
+                const cookieValue = new Cookies().get('jwt');
+                const response = await fetch(BACKEND + `/${imgPath}`, {
+                    signal,
+                    cache: 'no-cache',
+                    headers: {
+                        Authorization: `Bearer ${cookieValue}`,
+                    },
+                    method: 'GET',
+                });
+                if (response.status >= 400) {
+                    if (imageType == 'HImgs') {
+                        newFileStates[imageType] = [
+                            ...newFileStates['HImgs'],
+                            undefined,
+                        ];
+                    } else {
+                        newFileStates[imageType] = undefined;
+                    }
+                } else {
+                    const imageBlob = await response.blob();
+                    const filename = imgPath.slice(
+                        imgPath.lastIndexOf('/') + 1
+                    );
+                    const imageFile = new File([imageBlob], filename);
+                    if (imageType == 'HImgs') {
+                        newFileStates[imageType] = [
+                            ...newFileStates['HImgs'],
+                            imageFile,
+                        ];
+                    } else {
+                        newFileStates[imageType] = imageFile;
+                    }
+                }
+            } else {
+                if (imageType == 'HImgs') {
+                    newFileStates[imageType] = [
+                        ...newFileStates['HImgs'],
+                        undefined,
+                    ];
+                } else {
+                    newFileStates[imageType] = undefined;
+                }
+            }
+        };
+
+        const fetchAllImgs = async () => {
+            for await (const items of Object.entries(filePath)) {
+                const [type, path] = items as [imageType, any];
+                if (type == 'HImgs') {
+                    for await (const path of filePath.HImgs) {
+                        await fetchImg(type, path);
+                    }
+                } else {
+                    await fetchImg(type, path);
+                }
+            }
+        };
+
+        fetchAllImgs()
+            .then(() => {
+                if (setFiles) {
+                    setFileStates({ ...newFileStates });
+                    setImgLoading(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        return () => {
+            controller.abort();
+            setFiles = false;
+        };
     }, [filePath]);
 
     React.useEffect(() => {
-        if (idnoToBeUpdated) {
-            searchHumanresource({
-                variables: { idno: idnoToBeUpdated },
-            });
+        if (humanToBeUpdated) {
+            humanToBeUpdated.no
+                ? getHumanresource({
+                      variables: { no: humanToBeUpdated.no },
+                  })
+                : getHumanresource({
+                      variables: { idno: humanToBeUpdated.idno },
+                  });
         }
-    }, [idnoToBeUpdated]);
-
-    console.log(fileStates);
+    }, [humanToBeUpdated]);
 
     return (
         <Flex direction={'column'} h={'100%'}>
@@ -386,17 +472,22 @@ export default function FromPage(props: {
                         templateColumns="repeat(6, 1fr)"
                         gap={'4px 45px'}
                     >
-                        <GridInputItem
+                        <GridIdnoItem
                             fieldName="idno"
+                            handleValidate={validateEmpty}
+                            formlabel={'身分證字號'}
+                            searchResult={searchResult}
+                            setHumanToBeUpdated={setHumanToBeUpdated}
+                            handleDebounceSearch={handleDebounceSearch}
+                            setSearchResult={setSearchResult}
+                            formProps={formProps}
+                            gridRange={[1, 2, 1, 3]}
+                        ></GridIdnoItem>
+                        <GridInputItem
+                            gridRange={[1, 2, 3, 5]}
                             handleValidate={(value: any) =>
                                 !value && '欄位不能為空'
                             }
-                            formlabel={'身分證字號'}
-                            inputComponent={<Input type={'text'} />}
-                            gridRange={[1, 2, 1, 3]}
-                        ></GridInputItem>
-                        <GridInputItem
-                            gridRange={[1, 2, 3, 5]}
                             fieldName="name"
                             formlabel="姓名"
                             inputComponent={<Input type={'text'} />}
@@ -519,6 +610,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[7, 8, 5, 7]}
+                            handleValidate={validateExpired}
                             fieldName="sixStatus"
                             formlabel="6小時效期狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -590,6 +682,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[11, 12, 1, 3]}
+                            handleValidate={validateExpired}
                             fieldName="certificationStatus"
                             formlabel={`主管證照\n效期狀況`}
                             inputComponent={<Input type={'text'} disabled />}
@@ -669,6 +762,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[18, 19, 1, 3]}
+                            handleValidate={validateExpired}
                             fieldName="aStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -700,6 +794,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[18, 19, 3, 5]}
+                            handleValidate={validateExpired}
                             fieldName="wahStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -731,6 +826,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[18, 19, 5, 7]}
+                            handleValidate={validateExpired}
                             fieldName="lStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -762,6 +858,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[21, 22, 1, 3]}
+                            handleValidate={validateExpired}
                             fieldName="cStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -793,6 +890,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[21, 22, 3, 5]}
+                            handleValidate={validateExpired}
                             fieldName="hStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -824,6 +922,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[21, 22, 5, 7]}
+                            handleValidate={validateExpired}
                             fieldName="exStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -855,6 +954,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[24, 25, 1, 3]}
+                            handleValidate={validateExpired}
                             fieldName="sStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -886,6 +986,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[24, 25, 3, 5]}
+                            handleValidate={validateExpired}
                             fieldName="sStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -917,6 +1018,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[24, 25, 5, 7]}
+                            handleValidate={validateExpired}
                             fieldName="osStatus"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -948,6 +1050,7 @@ export default function FromPage(props: {
                         ></GridInputItem>
                         <GridInputItem
                             gridRange={[27, 28, 1, 3]}
+                            handleValidate={validateExpired}
                             fieldName="o2Status"
                             formlabel="期效狀況"
                             inputComponent={<Input type={'text'} disabled />}
@@ -1153,7 +1256,7 @@ export default function FromPage(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {(createLoading || loading) && (
+            {(submitLoading || uploadLoading) && (
                 <Center
                     position={'absolute'}
                     top={0}
