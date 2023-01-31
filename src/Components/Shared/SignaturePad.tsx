@@ -11,7 +11,6 @@ import {
     Box,
     Text,
     VStack,
-    Image,
     useDisclosure,
 } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
@@ -65,15 +64,15 @@ export default function SignaturePad({
                 w="100%"
                 h="100%"
                 display="flex"
+                backgroundImage={imageURL}
+                backgroundRepeat="no-repeat"
+                backgroundSize="contain"
+                backgroundPosition="center"
                 alignItems="center"
                 justifyContent="center"
                 onClick={Disable ? () => {} : onOpen}
             >
-                {signature?.image ? (
-                    <Image src={imageURL} />
-                ) : (
-                    <Text color="#66708080">請簽核</Text>
-                )}
+                {signature?.image ? '' : <Text color="#66708080">請簽核</Text>}
             </Box>
             <Text pr={1} w="100%" fontSize="1.2vw" align="right">
                 {signature?.time ? signature.time.toLocaleString() : null}
