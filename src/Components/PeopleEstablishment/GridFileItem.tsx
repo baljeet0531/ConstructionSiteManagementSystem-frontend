@@ -7,7 +7,7 @@ import {
     Text,
 } from '@chakra-ui/react';
 import React from 'react';
-import { formFiles } from './BuildFormik';
+import { formFiles } from './PeopleEstablishment';
 import FileInput from './FileInput';
 
 export default function GridFileItem(props: {
