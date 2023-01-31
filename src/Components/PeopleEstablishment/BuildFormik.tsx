@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React from 'react';
 import FormPage from './FormPage';
-import { gql, useMutation } from '@apollo/client';
+import { ApolloError, gql, useMutation } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
 import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 
@@ -363,8 +363,37 @@ export default function BuildFormik(props: {
                     }
                 }
                 const { HImgs, ...rest } = fileStates;
-                console.log(humanToBeUpdated);
 
+                const handleCompeleted = (message: string) => {
+                    toast({
+                        title: message,
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    setFileStates({
+                        F6Img: undefined,
+                        GImg: undefined,
+                        HImgs: [undefined],
+                        IDFImg: undefined,
+                        IDRImg: undefined,
+                        LImg: undefined,
+                        PImg: undefined,
+                        R6Img: undefined,
+                    });
+                    setHumanToBeUpdated(undefined);
+                    actions.resetForm();
+                };
+                const handleErr = (err: ApolloError) => {
+                    console.log(err);
+                    toast({
+                        title: '錯誤',
+                        description: `${err}`,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                };
                 if (humanToBeUpdated && humanToBeUpdated.no == '') {
                     updateHumanResource({
                         variables: {
@@ -374,36 +403,10 @@ export default function BuildFormik(props: {
                         },
                         onCompleted: ({ updateHumanResource }) => {
                             if (updateHumanResource.ok) {
-                                toast({
-                                    title: updateHumanResource.message,
-                                    status: 'success',
-                                    duration: 3000,
-                                    isClosable: true,
-                                });
-                                setFileStates({
-                                    F6Img: undefined,
-                                    GImg: undefined,
-                                    HImgs: [undefined],
-                                    IDFImg: undefined,
-                                    IDRImg: undefined,
-                                    LImg: undefined,
-                                    PImg: undefined,
-                                    R6Img: undefined,
-                                });
-                                setHumanToBeUpdated(undefined);
-                                actions.resetForm();
+                                handleCompeleted(updateHumanResource.message);
                             }
                         },
-                        onError: (err) => {
-                            console.log(err);
-                            toast({
-                                title: '錯誤',
-                                description: `${err}`,
-                                status: 'error',
-                                duration: 3000,
-                                isClosable: true,
-                            });
-                        },
+                        onError: handleErr,
                         refetchQueries: [ALL_HUMAN_RESOURCE],
                     });
                 } else {
@@ -415,36 +418,10 @@ export default function BuildFormik(props: {
                         },
                         onCompleted: ({ createHumanResource }) => {
                             if (createHumanResource.ok) {
-                                toast({
-                                    title: createHumanResource.message,
-                                    status: 'success',
-                                    duration: 3000,
-                                    isClosable: true,
-                                });
-                                setFileStates({
-                                    F6Img: undefined,
-                                    GImg: undefined,
-                                    HImgs: [undefined],
-                                    IDFImg: undefined,
-                                    IDRImg: undefined,
-                                    LImg: undefined,
-                                    PImg: undefined,
-                                    R6Img: undefined,
-                                });
-                                setHumanToBeUpdated(undefined);
-                                actions.resetForm();
+                                handleCompeleted(createHumanResource.message);
                             }
                         },
-                        onError: (err) => {
-                            console.log(err);
-                            toast({
-                                title: '錯誤',
-                                description: `${err}`,
-                                status: 'error',
-                                duration: 3000,
-                                isClosable: true,
-                            });
-                        },
+                        onError: handleErr,
                         refetchQueries: [ALL_HUMAN_RESOURCE],
                     });
                 }

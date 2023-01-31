@@ -26,7 +26,6 @@ export default function GridInputItem(props: {
     ];
     fieldName: string;
     formlabel: string;
-    // inputComponent: React.ReactElement;
     labelAlign?: any;
     helpText?: String;
     handleValidate?: Function;

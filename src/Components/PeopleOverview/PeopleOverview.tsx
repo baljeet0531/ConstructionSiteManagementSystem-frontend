@@ -597,7 +597,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     );
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
     });
 
     const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();

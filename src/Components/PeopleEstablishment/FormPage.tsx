@@ -218,7 +218,7 @@ export default function FromPage(props: {
     );
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
     });
     const [searchResult, setSearchResult] =
         React.useState<{ idno: string; name: string }[]>();
