@@ -1,10 +1,4 @@
-import React, {
-    useState,
-    useRef,
-    Dispatch,
-    SetStateAction,
-    useEffect,
-} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -17,28 +11,25 @@ import {
     Box,
     Text,
     VStack,
+    Image,
     useDisclosure,
 } from '@chakra-ui/react';
+import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
-
-export interface Signature {
-    image: File | undefined;
-    createdTime: Date | undefined;
-}
+import { SignatureStateItem } from '../../Interface/Signature';
 
 export default function SignaturePad({
     title,
     signatureName,
-    signature,
-    setSignature,
+    state,
     Disable = false,
 }: {
     title: string;
     signatureName: string;
-    signature: Signature;
-    setSignature: Dispatch<SetStateAction<Signature>>;
+    state: SignatureStateItem;
     Disable?: boolean;
 }) {
+    const [signature, setSignature] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
     const [imageURL, setImageURL] = useState<string>('');
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -50,7 +41,8 @@ export default function SignaturePad({
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
             image: new File([blob], signatureName),
-            createdTime: undefined,
+            time: undefined,
+            owner: new Cookies().get('username'),
         });
         onClose();
     };
@@ -62,8 +54,8 @@ export default function SignaturePad({
     };
 
     useEffect(() => {
-        if (signature.image) {
-            setImageURL(URL.createObjectURL(signature.image));
+        if (signature && signature.image) {
+            setImageURL(URL.createObjectURL(signature.image as File));
         }
     }, [signature]);
 
@@ -75,17 +67,16 @@ export default function SignaturePad({
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                backgroundImage={imageURL || 'none'}
-                backgroundSize={'contain'}
-                backgroundRepeat={'no-repeat'}
                 onClick={Disable ? () => {} : onOpen}
             >
-                {signature.image ? '' : <Text color="#66708080">請簽核</Text>}
+                {signature?.image ? (
+                    <Image src={imageURL} />
+                ) : (
+                    <Text color="#66708080">請簽核</Text>
+                )}
             </Box>
             <Text pr={1} w="100%" fontSize="1.2vw" align="right">
-                {signature.createdTime
-                    ? signature.createdTime.toLocaleString()
-                    : null}
+                {signature?.time ? signature.time.toLocaleString() : null}
             </Text>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
