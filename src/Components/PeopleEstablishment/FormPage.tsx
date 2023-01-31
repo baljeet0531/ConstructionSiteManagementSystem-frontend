@@ -20,7 +20,7 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
-import { formFiles, formValues } from './BuildFormik';
+import { formFiles, formValues } from './PeopleEstablishment';
 import { EditIcon, ReplyIcon } from '../../Icons/Icons';
 import GridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';

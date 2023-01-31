@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { Field, FormikProps } from 'formik';
 import React from 'react';
-import { formValues } from './BuildFormik';
+import { formValues } from './PeopleEstablishment';
 
 export default function GridInputItem(props: {
     gridRange: [
