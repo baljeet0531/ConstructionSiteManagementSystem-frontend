@@ -35,6 +35,7 @@ export default function GridInputItem({
             rowEnd={gridRange[1]}
             colStart={gridRange[2]}
             colEnd={gridRange[3]}
+            paddingTop='5px'
             {...style}
         >
             <Field name={fieldName} validate={handleValidate}>

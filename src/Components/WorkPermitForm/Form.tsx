@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import {
     Box,
     Button,
+    Checkbox,
     Grid,
     GridItem,
     Image,
@@ -12,37 +13,23 @@ import {
     HStack,
     VStack,
 } from '@chakra-ui/react';
-import { FormikProps, Form, Field } from 'formik';
-import { IWorkPermit } from './Formik';
+import { FormikProps, Form } from 'formik';
+import { IWorkPermit, SignatureName } from './Formik';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
+import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import SignaturePad, { Signature } from '../Shared/SignaturePad';
+import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from './GridInputItem';
 
 export default function WorkPermitForm({
     formProps,
+    signatures,
 }: {
     formProps: FormikProps<IWorkPermit>;
+    signatures: Record<SignatureName, SignatureStateItem>;
 }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
-
-    const [approved, setApproved] = useState<Signature>({
-        image: undefined,
-        createdTime: undefined,
-    });
-    const [review, setReview] = useState<Signature>({
-        image: undefined,
-        createdTime: undefined,
-    });
-    const [supplierManager, setSupplierManager] = useState<Signature>({
-        image: undefined,
-        createdTime: undefined,
-    });
-    const [supplier, setSupplier] = useState<Signature>({
-        image: undefined,
-        createdTime: undefined,
-    });
 
     const titleStyle = {
         border: '1px',
@@ -56,7 +43,7 @@ export default function WorkPermitForm({
         ...titleStyle,
         borderTop: '0px',
         borderRight: '0px',
-        paddingLeft: '8px',
+        paddingLeft: '12px',
     };
 
     const lastStyle = {
@@ -70,6 +57,11 @@ export default function WorkPermitForm({
         borderTop: '0px',
         borderRight: '0px',
         justifyContent: 'center',
+    };
+
+    const placeholderStyle = {
+        color: '#667080',
+        opacity: 0.5,
     };
 
     return (
@@ -100,26 +92,26 @@ export default function WorkPermitForm({
                         <Text>工作許可單</Text>
                     </VStack>
                     <HStack>
-                        <Field
-                            type="checkbox"
-                            name="applied"
-                            validate={(value: boolean) => {
+                        <GridInputItem
+                            gridRange={['auto', 'auto', 'auto', 'auto']}
+                            fieldName="applied"
+                            inputComponent={<Checkbox>初次申請</Checkbox>}
+                            handleValidate={(value: boolean) => {
                                 if (value && formProps.values['modified']) {
                                     formProps.setFieldValue('modified', false);
                                 }
                             }}
                         />
-                        <Text>初次申請</Text>
-                        <Field
-                            type="checkbox"
-                            name="modified"
-                            validate={(value: boolean) => {
+                        <GridInputItem
+                            gridRange={['auto', 'auto', 'auto', 'auto']}
+                            fieldName="modified"
+                            inputComponent={<Checkbox>申請異動</Checkbox>}
+                            handleValidate={(value: boolean) => {
                                 if (value && formProps.values['applied']) {
                                     formProps.setFieldValue('applied', false);
                                 }
                             }}
                         />
-                        <Text>異動申請</Text>
                     </HStack>
                 </Flex>
                 <Grid
@@ -164,25 +156,85 @@ export default function WorkPermitForm({
 
                     <GridItem {...numberStyle}>5</GridItem>
                     <GridItem {...contentStyle}>監工單位：</GridItem>
-                    <GridItem colStart={3} colEnd={6} {...lastStyle} />
+                    <GridInputItem
+                        gridRange={[6, 7, 3, 6]}
+                        fieldName="supervisorCorp"
+                        inputComponent={
+                            <Input
+                                type="text"
+                                border="0px"
+                                placeholder="填寫"
+                                _placeholder={placeholderStyle}
+                            />
+                        }
+                        style={lastStyle}
+                    />
 
                     <GridItem {...numberStyle}>6</GridItem>
                     <GridItem {...contentStyle}>監工：</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[7, 8, 3, 4]}
+                        fieldName="supervisor"
+                        inputComponent={
+                            <Input
+                                type="text"
+                                border="0px"
+                                placeholder="填寫"
+                                _placeholder={placeholderStyle}
+                            />
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>
-                    <GridItem {...lastStyle} />
+                    <GridInputItem
+                        gridRange={[7, 8, 5, 6]}
+                        fieldName="tel"
+                        inputComponent={
+                            <Input
+                                type="text"
+                                border="0px"
+                                placeholder="填寫"
+                                _placeholder={placeholderStyle}
+                            />
+                        }
+                        style={lastStyle}
+                    />
 
                     <GridItem {...numberStyle}>7</GridItem>
                     <GridItem {...contentStyle}>專案編號：</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[8, 9, 3, 4]}
+                        fieldName="siteId"
+                        inputComponent={
+                            <Input
+                                type="text"
+                                border="0px"
+                                placeholder="填寫"
+                                _placeholder={placeholderStyle}
+                            />
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...contentStyle}>工程名稱：</GridItem>
-                    <GridItem {...lastStyle} />
+                    <GridInputItem
+                        gridRange={[8, 9, 5, 6]}
+                        fieldName="projectName"
+                        inputComponent={
+                            <Input
+                                type="text"
+                                border="0px"
+                                placeholder="填寫"
+                                _placeholder={placeholderStyle}
+                            />
+                        }
+                        style={lastStyle}
+                    />
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="25vh"
+                    height="30vh"
                     templateColumns={'repeat(3, 50fr 203fr)'}
-                    templateRows={'36fr repeat(3, 50fr)'}
+                    templateRows={'36fr repeat(4, 50fr)'}
                 >
                     <GridItem
                         colStart={1}
@@ -193,24 +245,121 @@ export default function WorkPermitForm({
                         二、申請許可作業類別：（請在□內打勾）
                     </GridItem>
                     <GridItem {...numberStyle}>1</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[2, 3, 2, 3]}
+                        fieldName="opFire"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                動火作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>2</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[2, 3, 4, 5]}
+                        fieldName="opAloft"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                高架作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>3</GridItem>
-                    <GridItem {...lastStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[2, 3, 6, 7]}
+                        fieldName="opConfined"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                局限空間作業
+                            </Checkbox>
+                        }
+                        style={lastStyle}
+                    />
 
                     <GridItem {...numberStyle}>4</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[3, 4, 2, 3]}
+                        fieldName="opElectric"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                電力作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>5</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[3, 4, 4, 5]}
+                        fieldName="opCage"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                吊籠作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>6</GridItem>
-                    <GridItem {...lastStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[3, 4, 6, 7]}
+                        fieldName="opLift"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                起架吊掛作業
+                            </Checkbox>
+                        }
+                        style={lastStyle}
+                    />
 
                     <GridItem {...numberStyle}>7</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[4, 5, 2, 3]}
+                        fieldName="opAssemble"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                施工架組裝作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>8</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        gridRange={[4, 5, 4, 5]}
+                        fieldName="opDetach"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                管線拆離
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
                     <GridItem {...numberStyle}>9</GridItem>
+                    <GridInputItem
+                        gridRange={[4, 5, 6, 7]}
+                        fieldName="opHole"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                開口作業
+                            </Checkbox>
+                        }
+                        style={lastStyle}
+                    />
+
+                    <GridItem {...numberStyle}>10</GridItem>
+                    <GridInputItem
+                        gridRange={[5, 6, 2, 3]}
+                        fieldName="opChemical"
+                        inputComponent={
+                            <Checkbox w="100%" spacing="2rem">
+                                化學作業
+                            </Checkbox>
+                        }
+                        style={contentStyle}
+                    />
+                    <GridItem {...numberStyle}>11</GridItem>
+                    <GridItem {...contentStyle}></GridItem>
+                    <GridItem {...numberStyle}></GridItem>
                     <GridItem {...lastStyle}></GridItem>
                 </Grid>
                 <Grid
@@ -268,55 +417,51 @@ export default function WorkPermitForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 2, 1, 2]}
-                        fieldName="approvedRef"
+                        fieldName="approved"
                         inputComponent={
                             <SignaturePad
                                 title="核准 - 簽名"
                                 signatureName="approved-signature.png"
-                                signature={approved}
-                                setSignature={setApproved}
+                                state={signatures.approved}
                             />
                         }
                         style={numberStyle}
                     />
                     <GridInputItem
                         gridRange={[2, 2, 2, 3]}
-                        fieldName="reviewRef"
+                        fieldName="review"
                         inputComponent={
                             <SignaturePad
                                 title="審核 - 簽名"
                                 signatureName="review-signature.png"
-                                signature={review}
-                                setSignature={setReview}
+                                state={signatures.review}
                             />
                         }
                         style={numberStyle}
                     />
                     <GridInputItem
                         gridRange={[2, 2, 3, 4]}
-                        fieldName="supplierManagerRef"
+                        fieldName="supplierManager"
                         inputComponent={
                             <SignaturePad
                                 title="申請單位主管 - 簽名"
                                 signatureName="supplierManager-signature.png"
-                                signature={supplierManager}
-                                setSignature={setSupplierManager}
+                                state={signatures.supplierManager}
                             />
                         }
                         style={numberStyle}
                     />
                     <GridInputItem
                         gridRange={[2, 2, 4, 5]}
-                        fieldName="supplierRef"
+                        fieldName="supplier"
                         inputComponent={
                             <SignaturePad
                                 title="申請人 - 簽名"
                                 signatureName="supplier-signature.png"
-                                signature={supplier}
-                                setSignature={setSupplier}
+                                state={signatures.supplier}
                             />
                         }
-                        style={{...numberStyle, borderRight: '1px'}}
+                        style={{ ...numberStyle, borderRight: '1px' }}
                     />
                 </Grid>
             </Box>
