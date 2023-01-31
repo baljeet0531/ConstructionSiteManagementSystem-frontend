@@ -69,16 +69,6 @@ export default function OverViewTable(props: {
         ...dataCellStyle,
         bg: '#FDFFE3',
     };
-    const headerHeight = 65;
-
-    const pagePadding = 42;
-    const pageRatio = 0.8;
-    const tableWidth = 877;
-
-    const tablePaddingTop = 152 + headerHeight;
-    const tablePaddingBottom = 52;
-
-    // const scrollbarWidth = 12;
 
     const tableViewData: {
         [primaryKey: string]: humanTableValues;
@@ -98,6 +88,46 @@ export default function OverViewTable(props: {
                 : {}
             : tableValue;
 
+    const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
+    const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
+
+    const pagePadding = 42;
+    const pageRatio = 0.8;
+    const tableFigmaWidth = 877;
+
+    const headerHeight = 65;
+    const tablePaddingTop = 152 + headerHeight;
+    const tablePaddingBottom = 52;
+
+    // const scrollbarWidth = 12;
+
+    const [tableViewWidth, setTableViewWidth] = React.useState(
+        window.innerWidth * pageRatio - 2 * pagePadding
+    );
+    const [tableViewHeight, setTableViewHeight] = React.useState(
+        window.innerHeight - tablePaddingTop - tablePaddingBottom
+    );
+
+    const getColumnWidth = (index: number) =>
+        (Object.values(tabItem)[index]['w'] / tableFigmaWidth) * tableViewWidth;
+
+    React.useEffect(() => {
+        const watchResize = () => {
+            setTableViewWidth(window.innerWidth * pageRatio - 2 * pagePadding);
+            setTableViewHeight(
+                window.innerHeight - tablePaddingTop - tablePaddingBottom
+            );
+            variableSizeHeaderRef.current &&
+                variableSizeHeaderRef.current.resetAfterColumnIndex(0);
+            variableSizeDataRef.current &&
+                variableSizeDataRef.current.resetAfterColumnIndex(0);
+        };
+        window.addEventListener('resize', watchResize);
+        return () => {
+            window.removeEventListener('resize', watchResize);
+        };
+    }, []);
+
     return (
         <TabPanel
             p={0}
@@ -106,54 +136,57 @@ export default function OverViewTable(props: {
             h={'100%'}
             // style={{ scrollbarWidth: 'none' }}
         >
-            <VariableSizeGrid
-                style={{
-                    outline: '2px solid #919AA9',
-                    background: '#FFFFFF',
-                    scrollbarWidth: 'none',
-                    // overflowY: 'scroll',
-                }}
-                rowCount={1}
-                columnCount={Object.values(tabItem).length}
-                height={65}
-                width={window.innerWidth * pageRatio - 2 * pagePadding}
-                columnWidth={(index) => {
-                    const tableViewWidth =
-                        window.innerWidth * pageRatio - 2 * pagePadding; //TODO:scroll bar size
-                    const columnRatio =
-                        Object.values(tabItem)[index]['w'] / tableWidth;
-                    return tableViewWidth * columnRatio;
-                }}
-                rowHeight={() => 65}
-            >
-                {({ columnIndex, style }) => {
-                    return (
-                        <Center style={style} {...headerCellStyle}>
-                            {Object.keys(tabItem)[columnIndex] == 'checkBox' ? (
-                                <Checkbox
-                                    isChecked={selectAll}
-                                    onChange={(e) => {
-                                        setSelectAll(e.target.checked);
-                                        if (tableValue) {
-                                            Object.keys(tableViewData).forEach(
-                                                (primaryKey) =>
-                                                    (tableValue[primaryKey][
-                                                        'isCheck'
-                                                    ] = e.target.checked)
-                                            );
-                                            setTableValue({ ...tableValue });
-                                        }
-                                    }}
-                                ></Checkbox>
-                            ) : (
-                                Object.keys(tabItem)[columnIndex]
-                            )}
-                        </Center>
-                    );
-                }}
-            </VariableSizeGrid>
+            {
+                <VariableSizeGrid
+                    ref={variableSizeHeaderRef}
+                    style={{
+                        outline: '2px solid #919AA9',
+                        background: '#FFFFFF',
+                        scrollbarWidth: 'none',
+                        // overflowY: 'scroll',
+                    }}
+                    rowCount={1}
+                    columnCount={Object.values(tabItem).length}
+                    height={65}
+                    width={tableViewWidth}
+                    columnWidth={getColumnWidth}
+                    rowHeight={() => headerHeight}
+                >
+                    {({ columnIndex, style }) => {
+                        return (
+                            <Center style={style} {...headerCellStyle}>
+                                {Object.keys(tabItem)[columnIndex] ==
+                                'checkBox' ? (
+                                    <Checkbox
+                                        isChecked={selectAll}
+                                        onChange={(e) => {
+                                            setSelectAll(e.target.checked);
+                                            if (tableValue) {
+                                                Object.keys(
+                                                    tableViewData
+                                                ).forEach(
+                                                    (primaryKey) =>
+                                                        (tableValue[primaryKey][
+                                                            'isCheck'
+                                                        ] = e.target.checked)
+                                                );
+                                                setTableValue({
+                                                    ...tableValue,
+                                                });
+                                            }
+                                        }}
+                                    ></Checkbox>
+                                ) : (
+                                    Object.keys(tabItem)[columnIndex]
+                                )}
+                            </Center>
+                        );
+                    }}
+                </VariableSizeGrid>
+            }
             {tableValue && Object.keys(tableValue).length != 0 && (
                 <VariableSizeGrid
+                    ref={variableSizeDataRef}
                     style={{
                         outline: '2px solid #919AA9',
                         background: '#FFFFFF',
@@ -162,19 +195,9 @@ export default function OverViewTable(props: {
                     }}
                     rowCount={Object.keys(tableViewData).length}
                     columnCount={Object.values(tabItem).length}
-                    height={
-                        window.innerHeight -
-                        tablePaddingTop -
-                        tablePaddingBottom
-                    }
-                    width={window.innerWidth * pageRatio - 2 * pagePadding}
-                    columnWidth={(index) => {
-                        const tableViewWidth =
-                            window.innerWidth * pageRatio - 2 * pagePadding;
-                        const columnRatio =
-                            Object.values(tabItem)[index]['w'] / tableWidth;
-                        return tableViewWidth * columnRatio;
-                    }}
+                    height={tableViewHeight}
+                    width={tableViewWidth}
+                    columnWidth={getColumnWidth}
                     rowHeight={() => 30}
                 >
                     {({ columnIndex, rowIndex, style }) => {
