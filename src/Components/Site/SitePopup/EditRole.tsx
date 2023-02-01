@@ -109,12 +109,17 @@ export default function EditRole(props: {
         >
             <Center
                 border={'1px solid #667080'}
-                w={'32%'}
+                w={'380px'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
                 p={'30px 45px'}
             >
-                <Flex h={'100%'} direction={'column'} color={'#667080'}>
+                <Flex
+                    h={'100%'}
+                    w={'100%'}
+                    direction={'column'}
+                    color={'#667080'}
+                >
                     <Text
                         fontWeight={700}
                         fontSize={'20px'}
