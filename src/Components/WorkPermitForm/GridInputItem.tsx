@@ -4,7 +4,7 @@ import {
     InputGroup,
     InputRightElement,
 } from '@chakra-ui/react';
-import { FastField, FieldInputProps, FormikProps } from 'formik';
+import { Field, FieldInputProps, FormikProps } from 'formik';
 import React from 'react';
 
 export default function GridInputItem({
@@ -39,7 +39,7 @@ export default function GridInputItem({
             paddingTop="5px"
             {...style}
         >
-            <FastField name={fieldName} validate={handleValidate}>
+            <Field name={fieldName} validate={handleValidate}>
                 {({
                     field,
                     form,
@@ -72,7 +72,7 @@ export default function GridInputItem({
                         </InputGroup>
                     );
                 }}
-            </FastField>
+            </Field>
         </GridItem>
     );
 }

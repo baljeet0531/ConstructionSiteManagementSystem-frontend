@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import {
     Box,
@@ -8,68 +8,85 @@ import {
     GridItem,
     Image,
     Input,
+    Select,
     Flex,
     Text,
     HStack,
     VStack,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
+import { useQuery, gql } from '@apollo/client';
 import { IWorkPermit, SignatureName } from './Formik';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from './GridInputItem';
+import {
+    titleStyle,
+    contentStyle,
+    lastStyle,
+    numberStyle,
+    placeholderStyle,
+    inputStyle,
+} from './Styles';
+
+export const QUERY_WORK_PERMIT_OPTIONS = gql`
+    query workPermitOptions($siteId: String!) {
+        workContent(siteId: $siteId) {
+            content {
+                name
+                system {
+                    name
+                    systemBranch {
+                        name
+                        project
+                    }
+                }
+            }
+        }
+        siteAreas(siteId: $siteId) {
+            name
+            zone
+        }
+    }
+`;
 
 export default function WorkPermitForm({
+    siteId,
     formProps,
     signatures,
 }: {
+    siteId: string;
     formProps: FormikProps<IWorkPermit>;
     signatures: Record<SignatureName, SignatureStateItem>;
 }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const titleStyle = {
-        border: '1px',
-        borderColor: '#919AA9',
-        display: 'flex',
-        alignItems: 'center',
-        paddingLeft: '4px',
-    };
+    const [siteAreas, setSiteAreas] = useState([]);
+    const [, setWorkContent] = useState([]);
 
-    const contentStyle = {
-        ...titleStyle,
-        borderTop: '0px',
-        borderRight: '0px',
-        paddingLeft: '12px',
-    };
-
-    const lastStyle = {
-        ...contentStyle,
-        borderRight: '1px',
-    };
-
-    const numberStyle = {
-        ...titleStyle,
-        paddingLeft: '0px',
-        borderTop: '0px',
-        borderRight: '0px',
-        justifyContent: 'center',
-    };
-
-    const placeholderStyle = {
-        color: '#667080',
-        opacity: 0.5,
-    };
+    useQuery(QUERY_WORK_PERMIT_OPTIONS, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: (d) => {
+            setSiteAreas(d.siteAreas);
+            setWorkContent(d.workContent.content);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     function OpCheckBox(props: React.ComponentProps<any>) {
+        const name = props.name as keyof IWorkPermit;
+        const value = formProps.values[name] as boolean;
         return (
             <Checkbox
+                {...props}
                 w="100%"
                 spacing="2rem"
-                isChecked={formProps.values.applied}
+                isChecked={value}
                 onChange={formProps.handleChange}
             >
                 {props.children}
@@ -77,14 +94,39 @@ export default function WorkPermitForm({
         );
     }
 
-    function TextInput() {
+    function TextInput(props: React.ComponentProps<any>) {
         return (
             <Input
+                {...props}
                 type="text"
                 border="0px"
                 placeholder="填寫"
                 _placeholder={placeholderStyle}
             />
+        );
+    }
+
+    function SelectAreaInput(props: React.ComponentProps<any>) {
+        const areas = props.siteareas
+            ?.map((v: { name: string; zone: string }) => {
+                return v.name;
+            })
+            .filter(
+                (v: string, i: number, a: Array<string>) => a.indexOf(v) === i
+            );
+        return (
+            <Select {...props} border="0px">
+                <option value="" disabled hidden {...placeholderStyle}>
+                    填寫
+                </option>
+                {areas?.map((v: string) => {
+                    return (
+                        <option key={v} value={v}>
+                            {v}
+                        </option>
+                    );
+                })}
+            </Select>
         );
     }
 
@@ -167,7 +209,7 @@ export default function WorkPermitForm({
                         fieldName={'supplyDate'}
                         inputComponent={<Input type="date" border="0px" />}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={contentStyle}
+                        style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem
                         colStart={4}
@@ -182,13 +224,35 @@ export default function WorkPermitForm({
 
                     <GridItem {...numberStyle}>3</GridItem>
                     <GridItem {...contentStyle}>施工廠區：</GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridInputItem
+                        fieldName="area"
+                        inputComponent={<SelectAreaInput siteareas={siteAreas} />}
+                        style={{ ...contentStyle, ...inputStyle }}
+                    />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
                     <GridItem {...lastStyle} />
 
                     <GridItem {...numberStyle}>4</GridItem>
                     <GridItem {...contentStyle}>預計施工時間：</GridItem>
-                    <GridItem colStart={3} colEnd={6} {...lastStyle} />
+                    <GridInputItem
+                        gridRange={[5, 6, 3, 4]}
+                        fieldName="workStart"
+                        inputComponent={
+                            <Input type="datetime-local" border="0px" />
+                        }
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...contentStyle, ...inputStyle }}
+                    />
+                    <GridItem {...contentStyle}>至</GridItem>
+                    <GridInputItem
+                        gridRange={[5, 6, 5, 6]}
+                        fieldName="workEnd"
+                        inputComponent={
+                            <Input type="datetime-local" border="0px" />
+                        }
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...lastStyle, ...inputStyle }}
+                    />
 
                     <GridItem {...numberStyle}>5</GridItem>
                     <GridItem {...contentStyle}>監工單位：</GridItem>
@@ -196,7 +260,7 @@ export default function WorkPermitForm({
                         gridRange={[6, 7, 3, 6]}
                         fieldName="supervisorCorp"
                         inputComponent={<TextInput />}
-                        style={lastStyle}
+                        style={{ ...lastStyle, ...inputStyle }}
                     />
 
                     <GridItem {...numberStyle}>6</GridItem>
@@ -205,14 +269,14 @@ export default function WorkPermitForm({
                         gridRange={[7, 8, 3, 4]}
                         fieldName="supervisor"
                         inputComponent={<TextInput />}
-                        style={contentStyle}
+                        style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>
                     <GridInputItem
                         gridRange={[7, 8, 5, 6]}
                         fieldName="tel"
                         inputComponent={<TextInput />}
-                        style={lastStyle}
+                        style={{ ...lastStyle, ...inputStyle }}
                     />
 
                     <GridItem {...numberStyle}>7</GridItem>
@@ -221,14 +285,14 @@ export default function WorkPermitForm({
                         gridRange={[8, 9, 3, 4]}
                         fieldName="siteId"
                         inputComponent={<TextInput />}
-                        style={contentStyle}
+                        style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem {...contentStyle}>工程名稱：</GridItem>
                     <GridInputItem
                         gridRange={[8, 9, 5, 6]}
                         fieldName="projectName"
                         inputComponent={<TextInput />}
-                        style={lastStyle}
+                        style={{ ...lastStyle, ...inputStyle }}
                     />
                 </Grid>
                 <Grid

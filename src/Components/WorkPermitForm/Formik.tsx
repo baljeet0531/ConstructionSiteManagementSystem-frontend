@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { gql, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { useToast } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import { ISignature, SignatureStateItem } from '../../Interface/Signature';
 import WorkPermitForm from './Form';
 
@@ -41,7 +42,11 @@ export interface IWorkPermit {
     supplier: ISignature | undefined;
 }
 
-export type SignatureName = 'approved' | 'review' | 'supplier' | 'supplierManager';
+export type SignatureName =
+    | 'approved'
+    | 'review'
+    | 'supplier'
+    | 'supplierManager';
 
 const CREATE_WORK_PERMIT = gql`
     mutation uwp(
@@ -168,12 +173,22 @@ export default function WorkPermitFormik() {
         siteId: siteId,
         supervisor: '',
         supervisorCorp: '',
-        supplyDate: '',
+        supplyDate: dayjs().format('YYYY-MM-DD'),
         system: '',
         systemBranch: '',
         tel: '',
-        workEnd: '',
-        workStart: '',
+        workEnd: dayjs()
+            .add(1, 'day')
+            .hour(17)
+            .minute(30)
+            .second(0)
+            .format('YYYY-MM-DDTHH:mm:ss'),
+        workStart: dayjs()
+            .add(1, 'day')
+            .hour(8)
+            .minute(30)
+            .second(0)
+            .format('YYYY-MM-DDTHH:mm:ss'),
         zone: '',
         approved: undefined,
         review: undefined,
@@ -182,18 +197,12 @@ export default function WorkPermitFormik() {
     };
 
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        approved: useState<ISignature>(
-            initialValues.approved as ISignature
-        ),
-        review: useState<ISignature>(
-            initialValues.review as ISignature
-        ),
-        supplier: useState<ISignature>(
-            initialValues.supplier as ISignature
-        ),
+        approved: useState<ISignature>(initialValues.approved as ISignature),
+        review: useState<ISignature>(initialValues.review as ISignature),
+        supplier: useState<ISignature>(initialValues.supplier as ISignature),
         supplierManager: useState<ISignature>(
             initialValues.supplierManager as ISignature
-        )
+        ),
     };
 
     const toast = useToast();
@@ -229,7 +238,13 @@ export default function WorkPermitFormik() {
                 actions.setSubmitting(false);
             }}
         >
-            {(props) => <WorkPermitForm formProps={props} signatures={signatures}/>}
+            {(props) => (
+                <WorkPermitForm
+                    siteId={siteId}
+                    formProps={props}
+                    signatures={signatures}
+                />
+            )}
         </Formik>
     );
 }
