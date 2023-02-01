@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Layout from './Layouts/Layout';
 import Login from './Components/Login/Login';
+import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 
 function App() {
     return (
@@ -67,7 +68,10 @@ function App() {
                     path="/eng/photo"
                     element={<Layout page="eng_photo" />}
                 />
-                <Route path="/ehs/form" element={<Layout page="ehs_form" />} />
+                <Route
+                    path="/ehs/form/ehs-form"
+                    element={<Layout page="ehs_form" />}
+                />
                 <Route
                     path="/ehs/form/fault"
                     element={<Layout page="ehs_fault_form" />}
@@ -107,6 +111,10 @@ function App() {
                     element={<Layout page="outsource_fault_form" />}
                 />
                 <Route path="/login" element={<Login />}></Route>
+                <Route
+                    path="/form/work-permit"
+                    element={<WorkPermitFormik />}
+                />
             </Routes>
         </BrowserRouter>
     );
