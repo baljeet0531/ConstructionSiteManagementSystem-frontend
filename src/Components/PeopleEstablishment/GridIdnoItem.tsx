@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     Text,
     Flex,
@@ -7,7 +6,6 @@ import {
     FormControl,
     FormErrorMessage,
     FormHelperText,
-    useDisclosure,
 } from '@chakra-ui/react';
 import {
     AutoComplete,
@@ -71,9 +69,6 @@ export default function GridInputItem(props: {
         handleDebounceSearch,
         setHumanToBeUpdated,
     } = props;
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const initialFocusRef = React.useRef(null);
 
     return (
         <GridItem
