@@ -128,7 +128,7 @@ export default function AddArea(props: {
         >
             <Center
                 border={'1px solid #667080'}
-                w={'32%'}
+                w={'380px'}
                 maxH={'80%'}
                 borderRadius={'10px'}
                 bg={'#FFFFFF'}
@@ -137,6 +137,7 @@ export default function AddArea(props: {
                 <Flex
                     h={'100%'}
                     maxH={'100%'}
+                    w={'100%'}
                     direction={'column'}
                     color={'#667080'}
                 >
