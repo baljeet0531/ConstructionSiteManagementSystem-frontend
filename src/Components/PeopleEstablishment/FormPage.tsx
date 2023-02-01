@@ -33,6 +33,7 @@ import {
 } from '../PeopleOverview/PeopleOverview';
 import { Cookies } from 'react-cookie';
 import GridIdnoItem from './GridIdnoItem';
+import dayjs from 'dayjs';
 
 type imageType =
     | 'F6Img'
@@ -158,31 +159,22 @@ export default function FromPage(props: {
         year: number,
         withdraw?: string
     ) {
-        const date = new Date(e.target.value);
-        const withDrawDate = new Date(
-            date.getFullYear() + year,
-            date.getMonth(),
-            date.getDate() +
-                (target == 'certificationWithdraw' ||
-                target == 'safetyHealthyEducationWithdraw'
-                    ? 1
-                    : 0),
-            0,
-            0,
-            0,
-            -1
-        );
+        const date = dayjs(e.target.value);
+        const withDrawDate =
+            target == 'certificationWithdraw' ||
+            target == 'safetyHealthyEducationWithdraw'
+                ? date
+                : date.add(year, 'year').subtract(1, 'day');
 
-        const now = new Date();
-        const diff = now.valueOf() - withDrawDate.valueOf();
+        const now = dayjs();
+        const diff = now.diff(withDrawDate, 'day');
         formProps.setValues({
             ...formProps.values,
-            [target]: date.toISOString().split('T')[0],
+            [target]: date.format('YYYY-MM-DD'),
             ...(withdraw && {
-                [withdraw]: withDrawDate.toISOString().split('T')[0],
+                [withdraw]: withDrawDate.format('YYYY-MM-DD'),
             }),
-            [status]:
-                diff <= 0 ? 'OK' : `已過期${Math.ceil(diff / 86400000)}天`,
+            [status]: diff <= 0 ? 'OK' : `已過期${diff}天`,
         });
     }
 
