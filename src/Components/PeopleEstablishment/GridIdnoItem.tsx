@@ -1,18 +1,21 @@
+/* eslint-disable no-unused-vars */
 import {
     Text,
     Flex,
-    FormControl,
     GridItem,
     ResponsiveValue,
-    Popover,
+    FormControl,
     FormErrorMessage,
     FormHelperText,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverBody,
     useDisclosure,
-    Input,
 } from '@chakra-ui/react';
+import {
+    AutoComplete,
+    AutoCompleteInput,
+    AutoCompleteItem,
+    AutoCompleteList,
+} from '@choc-ui/chakra-autocomplete';
+
 import { Field, FormikProps } from 'formik';
 import React from 'react';
 import { formValues } from './PeopleEstablishment';
@@ -89,90 +92,69 @@ export default function GridInputItem(props: {
                             }
                         >
                             <Flex align={labelAlign || 'center'}>
-                                <Text variant={'formlabel'}>{formlabel}</Text>
-                                <Popover
-                                    isOpen={isOpen}
-                                    onClose={onClose}
-                                    placement="bottom"
-                                    closeOnBlur={true}
-                                    initialFocusRef={initialFocusRef}
-                                    returnFocusOnClose={false}
-                                >
-                                    <PopoverTrigger>
-                                        <Input
-                                            ref={initialFocusRef}
-                                            {...field}
-                                            type={'text'}
-                                            ml={'8px'}
-                                            variant={'formOutline'}
-                                            onChange={(e) => {
-                                                formProps.handleChange(e);
-                                                handleDebounceSearch(
-                                                    e.target.value
-                                                );
-                                                onOpen();
-                                            }}
-                                            onBlur={(e) => {
-                                                formProps.handleBlur(e);
-                                                onClose();
-                                            }}
-                                        />
-                                    </PopoverTrigger>
-                                    <PopoverContent>
-                                        <PopoverBody>
-                                            <Flex
-                                                overflowX={'auto'}
-                                                maxH={'104px'}
-                                                direction={'column'}
-                                            >
-                                                {searchResult &&
-                                                    searchResult.map(
-                                                        (
-                                                            { idno, name },
-                                                            index
-                                                        ) => {
-                                                            return (
-                                                                <Flex
-                                                                    key={index}
-                                                                    direction={
-                                                                        'column'
-                                                                    }
-                                                                    p={'0.5rem'}
-                                                                    onClick={() => {
-                                                                        setHumanToBeUpdated(
-                                                                            {
-                                                                                no: '',
-                                                                                idno: idno,
-                                                                            }
-                                                                        );
-                                                                        onClose();
-                                                                    }}
-                                                                >
-                                                                    <Text
-                                                                        variant={
-                                                                            'searchResult'
-                                                                        }
-                                                                    >
-                                                                        {idno}
-                                                                    </Text>
-                                                                    <Text
-                                                                        variant={
-                                                                            'searchResult'
-                                                                        }
-                                                                        color={
-                                                                            'rgba(102, 112, 128, 0.5)'
-                                                                        }
-                                                                    >
-                                                                        {name}
-                                                                    </Text>
-                                                                </Flex>
+                                <Text variant={'formlabel'} mr={'8px'}>
+                                    {formlabel}
+                                </Text>
+                                <AutoComplete openOnFocus>
+                                    <AutoCompleteInput
+                                        {...field}
+                                        type={'text'}
+                                        variant={'formOutline'}
+                                        onChange={(e) => {
+                                            formProps.handleChange(e);
+                                            handleDebounceSearch(
+                                                e.target.value
+                                            );
+                                        }}
+                                    />
+                                    <AutoCompleteList
+                                        border={'2px solid'}
+                                        borderColor={'gray.200'}
+                                        pt={'0.5rem'}
+                                        pb={'0.5rem'}
+                                    >
+                                        {searchResult &&
+                                            searchResult.map(
+                                                ({ idno, name }, index) => (
+                                                    <AutoCompleteItem
+                                                        key={index}
+                                                        value={idno}
+                                                        onClick={() => {
+                                                            setHumanToBeUpdated(
+                                                                {
+                                                                    no: '',
+                                                                    idno: idno,
+                                                                }
                                                             );
-                                                        }
-                                                    )}
-                                            </Flex>
-                                        </PopoverBody>
-                                    </PopoverContent>
-                                </Popover>
+                                                        }}
+                                                        p={'0.5rem'}
+                                                    >
+                                                        <Flex
+                                                            direction={'column'}
+                                                        >
+                                                            <Text
+                                                                variant={
+                                                                    'searchResult'
+                                                                }
+                                                            >
+                                                                {idno}
+                                                            </Text>
+                                                            <Text
+                                                                variant={
+                                                                    'searchResult'
+                                                                }
+                                                                color={
+                                                                    'rgba(102, 112, 128, 0.5)'
+                                                                }
+                                                            >
+                                                                {name}
+                                                            </Text>
+                                                        </Flex>
+                                                    </AutoCompleteItem>
+                                                )
+                                            )}
+                                    </AutoCompleteList>
+                                </AutoComplete>
                             </Flex>
                             {form.errors[fieldName] &&
                             form.touched[fieldName] ? (
