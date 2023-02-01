@@ -1,31 +1,31 @@
 // import { Cookies } from "react-cookie";
 
 export type features = {
-    dashboard?: string
-    site?: string
-    organization?: string
-    people_overview?: string
-    people_approval?: string
-    people_establishment?: string
-    project_schedule?: string
-    project_report?: string
-    project_photo?: string
-    eng_work_permit_form?: string
-    eng_toolbox_form?: string
-    eng_fault_form?: string
-    eng_env_security_form?: string
-    eng_special_form?: string
-    eng_photo?: string
-    ehs_form?: string
-    ehs_fault_form?: string
-    ehs_machinery_management?: string
-    ehs_photo?: string
-    outsource_work_permit_form?: string
-    outsource_toolbox_form?: string
-    outsource_env_security_form?: string
-    outsource_special_form?: string
-    outsource_machinery_establishment?: string
-    outsource_fault_form?: string
+    dashboard?: string;
+    site?: string;
+    organization?: string;
+    people_overview?: string;
+    people_approval?: string;
+    people_establishment?: string;
+    project_schedule?: string;
+    project_report?: string;
+    project_photo?: string;
+    eng_work_permit_form?: string;
+    eng_toolbox_form?: string;
+    eng_fault_form?: string;
+    eng_env_security_form?: string;
+    eng_special_form?: string;
+    eng_photo?: string;
+    ehs_form?: string;
+    ehs_fault_form?: string;
+    ehs_machinery_management?: string;
+    ehs_photo?: string;
+    outsource_work_permit_form?: string;
+    outsource_toolbox_form?: string;
+    outsource_env_security_form?: string;
+    outsource_special_form?: string;
+    outsource_machinery_establishment?: string;
+    outsource_fault_form?: string;
 };
 
 // type details = {

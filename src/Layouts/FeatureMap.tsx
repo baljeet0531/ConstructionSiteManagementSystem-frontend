@@ -9,7 +9,7 @@ import PeopleEstablishment from '../Components/PeopleEstablishment/PeopleEstabli
 import Schedule from '../Components/Schedule/Schedule';
 import Report from '../Components/Report/Report';
 import Photo from '../Components/Photo/Photo';
-import WorkPermitForm from '../Components/WorkPermitForm/WorkPermitForm';
+import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
 import ToolboxForm from '../Components/ToolboxForm/ToolboxForm';
 import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
@@ -112,7 +112,7 @@ export function getFeatureMap({
         eng_work_permit_form: {
             name: '工作許可單',
             path: '/eng/form/work-permit',
-            page: <WorkPermitForm />,
+            page: <WorkPermitFormOverview siteId={siteId}/>,
         },
         eng_toolbox_form: {
             name: '工具箱會議',
@@ -141,7 +141,7 @@ export function getFeatureMap({
         },
         ehs_form: {
             name: '工安自主檢查',
-            path: '/ehs/form',
+            path: '/ehs/form/ehs-form',
             page: <EHSForm />,
         },
         ehs_fault_form: {
@@ -164,13 +164,11 @@ export function getFeatureMap({
             path: '/outsource/form/work-permit',
             page: <MachineryEstablishment />,
         },
-
         outsource_toolbox_form: {
             name: '工具箱會議',
             path: '/outsource/form/toolbox',
             page: <MachineryEstablishment />,
         },
-
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/outsource/form/env-security',
@@ -181,7 +179,6 @@ export function getFeatureMap({
             path: '/outsource/form/special',
             page: <MachineryEstablishment />,
         },
-
         outsource_machinery_establishment: {
             name: '機具清單建置',
             path: '/outsource/machinery/establishment',
