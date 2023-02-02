@@ -8,7 +8,6 @@ import {
     GridItem,
     Image,
     Input,
-    Select,
     Flex,
     Text,
     HStack,
@@ -18,6 +17,7 @@ import { FormikProps, Form } from 'formik';
 import { useQuery, gql } from '@apollo/client';
 import { IWorkPermit, SignatureName } from './Formik';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
+import { ISiteArea } from '../../Interface/Site';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
@@ -27,9 +27,9 @@ import {
     contentStyle,
     lastStyle,
     numberStyle,
-    placeholderStyle,
     inputStyle,
 } from './Styles';
+import FormFactory from './Factory';
 
 export const QUERY_WORK_PERMIT_OPTIONS = gql`
     query workPermitOptions($siteId: String!) {
@@ -52,6 +52,8 @@ export const QUERY_WORK_PERMIT_OPTIONS = gql`
     }
 `;
 
+
+
 export default function WorkPermitForm({
     siteId,
     formProps,
@@ -64,8 +66,10 @@ export default function WorkPermitForm({
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const [siteAreas, setSiteAreas] = useState([]);
+    const [siteAreas, setSiteAreas] = useState<ISiteArea[]>([]);
+    const [zones, setZones] = useState<string[]>([]);
     const [, setWorkContent] = useState([]);
+    const f = new FormFactory(formProps);
 
     useQuery(QUERY_WORK_PERMIT_OPTIONS, {
         variables: {
@@ -78,57 +82,13 @@ export default function WorkPermitForm({
         fetchPolicy: 'network-only',
     });
 
-    function OpCheckBox(props: React.ComponentProps<any>) {
-        const name = props.name as keyof IWorkPermit;
-        const value = formProps.values[name] as boolean;
-        return (
-            <Checkbox
-                {...props}
-                w="100%"
-                spacing="2rem"
-                isChecked={value}
-                onChange={formProps.handleChange}
-            >
-                {props.children}
-            </Checkbox>
-        );
-    }
+    // console.log(formProps);
 
-    function TextInput(props: React.ComponentProps<any>) {
-        return (
-            <Input
-                {...props}
-                type="text"
-                border="0px"
-                placeholder="填寫"
-                _placeholder={placeholderStyle}
-            />
-        );
-    }
+    // function SelectZoneInput(props: React.ComponentProps<any>) {
+    //     return (
 
-    function SelectAreaInput(props: React.ComponentProps<any>) {
-        const areas = props.siteareas
-            ?.map((v: { name: string; zone: string }) => {
-                return v.name;
-            })
-            .filter(
-                (v: string, i: number, a: Array<string>) => a.indexOf(v) === i
-            );
-        return (
-            <Select {...props} border="0px">
-                <option value="" disabled hidden {...placeholderStyle}>
-                    填寫
-                </option>
-                {areas?.map((v: string) => {
-                    return (
-                        <option key={v} value={v}>
-                            {v}
-                        </option>
-                    );
-                })}
-            </Select>
-        );
-    }
+    //     )
+    // }
 
     return (
         <Form>
@@ -226,11 +186,20 @@ export default function WorkPermitForm({
                     <GridItem {...contentStyle}>施工廠區：</GridItem>
                     <GridInputItem
                         fieldName="area"
-                        inputComponent={<SelectAreaInput siteareas={siteAreas} />}
+                        inputComponent={f.selectAreaInput(siteAreas)}
+                        inputRightComponent={<ChevronDownIcon />}
                         style={{ ...contentStyle, ...inputStyle }}
+                        handleValidate={(value: string) => {
+                            setZones(f.getZones(value, siteAreas));
+                        }}
                     />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
-                    <GridItem {...lastStyle} />
+                    <GridInputItem
+                        fieldName="zone"
+                        inputComponent={f.selectZoneInput(zones)}
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...lastStyle, ...inputStyle }}
+                    />
 
                     <GridItem {...numberStyle}>4</GridItem>
                     <GridItem {...contentStyle}>預計施工時間：</GridItem>
@@ -259,7 +228,7 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[6, 7, 3, 6]}
                         fieldName="supervisorCorp"
-                        inputComponent={<TextInput />}
+                        inputComponent={f.textInput()}
                         style={{ ...lastStyle, ...inputStyle }}
                     />
 
@@ -268,14 +237,14 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[7, 8, 3, 4]}
                         fieldName="supervisor"
-                        inputComponent={<TextInput />}
+                        inputComponent={f.textInput()}
                         style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>
                     <GridInputItem
                         gridRange={[7, 8, 5, 6]}
                         fieldName="tel"
-                        inputComponent={<TextInput />}
+                        inputComponent={f.textInput()}
                         style={{ ...lastStyle, ...inputStyle }}
                     />
 
@@ -284,14 +253,14 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[8, 9, 3, 4]}
                         fieldName="siteId"
-                        inputComponent={<TextInput />}
+                        inputComponent={f.textInput()}
                         style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem {...contentStyle}>工程名稱：</GridItem>
                     <GridInputItem
                         gridRange={[8, 9, 5, 6]}
                         fieldName="projectName"
-                        inputComponent={<TextInput />}
+                        inputComponent={f.textInput()}
                         style={{ ...lastStyle, ...inputStyle }}
                     />
                 </Grid>
@@ -313,21 +282,24 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[2, 3, 2, 3]}
                         fieldName="opFire"
-                        inputComponent={<OpCheckBox>動火作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opFire', '動火作業')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>2</GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 4, 5]}
                         fieldName="opAloft"
-                        inputComponent={<OpCheckBox>高架作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opAloft', '高架作業')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>3</GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 6, 7]}
                         fieldName="opConfined"
-                        inputComponent={<OpCheckBox>局限空間作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox(
+                            'opConfined',
+                            '局限空間作業'
+                        )}
                         style={lastStyle}
                     />
 
@@ -335,21 +307,21 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[3, 4, 2, 3]}
                         fieldName="opElectric"
-                        inputComponent={<OpCheckBox>電力作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opElectric', '電力作業')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>5</GridItem>
                     <GridInputItem
                         gridRange={[3, 4, 4, 5]}
                         fieldName="opCage"
-                        inputComponent={<OpCheckBox>吊籠作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opCage', '吊籠作業')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>6</GridItem>
                     <GridInputItem
                         gridRange={[3, 4, 6, 7]}
                         fieldName="opLift"
-                        inputComponent={<OpCheckBox>起架吊掛作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opLift', '起架吊掛作業')}
                         style={lastStyle}
                     />
 
@@ -357,21 +329,24 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[4, 5, 2, 3]}
                         fieldName="opAssemble"
-                        inputComponent={<OpCheckBox>施工架組裝作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox(
+                            'opAssemble',
+                            '施工架組裝作業'
+                        )}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>8</GridItem>
                     <GridInputItem
                         gridRange={[4, 5, 4, 5]}
                         fieldName="opDetach"
-                        inputComponent={<OpCheckBox>管線拆離</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opDetach', '管線拆離')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>9</GridItem>
                     <GridInputItem
                         gridRange={[4, 5, 6, 7]}
                         fieldName="opHole"
-                        inputComponent={<OpCheckBox>開口作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opHole', '開口作業')}
                         style={lastStyle}
                     />
 
@@ -379,7 +354,7 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[5, 6, 2, 3]}
                         fieldName="opChemical"
-                        inputComponent={<OpCheckBox>化學作業</OpCheckBox>}
+                        inputComponent={f.opCheckBox('opChemical', '化學作業')}
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}></GridItem>
