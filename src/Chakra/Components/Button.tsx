@@ -26,6 +26,19 @@ const Button = {
                 w: 'fit-content',
             };
         },
+        buttonGraySolid: (props: StyleFunctionProps) => {
+            const solidProps = theme.components.Button.variants?.solid(props);
+            return {
+                ...solidProps,
+                fontStyle: 'normal',
+                fontWeight: '400',
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
+                height: '28px',
+                borderRadius: '0px',
+                color: '#667080',
+            };
+        },
     },
 };
 
