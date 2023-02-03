@@ -8,13 +8,12 @@ import {
     PopoverArrow,
     PopoverBody,
     PopoverContent,
-    PopoverFooter,
     PopoverTrigger,
     Text,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
-import { AddIcon, LaunchIcon } from '../../Icons/Icons';
+import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 
 export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     if (!IsPermit('eng_work_permit_form'))
@@ -50,26 +49,32 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 穩懋南科路竹廠機電一期新建工程
             </Text>
             <Text variant={'pageTitle'}>工作許可單</Text>
-            <Flex dir={'row'} align={'center'} justify={'space-between'}>
-                <Flex dir={'row'} gap={'10px'}>
-                    <Input type={'date'} variant={'formOutline'}></Input>
+            <Flex align={'center'} justify={'space-between'}>
+                <Flex gap={'10px'} align={'center'}>
+                    <Input
+                        type={'date'}
+                        width={'208px'}
+                        variant={'formOutline'}
+                    ></Input>
                     <Popover placement={'bottom-start'}>
                         <PopoverTrigger>
-                            <Button>搜尋條件</Button>
+                            <Button
+                                rightIcon={<ArrowDropDownIcon />}
+                                variant={'buttonGraySolid'}
+                            >
+                                搜尋條件
+                            </Button>
                         </PopoverTrigger>
                         <PopoverContent>
                             <PopoverArrow />
                             <PopoverBody>
-                                Are you sure you want to have that milkshake?
+                                <Text>PopoverBody</Text>
+                                <Flex justifyContent="flex-end">
+                                    <Button variant={'buttonBlueSolid'}>
+                                        確定搜尋
+                                    </Button>
+                                </Flex>
                             </PopoverBody>
-                            <PopoverFooter
-                                display="flex"
-                                justifyContent="flex-end"
-                            >
-                                <Button variant={'buttonBlueSolid'}>
-                                    確定搜尋
-                                </Button>
-                            </PopoverFooter>
                         </PopoverContent>
                     </Popover>
                 </Flex>
