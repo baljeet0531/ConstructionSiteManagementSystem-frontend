@@ -32,5 +32,15 @@ export const placeholderStyle = {
 };
 
 export const inputStyle = {
-    paddingTop: '8px'
-}
+    paddingTop: '8px',
+};
+
+export const workContentStyle = {
+    border: '0px',
+    paddingTop: '10px',
+};
+
+export const workContentInputStyle = {
+    border: '0px',
+    paddingTop: '2px',
+};
