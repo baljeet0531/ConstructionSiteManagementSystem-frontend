@@ -1682,3 +1682,20 @@ export function LaunchIcon() {
         </svg>
     );
 }
+
+export function ArrowDropDownIcon() {
+    return (
+        <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M5.80667 7.80666L7.53333 9.53332C7.79333 9.79332 8.21333 9.79332 8.47333 9.53332L10.2 7.80666C10.62 7.38666 10.32 6.66666 9.72667 6.66666H6.27333C5.68 6.66666 5.38667 7.38666 5.80667 7.80666Z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+}
