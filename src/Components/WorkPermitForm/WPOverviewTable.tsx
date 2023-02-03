@@ -1,5 +1,6 @@
-import { Center, ChakraProps, Flex } from '@chakra-ui/react';
+import { Box, Center, ChakraProps, Flex } from '@chakra-ui/react';
 import React from 'react';
+import Scrollbars, { ScrollbarProps } from 'react-custom-scrollbars';
 import { VariableSizeGrid } from 'react-window';
 
 const columnMap = {
@@ -87,6 +88,7 @@ const dataCellStyle: ChakraProps = {
     whiteSpace: 'nowrap',
     border: 'none',
     borderBottom: '1px solid #919AA9',
+    pt: '12px',
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -126,6 +128,33 @@ export default function WPOverViewTable() {
             window.removeEventListener('resize', watchResize);
         };
     }, []);
+
+    const CustomScrollbars = (props: any) => {
+        const { onScroll, forwardedRef, style, children } = props;
+        const refSetter = React.useCallback((scrollbarsRef: any) => {
+            if (scrollbarsRef) {
+                forwardedRef(scrollbarsRef.view);
+            } else {
+                forwardedRef(null);
+            }
+        }, []);
+
+        return (
+            <Scrollbars
+                ref={refSetter}
+                style={{ ...style, overflow: 'hidden' }}
+                onScroll={onScroll}
+            >
+                {children}
+            </Scrollbars>
+        );
+    };
+
+    const CustomScrollbarsVirtualList = React.forwardRef<
+        Scrollbars,
+        ScrollbarProps
+    >((props, ref) => <CustomScrollbars {...props} forwardedRef={ref} />);
+
     return (
         <Flex direction={'column'}>
             <VariableSizeGrid
@@ -151,6 +180,7 @@ export default function WPOverViewTable() {
                 }}
             </VariableSizeGrid>
             <VariableSizeGrid
+                outerElementType={CustomScrollbarsVirtualList}
                 ref={variableSizeDataRef}
                 style={{
                     outline: '2px solid #919AA9',
@@ -164,9 +194,9 @@ export default function WPOverViewTable() {
                 width={tableViewWidth}
             >
                 {({ columnIndex, rowIndex, style }) => (
-                    <Center style={style} {...dataCellStyle}>
+                    <Box style={style} {...dataCellStyle}>
                         Item {rowIndex},{columnIndex}
-                    </Center>
+                    </Box>
                 )}
             </VariableSizeGrid>
         </Flex>
