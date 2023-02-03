@@ -28,6 +28,8 @@ import {
     lastStyle,
     numberStyle,
     inputStyle,
+    workContentStyle,
+    workContentInputStyle,
 } from './Styles';
 import FormFactory from './Factory';
 
@@ -52,8 +54,6 @@ export const QUERY_WORK_PERMIT_OPTIONS = gql`
     }
 `;
 
-
-
 export default function WorkPermitForm({
     siteId,
     formProps,
@@ -68,7 +68,8 @@ export default function WorkPermitForm({
 
     const [siteAreas, setSiteAreas] = useState<ISiteArea[]>([]);
     const [zones, setZones] = useState<string[]>([]);
-    const [, setWorkContent] = useState([]);
+    const [workContents, setWorkContents] = useState([]);
+    const [systemBranches, setSystemBranches] = useState<string[]>([]);
     const f = new FormFactory(formProps);
 
     useQuery(QUERY_WORK_PERMIT_OPTIONS, {
@@ -77,18 +78,13 @@ export default function WorkPermitForm({
         },
         onCompleted: (d) => {
             setSiteAreas(d.siteAreas);
-            setWorkContent(d.workContent.content);
+            setWorkContents(d.workContent.content);
         },
         fetchPolicy: 'network-only',
     });
 
-    // console.log(formProps);
-
-    // function SelectZoneInput(props: React.ComponentProps<any>) {
-    //     return (
-
-    //     )
-    // }
+    console.log(formProps.values);
+    console.log(workContents);
 
     return (
         <Form>
@@ -180,7 +176,55 @@ export default function WorkPermitForm({
 
                     <GridItem {...numberStyle}>2</GridItem>
                     <GridItem {...contentStyle}>工作內容：</GridItem>
-                    <GridItem colStart={3} colEnd={6} {...lastStyle} />
+                    <GridItem colStart={3} colEnd={6} {...lastStyle}>
+                        <Grid
+                            w="100%"
+                            templateColumns={'70px 120fr 90px 120fr 90px 120fr'}
+                        >
+                            <GridItem {...workContentStyle} paddingLeft="15px">
+                                <Text as="b">系統：</Text>
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[1, 1, 2, 3]}
+                                fieldName="system"
+                                inputComponent={f.selectSystemInput()}
+                                inputRightComponent={<ChevronDownIcon />}
+                                style={{ ...workContentInputStyle }}
+                                handleValidate={(value: string) => {
+                                    const area = formProps.values.area;
+                                    setSystemBranches(
+                                        f.getSystemBranches(
+                                            value,
+                                            workContents,
+                                            area
+                                        )
+                                    );
+                                }}
+                            />
+                            <GridItem {...workContentStyle}>
+                                <Text as="b">系統分項：</Text>
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[1, 1, 4, 5]}
+                                fieldName="systemBranch"
+                                inputComponent={f.selectSystemBranchInput(
+                                    systemBranches
+                                )}
+                                inputRightComponent={<ChevronDownIcon />}
+                                style={{ ...workContentInputStyle }}
+                            />
+                            <GridItem {...workContentStyle}>
+                                <Text as="b">施工項目：</Text>
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[1, 1, 6, 7]}
+                                fieldName="project"
+                                inputComponent={f.textInput()}
+                                inputRightComponent={<ChevronDownIcon />}
+                                style={{ ...workContentInputStyle }}
+                            />
+                        </Grid>
+                    </GridItem>
 
                     <GridItem {...numberStyle}>3</GridItem>
                     <GridItem {...contentStyle}>施工廠區：</GridItem>
