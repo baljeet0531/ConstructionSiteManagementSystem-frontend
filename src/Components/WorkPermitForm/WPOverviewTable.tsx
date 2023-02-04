@@ -1,7 +1,18 @@
-import { Box, Center, ChakraProps, Flex } from '@chakra-ui/react';
+import {
+    Box,
+    Center,
+    ChakraProps,
+    Flex,
+    Text,
+    Button,
+    Tooltip,
+    Checkbox,
+} from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import React from 'react';
 import Scrollbars, { ScrollbarProps } from 'react-custom-scrollbars';
 import { VariableSizeGrid } from 'react-window';
+import { workPermit, workPermitChecked } from './Overview';
 
 const columnMap = {
     日期: {
@@ -97,7 +108,19 @@ const errorDataCellStyle: ChakraProps = {
     bg: '#FDFFE3',
 };
 
-export default function WPOverViewTable() {
+export default function WPOverViewTable(props: {
+    overviewTableData: { [primaryKey: string]: workPermitChecked };
+    setOverviewTableData: React.Dispatch<
+        React.SetStateAction<{
+            [primaryKey: string]: workPermitChecked;
+        }>
+    >;
+}) {
+    const { overviewTableData, setOverviewTableData } = props;
+    const primarykeys = Object.keys(overviewTableData);
+
+    const [allChecked, setAllChecked] = React.useState<boolean>(false);
+
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
 
@@ -172,33 +195,184 @@ export default function WPOverViewTable() {
             >
                 {({ columnIndex, style }) => {
                     const tableHeader = Object.keys(columnMap);
+                    const title = tableHeader[columnIndex];
+                    if (title == '全選') {
+                        return (
+                            <Center style={style} {...headerCellStyle}>
+                                <Checkbox
+                                    isChecked={allChecked}
+                                    onChange={(e) => {
+                                        setAllChecked(e.target.checked);
+                                        primarykeys.forEach(
+                                            (primaryKey) =>
+                                                (overviewTableData[primaryKey][
+                                                    'isChecked'
+                                                ] = e.target.checked)
+                                        );
+                                        setOverviewTableData({
+                                            ...overviewTableData,
+                                        });
+                                    }}
+                                ></Checkbox>
+                            </Center>
+                        );
+                    }
                     return (
                         <Center style={style} {...headerCellStyle}>
-                            {tableHeader[columnIndex]}
+                            {title}
                         </Center>
                     );
                 }}
             </VariableSizeGrid>
-            <VariableSizeGrid
-                outerElementType={CustomScrollbarsVirtualList}
-                ref={variableSizeDataRef}
-                style={{
-                    outline: '2px solid #919AA9',
-                    background: '#FFFFFF',
-                }}
-                columnCount={9}
-                columnWidth={getColumnWidth}
-                height={tableViewHeight}
-                rowCount={1000}
-                rowHeight={() => cellHeight}
-                width={tableViewWidth}
-            >
-                {({ columnIndex, rowIndex, style }) => (
-                    <Box style={style} {...dataCellStyle}>
-                        Item {rowIndex},{columnIndex}
-                    </Box>
-                )}
-            </VariableSizeGrid>
+            {primarykeys.length != 0 && (
+                <VariableSizeGrid
+                    outerElementType={CustomScrollbarsVirtualList}
+                    ref={variableSizeDataRef}
+                    style={{
+                        outline: '2px solid #919AA9',
+                        background: '#FFFFFF',
+                    }}
+                    columnCount={9}
+                    columnWidth={getColumnWidth}
+                    height={tableViewHeight}
+                    rowCount={primarykeys.length}
+                    rowHeight={() => cellHeight}
+                    width={tableViewWidth}
+                >
+                    {({ columnIndex, rowIndex, style }) => {
+                        const info = overviewTableData[primarykeys[rowIndex]];
+                        const variable =
+                            Object.values(columnMap)[columnIndex]['variable'];
+                        if (variable == 'signStatus') {
+                            if (!info['applied']) {
+                                return (
+                                    <Box style={style} {...dataCellStyle}>
+                                        尚未申請
+                                    </Box>
+                                );
+                            }
+
+                            type fieldType =
+                                | 'approved'
+                                | 'review'
+                                | 'supplierManager'
+                                | 'supplier';
+                            const fieldArray: fieldType[] = [
+                                'approved',
+                                'review',
+                                'supplierManager',
+                                'supplier',
+                            ];
+                            const signStatusMap = fieldArray.map(
+                                (field, index) => {
+                                    const sign = info[field];
+                                    const label = sign ? (
+                                        <>
+                                            <Text textAlign={'center'}>
+                                                {info[`${field}Ref`].owner}
+                                                <br />
+                                                {info[`${field}Ref`].time}
+                                            </Text>
+                                        </>
+                                    ) : (
+                                        ''
+                                    );
+                                    return (
+                                        <Tooltip label={label} key={index}>
+                                            <Button
+                                                key={index}
+                                                w={'40px'}
+                                                h={'10px'}
+                                                bg={
+                                                    sign
+                                                        ? '#9CE3DE'
+                                                        : 'rgba(102, 112, 128, 0.1)'
+                                                }
+                                                borderRadius={'4px'}
+                                            ></Button>
+                                        </Tooltip>
+                                    );
+                                }
+                            );
+
+                            return (
+                                <Flex
+                                    style={style}
+                                    {...dataCellStyle}
+                                    gap={'2px'}
+                                    w={'170px'}
+                                    align={'center'}
+                                    justify={'center'}
+                                    height={'20px'}
+                                >
+                                    {signStatusMap}
+                                </Flex>
+                            );
+                        } else if (variable == 'appliedOrModified') {
+                            const now = dayjs();
+                            const workEnd = dayjs(
+                                info['workEnd'].split('T')[0]
+                            );
+                            const diff = now.diff(workEnd, 'day');
+                            return (
+                                <Box style={style} {...dataCellStyle}>
+                                    {!info['applied'] ? (
+                                        <Button
+                                            variant={'buttonBlueSolid'}
+                                            height={'20px'}
+                                            width={'36px'}
+                                            fontSize={'10px'}
+                                        >
+                                            申請
+                                        </Button>
+                                    ) : info['modified'] ? (
+                                        '異動單'
+                                    ) : diff > 0 ? (
+                                        ''
+                                    ) : (
+                                        <Button
+                                            variant={'buttonBlueSolid'}
+                                            height={'20px'}
+                                            width={'36px'}
+                                            fontSize={'10px'}
+                                            bg={'#DB504A'}
+                                            _hover={{ bg: '#DB504A77' }}
+                                        >
+                                            異動
+                                        </Button>
+                                    )}
+                                </Box>
+                            );
+                        } else if (variable == 'isCheck') {
+                            return (
+                                <Box style={style} {...dataCellStyle}>
+                                    <Checkbox
+                                        isChecked={info['isChecked']}
+                                        onChange={(e) => {
+                                            setOverviewTableData(
+                                                (prevState) => ({
+                                                    ...prevState,
+                                                    [primarykeys[rowIndex]]: {
+                                                        ...info,
+                                                        isChecked:
+                                                            e.target.checked,
+                                                    },
+                                                })
+                                            );
+                                        }}
+                                    ></Checkbox>
+                                </Box>
+                            );
+                        }
+
+                        return (
+                            <Box style={style} {...dataCellStyle}>
+                                {info[variable as keyof workPermit]}
+                            </Box>
+                        );
+                    }}
+                </VariableSizeGrid>
+            )}
         </Flex>
     );
 }
