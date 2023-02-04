@@ -5,12 +5,18 @@ import {
     AutoCompleteItem,
     AutoCompleteList,
     AutoCompleteCreatable,
+    AutoCompleteTag
 } from '@choc-ui/chakra-autocomplete';
 import { FormikProps } from 'formik';
 import { IWorkPermit } from './Formik';
 import { placeholderStyle } from './Styles';
 import { ISiteArea, IWorkContent } from '../../Interface/Site';
 import { SystemConstants } from '../../Constants/System';
+import { SetStateAction, Dispatch } from 'react';
+import {
+    IWorkPermitData,
+    IWorkPermitOptions,
+} from '../../Interface/WorkPermit';
 
 export default class FormFactory {
     formProps: FormikProps<IWorkPermit>;
@@ -43,8 +49,16 @@ export default class FormFactory {
         );
     }
 
-    selectAreaInput(siteareas: ISiteArea[]) {
-        const areas = siteareas
+    selectAreaInput({
+        data,
+        options,
+        setOptions,
+    }: {
+        data: IWorkPermitData;
+        options: IWorkPermitOptions;
+        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
+    }) {
+        const areas = data.siteAreas
             ?.map((v) => v.name)
             .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
         return (
@@ -54,12 +68,15 @@ export default class FormFactory {
                 listAllValuesOnFocus
                 onChange={(value: string) => {
                     const before = this.formProps.values.area;
-                    if (before !== value) {
+                    if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('zone', []);
-                        this.formProps.setFieldValue('system', '');
-                        this.formProps.setFieldValue('systemBranch', '');
                     }
                     this.formProps.setFieldValue('area', value);
+
+                    setOptions({
+                        ...options,
+                        zones: this.getZones(value, data.siteAreas),
+                    });
                 }}
             >
                 <AutoCompleteInput
@@ -89,7 +106,14 @@ export default class FormFactory {
         return siteareas.filter((v) => v.name == area).map((v) => v.zone);
     }
 
-    selectZoneInput(zones: string[]) {
+    selectZoneInput({
+        options,
+    }: {
+        data: IWorkPermitData;
+        setData: Dispatch<SetStateAction<IWorkPermitData>>;
+        options: IWorkPermitOptions;
+        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
+    }) {
         return (
             <AutoComplete
                 multiple
@@ -105,10 +129,21 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
-                    value={this.formProps.values.zone}
-                ></AutoCompleteInput>
+                >
+                    {({ tags }) =>
+                        tags.map((tag, tid) => (
+                            <AutoCompleteTag
+                                size='md'
+                                w={ 50 + tag.label.length *  8+ 'px'}
+                                key={tid}
+                                label={tag.label}
+                                onRemove={tag.onRemove}
+                            />
+                        ))
+                    }
+                </AutoCompleteInput>
                 <AutoCompleteList>
-                    {zones.map((zone: string, cid: number) => (
+                    {options.zones.map((zone: string, cid: number) => (
                         <AutoCompleteItem key={`option-${cid}`} value={zone}>
                             {zone}
                         </AutoCompleteItem>
@@ -128,7 +163,7 @@ export default class FormFactory {
                 listAllValuesOnFocus
                 onChange={(value: string) => {
                     const before = this.formProps.values.system;
-                    if (before !== value) {
+                    if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('systemBranch', '');
                     }
                     this.formProps.setFieldValue('system', value);
@@ -139,7 +174,6 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
-                    value={this.formProps.values.system}
                 />
                 <AutoCompleteList>
                     {SystemConstants.map((system: string, cid: number) => (
@@ -156,22 +190,21 @@ export default class FormFactory {
         );
     }
 
-    getSystemBranches(
-        target: string,
-        workContents: IWorkContent[],
-        area?: string
-    ) {
-        const isValid = (i: IWorkContent) =>
-            i.name === area && i.system.name === target;
-        const isValidWithoutArea = (i: IWorkContent) =>
-            i.system.name === target;
-        const filterFn = area ? isValid : isValidWithoutArea;
+    getSystemBranches(workContents: IWorkContent[]) {
         return workContents
-            .filter(filterFn)
-            .map((i) => i.system.systemBranch.name);
+            .map((i) => i.system.systemBranch.name)
+            .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
     }
 
-    selectSystemBranchInput(systemBranches: string[]) {
+    selectSystemBranchInput({
+        data,
+    }: {
+        data: IWorkPermitData;
+        setData: Dispatch<SetStateAction<IWorkPermitData>>;
+        options: IWorkPermitOptions;
+        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
+    }) {
+        const systemBranches = this.getSystemBranches(data.workContents);
         return (
             <AutoComplete
                 openOnFocus
@@ -180,7 +213,7 @@ export default class FormFactory {
                 value={this.formProps.values.systemBranch}
                 onChange={(value: string) => {
                     const before = this.formProps.values.systemBranch;
-                    if (before !== value) {
+                    if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('project', '');
                     }
                     this.formProps.setFieldValue('systemBranch', value);
@@ -190,7 +223,6 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
-                    value={this.formProps.values.systemBranch}
                 ></AutoCompleteInput>
                 <AutoCompleteList>
                     {systemBranches.map((system: string, cid: number) => (
