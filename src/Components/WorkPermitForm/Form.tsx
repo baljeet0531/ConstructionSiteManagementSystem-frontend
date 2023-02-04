@@ -17,7 +17,6 @@ import { FormikProps, Form } from 'formik';
 import { useQuery, gql } from '@apollo/client';
 import { IWorkPermit, SignatureName } from './Formik';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
-import { ISiteArea } from '../../Interface/Site';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
@@ -32,6 +31,10 @@ import {
     workContentInputStyle,
 } from './Styles';
 import FormFactory from './Factory';
+import {
+    IWorkPermitData,
+    IWorkPermitOptions,
+} from '../../Interface/WorkPermit';
 
 export const QUERY_WORK_PERMIT_OPTIONS = gql`
     query workPermitOptions($siteId: String!) {
@@ -66,25 +69,33 @@ export default function WorkPermitForm({
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const [siteAreas, setSiteAreas] = useState<ISiteArea[]>([]);
-    const [zones, setZones] = useState<string[]>([]);
-    const [workContents, setWorkContents] = useState([]);
-    const [systemBranches, setSystemBranches] = useState<string[]>([]);
     const f = new FormFactory(formProps);
+    const [data, setData] = useState<IWorkPermitData>({
+        siteAreas: [],
+        workContents: [],
+    });
+    const [options, setOptions] = useState<IWorkPermitOptions>({
+        zones: [],
+        workContents: [],
+        systemBranches: [],
+    });
+    const args = { data, setData, options, setOptions };
 
     useQuery(QUERY_WORK_PERMIT_OPTIONS, {
         variables: {
             siteId: siteId,
         },
         onCompleted: (d) => {
-            setSiteAreas(d.siteAreas);
-            setWorkContents(d.workContent.content);
+            setData({
+                siteAreas: d.siteAreas,
+                workContents: d.workContent.content,
+            });
         },
         fetchPolicy: 'network-only',
     });
 
-    console.log(formProps.values);
-    console.log(workContents);
+    // console.log(formProps.values);
+    // console.log(systemBranches);
 
     return (
         <Form>
@@ -190,16 +201,6 @@ export default function WorkPermitForm({
                                 inputComponent={f.selectSystemInput()}
                                 inputRightComponent={<ChevronDownIcon />}
                                 style={{ ...workContentInputStyle }}
-                                handleValidate={(value: string) => {
-                                    const area = formProps.values.area;
-                                    setSystemBranches(
-                                        f.getSystemBranches(
-                                            value,
-                                            workContents,
-                                            area
-                                        )
-                                    );
-                                }}
                             />
                             <GridItem {...workContentStyle}>
                                 <Text as="b">系統分項：</Text>
@@ -207,9 +208,7 @@ export default function WorkPermitForm({
                             <GridInputItem
                                 gridRange={[1, 1, 4, 5]}
                                 fieldName="systemBranch"
-                                inputComponent={f.selectSystemBranchInput(
-                                    systemBranches
-                                )}
+                                inputComponent={f.selectSystemBranchInput(args)}
                                 inputRightComponent={<ChevronDownIcon />}
                                 style={{ ...workContentInputStyle }}
                             />
@@ -230,17 +229,14 @@ export default function WorkPermitForm({
                     <GridItem {...contentStyle}>施工廠區：</GridItem>
                     <GridInputItem
                         fieldName="area"
-                        inputComponent={f.selectAreaInput(siteAreas)}
+                        inputComponent={f.selectAreaInput(args)}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...contentStyle, ...inputStyle }}
-                        handleValidate={(value: string) => {
-                            setZones(f.getZones(value, siteAreas));
-                        }}
                     />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
                     <GridInputItem
                         fieldName="zone"
-                        inputComponent={f.selectZoneInput(zones)}
+                        inputComponent={f.selectZoneInput(args)}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle, ...inputStyle }}
                     />
