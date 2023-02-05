@@ -69,7 +69,6 @@ export default function WorkPermitForm({
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const f = new FormFactory(formProps);
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
         workContents: [],
@@ -78,8 +77,9 @@ export default function WorkPermitForm({
         zones: [],
         workContents: [],
         systemBranches: [],
+        projects: []
     });
-    const args = { data, setData, options, setOptions };
+    const f = new FormFactory(formProps, data, setData, options, setOptions);
 
     useQuery(QUERY_WORK_PERMIT_OPTIONS, {
         variables: {
@@ -95,7 +95,6 @@ export default function WorkPermitForm({
     });
 
     // console.log(formProps.values);
-    // console.log(systemBranches);
 
     return (
         <Form>
@@ -208,7 +207,7 @@ export default function WorkPermitForm({
                             <GridInputItem
                                 gridRange={[1, 1, 4, 5]}
                                 fieldName="systemBranch"
-                                inputComponent={f.selectSystemBranchInput(args)}
+                                inputComponent={f.selectSystemBranchInput()}
                                 inputRightComponent={<ChevronDownIcon />}
                                 style={{ ...workContentInputStyle }}
                             />
@@ -218,7 +217,7 @@ export default function WorkPermitForm({
                             <GridInputItem
                                 gridRange={[1, 1, 6, 7]}
                                 fieldName="project"
-                                inputComponent={f.textInput()}
+                                inputComponent={f.selectProjectInput()}
                                 inputRightComponent={<ChevronDownIcon />}
                                 style={{ ...workContentInputStyle }}
                             />
@@ -229,14 +228,14 @@ export default function WorkPermitForm({
                     <GridItem {...contentStyle}>施工廠區：</GridItem>
                     <GridInputItem
                         fieldName="area"
-                        inputComponent={f.selectAreaInput(args)}
+                        inputComponent={f.selectAreaInput()}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...contentStyle, ...inputStyle }}
                     />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
                     <GridInputItem
                         fieldName="zone"
-                        inputComponent={f.selectZoneInput(args)}
+                        inputComponent={f.selectZoneInput()}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle, ...inputStyle }}
                     />

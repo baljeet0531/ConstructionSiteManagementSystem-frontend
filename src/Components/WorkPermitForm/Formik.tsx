@@ -18,7 +18,7 @@ export interface IWorkPermit {
     systemBranch: string | undefined;
     project: string | undefined;
     area: string | undefined;
-    zone: string | undefined;
+    zone: string[] | undefined;
     workStart: string | undefined;
     workEnd: string | undefined;
     supervisorCorp: string | undefined;
@@ -189,7 +189,7 @@ export default function WorkPermitFormik() {
             .minute(30)
             .second(0)
             .format('YYYY-MM-DDTHH:mm:ss'),
-        zone: '',
+        zone: [],
         approved: undefined,
         review: undefined,
         supplierManager: undefined,
