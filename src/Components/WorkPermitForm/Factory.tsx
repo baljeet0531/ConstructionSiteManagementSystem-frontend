@@ -23,7 +23,6 @@ export default class FormFactory {
     setData: Dispatch<SetStateAction<IWorkPermitData>>;
     options: IWorkPermitOptions;
     setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
-    refs: any;
 
     constructor(
         formProps: FormikProps<IWorkPermit>,
@@ -37,7 +36,6 @@ export default class FormFactory {
         this.setData = setData;
         this.options = options;
         this.setOptions = setOptions;
-        this.refs = {};
     }
 
     opCheckBox(name: keyof IWorkPermit, text: string) {
