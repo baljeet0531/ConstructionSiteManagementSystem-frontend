@@ -8,11 +8,11 @@ import {
     AutoCompleteTag,
 } from '@choc-ui/chakra-autocomplete';
 import { FormikProps } from 'formik';
-import { IWorkPermit } from './Formik';
 import { placeholderStyle } from './Styles';
 import { SystemConstants } from '../../Constants/System';
 import { SetStateAction, Dispatch } from 'react';
 import {
+    IWorkPermit,
     IWorkPermitData,
     IWorkPermitOptions,
 } from '../../Interface/WorkPermit';
@@ -135,6 +135,7 @@ export default class FormFactory {
                             <AutoCompleteTag
                                 size="md"
                                 w={50 + tag.label.length * 8 + 'px'}
+                                color='#667080'
                                 key={tid}
                                 label={tag.label}
                                 onRemove={tag.onRemove}
@@ -220,8 +221,7 @@ export default class FormFactory {
                     onChange={(e) =>
                         this.formProps.setFieldValue(
                             'systemBranch',
-                            e.target.value,
-                            false
+                            e.target.value
                         )
                     }
                 />
@@ -269,8 +269,7 @@ export default class FormFactory {
                     onChange={(e) =>
                         this.formProps.setFieldValue(
                             'project',
-                            e.target.value,
-                            false
+                            e.target.value
                         )
                     }
                 ></AutoCompleteInput>
