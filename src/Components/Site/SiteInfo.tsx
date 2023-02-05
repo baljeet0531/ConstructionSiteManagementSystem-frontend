@@ -97,6 +97,7 @@ export default function SiteInfo(props: {
                         fontWeight={400}
                         fontSize={'14px'}
                         lineHeight={'20px'}
+                        borderRadius={'4px'}
                     >
                         {siteId}
                     </Text>
@@ -107,6 +108,7 @@ export default function SiteInfo(props: {
                         fontWeight={400}
                         fontSize={'14px'}
                         lineHeight={'20px'}
+                        borderRadius={'4px'}
                     >
                         {siteName}
                     </Text>
@@ -142,6 +144,7 @@ export default function SiteInfo(props: {
                         fontWeight={400}
                         fontSize={'14px'}
                         lineHeight={'20px'}
+                        borderRadius={'4px'}
                     >
                         {`工期：${start} ~ ${end}`}
                     </Text>

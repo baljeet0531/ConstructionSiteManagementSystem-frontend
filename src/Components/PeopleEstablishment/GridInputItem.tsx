@@ -1,154 +1,74 @@
-import {
-    Flex,
-    FormControl,
-    FormErrorMessage,
-    FormHelperText,
-    GridItem,
-    ResponsiveValue,
-    Text,
-} from '@chakra-ui/react';
+import { GridItem, ResponsiveValue } from '@chakra-ui/react';
 import { FastField, Field } from 'formik';
 import React from 'react';
+import PEFormControl from './PEFormControl';
 
-export default function FormGridInputItem(props: {
-    gridRange?: [
+export default function GridInputItem(props: {
+    gridRange: [
         ResponsiveValue<number | 'auto'> | undefined,
         ResponsiveValue<number | 'auto'> | undefined,
         ResponsiveValue<number | 'auto'> | undefined,
         ResponsiveValue<number | 'auto'> | undefined
     ];
-    colSpan?: ResponsiveValue<number | 'auto'> | undefined;
-    height?: any;
-    fieldName?: string;
-    handleValidate?: Function;
-    formlabel?: string;
+    fieldName: string;
+    formlabel: string;
+    inputComponent: React.ReactElement;
     labelAlign?: any;
-    inputComponent?: React.ReactElement;
     helpText?: String;
-    title?: string;
+    handleValidate?: Function;
     independent?: Boolean;
 }) {
     const {
         gridRange,
-        colSpan,
-        height,
         fieldName,
-        handleValidate,
         formlabel,
-        labelAlign,
         inputComponent,
+        labelAlign,
         helpText,
-        title,
+        handleValidate,
         independent = true,
     } = props;
 
     return (
         <GridItem
-            colSpan={colSpan}
-            h={height}
-            rowStart={gridRange && gridRange[0]}
-            rowEnd={gridRange && gridRange[1]}
-            colStart={gridRange && gridRange[2]}
-            colEnd={gridRange && gridRange[3]}
+            rowStart={gridRange[0]}
+            rowEnd={gridRange[1]}
+            colStart={gridRange[2]}
+            colEnd={gridRange[3]}
         >
-            {title && <Text variant={'formpartTitle'}>{title}</Text>}
-
-            {fieldName &&
-                inputComponent &&
-                formlabel &&
-                (independent ? (
-                    <FastField name={fieldName} validate={handleValidate}>
-                        {({ field, form }: { field: any; form: any }) => {
-                            return (
-                                <FormControl
-                                    isInvalid={
-                                        form.errors[fieldName] &&
-                                        form.touched[fieldName]
-                                    }
-                                >
-                                    <Flex align={labelAlign || 'center'}>
-                                        <Text variant={'formlabel'}>
-                                            {formlabel}
-                                        </Text>
-                                        {
-                                            <inputComponent.type
-                                                {...field}
-                                                {...inputComponent.props} //put this below {...field} to overwrite onChange event
-                                                ml={'8px'}
-                                                variant={'formOutline'}
-                                            />
-                                        }
-                                    </Flex>
-                                    {form.errors[fieldName] &&
-                                    form.touched[fieldName] ? (
-                                        <FormErrorMessage
-                                            fontSize={'0.625rem'}
-                                            m={0}
-                                            ml={'85px'}
-                                        >
-                                            {form.errors[fieldName]}
-                                        </FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText
-                                            fontSize={'0.625rem'}
-                                            m={0}
-                                            ml={'85px'}
-                                            opacity={helpText ? 1 : 0}
-                                        >
-                                            {helpText || '_'}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                            );
-                        }}
-                    </FastField>
-                ) : (
-                    <Field name={fieldName} validate={handleValidate}>
-                        {({ field, form }: { field: any; form: any }) => {
-                            return (
-                                <FormControl
-                                    isInvalid={
-                                        form.errors[fieldName] &&
-                                        form.touched[fieldName]
-                                    }
-                                >
-                                    <Flex align={labelAlign || 'center'}>
-                                        <Text variant={'formlabel'}>
-                                            {formlabel}
-                                        </Text>
-                                        {
-                                            <inputComponent.type
-                                                {...field}
-                                                {...inputComponent.props} //put this below {...field} to overwrite onChange event
-                                                ml={'8px'}
-                                                variant={'formOutline'}
-                                            />
-                                        }
-                                    </Flex>
-                                    {form.errors[fieldName] &&
-                                    form.touched[fieldName] ? (
-                                        <FormErrorMessage
-                                            fontSize={'0.625rem'}
-                                            m={0}
-                                            ml={'85px'}
-                                        >
-                                            {form.errors[fieldName]}
-                                        </FormErrorMessage>
-                                    ) : (
-                                        <FormHelperText
-                                            fontSize={'0.625rem'}
-                                            m={0}
-                                            ml={'85px'}
-                                            opacity={helpText ? 1 : 0}
-                                        >
-                                            {helpText || '_'}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                            );
-                        }}
-                    </Field>
-                ))}
+            {independent ? (
+                <FastField name={fieldName} validate={handleValidate}>
+                    {({ field, form }: { field: any; form: any }) => {
+                        return (
+                            <PEFormControl
+                                field={field}
+                                form={form}
+                                fieldName={fieldName}
+                                formlabel={formlabel}
+                                inputComponent={inputComponent}
+                                labelAlign={labelAlign}
+                                helpText={helpText}
+                            ></PEFormControl>
+                        );
+                    }}
+                </FastField>
+            ) : (
+                <Field name={fieldName} validate={handleValidate}>
+                    {({ field, form }: { field: any; form: any }) => {
+                        return (
+                            <PEFormControl
+                                field={field}
+                                form={form}
+                                fieldName={fieldName}
+                                formlabel={formlabel}
+                                inputComponent={inputComponent}
+                                labelAlign={labelAlign}
+                                helpText={helpText}
+                            ></PEFormControl>
+                        );
+                    }}
+                </Field>
+            )}
         </GridItem>
     );
 }

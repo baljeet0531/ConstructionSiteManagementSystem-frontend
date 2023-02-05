@@ -78,7 +78,7 @@ export default function WorkPermitForm({
         zones: [],
         workContents: [],
         systemBranches: [],
-        projects: []
+        projects: [],
     });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
 
@@ -95,14 +95,12 @@ export default function WorkPermitForm({
         fetchPolicy: 'network-only',
     });
 
-    console.log(formProps.values);
-
     return (
         <Form>
             <Button
                 type="submit"
                 leftIcon={<EditIcon />}
-                variant={'buttonBlueOutline'}
+                variant={'buttonBlueSolid'}
                 position="fixed"
                 top={'10px'}
                 right={'37px'}
@@ -132,10 +130,19 @@ export default function WorkPermitForm({
                                     isChecked={formProps.values.applied}
                                     onChange={(e) => {
                                         const value = e.target.checked;
-                                        if (value && formProps.values['modified']) {
-                                            formProps.setFieldValue('modified', false);
+                                        if (
+                                            value &&
+                                            formProps.values['modified']
+                                        ) {
+                                            formProps.setFieldValue(
+                                                'modified',
+                                                false
+                                            );
                                         }
-                                        formProps.setFieldValue('applied', value)
+                                        formProps.setFieldValue(
+                                            'applied',
+                                            value
+                                        );
                                     }}
                                 >
                                     初次申請
@@ -149,10 +156,19 @@ export default function WorkPermitForm({
                                     isChecked={formProps.values.modified}
                                     onChange={(e) => {
                                         const value = e.target.checked;
-                                        if (value && formProps.values['applied']) {
-                                            formProps.setFieldValue('applied', false);
+                                        if (
+                                            value &&
+                                            formProps.values['applied']
+                                        ) {
+                                            formProps.setFieldValue(
+                                                'applied',
+                                                false
+                                            );
                                         }
-                                        formProps.setFieldValue('modified', value)
+                                        formProps.setFieldValue(
+                                            'modified',
+                                            value
+                                        );
                                     }}
                                 >
                                     申請異動
