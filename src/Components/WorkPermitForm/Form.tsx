@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery, gql } from '@apollo/client';
-import { IWorkPermit, SignatureName } from './Formik';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
@@ -32,8 +31,10 @@ import {
 } from './Styles';
 import FormFactory from './Factory';
 import {
+    IWorkPermit,
     IWorkPermitData,
     IWorkPermitOptions,
+    SignatureName,
 } from '../../Interface/WorkPermit';
 
 export const QUERY_WORK_PERMIT_OPTIONS = gql`
@@ -94,7 +95,7 @@ export default function WorkPermitForm({
         fetchPolicy: 'network-only',
     });
 
-    // console.log(formProps.values);
+    console.log(formProps.values);
 
     return (
         <Form>
@@ -129,32 +130,34 @@ export default function WorkPermitForm({
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.applied}
-                                    onChange={formProps.handleChange}
+                                    onChange={(e) => {
+                                        const value = e.target.checked;
+                                        if (value && formProps.values['modified']) {
+                                            formProps.setFieldValue('modified', false);
+                                        }
+                                        formProps.setFieldValue('applied', value)
+                                    }}
                                 >
                                     初次申請
                                 </Checkbox>
                             }
-                            handleValidate={(value: boolean) => {
-                                if (value && formProps.values['modified']) {
-                                    formProps.setFieldValue('modified', false);
-                                }
-                            }}
                         />
                         <GridInputItem
                             fieldName="modified"
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.modified}
-                                    onChange={formProps.handleChange}
+                                    onChange={(e) => {
+                                        const value = e.target.checked;
+                                        if (value && formProps.values['applied']) {
+                                            formProps.setFieldValue('applied', false);
+                                        }
+                                        formProps.setFieldValue('modified', value)
+                                    }}
                                 >
                                     申請異動
                                 </Checkbox>
                             }
-                            handleValidate={(value: boolean) => {
-                                if (value && formProps.values['applied']) {
-                                    formProps.setFieldValue('applied', false);
-                                }
-                            }}
                         />
                     </HStack>
                 </Flex>

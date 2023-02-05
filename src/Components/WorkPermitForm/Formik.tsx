@@ -5,56 +5,14 @@ import { Cookies } from 'react-cookie';
 import { useToast } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { ISignature, SignatureStateItem } from '../../Interface/Signature';
+import { IWorkPermit, SignatureName } from '../../Interface/WorkPermit';
 import WorkPermitForm from './Form';
 
-export interface IWorkPermit {
-    siteId: string;
-    number: string;
-    applicant: string | undefined;
-    applied: boolean;
-    modified: boolean;
-    supplyDate: string | undefined;
-    system: string | undefined;
-    systemBranch: string | undefined;
-    project: string | undefined;
-    area: string | undefined;
-    zone: string[] | undefined;
-    workStart: string | undefined;
-    workEnd: string | undefined;
-    supervisorCorp: string | undefined;
-    supervisor: string | undefined;
-    tel: string | undefined;
-    projectName: string | undefined;
-    opFire: boolean | undefined;
-    opAloft: boolean | undefined;
-    opConfined: boolean | undefined;
-    opElectric: boolean | undefined;
-    opCage: boolean | undefined;
-    opLift: boolean | undefined;
-    opAssemble: boolean | undefined;
-    opDetach: boolean | undefined;
-    opHole: boolean | undefined;
-    opChemical: boolean | undefined;
-    opElse: string | undefined;
-    approved: ISignature | undefined;
-    review: ISignature | undefined;
-    supplierManager: ISignature | undefined;
-    supplier: ISignature | undefined;
-}
-
-export type SignatureName =
-    | 'approved'
-    | 'review'
-    | 'supplier'
-    | 'supplierManager';
-
-const CREATE_WORK_PERMIT = gql`
+const GQL_WORK_PERMIT = gql`
     mutation uwp(
+        $approved: signatureInput
         $applicant: String!
         $applied: Boolean
-        $approvedImg: Upload
-        $approvedTime: DateTime
-        $approvedOwner: String
         $area: String
         $modified: Boolean
         $opAssemble: Boolean
@@ -70,18 +28,12 @@ const CREATE_WORK_PERMIT = gql`
         $opLift: Boolean
         $project: String
         $projectName: String
-        $reviewImg: Upload
-        $reviewTime: DateTime
-        $reviewOwner: String
+        $review: signatureInput
         $siteId: String!
         $supervisor: String
         $supervisorCorp: String
-        $supplierImg: Upload
-        $supplierTime: DateTime
-        $supplierOwner: String
-        $supplierManagerImg: Upload
-        $supplierManagerTime: DateTime
-        $supplierManagerOwner: String
+        $supplier: signatureInput
+        $supplierManager: signatureInput
         $supplyDate: Date
         $system: String
         $systemBranch: String
@@ -93,11 +45,7 @@ const CREATE_WORK_PERMIT = gql`
         updateWorkPermit(
             applicant: $applicant
             applied: $applied
-            approved: {
-                time: $approvedTime
-                owner: $approvedOwner
-                image: $approvedImg
-            }
+            approved: $approved
             area: $area
             modified: $modified
             opAloft: $opAloft
@@ -113,24 +61,12 @@ const CREATE_WORK_PERMIT = gql`
             opLift: $opLift
             project: $project
             projectName: $projectName
-            review: {
-                time: $reviewTime
-                owner: $reviewOwner
-                image: $reviewImg
-            }
+            review: $review
             siteId: $siteId
             supervisor: $supervisor
             supervisorCorp: $supervisorCorp
-            supplier: {
-                time: $supplierTime
-                owner: $supplierOwner
-                image: $supplierImg
-            }
-            supplierManager: {
-                time: $supplierManagerTime
-                owner: $supplierManagerOwner
-                image: $supplierManagerImg
-            }
+            supplier: $supplier
+            supplierManager: $supplierManager
             supplyDate: $supplyDate
             system: $system
             systemBranch: $systemBranch
@@ -169,7 +105,7 @@ export default function WorkPermitFormik() {
         opHole: false,
         opLift: false,
         project: '',
-        projectName: '',
+        projectName: localStorage.getItem('siteName') as string,
         siteId: siteId,
         supervisor: '',
         supervisorCorp: '',
@@ -206,11 +142,11 @@ export default function WorkPermitFormik() {
     };
 
     const toast = useToast();
-    const [createWorkPermit] = useMutation(CREATE_WORK_PERMIT, {
-        onCompleted: ({ createWorkPermit }) => {
-            if (createWorkPermit.ok) {
+    const [updateWorkPermit] = useMutation(GQL_WORK_PERMIT, {
+        onCompleted: ({ updateWorkPermit }) => {
+            if (updateWorkPermit.ok) {
                 toast({
-                    title: createWorkPermit.message,
+                    title: updateWorkPermit.message,
                     status: 'success',
                     duration: 3000,
                     isClosable: true,
@@ -232,9 +168,19 @@ export default function WorkPermitFormik() {
     return (
         <Formik
             initialValues={initialValues}
+            validateOnChange={false}
             onSubmit={(values, actions) => {
                 actions.setSubmitting(true);
-                createWorkPermit({ variables: { ...values } });
+                const submitValues = { ...values }
+                if (submitValues.zone instanceof Array) {
+                    submitValues['zone'] = submitValues.zone.join(',');
+                }
+                let key : keyof Record<SignatureName, SignatureStateItem>
+                for (key in signatures) {
+                    const [signature] = signatures[key]
+                    submitValues[key] = {...signature}
+                }
+                updateWorkPermit({ variables: submitValues });
                 actions.setSubmitting(false);
             }}
         >

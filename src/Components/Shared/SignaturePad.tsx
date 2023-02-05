@@ -40,7 +40,7 @@ export default function SignaturePad({
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
             image: new File([blob], signatureName),
-            time: undefined,
+            time: new Date(),
             owner: new Cookies().get('username'),
         });
         onClose();
