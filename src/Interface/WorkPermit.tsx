@@ -8,5 +8,6 @@ export interface IWorkPermitData  {
 export interface IWorkPermitOptions {
     zones: string[],
     workContents: string[],
-    systemBranches: string[]
+    systemBranches: string[],
+    projects: string[]
 }

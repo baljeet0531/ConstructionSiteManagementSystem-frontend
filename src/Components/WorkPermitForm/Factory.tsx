@@ -5,12 +5,11 @@ import {
     AutoCompleteItem,
     AutoCompleteList,
     AutoCompleteCreatable,
-    AutoCompleteTag
+    AutoCompleteTag,
 } from '@choc-ui/chakra-autocomplete';
 import { FormikProps } from 'formik';
 import { IWorkPermit } from './Formik';
 import { placeholderStyle } from './Styles';
-import { ISiteArea, IWorkContent } from '../../Interface/Site';
 import { SystemConstants } from '../../Constants/System';
 import { SetStateAction, Dispatch } from 'react';
 import {
@@ -20,9 +19,25 @@ import {
 
 export default class FormFactory {
     formProps: FormikProps<IWorkPermit>;
+    data: IWorkPermitData;
+    setData: Dispatch<SetStateAction<IWorkPermitData>>;
+    options: IWorkPermitOptions;
+    setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
+    refs: any;
 
-    constructor(formProps: FormikProps<IWorkPermit>) {
+    constructor(
+        formProps: FormikProps<IWorkPermit>,
+        data: IWorkPermitData,
+        setData: Dispatch<SetStateAction<IWorkPermitData>>,
+        options: IWorkPermitOptions,
+        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>
+    ) {
         this.formProps = formProps;
+        this.data = data;
+        this.setData = setData;
+        this.options = options;
+        this.setOptions = setOptions;
+        this.refs = {};
     }
 
     opCheckBox(name: keyof IWorkPermit, text: string) {
@@ -49,16 +64,8 @@ export default class FormFactory {
         );
     }
 
-    selectAreaInput({
-        data,
-        options,
-        setOptions,
-    }: {
-        data: IWorkPermitData;
-        options: IWorkPermitOptions;
-        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
-    }) {
-        const areas = data.siteAreas
+    selectAreaInput() {
+        const areas = this.data.siteAreas
             ?.map((v) => v.name)
             .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
         return (
@@ -73,9 +80,9 @@ export default class FormFactory {
                     }
                     this.formProps.setFieldValue('area', value);
 
-                    setOptions({
-                        ...options,
-                        zones: this.getZones(value, data.siteAreas),
+                    this.setOptions({
+                        ...this.options,
+                        zones: this.getZones(value),
                     });
                 }}
             >
@@ -102,18 +109,13 @@ export default class FormFactory {
         );
     }
 
-    getZones(area: string, siteareas: ISiteArea[]) {
-        return siteareas.filter((v) => v.name == area).map((v) => v.zone);
+    getZones(area: string) {
+        return this.data.siteAreas
+            .filter((v) => v.name == area)
+            .map((v) => v.zone);
     }
 
-    selectZoneInput({
-        options,
-    }: {
-        data: IWorkPermitData;
-        setData: Dispatch<SetStateAction<IWorkPermitData>>;
-        options: IWorkPermitOptions;
-        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
-    }) {
+    selectZoneInput() {
         return (
             <AutoComplete
                 multiple
@@ -133,8 +135,8 @@ export default class FormFactory {
                     {({ tags }) =>
                         tags.map((tag, tid) => (
                             <AutoCompleteTag
-                                size='md'
-                                w={ 50 + tag.label.length *  8+ 'px'}
+                                size="md"
+                                w={50 + tag.label.length * 8 + 'px'}
                                 key={tid}
                                 label={tag.label}
                                 onRemove={tag.onRemove}
@@ -143,7 +145,7 @@ export default class FormFactory {
                     }
                 </AutoCompleteInput>
                 <AutoCompleteList>
-                    {options.zones.map((zone: string, cid: number) => (
+                    {this.options.zones.map((zone: string, cid: number) => (
                         <AutoCompleteItem key={`option-${cid}`} value={zone}>
                             {zone}
                         </AutoCompleteItem>
@@ -165,6 +167,7 @@ export default class FormFactory {
                     const before = this.formProps.values.system;
                     if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('systemBranch', '');
+                        this.formProps.setFieldValue('project', '');
                     }
                     this.formProps.setFieldValue('system', value);
                 }}
@@ -190,27 +193,19 @@ export default class FormFactory {
         );
     }
 
-    getSystemBranches(workContents: IWorkContent[]) {
-        return workContents
+    getSystemBranches() {
+        return this.data.workContents
             .map((i) => i.system.systemBranch.name)
             .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
     }
 
-    selectSystemBranchInput({
-        data,
-    }: {
-        data: IWorkPermitData;
-        setData: Dispatch<SetStateAction<IWorkPermitData>>;
-        options: IWorkPermitOptions;
-        setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
-    }) {
-        const systemBranches = this.getSystemBranches(data.workContents);
+    selectSystemBranchInput() {
+        const systemBranches = this.getSystemBranches();
         return (
             <AutoComplete
                 openOnFocus
                 creatable
                 listAllValuesOnFocus
-                value={this.formProps.values.systemBranch}
                 onChange={(value: string) => {
                     const before = this.formProps.values.systemBranch;
                     if (before !== '' && before !== value) {
@@ -223,11 +218,68 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
-                ></AutoCompleteInput>
+                    value={this.formProps.values.systemBranch}
+                    onChange={(e) =>
+                        this.formProps.setFieldValue(
+                            'systemBranch',
+                            e.target.value,
+                            false
+                        )
+                    }
+                />
                 <AutoCompleteList>
                     {systemBranches.map((system: string, cid: number) => (
                         <AutoCompleteItem key={`option-${cid}`} value={system}>
                             {system}
+                        </AutoCompleteItem>
+                    ))}
+                    <AutoCompleteCreatable>
+                        {({ value }) => <Text>新增 "{value}"</Text>}
+                    </AutoCompleteCreatable>
+                </AutoCompleteList>
+            </AutoComplete>
+        );
+    }
+
+    getProjects() {
+        let l: string[] = [];
+        this.data.workContents.map(
+            (i) => (l = [...l, ...i.system.systemBranch.project])
+        );
+        return l.filter(
+            (v: string, i: number, a: string[]) => a.indexOf(v) === i
+        );
+    }
+
+    selectProjectInput() {
+        const projects = this.getProjects();
+        return (
+            <AutoComplete
+                openOnFocus
+                creatable
+                listAllValuesOnFocus
+                value={this.formProps.values.project}
+                onChange={(value: string) => {
+                    this.formProps.setFieldValue('project', value);
+                }}
+            >
+                <AutoCompleteInput
+                    border="0px"
+                    placeholder="填寫"
+                    _placeholder={placeholderStyle}
+                    value={this.formProps.values.project}
+                    onChange={(e) =>
+                        this.formProps.setFieldValue(
+                            'project',
+                            e.target.value,
+                            false
+                        )
+                    }
+                ></AutoCompleteInput>
+                <AutoCompleteList>
+                    {projects.map((project: string, cid: number) => (
+                        <AutoCompleteItem key={`option-${cid}`} value={project}>
+                            {project}
                         </AutoCompleteItem>
                     ))}
                     <AutoCompleteCreatable>
