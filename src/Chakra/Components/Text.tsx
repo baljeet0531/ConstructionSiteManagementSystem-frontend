@@ -25,6 +25,23 @@ const Text = {
             fontWeight: '600',
             color: '#667080',
         },
+        pageTitle: {
+            p: 0,
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '2.25rem',
+            lineHeight: '2.75rem',
+            color: '#667080',
+            wordBreak: 'keep-all',
+            overflowWrap: 'break-word',
+        },
+        searchResult: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '14px',
+            lineHeight: '20px',
+            color: '#667080',
+        },
     },
 };
 

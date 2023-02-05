@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 import React from 'react';
-import { HStack } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
@@ -84,7 +82,11 @@ export default function Layout(props: { page: featureName }) {
     });
 
     return (
-        <HStack align="top" backgroundImage={`url(${Background})`}>
+        <Flex
+            direction={'row'}
+            align="top"
+            backgroundImage={`url(${Background})`}
+        >
             <Sidebar
                 username={username}
                 role={selectedSite?.role || ''}
@@ -93,6 +95,6 @@ export default function Layout(props: { page: featureName }) {
                 featureMap={featureMap}
             />
             <MainScreen>{featureMap[page].page}</MainScreen>
-        </HStack>
+        </Flex>
     );
 }
