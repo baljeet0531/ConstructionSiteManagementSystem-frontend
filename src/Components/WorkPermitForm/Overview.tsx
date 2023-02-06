@@ -18,14 +18,7 @@ import {
 import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
 import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
-import { gql, useQuery } from '@apollo/client';
-
-// siteId: "TEST-1"
-// number: null
-// area: null
-// system: null
-// startDate: "2000-12-27T08:30:00"
-// endDate: "2030-12-27T08:30:00"
+import { gql, useQuery, useLazyQuery } from '@apollo/client';
 
 const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
@@ -174,32 +167,31 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const navSingleWorkPermit = () => {
+    const navSingleWorkPermit = (number: string) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem('siteId', siteId);
         // TODO: Save the workPermit item in localStorage
-        // localStorage.setItem('singleWorkPermit', JSON.stringify(valueList[e.currentTarget.id]))
+        localStorage.setItem('singleWorkPermitNumber', number);
         window.open(url, '_blank');
     };
 
     const [overviewTableData, setOverviewTableData] = React.useState<{
         [primaryKey: string]: workPermitChecked;
     }>({});
+    const [searchResultNumber, setSearchResultNumber] =
+        React.useState<string[]>();
     const startDateRef = React.useRef<HTMLInputElement>(null);
     const endDateRef = React.useRef<HTMLInputElement>(null);
+
+    const [startDate, setStartDate] = React.useState<string>();
+    const [endDate, setEndDate] = React.useState<string>();
     const { loading } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
             siteId: siteId, //string!
-            // number: ,//string
-            // area: ,//string
-            // system: ,//string
-            startDate: startDateRef.current?.value
-                ? `${startDateRef.current.value}T00:00:00`
-                : '1950-01-01T00:00:00', //DateTime
-            endDate: endDateRef.current?.value
-                ? `${endDateRef.current.value}T00:00:00`
-                : '2099-12-31T23:59:59', //DateTime
+            startDate: '1950-01-01T00:00:00', //DateTime
+            endDate: '2099-12-31T23:59:59', //DateTime
         },
+        // pollInterval: 10000,
         onCompleted: ({ workPermit }: { workPermit: workPermit[] }) => {
             const workPermitHashed = workPermit.map((info) => ({
                 [info['number']]: { ...info, isCheck: false },
@@ -209,6 +201,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         onError: (err) => {
             console.log(err);
         },
+        fetchPolicy: 'network-only',
     });
 
     const [areas, setAreas] = React.useState<
@@ -283,6 +276,19 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         },
     });
 
+    const [searchWorkpermit, { loading: searchLoading }] = useLazyQuery(
+        QUERY_WORK_PEFMIT,
+        {
+            onCompleted: ({ workPermit }: { workPermit: workPermitRef[] }) => {
+                setSearchResultNumber(workPermit.map((info) => info['number']));
+            },
+            onError: (err) => {
+                console.log(err);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
     return (
         <Flex
             direction={'column'}
@@ -312,12 +318,20 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         type={'date'}
                         width={'140px'}
                         variant={'formOutline'}
+                        onChange={(e) => {
+                            setStartDate(e.target.value);
+                        }}
+                        max={endDate}
                     ></Input>
                     <Input
                         ref={endDateRef}
                         type={'date'}
                         width={'140px'}
                         variant={'formOutline'}
+                        onChange={(e) => {
+                            setEndDate(e.target.value);
+                        }}
+                        min={startDate}
                     ></Input>
                     <Popover placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -376,7 +390,31 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                                     </Flex>
                                 </Grid>
                                 <Flex justifyContent="flex-end">
-                                    <Button variant={'buttonBlueSolid'}>
+                                    <Button
+                                        variant={'buttonBlueSolid'}
+                                        onClick={() => {
+                                            searchWorkpermit({
+                                                variables: {
+                                                    siteId: siteId, //string!
+                                                    // number: ,//string
+                                                    area: areas.flatMap(
+                                                        (area) =>
+                                                            area.isChecked
+                                                                ? area.name
+                                                                : []
+                                                    )[0], //string
+                                                    system: systems.flatMap(
+                                                        (system) =>
+                                                            system.isChecked
+                                                                ? system.name
+                                                                : []
+                                                    )[0], //string
+                                                    startDate: startDate, //DateTime
+                                                    endDate: endDate, //DateTime
+                                                },
+                                            });
+                                        }}
+                                    >
                                         確定搜尋
                                     </Button>
                                 </Flex>
@@ -388,7 +426,9 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                     <Button
                         leftIcon={<AddIcon />}
                         variant={'buttonBlueSolid'}
-                        onClick={navSingleWorkPermit}
+                        onClick={() => {
+                            navSingleWorkPermit('');
+                        }}
                     >
                         新增工單
                     </Button>
@@ -401,12 +441,13 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 </Flex>
             </Flex>
             <WPOverViewTable
+                searchResultNumber={searchResultNumber}
                 overviewTableData={overviewTableData}
                 setOverviewTableData={setOverviewTableData}
+                navSingleWorkPermit={navSingleWorkPermit}
             ></WPOverViewTable>
-            {loading && (
+            {(loading || searchLoading) && (
                 <Center
-                    position={'absolute'}
                     top={0}
                     left={'20vw'}
                     w={'80vw'}
