@@ -115,9 +115,32 @@ export default function WPOverViewTable(props: {
             [primaryKey: string]: workPermitChecked;
         }>
     >;
+    navSingleWorkPermit: Function;
+    searchResultNumber?: string[];
 }) {
-    const { overviewTableData, setOverviewTableData } = props;
-    const primarykeys = Object.keys(overviewTableData);
+    const {
+        overviewTableData,
+        setOverviewTableData,
+        navSingleWorkPermit,
+        searchResultNumber,
+    } = props;
+
+    const displayTableData =
+        overviewTableData && searchResultNumber
+            ? searchResultNumber.length != 0
+                ? Object.assign(
+                      {},
+                      ...searchResultNumber.map((primaryKey) => {
+                          return {
+                              [primaryKey]: {
+                                  ...overviewTableData[primaryKey],
+                              },
+                          };
+                      })
+                  )
+                : {}
+            : overviewTableData;
+    const primarykeys = Object.keys(displayTableData);
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
@@ -205,13 +228,14 @@ export default function WPOverViewTable(props: {
                                         setAllChecked(e.target.checked);
                                         primarykeys.forEach(
                                             (primaryKey) =>
-                                                (overviewTableData[primaryKey][
+                                                (displayTableData[primaryKey][
                                                     'isChecked'
                                                 ] = e.target.checked)
                                         );
-                                        setOverviewTableData({
-                                            ...overviewTableData,
-                                        });
+                                        setOverviewTableData((prevState) => ({
+                                            ...prevState,
+                                            ...displayTableData,
+                                        }));
                                     }}
                                 ></Checkbox>
                             </Center>
@@ -240,7 +264,7 @@ export default function WPOverViewTable(props: {
                     width={tableViewWidth}
                 >
                     {({ columnIndex, rowIndex, style }) => {
-                        const info = overviewTableData[primarykeys[rowIndex]];
+                        const info = displayTableData[primarykeys[rowIndex]];
                         const variable =
                             Object.values(columnMap)[columnIndex]['variable'];
                         if (variable == 'signStatus') {
@@ -257,23 +281,30 @@ export default function WPOverViewTable(props: {
                                 | 'review'
                                 | 'supplierManager'
                                 | 'supplier';
-                            const fieldArray: fieldType[] = [
-                                'approved',
-                                'review',
-                                'supplierManager',
-                                'supplier',
+                            const fieldArray: {
+                                field: fieldType;
+                                fieldLabel: string;
+                            }[] = [
+                                { field: 'approved', fieldLabel: '核准' },
+                                { field: 'review', fieldLabel: '審核' },
+                                {
+                                    field: 'supplierManager',
+                                    fieldLabel: '申請單位主管',
+                                },
+                                { field: 'supplier', fieldLabel: '申請人' },
                             ];
                             const signStatusMap = fieldArray.map(
-                                (field, index) => {
+                                (fieldElement, index) => {
+                                    const { field, fieldLabel } = fieldElement;
                                     const sign = info[field];
                                     const label = sign ? (
-                                        <>
-                                            <Text textAlign={'center'}>
-                                                {info[`${field}Ref`].owner}
-                                                <br />
-                                                {info[`${field}Ref`].time}
-                                            </Text>
-                                        </>
+                                        <Text>
+                                            {`${fieldLabel}：`}
+                                            <br />
+                                            {info[`${field}Ref`].owner}
+                                            <br />
+                                            {info[`${field}Ref`].time}
+                                        </Text>
                                     ) : (
                                         ''
                                     );
@@ -322,6 +353,11 @@ export default function WPOverViewTable(props: {
                                             height={'20px'}
                                             width={'36px'}
                                             fontSize={'10px'}
+                                            onClick={() => {
+                                                navSingleWorkPermit(
+                                                    info['number']
+                                                );
+                                            }}
                                         >
                                             申請
                                         </Button>
@@ -337,6 +373,11 @@ export default function WPOverViewTable(props: {
                                             fontSize={'10px'}
                                             bg={'#DB504A'}
                                             _hover={{ bg: '#DB504A77' }}
+                                            onClick={() => {
+                                                navSingleWorkPermit(
+                                                    info['number']
+                                                );
+                                            }}
                                         >
                                             異動
                                         </Button>
