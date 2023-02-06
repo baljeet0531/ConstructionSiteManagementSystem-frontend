@@ -75,6 +75,7 @@ export default function Menu(props: {
         setSelectedSite({
             ...sitesList[selectValue],
         });
+        localStorage.setItem('siteName', sitesList[selectValue]?.siteName);
     }, [sitesList, selectValue]);
 
     return (
@@ -90,7 +91,7 @@ export default function Menu(props: {
             align="left"
             background="#FFFFFF"
         >
-            <Accordion >
+            <Accordion>
                 <Feature fItem={featureMap.dashboard} />
                 <Feature fItem={featureMap.site} />
                 <Box pl={3}>
@@ -158,11 +159,17 @@ export default function Menu(props: {
                         承商管理
                     </AccordionButton>
                     <AccordionPanel sx={panelStyle}>
-                        <Feature fItem={featureMap.outsource_work_permit_form} />
+                        <Feature
+                            fItem={featureMap.outsource_work_permit_form}
+                        />
                         <Feature fItem={featureMap.outsource_toolbox_form} />
-                        <Feature fItem={featureMap.outsource_env_security_form} />
+                        <Feature
+                            fItem={featureMap.outsource_env_security_form}
+                        />
                         <Feature fItem={featureMap.outsource_special_form} />
-                        <Feature fItem={featureMap.outsource_machinery_establishment} />
+                        <Feature
+                            fItem={featureMap.outsource_machinery_establishment}
+                        />
                         <Feature fItem={featureMap.outsource_fault_form} />
                     </AccordionPanel>
                 </AccordionItem>
