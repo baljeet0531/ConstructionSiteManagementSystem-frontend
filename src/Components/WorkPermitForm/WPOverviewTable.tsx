@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
-import Scrollbars, { ScrollbarProps } from 'react-custom-scrollbars';
 import { VariableSizeGrid } from 'react-window';
 import { workPermit, workPermitChecked } from './Overview';
 
@@ -154,9 +153,15 @@ export default function WPOverViewTable(props: {
         window.innerHeight - tablePaddingTop - tablePaddingBottom
     );
 
-    const getColumnWidth = (index: number) =>
-        (Object.values(columnMap)[index]['width'] / tableFigmaWidth) *
-        tableViewWidth;
+    const columnTitle = Object.keys(columnMap);
+    const columnInfo = Object.values(columnMap);
+    const getColumnWidth = (index: number) => {
+        const offset = index == columnInfo.length - 1 ? -6 : 0;
+        return (
+            (columnInfo[index]['width'] / tableFigmaWidth) * tableViewWidth +
+            offset
+        );
+    };
 
     React.useEffect(() => {
         const watchResize = () => {
@@ -175,41 +180,15 @@ export default function WPOverViewTable(props: {
         };
     }, []);
 
-    const CustomScrollbars = (props: any) => {
-        const { onScroll, forwardedRef, style, children } = props;
-        const refSetter = React.useCallback((scrollbarsRef: any) => {
-            if (scrollbarsRef) {
-                forwardedRef(scrollbarsRef.view);
-            } else {
-                forwardedRef(null);
-            }
-        }, []);
-
-        return (
-            <Scrollbars
-                ref={refSetter}
-                style={{ ...style, overflow: 'hidden' }}
-                onScroll={onScroll}
-            >
-                {children}
-            </Scrollbars>
-        );
-    };
-
-    const CustomScrollbarsVirtualList = React.forwardRef<
-        Scrollbars,
-        ScrollbarProps
-    >((props, ref) => <CustomScrollbars {...props} forwardedRef={ref} />);
-
     return (
         <Flex direction={'column'}>
             <VariableSizeGrid
                 ref={variableSizeHeaderRef}
                 style={{
                     outline: '2px solid #919AA9',
-                    background: '#FFFFFF',
+                    background: '#919AA9',
                 }}
-                columnCount={9}
+                columnCount={columnTitle.length}
                 columnWidth={getColumnWidth}
                 height={headerHeight}
                 rowCount={1}
@@ -217,8 +196,7 @@ export default function WPOverViewTable(props: {
                 width={tableViewWidth}
             >
                 {({ columnIndex, style }) => {
-                    const tableHeader = Object.keys(columnMap);
-                    const title = tableHeader[columnIndex];
+                    const title = columnTitle[columnIndex];
                     if (title == '全選') {
                         return (
                             <Center style={style} {...headerCellStyle}>
@@ -250,23 +228,26 @@ export default function WPOverViewTable(props: {
             </VariableSizeGrid>
             {primarykeys.length != 0 && (
                 <VariableSizeGrid
-                    outerElementType={CustomScrollbarsVirtualList}
                     ref={variableSizeDataRef}
                     style={{
                         outline: '2px solid #919AA9',
                         background: '#FFFFFF',
                     }}
-                    columnCount={9}
+                    columnCount={columnTitle.length}
                     columnWidth={getColumnWidth}
-                    height={tableViewHeight}
+                    height={
+                        tableViewHeight < primarykeys.length * cellHeight
+                            ? tableViewHeight
+                            : primarykeys.length * cellHeight
+                    }
                     rowCount={primarykeys.length}
                     rowHeight={() => cellHeight}
                     width={tableViewWidth}
+                    itemData={displayTableData}
                 >
-                    {({ columnIndex, rowIndex, style }) => {
-                        const info = displayTableData[primarykeys[rowIndex]];
-                        const variable =
-                            Object.values(columnMap)[columnIndex]['variable'];
+                    {({ columnIndex, rowIndex, style, data }) => {
+                        const info = data[primarykeys[rowIndex]];
+                        const variable = columnInfo[columnIndex]['variable'];
                         if (variable == 'signStatus') {
                             if (!info['applied']) {
                                 return (
