@@ -18,7 +18,7 @@ import {
 import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
 import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 
 const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
@@ -102,6 +102,15 @@ const AREAS_AND_SYSTEMS = gql`
     }
 `;
 
+const EXPORT_WORK_PREMIT = gql`
+    mutation {
+        exportWorkPermit(number: ["string"], siteId: "string") {
+            ok
+            message
+            path
+        }
+    }
+`;
 export interface workPermit {
     siteId: string;
     number: string;
@@ -170,7 +179,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     const navSingleWorkPermit = (number: string) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem('siteId', siteId);
-        // TODO: Save the workPermit item in localStorage
         localStorage.setItem('singleWorkPermitNumber', number);
         window.open(url, '_blank');
     };
@@ -180,11 +188,23 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     }>({});
     const [searchResultNumber, setSearchResultNumber] =
         React.useState<string[]>();
-    const startDateRef = React.useRef<HTMLInputElement>(null);
-    const endDateRef = React.useRef<HTMLInputElement>(null);
 
     const [startDate, setStartDate] = React.useState<string>();
     const [endDate, setEndDate] = React.useState<string>();
+
+    const [areas, setAreas] = React.useState<
+        { name: string; isChecked: boolean }[]
+    >([]);
+    const [systems, setSystems] = React.useState<
+        { name: string; isChecked: boolean }[]
+    >([
+        { name: '空調系統', isChecked: false },
+        { name: '電力系統', isChecked: false },
+        { name: '消防系統', isChecked: false },
+        { name: '給排水系統', isChecked: false },
+        { name: '儀控系統', isChecked: false },
+    ]);
+
     const { loading } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
             siteId: siteId, //string!
@@ -204,18 +224,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         fetchPolicy: 'network-only',
     });
 
-    const [areas, setAreas] = React.useState<
-        { name: string; isChecked: boolean }[]
-    >([]);
-    const [systems, setSystems] = React.useState<
-        { name: string; isChecked: boolean }[]
-    >([
-        { name: '空調系統', isChecked: false },
-        { name: '電力系統', isChecked: false },
-        { name: '消防系統', isChecked: false },
-        { name: '給排水系統', isChecked: false },
-        { name: '儀控系統', isChecked: false },
-    ]);
     const handleSearchCheckboxClick = (
         setState: React.Dispatch<
             React.SetStateAction<
@@ -269,7 +277,11 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
             areaAndSystem: { areas: string[]; systems: string[] };
         }) => {
             const { areas } = areaAndSystem;
-            setAreas(areas.map((area) => ({ name: area, isChecked: false })));
+            setAreas(
+                areas.flatMap((area) =>
+                    area != '' ? { name: area, isChecked: false } : []
+                )
+            );
         },
         onError: (err) => {
             console.log(err);
@@ -281,6 +293,19 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         {
             onCompleted: ({ workPermit }: { workPermit: workPermitRef[] }) => {
                 setSearchResultNumber(workPermit.map((info) => info['number']));
+            },
+            onError: (err) => {
+                console.log(err);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const [exportWorkPermit, { loading: exportLoading }] = useMutation(
+        EXPORT_WORK_PREMIT,
+        {
+            onCompleted: ({ exportWorkPermit }) => {
+                console.log(exportWorkPermit);
             },
             onError: (err) => {
                 console.log(err);
@@ -314,7 +339,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
                     <Input
-                        ref={startDateRef}
                         type={'date'}
                         width={'140px'}
                         variant={'formOutline'}
@@ -324,7 +348,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         max={endDate}
                     ></Input>
                     <Input
-                        ref={endDateRef}
                         type={'date'}
                         width={'140px'}
                         variant={'formOutline'}
@@ -409,8 +432,12 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                                                                 ? system.name
                                                                 : []
                                                     )[0], //string
-                                                    startDate: startDate, //DateTime
-                                                    endDate: endDate, //DateTime
+                                                    startDate:
+                                                        startDate ||
+                                                        '1950-01-01T00:00:00', //DateTime
+                                                    endDate:
+                                                        endDate ||
+                                                        '2099-12-31T23:59:59', //DateTime
                                                 },
                                             });
                                         }}
@@ -435,6 +462,19 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                     <Button
                         leftIcon={<LaunchIcon />}
                         variant={'buttonGrayOutline'}
+                        onClick={() => {
+                            const selectedNumber = Object.values(
+                                overviewTableData
+                            ).flatMap((info: workPermitChecked) =>
+                                info.isChecked ? info.number : []
+                            );
+                            exportWorkPermit({
+                                variables: {
+                                    number: selectedNumber,
+                                    siteId: siteId,
+                                },
+                            });
+                        }}
                     >
                         輸出
                     </Button>
@@ -446,7 +486,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 setOverviewTableData={setOverviewTableData}
                 navSingleWorkPermit={navSingleWorkPermit}
             ></WPOverViewTable>
-            {(loading || searchLoading) && (
+            {(loading || searchLoading || exportLoading) && (
                 <Center
                     top={0}
                     left={'20vw'}
