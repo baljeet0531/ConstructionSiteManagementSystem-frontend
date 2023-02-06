@@ -1,6 +1,11 @@
-
+import { Dispatch, SetStateAction } from 'react';
 export interface ISignature {
-    path: string;
-    time: string;
-    owner: string;
+    image: string | File | undefined;
+    time: string | Date | undefined;
+    owner: string | undefined;
 }
+
+export type SignatureStateItem = [
+    ISignature,
+    Dispatch<SetStateAction<ISignature>>
+];
