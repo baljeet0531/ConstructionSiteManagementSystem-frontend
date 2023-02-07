@@ -95,7 +95,9 @@ export default function Layout(props: { page: featureName }) {
                 setSelectedSite={setSelectedSite}
                 featureMap={featureMap}
             />
-            <MainScreen>{featureMap[page].page}</MainScreen>
+            <MainScreen key={selectedSite?.siteId}>
+                {featureMap[page].page}
+            </MainScreen>
         </Flex>
     );
 }
