@@ -83,14 +83,14 @@ const GQL_WORK_PERMIT = gql`
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
-    const singleWorkPermitNumber = localStorage.getItem(
-        'singleWorkPermitNumber'
-    ) as string;
+    const singleWorkPermitObject = JSON.parse(
+        localStorage.getItem('singleWorkPermitObject') as string
+    );
     const value = JSON.parse(
         localStorage.getItem('singleWorkPermit') as string
     ) as IWorkPermit;
     const username: string = new Cookies().get('username');
-    console.log(singleWorkPermitNumber);
+    console.log(singleWorkPermitObject);
     const initialValues: IWorkPermit = value || {
         applicant: username,
         applied: true,
