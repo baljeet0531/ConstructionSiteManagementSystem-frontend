@@ -59,11 +59,12 @@ export default function Layout(props: { page: featureName }) {
                     index: number
                 ) => {
                     const { siteRef, ...siteIdRole } = site;
-                    if (index == 0)
+                    if (index == 0) {
                         setSelectedSite({
                             ...siteIdRole,
                             siteName: siteRef.name,
                         });
+                    }
                     return {
                         ...siteIdRole,
                         siteName: siteRef.name,
