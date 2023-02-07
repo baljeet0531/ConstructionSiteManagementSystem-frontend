@@ -24,8 +24,8 @@ const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
         $siteId: String!
         $number: String
-        $area: String
-        $system: String
+        $area: [String]
+        $system: [String]
         $startDate: DateTime
         $endDate: DateTime
     ) {
@@ -94,10 +94,9 @@ const QUERY_WORK_PEFMIT = gql`
 `;
 
 const AREAS_AND_SYSTEMS = gql`
-    query AreaAndSystem($siteId: String!, $area: [String]) {
-        areaAndSystem(siteId: $siteId, area: $area) {
+    query AreaAndSystem($siteId: String!) {
+        areaAndSystem(siteId: $siteId) {
             areas
-            systems
         }
     }
 `;
@@ -117,14 +116,14 @@ export interface workPermit {
     applicant: string;
     applied: boolean;
     modified: boolean;
-    supplyDate: string; //Date;
+    supplyDate: string;
     system: string;
     systemBranch: string;
     project: string;
     area: string;
     zone: string;
-    workStart: string; //Date;
-    workEnd: string; //Date;
+    workStart: string;
+    workEnd: string;
     supervisorCorp: string;
     supervisor: string;
     tel: string;
@@ -149,22 +148,22 @@ export interface workPermit {
 export interface workPermitRef extends workPermit {
     approvedRef: {
         path: string;
-        time: string; //Date;
+        time: string;
         owner: string;
     };
     reviewRef: {
         path: string;
-        time: string; //Date;
+        time: string;
         owner: string;
     };
     supplierManagerRef: {
         path: string;
-        time: string; //Date;
+        time: string;
         owner: string;
     };
     supplierRef: {
         path: string;
-        time: string; //Date;
+        time: string;
         owner: string;
     };
 }
@@ -210,9 +209,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
 
     const { loading } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
-            siteId: siteId, //string!
-            startDate: '1950-01-01T00:00:00', //DateTime
-            endDate: '2099-12-31T23:59:59', //DateTime
+            siteId: siteId,
         },
         // pollInterval: 10000,
         onCompleted: ({ workPermit }: { workPermit: workPermit[] }) => {
@@ -272,7 +269,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     useQuery(AREAS_AND_SYSTEMS, {
         variables: {
             siteId: siteId,
-            area: null,
         },
         onCompleted: ({
             areaAndSystem,
@@ -421,26 +417,25 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                                         onClick={() => {
                                             searchWorkpermit({
                                                 variables: {
-                                                    siteId: siteId, //string!
-                                                    // number: ,//string
+                                                    siteId: siteId,
                                                     area: areas.flatMap(
                                                         (area) =>
                                                             area.isChecked
                                                                 ? area.name
                                                                 : []
-                                                    )[0], //string
+                                                    ),
                                                     system: systems.flatMap(
                                                         (system) =>
                                                             system.isChecked
                                                                 ? system.name
                                                                 : []
-                                                    )[0], //string
-                                                    startDate:
-                                                        startDate ||
-                                                        '1950-01-01T00:00:00', //DateTime
-                                                    endDate:
-                                                        endDate ||
-                                                        '2099-12-31T23:59:59', //DateTime
+                                                    ),
+                                                    ...(startDate && {
+                                                        startDate: `${startDate}T08:30:00`,
+                                                    }),
+                                                    ...(endDate && {
+                                                        endDate: `${endDate}T08:30:00`,
+                                                    }),
                                                 },
                                             });
                                         }}
