@@ -103,8 +103,8 @@ const AREAS_AND_SYSTEMS = gql`
 `;
 
 const EXPORT_WORK_PREMIT = gql`
-    mutation {
-        exportWorkPermit(number: ["string"], siteId: "string") {
+    mutation ExportWorkPermit($number: [String]!, $siteId: String!) {
+        exportWorkPermit(number: $number, siteId: $siteId) {
             ok
             message
             path
@@ -176,10 +176,13 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
 
-    const navSingleWorkPermit = (number: string) => {
+    const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem('siteId', siteId);
-        localStorage.setItem('singleWorkPermitNumber', number);
+        localStorage.setItem(
+            'singleWorkPermitObject',
+            JSON.stringify({ number: number, modified: modified })
+        );
         window.open(url, '_blank');
     };
 
@@ -454,7 +457,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         leftIcon={<AddIcon />}
                         variant={'buttonBlueSolid'}
                         onClick={() => {
-                            navSingleWorkPermit('');
+                            navSingleWorkPermit('', false);
                         }}
                     >
                         新增工單

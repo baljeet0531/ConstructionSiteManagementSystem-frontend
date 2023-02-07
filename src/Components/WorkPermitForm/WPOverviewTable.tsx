@@ -7,10 +7,11 @@ import {
     Button,
     Tooltip,
     Checkbox,
+    Link,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
-import { VariableSizeGrid } from 'react-window';
+import { VariableSizeGrid, areEqual } from 'react-window';
 import { workPermit, workPermitChecked } from './Overview';
 
 const columnMap = {
@@ -124,7 +125,9 @@ export default function WPOverViewTable(props: {
         searchResultNumber,
     } = props;
 
-    const displayTableData =
+    const displayTableData: {
+        [primaryKey: string]: workPermitChecked;
+    } =
         overviewTableData && searchResultNumber
             ? searchResultNumber.length != 0
                 ? Object.assign(
@@ -162,6 +165,173 @@ export default function WPOverViewTable(props: {
             offset
         );
     };
+
+    const memorizedTable = React.memo(
+        ({
+            columnIndex,
+            rowIndex,
+            style,
+            data,
+        }: {
+            columnIndex: number;
+            rowIndex: number;
+            style: React.CSSProperties;
+            data: {
+                [primaryKey: string]: workPermitChecked;
+            };
+        }) => {
+            const info: workPermitChecked = data[primarykeys[rowIndex]];
+            const variable = columnInfo[columnIndex]['variable'];
+            if (variable == 'number') {
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        <Link
+                            onClick={() => {
+                                navSingleWorkPermit(info['number'], false);
+                            }}
+                        >
+                            {info['number']}
+                        </Link>
+                    </Box>
+                );
+            } else if (variable == 'signStatus') {
+                if (!info['applied']) {
+                    return (
+                        <Box style={style} {...dataCellStyle}>
+                            尚未申請
+                        </Box>
+                    );
+                }
+
+                type fieldType =
+                    | 'approved'
+                    | 'review'
+                    | 'supplierManager'
+                    | 'supplier';
+                const fieldArray: {
+                    field: fieldType;
+                    fieldLabel: string;
+                }[] = [
+                    { field: 'approved', fieldLabel: '核准' },
+                    { field: 'review', fieldLabel: '審核' },
+                    {
+                        field: 'supplierManager',
+                        fieldLabel: '申請單位主管',
+                    },
+                    { field: 'supplier', fieldLabel: '申請人' },
+                ];
+                const signStatusMap = fieldArray.map((fieldElement, index) => {
+                    const { field, fieldLabel } = fieldElement;
+                    const sign = info[field];
+                    const label = sign ? (
+                        <Text>
+                            {`${fieldLabel}：`}
+                            <br />
+                            {info[`${field}Ref`].owner}
+                            <br />
+                            {dayjs(info[`${field}Ref`].time).format(
+                                'YYYY-MM-DD HH:mm:ss'
+                            )}
+                        </Text>
+                    ) : (
+                        ''
+                    );
+                    return (
+                        <Tooltip label={label} key={index}>
+                            <Button
+                                key={index}
+                                w={'40px'}
+                                h={'10px'}
+                                bg={
+                                    sign
+                                        ? '#9CE3DE'
+                                        : 'rgba(102, 112, 128, 0.1)'
+                                }
+                                borderRadius={'4px'}
+                            ></Button>
+                        </Tooltip>
+                    );
+                });
+
+                return (
+                    <Flex
+                        style={style}
+                        {...dataCellStyle}
+                        gap={'2px'}
+                        w={'170px'}
+                        align={'center'}
+                        justify={'center'}
+                        height={'20px'}
+                    >
+                        {signStatusMap}
+                    </Flex>
+                );
+            } else if (variable == 'appliedOrModified') {
+                const now = dayjs();
+                const workEnd = dayjs(info['workEnd'].split('T')[0]);
+                const diff = now.diff(workEnd, 'day');
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        {!info['applied'] ? (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], false);
+                                }}
+                            >
+                                申請
+                            </Button>
+                        ) : info['modified'] ? (
+                            '異動單'
+                        ) : diff > 0 ? (
+                            ''
+                        ) : (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                bg={'#DB504A'}
+                                _hover={{ bg: '#DB504A77' }}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], true);
+                                }}
+                            >
+                                異動
+                            </Button>
+                        )}
+                    </Box>
+                );
+            } else if (variable == 'isCheck') {
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        <Checkbox
+                            isChecked={info['isChecked']}
+                            onChange={(e) => {
+                                setOverviewTableData((prevState) => ({
+                                    ...prevState,
+                                    [primarykeys[rowIndex]]: {
+                                        ...info,
+                                        isChecked: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        ></Checkbox>
+                    </Box>
+                );
+            }
+
+            return (
+                <Box style={style} {...dataCellStyle}>
+                    {info[variable as keyof workPermit]}
+                </Box>
+            );
+        },
+        areEqual
+    );
 
     React.useEffect(() => {
         const watchResize = () => {
@@ -245,154 +415,7 @@ export default function WPOverViewTable(props: {
                     width={tableViewWidth}
                     itemData={displayTableData}
                 >
-                    {({ columnIndex, rowIndex, style, data }) => {
-                        const info = data[primarykeys[rowIndex]];
-                        const variable = columnInfo[columnIndex]['variable'];
-                        if (variable == 'signStatus') {
-                            if (!info['applied']) {
-                                return (
-                                    <Box style={style} {...dataCellStyle}>
-                                        尚未申請
-                                    </Box>
-                                );
-                            }
-
-                            type fieldType =
-                                | 'approved'
-                                | 'review'
-                                | 'supplierManager'
-                                | 'supplier';
-                            const fieldArray: {
-                                field: fieldType;
-                                fieldLabel: string;
-                            }[] = [
-                                { field: 'approved', fieldLabel: '核准' },
-                                { field: 'review', fieldLabel: '審核' },
-                                {
-                                    field: 'supplierManager',
-                                    fieldLabel: '申請單位主管',
-                                },
-                                { field: 'supplier', fieldLabel: '申請人' },
-                            ];
-                            const signStatusMap = fieldArray.map(
-                                (fieldElement, index) => {
-                                    const { field, fieldLabel } = fieldElement;
-                                    const sign = info[field];
-                                    const label = sign ? (
-                                        <Text>
-                                            {`${fieldLabel}：`}
-                                            <br />
-                                            {info[`${field}Ref`].owner}
-                                            <br />
-                                            {info[`${field}Ref`].time}
-                                        </Text>
-                                    ) : (
-                                        ''
-                                    );
-                                    return (
-                                        <Tooltip label={label} key={index}>
-                                            <Button
-                                                key={index}
-                                                w={'40px'}
-                                                h={'10px'}
-                                                bg={
-                                                    sign
-                                                        ? '#9CE3DE'
-                                                        : 'rgba(102, 112, 128, 0.1)'
-                                                }
-                                                borderRadius={'4px'}
-                                            ></Button>
-                                        </Tooltip>
-                                    );
-                                }
-                            );
-
-                            return (
-                                <Flex
-                                    style={style}
-                                    {...dataCellStyle}
-                                    gap={'2px'}
-                                    w={'170px'}
-                                    align={'center'}
-                                    justify={'center'}
-                                    height={'20px'}
-                                >
-                                    {signStatusMap}
-                                </Flex>
-                            );
-                        } else if (variable == 'appliedOrModified') {
-                            const now = dayjs();
-                            const workEnd = dayjs(
-                                info['workEnd'].split('T')[0]
-                            );
-                            const diff = now.diff(workEnd, 'day');
-                            return (
-                                <Box style={style} {...dataCellStyle}>
-                                    {!info['applied'] ? (
-                                        <Button
-                                            variant={'buttonBlueSolid'}
-                                            height={'20px'}
-                                            width={'36px'}
-                                            fontSize={'10px'}
-                                            onClick={() => {
-                                                navSingleWorkPermit(
-                                                    info['number']
-                                                );
-                                            }}
-                                        >
-                                            申請
-                                        </Button>
-                                    ) : info['modified'] ? (
-                                        '異動單'
-                                    ) : diff > 0 ? (
-                                        ''
-                                    ) : (
-                                        <Button
-                                            variant={'buttonBlueSolid'}
-                                            height={'20px'}
-                                            width={'36px'}
-                                            fontSize={'10px'}
-                                            bg={'#DB504A'}
-                                            _hover={{ bg: '#DB504A77' }}
-                                            onClick={() => {
-                                                navSingleWorkPermit(
-                                                    info['number']
-                                                );
-                                            }}
-                                        >
-                                            異動
-                                        </Button>
-                                    )}
-                                </Box>
-                            );
-                        } else if (variable == 'isCheck') {
-                            return (
-                                <Box style={style} {...dataCellStyle}>
-                                    <Checkbox
-                                        isChecked={info['isChecked']}
-                                        onChange={(e) => {
-                                            setOverviewTableData(
-                                                (prevState) => ({
-                                                    ...prevState,
-                                                    [primarykeys[rowIndex]]: {
-                                                        ...info,
-                                                        isChecked:
-                                                            e.target.checked,
-                                                    },
-                                                })
-                                            );
-                                        }}
-                                    ></Checkbox>
-                                </Box>
-                            );
-                        }
-
-                        return (
-                            <Box style={style} {...dataCellStyle}>
-                                {info[variable as keyof workPermit]}
-                            </Box>
-                        );
-                    }}
+                    {memorizedTable}
                 </VariableSizeGrid>
             )}
         </Flex>
