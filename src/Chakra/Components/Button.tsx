@@ -10,7 +10,7 @@ const Button = {
                 bg: '#4C7DE7',
                 color: '#FFFFFF',
                 _hover: {
-                    bg: '#4C7DE7',
+                    bg: '#4C7DE777',
                 },
             };
         },

@@ -83,10 +83,14 @@ const GQL_WORK_PERMIT = gql`
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
+    const singleWorkPermitObject = JSON.parse(
+        localStorage.getItem('singleWorkPermitObject') as string
+    );
     const value = JSON.parse(
         localStorage.getItem('singleWorkPermit') as string
     ) as IWorkPermit;
     const username: string = new Cookies().get('username');
+    console.log(singleWorkPermitObject);
     const initialValues: IWorkPermit = value || {
         applicant: username,
         applied: true,
@@ -171,14 +175,14 @@ export default function WorkPermitFormik() {
             validateOnChange={false}
             onSubmit={(values, actions) => {
                 actions.setSubmitting(true);
-                const submitValues = { ...values }
+                const submitValues = { ...values };
                 if (submitValues.zone instanceof Array) {
                     submitValues['zone'] = submitValues.zone.join(',');
                 }
-                let key : keyof Record<SignatureName, SignatureStateItem>
+                let key: keyof Record<SignatureName, SignatureStateItem>;
                 for (key in signatures) {
-                    const [signature] = signatures[key]
-                    submitValues[key] = {...signature}
+                    const [signature] = signatures[key];
+                    submitValues[key] = { ...signature };
                 }
                 updateWorkPermit({ variables: submitValues });
                 actions.setSubmitting(false);
