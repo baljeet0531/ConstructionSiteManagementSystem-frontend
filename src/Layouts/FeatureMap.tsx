@@ -21,6 +21,7 @@ import MachineryEstablishment from '../Components/MachineryEstablishment/Machine
 import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
+import { Center } from '@chakra-ui/react';
 
 export type featureName =
     | 'dashboard'
@@ -55,6 +56,12 @@ export type featureItem = {
     icon?: () => JSX.Element;
     page: JSX.Element;
 };
+
+const emptySiteIdPage = (
+    <Center w={'100%'} h={'100%'}>
+        請選擇專案
+    </Center>
+);
 
 export function getFeatureMap({
     siteId,
@@ -97,7 +104,7 @@ export function getFeatureMap({
         project_schedule: {
             name: '排程管理',
             path: '/project/schedule',
-            page: <Schedule siteId={siteId} />,
+            page: siteId == '' ? emptySiteIdPage : <Schedule siteId={siteId} />,
         },
         project_report: {
             name: '進度報表',
@@ -112,7 +119,12 @@ export function getFeatureMap({
         eng_work_permit_form: {
             name: '工作許可單',
             path: '/eng/form/work-permit',
-            page: <WorkPermitFormOverview siteId={siteId}/>,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <WorkPermitFormOverview siteId={siteId} />
+                ),
         },
         eng_toolbox_form: {
             name: '工具箱會議',

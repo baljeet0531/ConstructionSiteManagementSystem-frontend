@@ -1,7 +1,18 @@
-import { Box, Center, ChakraProps, Flex } from '@chakra-ui/react';
+import {
+    Box,
+    Center,
+    ChakraProps,
+    Flex,
+    Text,
+    Button,
+    Tooltip,
+    Checkbox,
+    Link,
+} from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import React from 'react';
-import Scrollbars, { ScrollbarProps } from 'react-custom-scrollbars';
-import { VariableSizeGrid } from 'react-window';
+import { VariableSizeGrid, areEqual } from 'react-window';
+import { workPermit, workPermitChecked } from './Overview';
 
 const columnMap = {
     日期: {
@@ -97,7 +108,44 @@ const errorDataCellStyle: ChakraProps = {
     bg: '#FDFFE3',
 };
 
-export default function WPOverViewTable() {
+export default function WPOverViewTable(props: {
+    overviewTableData: { [primaryKey: string]: workPermitChecked };
+    setOverviewTableData: React.Dispatch<
+        React.SetStateAction<{
+            [primaryKey: string]: workPermitChecked;
+        }>
+    >;
+    navSingleWorkPermit: Function;
+    searchResultNumber?: string[];
+}) {
+    const {
+        overviewTableData,
+        setOverviewTableData,
+        navSingleWorkPermit,
+        searchResultNumber,
+    } = props;
+
+    const displayTableData: {
+        [primaryKey: string]: workPermitChecked;
+    } =
+        overviewTableData && searchResultNumber
+            ? searchResultNumber.length != 0
+                ? Object.assign(
+                      {},
+                      ...searchResultNumber.map((primaryKey) => {
+                          return {
+                              [primaryKey]: {
+                                  ...overviewTableData[primaryKey],
+                              },
+                          };
+                      })
+                  )
+                : {}
+            : overviewTableData;
+    const primarykeys = Object.keys(displayTableData);
+
+    const [allChecked, setAllChecked] = React.useState<boolean>(false);
+
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
 
@@ -108,9 +156,182 @@ export default function WPOverViewTable() {
         window.innerHeight - tablePaddingTop - tablePaddingBottom
     );
 
-    const getColumnWidth = (index: number) =>
-        (Object.values(columnMap)[index]['width'] / tableFigmaWidth) *
-        tableViewWidth;
+    const columnTitle = Object.keys(columnMap);
+    const columnInfo = Object.values(columnMap);
+    const getColumnWidth = (index: number) => {
+        const offset = index == columnInfo.length - 1 ? -6 : 0;
+        return (
+            (columnInfo[index]['width'] / tableFigmaWidth) * tableViewWidth +
+            offset
+        );
+    };
+
+    const memorizedTable = React.memo(
+        ({
+            columnIndex,
+            rowIndex,
+            style,
+            data,
+        }: {
+            columnIndex: number;
+            rowIndex: number;
+            style: React.CSSProperties;
+            data: {
+                [primaryKey: string]: workPermitChecked;
+            };
+        }) => {
+            const info: workPermitChecked = data[primarykeys[rowIndex]];
+            const variable = columnInfo[columnIndex]['variable'];
+            if (variable == 'number') {
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        <Link
+                            onClick={() => {
+                                navSingleWorkPermit(info['number'], false);
+                            }}
+                        >
+                            {info['number']}
+                        </Link>
+                    </Box>
+                );
+            } else if (variable == 'signStatus') {
+                if (!info['applied']) {
+                    return (
+                        <Box style={style} {...dataCellStyle}>
+                            尚未申請
+                        </Box>
+                    );
+                }
+
+                type fieldType =
+                    | 'approved'
+                    | 'review'
+                    | 'supplierManager'
+                    | 'supplier';
+                const fieldArray: {
+                    field: fieldType;
+                    fieldLabel: string;
+                }[] = [
+                    { field: 'approved', fieldLabel: '核准' },
+                    { field: 'review', fieldLabel: '審核' },
+                    {
+                        field: 'supplierManager',
+                        fieldLabel: '申請單位主管',
+                    },
+                    { field: 'supplier', fieldLabel: '申請人' },
+                ];
+                const signStatusMap = fieldArray.map((fieldElement, index) => {
+                    const { field, fieldLabel } = fieldElement;
+                    const sign = info[field];
+                    const label = sign ? (
+                        <Text>
+                            {`${fieldLabel}：`}
+                            <br />
+                            {info[`${field}Ref`].owner}
+                            <br />
+                            {dayjs(info[`${field}Ref`].time).format(
+                                'YYYY-MM-DD HH:mm:ss'
+                            )}
+                        </Text>
+                    ) : (
+                        ''
+                    );
+                    return (
+                        <Tooltip label={label} key={index}>
+                            <Button
+                                key={index}
+                                w={'40px'}
+                                h={'10px'}
+                                bg={
+                                    sign
+                                        ? '#9CE3DE'
+                                        : 'rgba(102, 112, 128, 0.1)'
+                                }
+                                borderRadius={'4px'}
+                            ></Button>
+                        </Tooltip>
+                    );
+                });
+
+                return (
+                    <Flex
+                        style={style}
+                        {...dataCellStyle}
+                        gap={'2px'}
+                        w={'170px'}
+                        align={'center'}
+                        justify={'center'}
+                        height={'20px'}
+                    >
+                        {signStatusMap}
+                    </Flex>
+                );
+            } else if (variable == 'appliedOrModified') {
+                const now = dayjs();
+                const workEnd = dayjs(info['workEnd'].split('T')[0]);
+                const diff = now.diff(workEnd, 'day');
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        {!info['applied'] ? (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], false);
+                                }}
+                            >
+                                申請
+                            </Button>
+                        ) : info['modified'] ? (
+                            '異動單'
+                        ) : diff > 0 ? (
+                            ''
+                        ) : (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                bg={'#DB504A'}
+                                _hover={{ bg: '#DB504A77' }}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], true);
+                                }}
+                            >
+                                異動
+                            </Button>
+                        )}
+                    </Box>
+                );
+            } else if (variable == 'isCheck') {
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        <Checkbox
+                            isChecked={info['isChecked']}
+                            onChange={(e) => {
+                                setOverviewTableData((prevState) => ({
+                                    ...prevState,
+                                    [primarykeys[rowIndex]]: {
+                                        ...info,
+                                        isChecked: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        ></Checkbox>
+                    </Box>
+                );
+            }
+
+            return (
+                <Box style={style} {...dataCellStyle}>
+                    {info[variable as keyof workPermit]}
+                </Box>
+            );
+        },
+        areEqual
+    );
 
     React.useEffect(() => {
         const watchResize = () => {
@@ -129,41 +350,15 @@ export default function WPOverViewTable() {
         };
     }, []);
 
-    const CustomScrollbars = (props: any) => {
-        const { onScroll, forwardedRef, style, children } = props;
-        const refSetter = React.useCallback((scrollbarsRef: any) => {
-            if (scrollbarsRef) {
-                forwardedRef(scrollbarsRef.view);
-            } else {
-                forwardedRef(null);
-            }
-        }, []);
-
-        return (
-            <Scrollbars
-                ref={refSetter}
-                style={{ ...style, overflow: 'hidden' }}
-                onScroll={onScroll}
-            >
-                {children}
-            </Scrollbars>
-        );
-    };
-
-    const CustomScrollbarsVirtualList = React.forwardRef<
-        Scrollbars,
-        ScrollbarProps
-    >((props, ref) => <CustomScrollbars {...props} forwardedRef={ref} />);
-
     return (
         <Flex direction={'column'}>
             <VariableSizeGrid
                 ref={variableSizeHeaderRef}
                 style={{
                     outline: '2px solid #919AA9',
-                    background: '#FFFFFF',
+                    background: '#919AA9',
                 }}
-                columnCount={9}
+                columnCount={columnTitle.length}
                 columnWidth={getColumnWidth}
                 height={headerHeight}
                 rowCount={1}
@@ -171,34 +366,58 @@ export default function WPOverViewTable() {
                 width={tableViewWidth}
             >
                 {({ columnIndex, style }) => {
-                    const tableHeader = Object.keys(columnMap);
+                    const title = columnTitle[columnIndex];
+                    if (title == '全選') {
+                        return (
+                            <Center style={style} {...headerCellStyle}>
+                                <Checkbox
+                                    isChecked={allChecked}
+                                    onChange={(e) => {
+                                        setAllChecked(e.target.checked);
+                                        primarykeys.forEach(
+                                            (primaryKey) =>
+                                                (displayTableData[primaryKey][
+                                                    'isChecked'
+                                                ] = e.target.checked)
+                                        );
+                                        setOverviewTableData((prevState) => ({
+                                            ...prevState,
+                                            ...displayTableData,
+                                        }));
+                                    }}
+                                ></Checkbox>
+                            </Center>
+                        );
+                    }
                     return (
                         <Center style={style} {...headerCellStyle}>
-                            {tableHeader[columnIndex]}
+                            {title}
                         </Center>
                     );
                 }}
             </VariableSizeGrid>
-            <VariableSizeGrid
-                outerElementType={CustomScrollbarsVirtualList}
-                ref={variableSizeDataRef}
-                style={{
-                    outline: '2px solid #919AA9',
-                    background: '#FFFFFF',
-                }}
-                columnCount={9}
-                columnWidth={getColumnWidth}
-                height={tableViewHeight}
-                rowCount={1000}
-                rowHeight={() => cellHeight}
-                width={tableViewWidth}
-            >
-                {({ columnIndex, rowIndex, style }) => (
-                    <Box style={style} {...dataCellStyle}>
-                        Item {rowIndex},{columnIndex}
-                    </Box>
-                )}
-            </VariableSizeGrid>
+            {primarykeys.length != 0 && (
+                <VariableSizeGrid
+                    ref={variableSizeDataRef}
+                    style={{
+                        outline: '2px solid #919AA9',
+                        background: '#FFFFFF',
+                    }}
+                    columnCount={columnTitle.length}
+                    columnWidth={getColumnWidth}
+                    height={
+                        tableViewHeight < primarykeys.length * cellHeight
+                            ? tableViewHeight
+                            : primarykeys.length * cellHeight
+                    }
+                    rowCount={primarykeys.length}
+                    rowHeight={() => cellHeight}
+                    width={tableViewWidth}
+                    itemData={displayTableData}
+                >
+                    {memorizedTable}
+                </VariableSizeGrid>
+            )}
         </Flex>
     );
 }
