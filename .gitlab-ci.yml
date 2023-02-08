@@ -14,6 +14,7 @@ build_base_image:
         - yarn.lock
   image: jonoh/docker-buildx-qemu
   script:
+    - docker login registry.19gale.ai --username ${REGISTRY_USERNAME} --password ${REGISTRY_PASSWORD}
     - docker buildx create --platform linux/amd64,linux/arm64/v8 --driver docker-container --use --name builder
     - docker buildx inspect --bootstrap
     - update-binfmts --enable # Important: Ensures execution of other binary formats is enabled in the kernel
@@ -35,7 +36,7 @@ dev_build:
   artifacts:
     paths:
     - build.tar.gz
-    expire_in: 1 day
+    expire_in: 30 day
 
 prod_build:
   stage: delivery
@@ -52,7 +53,7 @@ prod_build:
   artifacts:
     paths:
     - build.tar.gz
-    expire_in: 1 day
+    expire_in: 30 day
 
 tag_verification:
   stage: delivery
