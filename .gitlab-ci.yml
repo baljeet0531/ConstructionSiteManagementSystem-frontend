@@ -2,7 +2,7 @@ default:
   tags: [amd64]
 
 stages:
-# - preparation
+  - preparation
   - delivery
   - deployment
 
