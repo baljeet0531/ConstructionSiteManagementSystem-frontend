@@ -6,18 +6,18 @@ stages:
   - delivery
   - deployment
 
-# build_base_image:
-#   stage: preparation
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
-#       changes:
-#         - requirements.txt
-#   image: jonoh/docker-buildx-qemu
-#   script:
-#     - docker buildx create --platform linux/amd64,linux/arm64/v8 --driver docker-container --use --name builder
-#     - docker buildx inspect --bootstrap
-#     - update-binfmts --enable # Important: Ensures execution of other binary formats is enabled in the kernel
-#     - docker buildx build --platform linux/amd64,linux/arm64/v8 --pull --push -f Dockerfile.base -t registry.${CI_PROJECT_PATH}:base .
+build_base_image:
+  stage: preparation
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+      changes:
+        - yarn.lock
+  image: jonoh/docker-buildx-qemu
+  script:
+    - docker buildx create --platform linux/amd64,linux/arm64/v8 --driver docker-container --use --name builder
+    - docker buildx inspect --bootstrap
+    - update-binfmts --enable # Important: Ensures execution of other binary formats is enabled in the kernel
+    - docker buildx build --platform linux/amd64,linux/arm64/v8 --pull --push -f Dockerfile.base -t registry.${CI_PROJECT_PATH}:base .
 
 dev_build:
   stage: delivery
