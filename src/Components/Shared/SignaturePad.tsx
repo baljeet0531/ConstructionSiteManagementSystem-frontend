@@ -35,7 +35,7 @@ export default function SignaturePad({
     const clear = () => sigCanvas.current.clear();
     const save = async () => {
         const base64string = sigCanvas.current
-            .getTrimmedCanvas()
+            .getCanvas()
             .toDataURL('image/png');
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
