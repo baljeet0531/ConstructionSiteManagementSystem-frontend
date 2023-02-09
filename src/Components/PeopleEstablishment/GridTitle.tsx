@@ -18,7 +18,7 @@ export default function GridTitle(props: {
             colStart={gridRange[2]}
             colEnd={gridRange[3]}
         >
-            <Text variant={'formpartTitle'}>{title}</Text>;
+            <Text variant={'formpartTitle'}>{title}</Text>
         </GridItem>
     );
 }
