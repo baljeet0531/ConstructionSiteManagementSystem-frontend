@@ -16,7 +16,9 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import React from 'react';
+import { Cookies } from 'react-cookie';
 import { Navigate, useNavigate } from 'react-router-dom';
+import BACKEND from '../../Constants/EnvConstants';
 import {
     DeleteIcon,
     EditIcon,
@@ -90,6 +92,16 @@ const DELETE_HUMAN_RESOURCE = gql`
     }
 `;
 
+const EXPORT_HUMAN_RESOURCE = gql`
+    mutation ExportHumanResource($idnos: [String]!, $username: String!) {
+        exportHumanResource(idnos: $idnos, username: $username) {
+            ok
+            message
+            path
+        }
+    }
+`;
+
 export const SEARCH_HUMAN = gql`
     query SearchHuman($context: String!, $errlist: Boolean!) {
         searchHuman(context: $context, errlist: $errlist) {
@@ -103,361 +115,361 @@ export const SEARCH_HUMAN = gql`
 export const tabMap = {
     個資: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         出生日期: {
-            w: 100,
+            width: 100,
             variable: 'birthday',
         },
         性別: {
-            w: 40,
+            width: 40,
             variable: 'gender',
         },
         血型: {
-            w: 40,
+            width: 40,
             variable: 'bloodType',
         },
         聯絡電話: {
-            w: 100,
+            width: 100,
             variable: 'tel',
         },
         '家屬\n聯絡人': {
-            w: 70,
+            width: 70,
             variable: 'liaison',
         },
         '緊急\n聯絡電話': {
-            w: 100,
+            width: 100,
             variable: 'emergencyTel',
         },
         聯絡地址: {
-            w: 164,
+            width: 164,
             variable: 'address',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     相關資料1: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '危害告知日期\n(須有存查資料)': {
-            w: 110,
+            width: 110,
             variable: 'hazardNotifyDate',
         },
         '供應商\n工安認證編號\n(須有存查資料)': {
-            w: 120,
+            width: 120,
             variable: 'supplierIndustrialSafetyNumber',
         },
         '一般安全衛生教育訓練(6小時)\n發證/回訓日期': {
-            w: 120,
+            width: 120,
             variable: 'safetyHealthyEducationIssue',
         },
         '一般安全衛生教育訓練(6小時)應回訓期限\n(三年減一天)': {
-            w: 160,
+            width: 160,
             variable: 'safetyHealthyEducationWithdraw',
         },
         '6小時期效狀況\n(期效3年)': {
-            w: 104,
+            width: 104,
             variable: 'sixStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     相關資料2: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '勞保申請日期\n(提供一個月內)': {
-            w: 152,
+            width: 152,
             variable: 'laborInsuranceApplyDate',
         },
         '工會申請日期\n(提供一個月內)': {
-            w: 152,
+            width: 152,
             variable: 'laborAssociationDate',
         },
         承攬公司: {
-            w: 155,
+            width: 155,
             variable: 'contractingCompanyName',
         },
         次承攬公司: {
-            w: 155,
+            width: 155,
             variable: 'viceContractingCompanyName',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     主管證照: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         主管證照名稱: {
-            w: 155,
+            width: 155,
             variable: 'certificationName',
         },
         '主管證照\n發證/回訓日期': {
-            w: 152,
+            width: 152,
             variable: 'certificationIssue',
         },
         '主管證照\n應回訓日期\n(兩年減一天)': {
-            w: 152,
+            width: 152,
             variable: 'certificationWithdraw',
         },
         '主管證照期效狀況(期效2年)': {
-            w: 155,
+            width: 155,
             variable: 'certificationStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     保險: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '意外險有效期\n(起始日)': {
-            w: 120,
+            width: 120,
             variable: 'accidentInsuranceStart',
         },
         '意外險有效期\n(截止日)': {
-            w: 120,
+            width: 120,
             variable: 'accidentInsuranceEnd',
         },
         '保險金\n(萬元)': {
-            w: 120,
+            width: 120,
             variable: 'accidentInsuranceAmount',
         },
         加保日期: {
-            w: 120,
+            width: 120,
             variable: 'accidentInsuranceSignDate',
         },
         保險公司: {
-            w: 134,
+            width: 134,
             variable: 'accidentInsuranceCompanyName',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     證照期限1: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '高空工作車\n發證/回訓日期 (A)': {
-            w: 154,
+            width: 154,
             variable: 'aCertificationDate',
         },
         '高空工作車\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'aStatus',
         },
         '高處(施工架)\n發證/回訓日期 (WAH)': {
-            w: 154,
+            width: 154,
             variable: 'wahCertificationDate',
         },
         '高處(施工架)\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'wahStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     證照期限2: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '吊掛作業\n發證/回訓日期 (L)': {
-            w: 154,
+            width: 154,
             variable: 'lCertificationDate',
         },
         '吊掛作業\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'lStatus',
         },
         '侷限空間\n發證/回訓日期 (C)': {
-            w: 154,
+            width: 154,
             variable: 'cCertificationDate',
         },
         '侷限空間\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'cStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     證照期限3: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '有機溶劑\n發證/回訓日期 (H)': {
-            w: 154,
+            width: 154,
             variable: 'hCertificationDate',
         },
         '有機溶劑\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'hStatus',
         },
         '防爆區\n(Ex)': {
-            w: 154,
+            width: 154,
             variable: 'exCertificationDate',
         },
         '防爆區\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'exStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     證照期限4: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '營造業業主管\n(S)': {
-            w: 154,
+            width: 154,
             variable: 'sCertificationDate',
         },
         '營造業業主管\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'sStatus',
         },
         '施工架作業主管\n(SA)': {
-            w: 154,
+            width: 154,
             variable: 'saCertificationDate',
         },
         '施工架作業主管\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'saStatus',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
     證照期限5: {
         編號: {
-            w: 40,
+            width: 40,
             variable: 'index',
         },
         姓名: {
-            w: 70,
+            width: 70,
             variable: 'name',
         },
         身分證字號: {
-            w: 103,
+            width: 103,
             variable: 'idno',
         },
         '有機溶劑作業主管\n(OS)': {
-            w: 154,
+            width: 154,
             variable: 'osCertificationDate',
         },
         '有機溶劑作業主管\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'osStatus',
         },
         '缺氧作業主管\n(O2)': {
-            w: 154,
+            width: 154,
             variable: 'o2CertificationDate',
         },
         '缺氧作業主管\n期效狀況 (期效3年)': {
-            w: 153,
+            width: 153,
             variable: 'o2Status',
         },
         checkBox: {
-            w: 50,
+            width: 50,
             variable: 'isCheck',
         },
     },
@@ -532,6 +544,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
+    const username: string = new Cookies().get('username');
 
     const [tableValue, setTableValue] = React.useState<{
         [primaryKey: string]: humanTableValues;
@@ -638,6 +651,67 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         )[]
     >([]);
 
+    const [exportHumanResource, { loading: exportLaoding }] = useMutation(
+        EXPORT_HUMAN_RESOURCE,
+        {
+            onCompleted: ({
+                exportHumanResource,
+            }: {
+                exportHumanResource: {
+                    ok: Boolean;
+                    message: String;
+                    path: String;
+                };
+            }) => {
+                if (exportHumanResource.ok) {
+                    const cookieValue = new Cookies().get('jwt');
+                    const { path } = exportHumanResource;
+                    fetch(BACKEND + `/${path}`, {
+                        cache: 'no-cache',
+                        headers: {
+                            Authorization: `Bearer ${cookieValue}`,
+                        },
+                        method: 'GET',
+                    })
+                        .then((data) => {
+                            toast({
+                                title: exportHumanResource.message,
+                                description: '成功匯出',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                            });
+                            return data.blob();
+                        })
+                        .then((blob) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const filename = path.slice(
+                                path.lastIndexOf('/') + 1
+                            );
+                            let fileLink = document.createElement('a');
+                            fileLink.href = url;
+                            fileLink.download = filename;
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            fileLink.remove();
+                        })
+                        .catch((err) => console.log(err));
+                }
+            },
+            onError: (err) => {
+                console.log(err);
+                toast({
+                    title: '錯誤',
+                    description: `${err}`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
     React.useEffect(() => {
         if (tableValue) {
             setSelectedHuman(
@@ -716,6 +790,19 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         <Button
                             leftIcon={<LaunchIcon />}
                             variant={'buttonGrayOutline'}
+                            onClick={() => {
+                                if (selectedHuman.length !== 0) {
+                                    const idnos = selectedHuman.map(
+                                        (selectedHuman) => selectedHuman?.idno
+                                    );
+                                    exportHumanResource({
+                                        variables: {
+                                            idnos: idnos,
+                                            username: username,
+                                        },
+                                    });
+                                }
+                            }}
                         >
                             輸出
                         </Button>
@@ -762,7 +849,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     })}
                 </TabPanels>
             </Tabs>
-            {(loading || deleteLoading) && (
+            {(loading || deleteLoading || exportLaoding) && (
                 <Center
                     position={'absolute'}
                     top={0}

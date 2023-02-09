@@ -1,6 +1,6 @@
 import { Box, Center, ChakraProps, Checkbox, TabPanel } from '@chakra-ui/react';
 import React from 'react';
-import { VariableSizeGrid } from 'react-window';
+import { areEqual, VariableSizeGrid } from 'react-window';
 import { humanTableValues, tabMap } from './PeopleOverview';
 
 export type ValueOf<T> = T[keyof T];
@@ -32,7 +32,8 @@ export default function OverViewTable(props: {
     } = props;
 
     const tableCellStyle: ChakraProps = {
-        outline: '1px solid #919AA9',
+        borderRight: '1px solid #919AA9',
+        borderBottom: '1px solid #919AA9',
         textAlign: 'center',
         fontFamily: 'Inter',
         fontStyle: 'normal',
@@ -59,6 +60,7 @@ export default function OverViewTable(props: {
         bg: '#FFFFFF',
         p: '5px',
         overflowX: 'auto',
+        overflowY: 'hidden',
         lineHeight: '20px',
         overflowWrap: 'normal',
         wordBreak: 'keep-all',
@@ -88,6 +90,69 @@ export default function OverViewTable(props: {
                 : {}
             : tableValue;
 
+    const primarykeys = tableViewData ? Object.keys(tableViewData) : [];
+    const columnInfo = Object.values(tabItem);
+    const memorizedTable = React.memo(
+        ({
+            columnIndex,
+            rowIndex,
+            style,
+            data,
+        }: {
+            columnIndex: number;
+            rowIndex: number;
+            style: React.CSSProperties;
+            data: {
+                [primaryKey: string]: humanTableValues;
+            };
+        }) => {
+            const header = columnInfo[columnIndex]['variable'] as string;
+            const info: humanTableValues = data[primarykeys[rowIndex]];
+
+            if (header == 'isCheck') {
+                return (
+                    <Box style={style} {...dataCellStyle} borderRight={'none'}>
+                        <Checkbox
+                            value={info['idno']}
+                            isChecked={info['isCheck']}
+                            onChange={(e) => {
+                                const primaryKey = errorOnly
+                                    ? info['no']
+                                    : info['idno'];
+                                setTableValue({
+                                    ...tableValue,
+                                    [primaryKey as string]: {
+                                        ...info,
+                                        isCheck: e.target.checked,
+                                    },
+                                });
+                                if (!e.target.checked) {
+                                    setSelectAll(false);
+                                }
+                            }}
+                        ></Checkbox>
+                    </Box>
+                );
+            } else if (
+                info[header as keyof humanTableValues] == '日期錯誤' ||
+                (header.slice(-6) == 'Status' &&
+                    info[header as keyof humanTableValues] != 'OK')
+            ) {
+                return (
+                    <Box style={style} {...errorDataCellStyle}>
+                        {info[header as keyof humanTableValues]}
+                    </Box>
+                );
+            }
+            return (
+                <Box style={style} {...dataCellStyle}>
+                    {info[header as keyof humanTableValues]}
+                </Box>
+            );
+        },
+        areEqual
+    );
+
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
 
@@ -99,8 +164,6 @@ export default function OverViewTable(props: {
     const tablePaddingTop = 152 + headerHeight;
     const tablePaddingBottom = 52;
 
-    // const scrollbarWidth = 12;
-
     const [tableViewWidth, setTableViewWidth] = React.useState(
         window.innerWidth * pageRatio - 2 * pagePadding
     );
@@ -108,9 +171,13 @@ export default function OverViewTable(props: {
         window.innerHeight - tablePaddingTop - tablePaddingBottom
     );
 
-    const getColumnWidth = (index: number) =>
-        (Object.values(tabItem)[index]['w'] / tableFigmaWidth) * tableViewWidth;
-
+    const getColumnWidth = (index: number) => {
+        const offset = index == columnInfo.length - 1 ? -6 : 0;
+        return (
+            (columnInfo[index]['width'] / tableFigmaWidth) * tableViewWidth +
+            offset
+        );
+    };
     React.useEffect(() => {
         const watchResize = () => {
             setTableViewWidth(window.innerWidth * pageRatio - 2 * pagePadding);
@@ -129,24 +196,17 @@ export default function OverViewTable(props: {
     }, []);
 
     return (
-        <TabPanel
-            p={0}
-            mt={'17px'}
-            w={'100%'}
-            h={'100%'}
-            // style={{ scrollbarWidth: 'none' }}
-        >
+        <TabPanel p={0} mt={'17px'} w={'100%'} h={'100%'}>
             {
                 <VariableSizeGrid
                     ref={variableSizeHeaderRef}
                     style={{
                         outline: '2px solid #919AA9',
-                        background: '#FFFFFF',
+                        background: '#919AA9',
                         scrollbarWidth: 'none',
-                        // overflowY: 'scroll',
                     }}
                     rowCount={1}
-                    columnCount={Object.values(tabItem).length}
+                    columnCount={columnInfo.length}
                     height={65}
                     width={tableViewWidth}
                     columnWidth={getColumnWidth}
@@ -191,64 +251,16 @@ export default function OverViewTable(props: {
                         outline: '2px solid #919AA9',
                         background: '#FFFFFF',
                         scrollbarWidth: 'none',
-                        // overflowY: 'scroll',
                     }}
-                    rowCount={Object.keys(tableViewData).length}
-                    columnCount={Object.values(tabItem).length}
+                    rowCount={primarykeys.length}
+                    columnCount={columnInfo.length}
                     height={tableViewHeight}
                     width={tableViewWidth}
                     columnWidth={getColumnWidth}
                     rowHeight={() => 30}
+                    itemData={tableViewData}
                 >
-                    {({ columnIndex, rowIndex, style }) => {
-                        const header = Object.values(tabItem)[columnIndex][
-                            'variable'
-                        ] as string;
-
-                        const info = Object.values(tableViewData)[rowIndex];
-
-                        if (header == 'isCheck') {
-                            return (
-                                <Box style={style} {...dataCellStyle}>
-                                    <Checkbox
-                                        value={info['idno']}
-                                        isChecked={info['isCheck']}
-                                        onChange={(e) => {
-                                            const primaryKey = errorOnly
-                                                ? info['no']
-                                                : info['idno'];
-                                            setTableValue({
-                                                ...tableValue,
-                                                [primaryKey as string]: {
-                                                    ...info,
-                                                    isCheck: e.target.checked,
-                                                },
-                                            });
-                                            if (!e.target.checked) {
-                                                setSelectAll(false);
-                                            }
-                                        }}
-                                    ></Checkbox>
-                                </Box>
-                            );
-                        } else if (
-                            info[header as keyof humanTableValues] ==
-                                '日期錯誤' ||
-                            (header.slice(-6) == 'Status' &&
-                                info[header as keyof humanTableValues] != 'OK')
-                        ) {
-                            return (
-                                <Box style={style} {...errorDataCellStyle}>
-                                    {info[header as keyof humanTableValues]}
-                                </Box>
-                            );
-                        }
-                        return (
-                            <Box style={style} {...dataCellStyle}>
-                                {info[header as keyof humanTableValues]}
-                            </Box>
-                        );
-                    }}
+                    {memorizedTable}
                 </VariableSizeGrid>
             )}
         </TabPanel>
