@@ -14,6 +14,14 @@ import {
     Tabs,
     Text,
     useToast,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    useDisclosure,
+    Grid,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Cookies } from 'react-cookie';
@@ -544,6 +552,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const username: string = new Cookies().get('username');
 
     const [tableValue, setTableValue] = React.useState<{
@@ -810,17 +819,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     <Button
                         leftIcon={<DeleteIcon />}
                         variant={'buttonGrayOutline'}
-                        onClick={() => {
-                            if (selectedHuman) {
-                                deleteHumanResource({
-                                    variables: {
-                                        idno: Object.values(selectedHuman).map(
-                                            (info) => info?.idno
-                                        ),
-                                    },
-                                });
-                            }
-                        }}
+                        onClick={onOpen}
                     >
                         刪除
                     </Button>
@@ -849,6 +848,101 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     })}
                 </TabPanels>
             </Tabs>
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                <ModalOverlay />
+                <ModalContent
+                    maxWidth={'330px'}
+                    maxHeight={'500px'}
+                    minHeight={'266px'}
+                    padding={'30px 45px 30px 45px'}
+                >
+                    <ModalHeader padding={0}>
+                        <Text
+                            fontStyle={'normal'}
+                            fontWeight={700}
+                            fontSize={'20px'}
+                            lineHeight={'20px'}
+                        >
+                            確定刪除以下人員資料？
+                        </Text>
+                    </ModalHeader>
+                    <ModalBody
+                        bg={'#E3ECFF'}
+                        mt={'20px'}
+                        padding={'41px 37px'}
+                        borderRadius={'10px'}
+                        overflowY={'auto'}
+                        maxHeight={'300px'}
+                        minHeight={'118px'}
+                    >
+                        <Flex
+                            width={'100%'}
+                            height={'100%'}
+                            bg={'#E3ECFF'}
+                            direction={'column'}
+                            gap={'10px'}
+                        >
+                            {selectedHuman &&
+                                Object.values(selectedHuman).map(
+                                    (info, index) => {
+                                        const idno = info?.idno;
+                                        return (
+                                            <Grid
+                                                key={index}
+                                                width={'164px'}
+                                                h={'36px'}
+                                                gap={'10px'}
+                                                templateColumns={
+                                                    'repeat(2,1fr)'
+                                                }
+                                                alignItems={'center'}
+                                            >
+                                                <Text>
+                                                    {tableValue &&
+                                                        idno &&
+                                                        tableValue[idno][
+                                                            'name'
+                                                        ]}
+                                                </Text>
+                                                <Text>{idno}</Text>
+                                            </Grid>
+                                        );
+                                    }
+                                )}
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter padding={0} mt={'20px'}>
+                        <Flex justify={'space-between'} width={'100%'}>
+                            <Button
+                                variant={'buttonGrayOutline'}
+                                size={'sm'}
+                                mr={3}
+                                onClick={onClose}
+                            >
+                                取消
+                            </Button>
+                            <Button
+                                variant={'buttonGrayOutline'}
+                                size={'sm'}
+                                onClick={() => {
+                                    if (selectedHuman) {
+                                        deleteHumanResource({
+                                            variables: {
+                                                idno: Object.values(
+                                                    selectedHuman
+                                                ).map((info) => info?.idno),
+                                            },
+                                        });
+                                    }
+                                }}
+                            >
+                                確定
+                            </Button>
+                        </Flex>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
             {(loading || deleteLoading || exportLaoding) && (
                 <Center
                     position={'absolute'}
