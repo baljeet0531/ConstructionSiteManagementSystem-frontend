@@ -24,11 +24,8 @@ import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,
     contentStyle,
-    lastStyle,
-    numberStyle,
+    centerStyle,
     inputStyle,
-    workContentStyle,
-    workContentInputStyle,
     filledStyle,
 } from './Styles';
 import FormFactory from './Factory';
@@ -99,27 +96,28 @@ export default function ToolboxForm({
                     <Text>工具箱會議及巡檢紀錄</Text>
                 </VStack>
                 <Text pt={5}>
+                    {' '}
                     工具箱會議由監工單位監工於施工前針對當天工作內容及安全衛生議題進行告知或討論/協議(如最近發生的事故、作業場所的特殊危害、設備的安全操作、新的工作程序或與人員相關的作業安全)，並確實紀錄。
                 </Text>
                 <Grid
-                    height="30vh"
+                    height="45vh"
                     templateColumns="repeat(6, 1fr)"
                     templateRows="repeat(8, 1fr)"
                 >
                     <GridInputItem
                         gridRange={[1, 2, 1, 3]}
-                        fieldName="meetingDatetime"
+                        fieldName="meetingDate"
                         inputComponent={f.filledDateInput()}
                         inputLeftComponent={<Text>會議日期:</Text>}
-                        inputLeftStyle={{w:'5.5rem'}}
+                        inputLeftStyle={{ w: '5.5rem' }}
                         style={{ ...filledStyle }}
                     />
                     <GridInputItem
                         gridRange={[1, 2, 3, 5]}
-                        fieldName="meetingDatetime"
+                        fieldName="meetingTime"
                         inputComponent={f.filledTimeInput()}
                         inputLeftComponent={<Text>會議時間:</Text>}
-                        inputLeftStyle={{w:'5.5rem'}}
+                        inputLeftStyle={{ w: '5.5rem' }}
                         style={{ ...filledStyle }}
                     />
                     <GridInputItem
@@ -127,8 +125,52 @@ export default function ToolboxForm({
                         fieldName="meetingPlace"
                         inputComponent={f.filledTextInput()}
                         inputLeftComponent={<Text>會議地點:</Text>}
-                        inputLeftStyle={{w:'5.5rem'}}
-                        style={{ ...filledStyle }}
+                        inputLeftStyle={{ w: '5.5rem' }}
+                        style={{ ...filledStyle, borderRightColor: '#919AA9' }}
+                    />
+                    <GridItem {...centerStyle}>主持人</GridItem>
+                    <GridItem {...centerStyle}>共同作業廠商</GridItem>
+                    <GridItem {...centerStyle}>主承攬商</GridItem>
+                    <GridItem {...centerStyle}>再承攬商(1)</GridItem>
+                    <GridItem {...centerStyle}>再承攬商(2)</GridItem>
+                    <GridItem {...centerStyle} borderRight="1px">
+                        再承攬商(3)
+                    </GridItem>
+                    <GridItem rowStart={3} rowEnd={5} {...centerStyle}>
+                        系統工程師
+                    </GridItem>
+                    <GridItem {...centerStyle}>廠商名字</GridItem>
+                    <GridInputItem
+                        fieldName="primeContractCorp"
+                        inputComponent={f.selectContractingCorpInput(
+                            'primeContractCorp'
+                        )}
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...inputStyle }}
+                    />
+                    <GridInputItem
+                        fieldName="minorContractCorpOne"
+                        inputComponent={f.selectContractingCorpInput(
+                            'minorContractCorpOne'
+                        )}
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...inputStyle }}
+                    />
+                    <GridInputItem
+                        fieldName="minorContractCorpTwo"
+                        inputComponent={f.selectContractingCorpInput(
+                            'minorContractCorpTwo'
+                        )}
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...inputStyle }}
+                    />
+                    <GridInputItem
+                        fieldName="minorContractCorpThree"
+                        inputComponent={f.selectContractingCorpInput(
+                            'minorContractCorpThree'
+                        )}
+                        inputRightComponent={<ChevronDownIcon />}
+                        style={{ ...inputStyle, borderRight: '1px' }}
                     />
                 </Grid>
             </Box>

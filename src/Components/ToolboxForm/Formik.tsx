@@ -351,11 +351,8 @@ export default function WorkPermitFormik() {
         headWorkspace: undefined,
         heatTouch: undefined,
         hypoxia: undefined,
-        meetingDatetime: dayjs()
-            .hour(8)
-            .minute(30)
-            .second(0)
-            .format('YYYY-MM-DDTHH:mm:ss'),
+        meetingDate: dayjs().format('YYYY-MM-DD'),
+        meetingTime: dayjs().format('HH:mm'),
         meetingPlace: undefined,
         microthermTouch: undefined,
         minorContractCorpOne: undefined,

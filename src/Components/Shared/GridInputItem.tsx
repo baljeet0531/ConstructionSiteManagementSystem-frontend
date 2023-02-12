@@ -43,7 +43,6 @@ export default function GridInputItem({
             rowEnd={grid[1]}
             colStart={grid[2]}
             colEnd={grid[3]}
-            paddingTop="5px"
             {...style}
         >
             <Field name={fieldName} validate={handleValidate}>
@@ -55,9 +54,10 @@ export default function GridInputItem({
                     form: FormikProps<any>;
                 }) => {
                     return (
-                        <InputGroup w="100%" h="100%">
+                        <InputGroup w="100%" h="100%" display="flex" alignItems="center" justifyContent="center">
                             {inputLeftComponent && (
                                 <InputLeftElement
+                                    h="100%"
                                     pointerEvents="none"
                                     children={inputLeftComponent}
                                     {...inputLeftStyle}
@@ -78,6 +78,7 @@ export default function GridInputItem({
                             )}
                             {inputRightComponent && (
                                 <InputRightElement
+                                    h="100%"
                                     pointerEvents="none"
                                     children={inputRightComponent}
                                     {...inputRightStyle}
