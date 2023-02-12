@@ -2,6 +2,7 @@ import {
     GridItem,
     ResponsiveValue,
     InputGroup,
+    InputLeftElement,
     InputRightElement,
 } from '@chakra-ui/react';
 import { Field, FieldInputProps, FormikProps } from 'formik';
@@ -11,7 +12,10 @@ export default function GridInputItem({
     gridRange,
     fieldName,
     inputComponent,
+    inputLeftComponent,
+    inputLeftStyle,
     inputRightComponent,
+    inputRightStyle,
     handleValidate,
     style,
     invalidStyle,
@@ -24,7 +28,10 @@ export default function GridInputItem({
         ResponsiveValue<number | 'auto'>,
         ResponsiveValue<number | 'auto'>
     ];
+    inputLeftComponent?: React.ReactElement;
+    inputLeftStyle?: object;
     inputRightComponent?: React.ReactElement;
+    inputRightStyle?: object;
     handleValidate?: Function;
     style?: object;
     invalidStyle?: object;
@@ -49,6 +56,13 @@ export default function GridInputItem({
                 }) => {
                     return (
                         <InputGroup w="100%" h="100%">
+                            {inputLeftComponent && (
+                                <InputLeftElement
+                                    pointerEvents="none"
+                                    children={inputLeftComponent}
+                                    {...inputLeftStyle}
+                                />
+                            )}
                             {form.errors[fieldName] &&
                             form.touched[fieldName] ? (
                                 <inputComponent.type
@@ -63,11 +77,11 @@ export default function GridInputItem({
                                 />
                             )}
                             {inputRightComponent && (
-                                <InputRightElement pointerEvents="none">
-                                    <inputRightComponent.type
-                                        {...inputRightComponent.props}
-                                    />
-                                </InputRightElement>
+                                <InputRightElement
+                                    pointerEvents="none"
+                                    children={inputRightComponent}
+                                    {...inputRightStyle}
+                                />
                             )}
                         </InputGroup>
                     );

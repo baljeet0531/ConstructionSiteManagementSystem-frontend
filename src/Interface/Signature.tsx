@@ -9,3 +9,8 @@ export type SignatureStateItem = [
     ISignature,
     Dispatch<SetStateAction<ISignature>>
 ];
+
+export type MultiSignatureStateItem = [
+    ISignature[],
+    Dispatch<SetStateAction<ISignature[]>>
+]
