@@ -88,7 +88,8 @@ export interface IToolbox {
     headWorkspace: boolean | undefined;
     heatTouch: boolean | undefined;
     hypoxia: boolean | undefined;
-    meetingDatetime: string | Date | undefined;
+    meetingDate: string | undefined;
+    meetingTime: string | undefined;
     meetingPlace: string | undefined;
     microthermTouch: boolean | undefined;
     minorContractCorpOne: string | undefined;

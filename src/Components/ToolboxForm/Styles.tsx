@@ -1,9 +1,9 @@
 export const filledStyle = {
     border: '1px',
-    borderColor: '#FFFFFF',
+    borderColor: '#919AA9',
+    borderRightColor: '#FFFFFF',
     background: '#919AA9',
     color: '#FFFFFF',
-    display: 'flex',
     paddingLeft: '4px',
 };
 
@@ -22,12 +22,7 @@ export const contentStyle = {
     paddingLeft: '12px',
 };
 
-export const lastStyle = {
-    ...contentStyle,
-    borderRight: '1px',
-};
-
-export const numberStyle = {
+export const centerStyle = {
     ...titleStyle,
     paddingLeft: '0px',
     borderTop: '0px',
@@ -46,15 +41,7 @@ export const filledPlaceholderStyle = {
 };
 
 export const inputStyle = {
-    paddingTop: '8px',
+    ...centerStyle,
+    paddingTop: '3px',
 };
 
-export const workContentStyle = {
-    border: '0px',
-    paddingTop: '10px',
-};
-
-export const workContentInputStyle = {
-    border: '0px',
-    paddingTop: '2px',
-};
