@@ -12,14 +12,12 @@ export const titleStyle = {
     borderColor: '#919AA9',
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: '4px',
 };
 
 export const contentStyle = {
     ...titleStyle,
     borderTop: '0px',
     borderRight: '0px',
-    paddingLeft: '12px',
 };
 
 export const centerStyle = {
@@ -30,6 +28,12 @@ export const centerStyle = {
     justifyContent: 'center',
 };
 
+export const hazardTitleStyle = {
+    ...centerStyle,
+    letterSpacing: '1em',
+    pl: 5
+}
+
 export const placeholderStyle = {
     color: '#667080',
     opacity: 0.5,
@@ -38,10 +42,5 @@ export const placeholderStyle = {
 export const filledPlaceholderStyle = {
     color: '#FFFFFF',
     opacity: 0.5,
-};
-
-export const inputStyle = {
-    ...centerStyle,
-    paddingTop: '3px',
 };
 

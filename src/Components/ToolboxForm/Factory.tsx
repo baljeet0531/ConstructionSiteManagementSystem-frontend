@@ -1,4 +1,4 @@
-import { Checkbox, Input, Text, Flex } from '@chakra-ui/react';
+import { Checkbox, Input, Text, Flex, Textarea } from '@chakra-ui/react';
 import {
     AutoComplete,
     AutoCompleteInput,
@@ -9,8 +9,9 @@ import {
 } from '@choc-ui/chakra-autocomplete';
 import { FormikProps } from 'formik';
 import { filledPlaceholderStyle, placeholderStyle } from './Styles';
-import { SetStateAction, Dispatch } from 'react';
+import { SetStateAction, Dispatch, useState, useRef } from 'react';
 import { IToolbox, IToolboxData } from '../../Interface/Toolbox';
+import { ThreeStateIcon } from '../../Icons/Icons';
 
 export default class FormFactory {
     formProps: FormikProps<IToolbox>;
@@ -44,6 +45,82 @@ export default class FormFactory {
             />
         );
     }
+    contractStaffInput() {
+        return (
+            <Input
+                type="text"
+                border="0px"
+                placeholder="承商監工或工安"
+                textAlign="center"
+                _placeholder={placeholderStyle}
+            />
+        );
+    }
+    textArea() {
+        return (
+            <Textarea
+                h="100%"
+                border="0px"
+                placeholder="填寫"
+                _placeholder={placeholderStyle}
+                resize="none"
+            />
+        );
+    }
+    threeStateCheckbox(name: keyof IToolbox, text: string) {
+        const value = this.formProps.values[name];
+        return (
+            <Checkbox
+                pl={3}
+                icon={<ThreeStateIcon />}
+                colorScheme={value === false ? 'red' : 'blue'}
+                isChecked={value ? true : false}
+                isIndeterminate={value === false ? true : false}
+                onChange={() => {
+                    value
+                        ? this.formProps.setFieldValue(name, false)
+                        : value === false
+                        ? this.formProps.setFieldValue(name, undefined)
+                        : this.formProps.setFieldValue(name, true);
+                }}
+            >
+                {text}
+            </Checkbox>
+        );
+    }
+    othersField(name: keyof IToolbox, text: string, w: string = '120px') {
+        const [enable, setEnable] = useState(
+            this.formProps.values[name] ? true : false
+        );
+        return (
+            <>
+                <Checkbox
+                    pl={3}
+                    isChecked={enable}
+                    onChange={() => {
+                        if (enable) {
+                            this.formProps.setFieldValue(name, '');
+                        }
+                        setEnable(!enable);
+                    }}
+                >
+                    {text}
+                </Checkbox>
+                <Input
+                    type="text"
+                    border="0px"
+                    w={w}
+                    isDisabled={!enable}
+                    placeholder={enable ? '填寫' : ''}
+                    _placeholder={placeholderStyle}
+                    value={this.formProps.values[name] as string}
+                    onChange={(e) => {
+                        this.formProps.setFieldValue(name, e.target.value);
+                    }}
+                />
+            </>
+        );
+    }
     selectContractingCorpInput(fieldName: string) {
         return (
             <AutoComplete
@@ -51,7 +128,6 @@ export default class FormFactory {
                 listAllValuesOnFocus
                 onChange={(value: string) => {
                     this.formProps.setFieldValue(fieldName, value);
-
                 }}
             >
                 <AutoCompleteInput
@@ -61,17 +137,19 @@ export default class FormFactory {
                     _placeholder={placeholderStyle}
                 />
                 <AutoCompleteList>
-                    {this.data.contractingCorpName?.map((corp: string, cid: number) => (
-                        <AutoCompleteItem
-                            key={`option-${cid}`}
-                            value={corp}
-                            textTransform="capitalize"
-                        >
-                            {corp}
-                        </AutoCompleteItem>
-                    ))}
+                    {this.data.contractingCorpName?.map(
+                        (corp: string, cid: number) => (
+                            <AutoCompleteItem
+                                key={`option-${cid}`}
+                                value={corp}
+                                textTransform="capitalize"
+                            >
+                                {corp}
+                            </AutoCompleteItem>
+                        )
+                    )}
                 </AutoCompleteList>
             </AutoComplete>
-        )
+        );
     }
 }
