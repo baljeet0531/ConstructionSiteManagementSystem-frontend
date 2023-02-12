@@ -36,6 +36,7 @@ const GQL_UPDATE_TOOLBOX = gql`
         $chemicalBurn: Boolean
         $chemicalInclude: String
         $chemicalInhalation: Boolean
+        $chemicalNone: Boolean
         $collapse: Boolean
         $contentConformSupervisor: Boolean
         $contentConformBeforeWork: Boolean
@@ -77,6 +78,7 @@ const GQL_UPDATE_TOOLBOX = gql`
         $footNormal: Boolean
         $foreignEnterEye: Boolean
         $gasInclude: String
+        $gasNone: Boolean
         $hand: Boolean
         $handCut: Boolean
         $handElectirc: Boolean
@@ -104,6 +106,7 @@ const GQL_UPDATE_TOOLBOX = gql`
         $ohterPrevention: String
         $otherDisaster: String
         $otherDisasterNone: Boolean
+        $outdoorHeat: Boolean
         $oxygen: Boolean
         $oxygenGasDetection: Boolean
         $oxygenLifeDetection: Boolean
@@ -161,6 +164,7 @@ const GQL_UPDATE_TOOLBOX = gql`
             chemicalBurn: $chemicalBurn
             chemicalInclude: $chemicalInclude
             chemicalInhalation: $chemicalInhalation
+            chemicalNone: $chemicalNone
             collapse: $collapse
             contentConformSupervisor: $contentConformSupervisor
             contentConformBeforeWork: $contentConformBeforeWork
@@ -202,6 +206,7 @@ const GQL_UPDATE_TOOLBOX = gql`
             footNormal: $footNormal
             foreignEnterEye: $foreignEnterEye
             gasInclude: $gasInclude
+            gasNone: $gasNone
             hand: $hand
             handCut: $handCut
             handElectirc: $handElectirc
@@ -229,6 +234,7 @@ const GQL_UPDATE_TOOLBOX = gql`
             ohterPrevention: $ohterPrevention
             otherDisaster: $otherDisaster
             otherDisasterNone: $otherDisasterNone
+            outdoorHeat: $outdoorHeat
             oxygen: $oxygen
             oxygenGasDetection: $oxygenGasDetection
             oxygenLifeDetection: $oxygenLifeDetection
@@ -283,7 +289,7 @@ export default function WorkPermitFormik() {
         abnormal: false,
         abnormalRecord: '',
         area: '',
-        biologicalHazard: false,
+        biologicalHazard: undefined,
         body: undefined,
         bodyBelt: undefined,
         bodyClothing: undefined,
@@ -298,6 +304,7 @@ export default function WorkPermitFormik() {
         chemicalBurn: undefined,
         chemicalInclude: undefined,
         chemicalInhalation: undefined,
+        chemicalNone: undefined,
         collapse: undefined,
         contentConformSupervisor: undefined,
         contentConformBeforeWork: undefined,
@@ -339,6 +346,7 @@ export default function WorkPermitFormik() {
         footNormal: undefined,
         foreignEnterEye: undefined,
         gasInclude: undefined,
+        gasNone: undefined,
         hand: undefined,
         handCut: undefined,
         handElectirc: undefined,
@@ -367,6 +375,7 @@ export default function WorkPermitFormik() {
         ohterPrevention: undefined,
         otherDisaster: undefined,
         otherDisasterNone: undefined,
+        outdoorHeat: undefined,
         oxygen: undefined,
         oxygenGasDetection: undefined,
         oxygenLifeDetection: undefined,

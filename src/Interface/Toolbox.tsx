@@ -35,6 +35,7 @@ export interface IToolbox {
     chemicalBurn: boolean | undefined;
     chemicalInclude: string | undefined;
     chemicalInhalation: boolean | undefined;
+    chemicalNone: boolean | undefined;
     collapse: boolean | undefined;
     contentConformSupervisor: boolean | undefined;
     contentConformBeforeWork: boolean | undefined;
@@ -76,6 +77,7 @@ export interface IToolbox {
     footNormal: boolean | undefined;
     foreignEnterEye: boolean | undefined;
     gasInclude: string | undefined;
+    gasNone: boolean | undefined;
     hand: boolean | undefined;
     handCut: boolean | undefined;
     handElectirc: boolean | undefined;
@@ -104,6 +106,7 @@ export interface IToolbox {
     ohterPrevention: string | undefined;
     otherDisaster: string | undefined;
     otherDisasterNone: boolean | undefined;
+    outdoorHeat: boolean | undefined;
     oxygen: boolean | undefined;
     oxygenGasDetection: boolean | undefined;
     oxygenLifeDetection: boolean | undefined;
