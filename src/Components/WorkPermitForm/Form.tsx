@@ -19,7 +19,7 @@ import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
-import GridInputItem from './GridInputItem';
+import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,
     contentStyle,

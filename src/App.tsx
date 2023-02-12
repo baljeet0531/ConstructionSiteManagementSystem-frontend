@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './Layouts/Layout';
 import Login from './Components/Login/Login';
 import WorkPermitFormik from './Components/WorkPermitForm/Formik';
+import ToolboxFormik from './Components/ToolboxForm/Formik';
 
 function App() {
     return (
@@ -111,9 +112,14 @@ function App() {
                     element={<Layout page="outsource_fault_form" />}
                 />
                 <Route path="/login" element={<Login />}></Route>
+                {/* Single Form Page is linked below */}
                 <Route
                     path="/form/work-permit"
                     element={<WorkPermitFormik />}
+                />
+                <Route
+                    path="/form/toolbox"
+                    element={<ToolboxFormik />}
                 />
             </Routes>
         </BrowserRouter>
