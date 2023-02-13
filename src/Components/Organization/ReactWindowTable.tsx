@@ -72,7 +72,7 @@ export interface ISizes {
 
 export default function ReactWindowTable(props: {
     tableData: {
-        [primaryKey: string]: {};
+        [primaryKey: string]: any;
     };
     columnMap: IColumnMap[];
     sizes: ISizes;
@@ -112,9 +112,6 @@ export default function ReactWindowTable(props: {
     const tablePaddingTop = 152 + headerHeight;
     const tablePaddingBottom = 52;
 
-    // const columnTitle = Object.keys(columnMap);
-    // const columnValue = Object.values(columnMap);
-
     const [tableWidth, setTableViewWidth] = React.useState(
         tableViewWidth
             ? tableViewWidth
@@ -128,16 +125,10 @@ export default function ReactWindowTable(props: {
 
     const getColumnWidth = (index: number) => {
         const offset = index == columnMap.length - 1 ? -6 : 0;
-        // const offset = index == columnValue.length - 1 ? -6 : 0;
         const width =
             (columnMap[index]['width'] / tableFigmaWidth) * tableWidth + offset;
         return width;
-        // return (
-        //     (columnValue[index]['width'] / tableFigmaWidth) * tableViewWidth +
-        //     offset
-        // );
     };
-    // const values = Object.keys(displayTableData)
 
     return (
         <Flex direction={'column'}>
@@ -148,7 +139,6 @@ export default function ReactWindowTable(props: {
                     background: '#919AA9',
                 }}
                 columnCount={columnMap.length}
-                // columnCount={columnTitle.length}
                 columnWidth={getColumnWidth}
                 height={headerHeight}
                 rowCount={1}
@@ -157,7 +147,6 @@ export default function ReactWindowTable(props: {
             >
                 {({ columnIndex, style }) => {
                     const title = columnMap[columnIndex]['title'];
-                    // const title = columnTitle[columnIndex];
                     if (title == '全選') {
                         return (
                             <Center style={style} {...headerCellStyle}>
@@ -166,17 +155,12 @@ export default function ReactWindowTable(props: {
                                     onChange={(e) => {
                                         setAllChecked(e.target.checked);
                                         primarykeys.forEach((primaryKey) => {
-                                            const info =
-                                                displayTableData[primaryKey];
-                                            displayTableData[primaryKey] = {
+                                            const info = tableData[primaryKey];
+                                            tableData[primaryKey] = {
                                                 ...info,
                                                 isChecked: e.target.checked,
                                             };
                                         });
-                                        // setOverviewTableData((prevState) => ({
-                                        //     ...prevState,
-                                        //     ...displayTableData,
-                                        // }));
                                     }}
                                 ></Checkbox>
                             </Center>
@@ -195,10 +179,9 @@ export default function ReactWindowTable(props: {
                     background: '#FFFFFF',
                 }}
                 columnCount={columnMap.length}
-                // columnCount={columnTitle.length}
                 columnWidth={getColumnWidth}
                 height={tableHeight}
-                rowCount={Object.values(tableData).length}
+                rowCount={Object.values(displayTableData).length}
                 rowHeight={() => cellHeight}
                 width={tableWidth}
             >
@@ -206,7 +189,6 @@ export default function ReactWindowTable(props: {
                     const { columnIndex, rowIndex, style } = props;
                     const info = Object.values(displayTableData)[rowIndex];
                     const columnInfo = columnMap[columnIndex];
-                    console.log(props);
                     const element = columnMap[columnIndex].getElement({
                         style: style,
                         info: info,
