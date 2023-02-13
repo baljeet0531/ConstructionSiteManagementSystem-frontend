@@ -38,7 +38,6 @@ export default function DeleteModal(props: {
         {
             onCompleted: ({ deleteHumanResource }) => {
                 if (deleteHumanResource.ok) {
-                    onClose();
                     toast({
                         title: deleteHumanResource.message,
                         status: 'success',
@@ -136,7 +135,7 @@ export default function DeleteModal(props: {
                                 variant={'buttonGrayOutline'}
                                 size={'sm'}
                                 onClick={() => {
-                                    if (selected) {
+                                    if (selected && selected.length != 0) {
                                         deleteHumanResource({
                                             variables: {
                                                 idno: Object.values(
@@ -148,6 +147,7 @@ export default function DeleteModal(props: {
                                             },
                                         });
                                     }
+                                    onClose();
                                 }}
                             >
                                 確定
