@@ -36,6 +36,7 @@ import {
     SignatureName,
     SignatureListName,
 } from '../../Interface/Toolbox';
+import SignatureTable from './SignatureTable';
 
 export const QUERY_TOOLBOX_OPTIONS = gql`
     query toolboxOptions($siteId: String!) {
@@ -305,7 +306,7 @@ export default function ToolboxForm({
                     (請逐一確認，有請「V」，無請「X」;個人防護具需功能正常方可使用)
                 </Text>
                 <Grid
-                    height="700px"
+                    height="600px"
                     templateColumns="40fr 135fr 587fr"
                     templateRows="repeat(14, 1fr) 4fr"
                 >
@@ -585,6 +586,7 @@ export default function ToolboxForm({
                         <br />
                     </Text>
                 </Box>
+                <SignatureTable {...signatureLists}/>
             </Box>
         </Form>
     );
