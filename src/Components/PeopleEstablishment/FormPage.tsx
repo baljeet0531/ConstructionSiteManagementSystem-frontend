@@ -481,9 +481,7 @@ export default function FromPage(props: {
                             ></GridIdnoItem>
                             <GridInputItem
                                 gridRange={[1, 2, 3, 5]}
-                                handleValidate={(value: any) =>
-                                    !value && '欄位不能為空'
-                                }
+                                handleValidate={validateEmpty}
                                 fieldName="name"
                                 formlabel="姓名"
                                 inputComponent={<Input type={'text'} />}
@@ -589,6 +587,7 @@ export default function FromPage(props: {
                                 gridRange={[7, 8, 3, 5]}
                                 fieldName="safetyHealthyEducationWithdraw"
                                 formlabel={'應回訓日期'}
+                                independent={false}
                                 inputComponent={
                                     <Input
                                         type={'date'}
@@ -663,6 +662,7 @@ export default function FromPage(props: {
                                 gridRange={[10, 11, 5, 7]}
                                 fieldName="certificationWithdraw"
                                 formlabel="應回訓日期"
+                                independent={false}
                                 inputComponent={
                                     <Input
                                         type={'date'}

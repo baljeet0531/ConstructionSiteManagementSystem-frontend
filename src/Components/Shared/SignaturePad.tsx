@@ -32,11 +32,28 @@ export default function SignaturePad({
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
     const [imageURL, setImageURL] = useState<string>('');
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const fillBackground = (srcCanvas: HTMLCanvasElement) => {
+        const destinationCanvas = document.createElement('canvas');
+        destinationCanvas.width = srcCanvas.width;
+        destinationCanvas.height = srcCanvas.height;
+        const destCtx = destinationCanvas.getContext('2d');
+
+        if (destCtx) {
+            //create a rectangle with the desired color
+            destCtx.fillStyle = '#FFFFFF';
+            destCtx.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+
+            //draw the original canvas onto the destination canvas
+            destCtx.drawImage(srcCanvas, 0, 0);
+            return destinationCanvas;
+        } else {
+            return srcCanvas;
+        }
+    };
     const clear = () => sigCanvas.current.clear();
     const save = async () => {
-        const base64string = sigCanvas.current
-            .getTrimmedCanvas()
-            .toDataURL('image/png');
+        const canvas = sigCanvas.current.getTrimmedCanvas();
+        const base64string = fillBackground(canvas).toDataURL();
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
             image: new File([blob], signatureName),
