@@ -20,8 +20,10 @@ import MachineryManagement from '../Components/MachineryManagement/MachineryMana
 import MachineryEstablishment from '../Components/MachineryEstablishment/MachineryEstablishment';
 import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
 
+import SelectSiteIdFirst from '../Images/SelectSiteIdFirst.svg';
+
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
-import { Center } from '@chakra-ui/react';
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 
 export type featureName =
     | 'dashboard'
@@ -59,7 +61,24 @@ export type featureItem = {
 
 const emptySiteIdPage = (
     <Center w={'100%'} h={'100%'}>
-        請選擇專案
+        <Flex direction={'column'} gap={'35px'} justify={'center'}>
+            <Box
+                width={'600px'}
+                height={'430.08px'}
+                backgroundImage={`url(${SelectSiteIdFirst})`}
+            ></Box>
+            <Text
+                fontFamily={'Inter'}
+                fontStyle={'normal'}
+                fontWeight={700}
+                fontSize={'24px'}
+                lineHeight={'20px'}
+                color={'#4C7DE7'}
+                textAlign={'center'}
+            >
+                請先選擇專案，以顯示內容
+            </Text>
+        </Flex>
     </Center>
 );
 
@@ -84,7 +103,12 @@ export function getFeatureMap({
         organization: {
             name: '專案人員組織',
             path: '/organization',
-            page: <Organization />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Organization key={siteId} siteId={siteId} />
+                ),
         },
         people_overview: {
             name: '人員資料總覽',
@@ -104,7 +128,12 @@ export function getFeatureMap({
         project_schedule: {
             name: '排程管理',
             path: '/project/schedule',
-            page: siteId == '' ? emptySiteIdPage : <Schedule siteId={siteId} />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Schedule key={siteId} siteId={siteId} />
+                ),
         },
         project_report: {
             name: '進度報表',
@@ -123,7 +152,7 @@ export function getFeatureMap({
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <WorkPermitFormOverview siteId={siteId} />
+                    <WorkPermitFormOverview key={siteId} siteId={siteId} />
                 ),
         },
         eng_toolbox_form: {
