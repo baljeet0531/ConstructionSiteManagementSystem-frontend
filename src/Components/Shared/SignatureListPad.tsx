@@ -7,6 +7,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    Image,
     Button,
     Box,
     Text,
@@ -15,23 +16,31 @@ import {
 } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
-import {
-    MultiSignatureStateItem,
-    SignatureStateItem,
-} from '../../Interface/Signature';
+import { MultiSignatureStateItem } from '../../Interface/Signature';
+
+const buttonStyle = {
+    border: '2px solid #919AA9',
+    backgroundColor: 'white',
+    color: '#667080',
+    size: 'sm',
+};
 
 export default function SignaturePad({
     title,
     signatureName,
     state,
+    idx,
+    h,
     Disable = false,
 }: {
     title: string;
     signatureName: string;
-    state: SignatureStateItem;
+    state: MultiSignatureStateItem;
+    idx: number;
+    h: string;
     Disable?: boolean;
 }) {
-    const [signature, setSignature] = state;
+    const [signatures, setSignatures] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
     const [imageURL, setImageURL] = useState<string>('');
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,56 +65,66 @@ export default function SignaturePad({
     const clear = () => sigCanvas.current.clear();
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
-            setSignature({
-                image: undefined,
-                time: undefined,
-                owner: undefined,
+            const arr = signatures.filter((_, index) => {
+                return index !== idx;
             });
+            setSignatures(arr);
             onClose();
             return;
         }
         const canvas = sigCanvas.current.getTrimmedCanvas();
         const base64string = fillBackground(canvas).toDataURL();
         const blob = await fetch(base64string).then((res) => res.blob());
-        setSignature({
+        const new_item = {
             image: new File([blob], signatureName),
             time: new Date(),
             owner: new Cookies().get('username'),
-        });
+        };
+        if (signatures[idx]) {
+            const arr = [...signatures];
+            arr[idx] = new_item;
+            setSignatures(arr);
+        } else {
+            setSignatures([...signatures, new_item]);
+        }
         onClose();
-    };
-    const buttonStyle = {
-        border: '2px solid #919AA9',
-        backgroundColor: 'white',
-        color: '#667080',
-        size: 'sm',
     };
 
     useEffect(() => {
-        if (signature && signature.image) {
-            setImageURL(URL.createObjectURL(signature.image as File));
+        if (signatures[idx]) {
+            setImageURL(URL.createObjectURL(signatures[idx].image as File));
         }
-    }, [signature]);
+    }, [signatures]);
+
+    const getDatetimeString = () => {
+        if (signatures[idx]) {
+            const dt = signatures[idx].time as Date;
+            return dt.toLocaleString();
+        } else {
+            return '';
+        }
+    };
 
     return (
-        <VStack w="100%" h="100%">
+        <VStack>
             <Box
                 w="100%"
-                h="100%"
+                h={h}
                 display="flex"
-                backgroundImage={imageURL}
-                backgroundRepeat="no-repeat"
-                backgroundSize="contain"
-                backgroundPosition="center"
                 alignItems="center"
                 justifyContent="center"
+                flexDirection="column"
                 onClick={Disable ? () => {} : onOpen}
             >
-                {signature?.image ? '' : <Text color="#66708080">請簽核</Text>}
+                {signatures[idx]?.image ? (
+                    <Image src={imageURL} minHeight="80%" maxWidth="100%" maxHeight="80%" fit="contain"/>
+                ) : (
+                    <Text color="#66708080">請簽核</Text>
+                )}
+                <Text pr="4px" w="100%" fontSize={2} align="right">
+                    {getDatetimeString()}
+                </Text>
             </Box>
-            <Text pr={1} w="100%" fontSize="1.2vw" align="right">
-                {signature?.time ? signature.time.toLocaleString() : null}
-            </Text>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
                 <ModalContent>

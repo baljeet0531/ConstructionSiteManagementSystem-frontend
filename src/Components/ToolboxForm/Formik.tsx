@@ -115,7 +115,7 @@ const GQL_UPDATE_TOOLBOX = gql`
         $oxygenVentilation: Boolean
         $primeContractCorp: String
         $primeContractStaff: String
-        $primeContractingCorpAppearance: [Upload]
+        $primeContractingCorpAppearance: [signatureInput]
         $principleOnSiteBeforeWork: Boolean
         $principleOnSiteDuringWork: Boolean
         $principleOnSiteKnockOff: Boolean
@@ -139,9 +139,9 @@ const GQL_UPDATE_TOOLBOX = gql`
         $systemBranch: String
         $systemEngineerSignature: signatureInput
         $username: String!
-        $viceFirstContractingCorpAppearance: [Upload]
-        $viceSecondContractingCorpAppearance: [Upload]
-        $viceThirdContractingCorpAppearance: [Upload]
+        $viceFirstContractingCorpAppearance: [signatureInput]
+        $viceSecondContractingCorpAppearance: [signatureInput]
+        $viceThirdContractingCorpAppearance: [signatureInput]
         $workContent: String
         $workPlace: String
     ) {
@@ -384,7 +384,7 @@ export default function WorkPermitFormik() {
         oxygenVentilation: undefined,
         primeContractCorp: undefined,
         primeContractStaff: undefined,
-        primeContractingCorpAppearance: undefined,
+        primeContractingCorpAppearance: [],
         principleOnSiteBeforeWork: undefined,
         principleOnSiteDuringWork: undefined,
         principleOnSiteKnockOff: undefined,
@@ -408,9 +408,9 @@ export default function WorkPermitFormik() {
         systemBranch: undefined,
         systemEngineerSignature: undefined,
         username: username,
-        viceFirstContractingCorpAppearance: undefined,
-        viceSecondContractingCorpAppearance: undefined,
-        viceThirdContractingCorpAppearance: undefined,
+        viceFirstContractingCorpAppearance: [],
+        viceSecondContractingCorpAppearance: [],
+        viceThirdContractingCorpAppearance: [],
         workContent: undefined,
         workPlace: undefined,
     };
