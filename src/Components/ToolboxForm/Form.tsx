@@ -26,6 +26,7 @@ import {
     contentStyle,
     centerStyle,
     filledStyle,
+    diseaseStyle,
     hazardTitleStyle,
 } from './Styles';
 import FormFactory from './Factory';
@@ -519,6 +520,71 @@ export default function ToolboxForm({
                         style={{ ...centerStyle, borderRight: '1px' }}
                     />
                 </Grid>
+                <Text pt={1}>
+                    *健康危害告知(依勞工健康保護規則規定，有下列疾病人員，不得從事相對應的作業)
+                </Text>
+                <Grid
+                    height="300px"
+                    templateColumns="1fr 5fr"
+                    templateRows="repeat(9, 1fr)"
+                >
+                    <GridItem
+                        {...titleStyle}
+                        justifyContent="center"
+                        borderRight="0px"
+                    >
+                        作業名稱
+                    </GridItem>
+                    <GridItem
+                        {...titleStyle}
+                        justifyContent="center"
+                        borderRight="1px"
+                    >
+                        考量不適合從事作業之疾病
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>噪音作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        心血管疾病、聽力異常。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>振動作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        周邊神經系統疾病、周邊循環系統疾病、骨骼肌肉系統疾病。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>游離輻射作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        血液疾病、內分泌疾病、精神與神經異常、眼睛疾病、惡性腫瘤。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>非游離輻射作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        眼睛疾病、內分泌系統疾病。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>高架作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        癲癇、精神或神經系統疾病、高血壓、心血管疾病、貧血、平衡機能失常、呼吸系統疾病、色盲、視力不良、聽力障礙、肢體殘障。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>粉塵作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        心血管疾病、慢性阻塞性肺疾病、慢性氣管炎、氣喘等。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>正已烷作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        周邊神經系統疾病、接觸性皮膚疾病等。
+                    </GridItem>
+                    <GridItem {...diseaseStyle}>重力勞動作業</GridItem>
+                    <GridItem {...diseaseStyle} borderRight="1px">
+                        呼吸系統疾病、高血壓、心血管疾病、貧血、肝病、腎臟疾病、精神或神經系統疾病、骨骼肌肉系統疾病、內分泌系統疾病、視網膜玻璃體疾病、肢體殘障。
+                    </GridItem>
+                </Grid>
+                <Box pt={2}>
+                    <Text as="b">
+                        *出席人員簽名(簽名時，本人已了解下列事項)：
+                        <br />
+                        1.已了解今日作業環境及作業內容的危害並願意全程使用防護具及遵守各項防範措施。
+                        <br />
+                        2.已了解健康危害告知內容，本人如有上述疾病時，不會從事該項作業。
+                        <br />
+                    </Text>
+                </Box>
             </Box>
         </Form>
     );

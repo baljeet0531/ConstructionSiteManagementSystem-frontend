@@ -20,9 +20,13 @@ export const contentStyle = {
     borderRight: '0px',
 };
 
+export const diseaseStyle = {
+    ...contentStyle,
+    pl: 2,
+};
+
 export const centerStyle = {
     ...titleStyle,
-    paddingLeft: '0px',
     borderTop: '0px',
     borderRight: '0px',
     justifyContent: 'center',
@@ -31,8 +35,8 @@ export const centerStyle = {
 export const hazardTitleStyle = {
     ...centerStyle,
     letterSpacing: '1em',
-    pl: 5
-}
+    pl: 5,
+};
 
 export const placeholderStyle = {
     color: '#667080',
@@ -43,4 +47,3 @@ export const filledPlaceholderStyle = {
     color: '#FFFFFF',
     opacity: 0.5,
 };
-
