@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
@@ -24,7 +23,6 @@ import {
     ReplyIcon,
     SearchIcon,
 } from '../../Icons/Icons';
-import OrgTable from './OrgTable';
 import AddPeopleModal from './AddPeopleModal';
 import ReactWindowTable, {
     dataCellStyle,
@@ -33,8 +31,11 @@ import ReactWindowTable, {
     IColumnMap,
     ISizes,
 } from './ReactWindowTable';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import DeleteLaborModal from './DeleteLaborModal';
+import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
+import { Cookies } from 'react-cookie';
+import BACKEND from '../../Constants/EnvConstants';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $idno: String, $corp: String) {
@@ -65,50 +66,11 @@ export interface organizationDataChecked extends organizationData {
 }
 
 const sizes: ISizes = {
-    tableViewHeight: 570,
+    // tableViewHeight: 570,
     tableFigmaWidth: 877,
     // tableViewWidth: 860,
     headerHeight: 56,
     cellHeight: 30,
-};
-
-const mockQueryData = {
-    A122898710: {
-        corp: '華穗',
-        name: '馮明輝',
-        idno: 'A122898710',
-        birth: '1959-10-20',
-        gender: '男',
-        blood: 'A',
-        tel: '0910-645031',
-    },
-    A121097853: {
-        corp: '合順儀電工程行',
-        name: '陳信宗',
-        idno: 'A121097853',
-        birth: '1963-02-22',
-        gender: '男',
-        blood: 'B',
-        tel: '0939-218956',
-    },
-    A120777781: {
-        corp: '力天',
-        name: '吳聲天',
-        idno: 'A120777781',
-        birth: '1961-04-18',
-        gender: '男',
-        blood: 'A',
-        tel: '0986-050147',
-    },
-    A120114828: {
-        corp: '力天',
-        name: '陳志誠',
-        idno: 'A120114828',
-        birth: '1969-02-04',
-        gender: '男',
-        blood: 'O',
-        tel: '0916-757365',
-    },
 };
 
 interface ISiteLabor {
@@ -133,74 +95,6 @@ type modalName = 'createLabor' | 'deleteLabor';
 
 export default function Organization(props: { siteId: string }) {
     if (!IsPermit('organization')) return <Navigate to="/" replace={true} />;
-    const { siteId } = props;
-    const toast = useToast();
-    const disclosure = useDisclosure();
-    const { isOpen, onOpen, onClose } = disclosure;
-    const [tableData, setTableData] = React.useState<tableData>({});
-    const [modalName, setModalName] = React.useState<modalName>('createLabor');
-
-    const { loading } = useQuery(SITE_LABOR, {
-        variables: {
-            siteId: siteId,
-        },
-        onCompleted: ({ siteLabor }: { siteLabor: ISiteLabor[] }) => {
-            const siteLaborChecked = siteLabor.map((element, index) => ({
-                [element.idno]: {
-                    ...element,
-                    index: index + 1,
-                    isChecked: false,
-                },
-            }));
-            setTableData(Object.assign({}, ...siteLaborChecked));
-        },
-        onError: (err) => {
-            console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    const [searchSiteLabor] = useLazyQuery(SITE_LABOR);
-    const [filteredPrimaryKey, setFilteredPrimaryKey] =
-        React.useState<string[]>();
-    const searchInputRef = React.useRef<HTMLInputElement>(null);
-    const timeout = React.useRef<any>();
-    const handleDebounceSearch = () => {
-        clearTimeout(timeout.current);
-
-        if (!searchInputRef.current?.value.trim()) {
-            setFilteredPrimaryKey(undefined);
-            return;
-        }
-        timeout.current = setTimeout(() => {
-            searchSiteLabor({
-                variables: {
-                    siteId: siteId,
-                    idno: searchInputRef.current?.value,
-                    // corp: corp,
-                },
-                onCompleted: ({ siteLabor }) => {
-                    const searchResult = siteLabor.map(
-                        (info: ISiteLabor) => info.idno
-                    );
-                    setFilteredPrimaryKey(
-                        searchResult.length != 0 ? searchResult : undefined
-                    );
-                },
-                onError: (err) => {
-                    console.log(err);
-                },
-            });
-        }, 300);
-    };
-
     const columnMap: IColumnMap[] = [
         {
             title: '編號',
@@ -353,6 +247,134 @@ export default function Organization(props: { siteId: string }) {
             },
         },
     ];
+    const { siteId } = props;
+    const toast = useToast();
+    const disclosure = useDisclosure();
+    const { isOpen, onOpen, onClose } = disclosure;
+    const [tableData, setTableData] = React.useState<tableData>({});
+    const [modalName, setModalName] = React.useState<modalName>('createLabor');
+
+    const { loading } = useQuery(SITE_LABOR, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ siteLabor }: { siteLabor: ISiteLabor[] }) => {
+            const siteLaborChecked = siteLabor.map((element, index) => ({
+                [element.idno]: {
+                    ...element,
+                    index: index + 1,
+                    isChecked: false,
+                },
+            }));
+            setTableData(Object.assign({}, ...siteLaborChecked));
+        },
+        onError: (err) => {
+            console.log(err);
+            toast({
+                title: '錯誤',
+                description: `${err}`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [searchSiteLabor] = useLazyQuery(SITE_LABOR);
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const timeout = React.useRef<any>();
+    const handleDebounceSearch = () => {
+        clearTimeout(timeout.current);
+
+        if (!searchInputRef.current?.value.trim()) {
+            setFilteredPrimaryKey(undefined);
+            return;
+        }
+        timeout.current = setTimeout(() => {
+            searchSiteLabor({
+                variables: {
+                    siteId: siteId,
+                    idno: searchInputRef.current?.value,
+                    // corp: corp,
+                },
+                onCompleted: ({ siteLabor }) => {
+                    const searchResult = siteLabor.map(
+                        (info: ISiteLabor) => info.idno
+                    );
+                    setFilteredPrimaryKey(
+                        searchResult.length != 0 ? searchResult : undefined
+                    );
+                },
+                onError: (err) => {
+                    console.log(err);
+                },
+            });
+        }, 300);
+    };
+    const [exportHumanResource, { loading: exportLaoding }] = useMutation(
+        EXPORT_HUMAN_RESOURCE,
+        {
+            onCompleted: ({
+                exportHumanResource,
+            }: {
+                exportHumanResource: {
+                    ok: Boolean;
+                    message: String;
+                    path: String;
+                };
+            }) => {
+                if (exportHumanResource.ok) {
+                    const cookieValue = new Cookies().get('jwt');
+                    const { path } = exportHumanResource;
+                    fetch(BACKEND + `/${path}`, {
+                        cache: 'no-cache',
+                        headers: {
+                            Authorization: `Bearer ${cookieValue}`,
+                        },
+                        method: 'GET',
+                    })
+                        .then((data) => {
+                            toast({
+                                title: exportHumanResource.message,
+                                description: '成功匯出',
+                                status: 'success',
+                                duration: 3000,
+                                isClosable: true,
+                            });
+                            return data.blob();
+                        })
+                        .then((blob) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const filename = path.slice(
+                                path.lastIndexOf('/') + 1
+                            );
+                            let fileLink = document.createElement('a');
+                            fileLink.href = url;
+                            fileLink.download = filename;
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                            fileLink.remove();
+                        })
+                        .catch((err) => console.log(err));
+                }
+            },
+            onError: (err) => {
+                console.log(err);
+                toast({
+                    title: '錯誤',
+                    description: `${err}`,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
     return (
         <Flex
             direction={'column'}
@@ -428,6 +450,23 @@ export default function Organization(props: { siteId: string }) {
                     <Button
                         leftIcon={<LaunchIcon />}
                         variant={'buttonGrayOutline'}
+                        onClick={() => {
+                            const idnos = Object.values(tableData).flatMap(
+                                (element) =>
+                                    element.isChecked ? element.idno : []
+                            );
+                            if (idnos.length != 0) {
+                                const username: string = new Cookies().get(
+                                    'username'
+                                );
+                                exportHumanResource({
+                                    variables: {
+                                        idnos: idnos,
+                                        username: username,
+                                    },
+                                });
+                            }
+                        }}
                     >
                         輸出
                     </Button>
@@ -468,7 +507,7 @@ export default function Organization(props: { siteId: string }) {
                         : []
                 )}
             ></DeleteLaborModal>
-            {loading && (
+            {(loading || exportLaoding) && (
                 <Center
                     position={'absolute'}
                     top={0}

@@ -92,7 +92,7 @@ const DELETE_HUMAN_RESOURCE = gql`
     }
 `;
 
-const EXPORT_HUMAN_RESOURCE = gql`
+export const EXPORT_HUMAN_RESOURCE = gql`
     mutation ExportHumanResource($idnos: [String]!, $username: String!) {
         exportHumanResource(idnos: $idnos, username: $username) {
             ok
