@@ -3,8 +3,10 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import {
+    Box,
     Button,
     Center,
+    Checkbox,
     Flex,
     IconButton,
     Input,
@@ -13,6 +15,7 @@ import {
     Spinner,
     Text,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react';
 import {
     AddIcon,
@@ -24,10 +27,28 @@ import {
 import OrgTable from './OrgTable';
 import AddPeopleModal from './AddPeopleModal';
 import ReactWindowTable, {
+    dataCellStyle,
     defalutElement,
+    getElementProps,
     IColumnMap,
     ISizes,
 } from './ReactWindowTable';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import DeleteLaborModal from './DeleteLaborModal';
+
+export const SITE_LABOR = gql`
+    query SiteLabor($siteId: String!, $idno: String, $corp: String) {
+        siteLabor(siteId: $siteId, idno: $idno, corp: $corp) {
+            corp
+            name
+            idno
+            birth
+            gender
+            blood
+            tel
+        }
+    }
+`;
 
 export interface organizationData {
     contractingCompanyName: string;
@@ -42,143 +63,6 @@ export interface organizationDataChecked extends organizationData {
     index: number;
     isChecked: boolean;
 }
-
-const columnMap: IColumnMap[] = [
-    {
-        title: '編號',
-        width: 70,
-        variable: 'index',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '承攬公司',
-        width: 125,
-        variable: 'corp',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '姓名',
-        width: 125,
-        variable: 'name',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '身分證字號',
-        width: 125,
-        variable: 'idno',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '出生日期',
-        width: 125,
-        variable: 'birth',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '性別',
-        width: 50,
-        variable: 'gender',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '血型',
-        width: 50,
-        variable: 'blood',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '聯絡電話',
-        width: 125,
-        variable: 'tel',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderRight: '1px solid #919AA9',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-    {
-        title: '全選',
-        width: 82,
-        variable: 'isChecked',
-        getElement: (props) =>
-            defalutElement({
-                ...props,
-                style: {
-                    ...props.style,
-                    paddingTop: '5px',
-                    borderBottom: '1px solid #919AA9',
-                },
-            }),
-    },
-];
 
 const sizes: ISizes = {
     tableViewHeight: 570,
@@ -227,31 +111,248 @@ const mockQueryData = {
     },
 };
 
+interface ISiteLabor {
+    corp: string;
+    name: string;
+    idno: string;
+    birth: string;
+    gender: string;
+    blood: string;
+    tel: string;
+}
+
+interface ISiteLaborChecked extends ISiteLabor {
+    isChecked: boolean;
+}
+
+type tableData = {
+    [idno: string]: ISiteLaborChecked;
+};
+
+type modalName = 'createLabor' | 'deleteLabor';
+
 export default function Organization(props: { siteId: string }) {
     if (!IsPermit('organization')) return <Navigate to="/" replace={true} />;
     const { siteId } = props;
+    const toast = useToast();
     const disclosure = useDisclosure();
     const { isOpen, onOpen, onClose } = disclosure;
+    const [tableData, setTableData] = React.useState<tableData>({});
+    const [modalName, setModalName] = React.useState<modalName>('createLabor');
 
-    const reprocessingData = Object.keys(mockQueryData).map(
-        (primarykey, index) => {
-            return {
-                [primarykey]: {
-                    ...mockQueryData[primarykey as keyof typeof mockQueryData],
+    const { loading } = useQuery(SITE_LABOR, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ siteLabor }: { siteLabor: ISiteLabor[] }) => {
+            const siteLaborChecked = siteLabor.map((element, index) => ({
+                [element.idno]: {
+                    ...element,
                     index: index + 1,
                     isChecked: false,
                 },
-            };
+            }));
+            setTableData(Object.assign({}, ...siteLaborChecked));
+        },
+        onError: (err) => {
+            console.log(err);
+            toast({
+                title: '錯誤',
+                description: `${err}`,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [searchSiteLabor] = useLazyQuery(SITE_LABOR);
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const timeout = React.useRef<any>();
+    const handleDebounceSearch = () => {
+        clearTimeout(timeout.current);
+
+        if (!searchInputRef.current?.value.trim()) {
+            setFilteredPrimaryKey(undefined);
+            return;
         }
-    );
-    const reprocessingDataObj: {
-        [primaryKey: string]: organizationDataChecked;
-    } = Object.assign({}, ...reprocessingData);
+        timeout.current = setTimeout(() => {
+            searchSiteLabor({
+                variables: {
+                    siteId: siteId,
+                    idno: searchInputRef.current?.value,
+                    // corp: corp,
+                },
+                onCompleted: ({ siteLabor }) => {
+                    const searchResult = siteLabor.map(
+                        (info: ISiteLabor) => info.idno
+                    );
+                    setFilteredPrimaryKey(
+                        searchResult.length != 0 ? searchResult : undefined
+                    );
+                },
+                onError: (err) => {
+                    console.log(err);
+                },
+            });
+        }, 300);
+    };
 
-    const [organizationTableData, setOrganizationTableData] = React.useState<{
-        [primaryKey: string]: organizationDataChecked;
-    }>(reprocessingDataObj);
-
+    const columnMap: IColumnMap[] = [
+        {
+            title: '編號',
+            width: 70,
+            variable: 'index',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '承攬公司',
+            width: 125,
+            variable: 'corp',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '姓名',
+            width: 125,
+            variable: 'name',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '身分證字號',
+            width: 125,
+            variable: 'idno',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '出生日期',
+            width: 125,
+            variable: 'birth',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '性別',
+            width: 50,
+            variable: 'gender',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '血型',
+            width: 50,
+            variable: 'blood',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '聯絡電話',
+            width: 125,
+            variable: 'tel',
+            getElement: (props) =>
+                defalutElement({
+                    ...props,
+                    style: {
+                        ...props.style,
+                        paddingTop: '5px',
+                        borderRight: '1px solid #919AA9',
+                        borderBottom: '1px solid #919AA9',
+                    },
+                }),
+        },
+        {
+            title: '全選',
+            width: 82,
+            variable: 'isChecked',
+            getElement: ({ style, info, variable }: getElementProps) => {
+                return (
+                    <Box
+                        {...dataCellStyle}
+                        style={{
+                            ...style,
+                            paddingTop: '5px',
+                            borderBottom: '1px solid #919AA9',
+                        }}
+                    >
+                        <Checkbox
+                            isChecked={info[variable]}
+                            onChange={(e) => {
+                                setTableData((prevState) => ({
+                                    ...prevState,
+                                    [info.idno]: {
+                                        ...info,
+                                        isChecked: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        ></Checkbox>
+                    </Box>
+                );
+            },
+        },
+    ];
     return (
         <Flex
             direction={'column'}
@@ -288,7 +389,7 @@ export default function Organization(props: { siteId: string }) {
                             ></IconButton>
                         </InputLeftElement>
                         <Input
-                            // ref={searchInputRef}
+                            ref={searchInputRef}
                             w={'fit-content'}
                             type="text"
                             border={'2px solid'}
@@ -303,13 +404,16 @@ export default function Organization(props: { siteId: string }) {
                                 lineHeight: '2.25rem',
                                 color: 'rgba(102, 112, 128, 0.5)',
                             }}
-                            // onChange={handleDebounceSearch}
+                            onChange={handleDebounceSearch}
                         />
                     </InputGroup>
                     <Button
                         leftIcon={<AddIcon />}
                         variant={'buttonBlueSolid'}
-                        onClick={onOpen}
+                        onClick={() => {
+                            setModalName('createLabor');
+                            onOpen();
+                        }}
                     >
                         新增人員
                     </Button>
@@ -318,7 +422,6 @@ export default function Organization(props: { siteId: string }) {
                     <Button
                         leftIcon={<ReplyIcon />}
                         variant={'buttonGrayOutline'}
-                        // onClick={onOpen}
                     >
                         批次輸入
                     </Button>
@@ -331,6 +434,10 @@ export default function Organization(props: { siteId: string }) {
                     <Button
                         leftIcon={<DeleteIcon />}
                         variant={'buttonGrayOutline'}
+                        onClick={() => {
+                            setModalName('deleteLabor');
+                            onOpen();
+                        }}
                     >
                         刪除
                     </Button>
@@ -341,24 +448,39 @@ export default function Organization(props: { siteId: string }) {
                 setOverviewTableData={setOrganizationTableData}
             ></OrgTable> */}
             <ReactWindowTable
-                tableData={organizationTableData}
-                // setOverviewTableData={setOrganizationTableData}
+                tableData={tableData}
                 columnMap={columnMap}
                 sizes={sizes}
+                filteredPrimaryKey={filteredPrimaryKey}
             />
-            <AddPeopleModal disclosure={disclosure}></AddPeopleModal>
-            {/* {(loading || searchLoading || exportLoading) && (
-        <Center
-            top={0}
-            left={'20vw'}
-            w={'80vw'}
-            h={'100vh'}
-            bg={'#D9D9D980'}
-            zIndex={2}
-        >
-            <Spinner size={'xl'} />
-        </Center>
-    )} */}
+            <AddPeopleModal
+                siteId={siteId}
+                onClose={onClose}
+                isOpen={modalName == 'createLabor' ? isOpen : false}
+            ></AddPeopleModal>
+            <DeleteLaborModal
+                siteId={siteId}
+                onClose={onClose}
+                isOpen={modalName == 'deleteLabor' ? isOpen : false}
+                selected={Object.values(tableData).flatMap((element) =>
+                    element.isChecked
+                        ? { name: element.name, idno: element.idno }
+                        : []
+                )}
+            ></DeleteLaborModal>
+            {loading && (
+                <Center
+                    position={'absolute'}
+                    top={0}
+                    left={'20vw'}
+                    w={'80vw'}
+                    h={'100vh'}
+                    bg={'#D9D9D980'}
+                    zIndex={2}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
         </Flex>
     );
 }
