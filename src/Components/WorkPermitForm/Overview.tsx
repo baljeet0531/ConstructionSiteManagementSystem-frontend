@@ -486,6 +486,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
             ></WPOverViewTable>
             {(loading || searchLoading || exportLoading) && (
                 <Center
+                    position={'absolute'}
                     top={0}
                     left={'20vw'}
                     w={'80vw'}
