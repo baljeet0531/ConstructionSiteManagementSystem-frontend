@@ -106,6 +106,9 @@ export default function ReactWindowTable(props: {
     const primarykeys = Object.keys(displayTableData);
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
+    const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
+    const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
+
     const pagePadding = 42;
     const pageRatio = 0.8;
 
@@ -130,10 +133,29 @@ export default function ReactWindowTable(props: {
         return width;
     };
 
+    React.useEffect(() => {
+        const watchResize = () => {
+            setTableViewWidth(window.innerWidth * pageRatio - 2 * pagePadding);
+            setTableViewHeight(
+                window.innerHeight - tablePaddingTop - tablePaddingBottom
+            );
+            variableSizeHeaderRef.current &&
+                variableSizeHeaderRef.current.resetAfterColumnIndex(0);
+            variableSizeDataRef.current &&
+                variableSizeDataRef.current.resetAfterColumnIndex(0);
+        };
+        window.addEventListener('resize', watchResize);
+        window.addEventListener('orientationchange', watchResize);
+        return () => {
+            window.removeEventListener('resize', watchResize);
+            window.removeEventListener('orientationchange', watchResize);
+        };
+    }, []);
+
     return (
         <Flex direction={'column'}>
             <VariableSizeGrid
-                // ref={variableSizeHeaderRef}
+                ref={variableSizeHeaderRef}
                 style={{
                     outline: '2px solid #919AA9',
                     background: '#919AA9',
@@ -174,6 +196,7 @@ export default function ReactWindowTable(props: {
                 }}
             </VariableSizeGrid>
             <VariableSizeGrid
+                ref={variableSizeDataRef}
                 style={{
                     outline: '2px solid #919AA9',
                     background: '#FFFFFF',
