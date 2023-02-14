@@ -12,6 +12,8 @@ import { filledPlaceholderStyle, placeholderStyle } from './Styles';
 import { SetStateAction, Dispatch, useState, useRef } from 'react';
 import { IToolbox, IToolboxData } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
+import { SignatureStateItem } from '../../Interface/Signature';
+import dayjs from 'dayjs';
 
 export default class FormFactory {
     formProps: FormikProps<IToolbox>;
@@ -119,6 +121,35 @@ export default class FormFactory {
                     }}
                 />
             </>
+        );
+    }
+    checkBox(name: keyof IToolbox) {
+        return (
+            <Checkbox
+                isChecked={this.formProps.values[name] as boolean}
+                onChange={this.formProps.handleChange}
+            />
+        );
+    }
+    checkTimeInput(state: SignatureStateItem) {
+        const [signature, setSignature] = state;
+        return (
+            <Input
+                size="sm"
+                type="time"
+                border="0px"
+                minW="100px"
+                textAlign="center"
+                p="0px"
+                value={signature?.time ? signature.time.format('HH:mm') : ''}
+                onChange={(e) => {
+                    const [hour, min] = e.target.value.split(':');
+                    const newDate = dayjs(signature.time)
+                        .hour(Number(hour))
+                        .minute(Number(min));
+                    setSignature({ ...signature, time: newDate });
+                }}
+            />
         );
     }
     selectContractingCorpInput(fieldName: string) {

@@ -67,8 +67,6 @@ export default function ToolboxForm({
         fetchPolicy: 'network-only',
     });
 
-    // console.log(formProps.values);
-
     return (
         <Form>
             <Button
@@ -586,7 +584,355 @@ export default function ToolboxForm({
                         <br />
                     </Text>
                 </Box>
-                <SignatureTable {...signatureLists}/>
+                <SignatureTable {...signatureLists} />
+                <Text pt={1}>
+                    *作業現場巡檢紀錄(確認檢查項目均符規定後方可作業)
+                </Text>
+                <Grid
+                    height="600px"
+                    templateColumns="30fr 300fr 110fr repeat(4, 80fr)"
+                    templateRows="repeat(14, 1fr)"
+                >
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={3}
+                        {...titleStyle}
+                        borderRight="0px"
+                    />
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={3}
+                        colStart={2}
+                        colEnd={4}
+                        {...titleStyle}
+                        justifyContent="center"
+                    >
+                        <Text as="b">檢查項目</Text>
+                    </GridItem>
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={2}
+                        colStart={4}
+                        colEnd={7}
+                        {...titleStyle}
+                        justifyContent="center"
+                        borderLeft="0px"
+                        borderBottom="0px"
+                    >
+                        主承攬商監工人員巡檢欄
+                    </GridItem>
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={3}
+                        {...titleStyle}
+                        justifyContent="center"
+                        borderLeft="0px"
+                        textAlign="center"
+                    >
+                        監工單位巡檢欄
+                    </GridItem>
+                    <GridItem
+                        rowStart={2}
+                        rowEnd={3}
+                        colStart={4}
+                        colEnd={5}
+                        {...centerStyle}
+                        borderLeft="0px"
+                    >
+                        施工前
+                    </GridItem>
+                    <GridItem
+                        rowStart={2}
+                        rowEnd={3}
+                        colStart={5}
+                        colEnd={6}
+                        {...centerStyle}
+                        borderLeft="0px"
+                    >
+                        施工中
+                    </GridItem>
+                    <GridItem
+                        rowStart={2}
+                        rowEnd={3}
+                        colStart={6}
+                        colEnd={7}
+                        {...centerStyle}
+                        borderLeft="0px"
+                        borderRight="1px"
+                    >
+                        放工前
+                    </GridItem>
+                    <GridItem {...centerStyle}>1</GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        colStart={2}
+                        colEnd={4}
+                        borderRight="1px"
+                        pl="8px"
+                    >
+                        作業內容符合申請種類。
+                    </GridItem>
+                    <GridInputItem
+                        fieldName="contentConformBeforeWork"
+                        inputComponent={f.checkBox('contentConformBeforeWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="contentConformDuringWork"
+                        inputComponent={f.checkBox('contentConformDuringWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridInputItem
+                        fieldName="contentConformSupervisor"
+                        inputComponent={f.checkBox('contentConformSupervisor')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridItem {...centerStyle}>2</GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        colStart={2}
+                        colEnd={4}
+                        borderRight="1px"
+                        pl="8px"
+                    >
+                        確實執行相關作業檢點及安全防範措施。
+                    </GridItem>
+                    <GridInputItem
+                        fieldName="safetyMeasureBeforeWork"
+                        inputComponent={f.checkBox('safetyMeasureBeforeWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="safetyMeasureDuringWork"
+                        inputComponent={f.checkBox('safetyMeasureDuringWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="safetyMeasureKnockOff"
+                        inputComponent={f.checkBox('safetyMeasureKnockOff')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="safetyMeasureSupervisor"
+                        inputComponent={f.checkBox('safetyMeasureSupervisor')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridItem {...centerStyle}>3</GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        colStart={2}
+                        colEnd={4}
+                        borderRight="1px"
+                        pl="8px"
+                    >
+                        作業人員確實配戴/使用安全防護具、精神狀態/身體狀況正常。
+                    </GridItem>
+                    <GridInputItem
+                        fieldName="staffStateBeforeWork"
+                        inputComponent={f.checkBox('staffStateBeforeWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="staffStateDuringWork"
+                        inputComponent={f.checkBox('staffStateDuringWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="staffStateKnockOff"
+                        inputComponent={f.checkBox('staffStateKnockOff')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="staffStateSupervisor"
+                        inputComponent={f.checkBox('staffStateSupervisor')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridItem {...centerStyle}>4</GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        colStart={2}
+                        colEnd={4}
+                        borderRight="1px"
+                        pl="8px"
+                    >
+                        作業主管確實於現場監督。
+                    </GridItem>
+                    <GridInputItem
+                        fieldName="principleOnSiteBeforeWork"
+                        inputComponent={f.checkBox('principleOnSiteBeforeWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="principleOnSiteDuringWork"
+                        inputComponent={f.checkBox('principleOnSiteDuringWork')}
+                        style={{ borderBottom: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="principleOnSiteKnockOff"
+                        inputComponent={f.checkBox('principleOnSiteKnockOff')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="principleOnSiteSupervisor"
+                        inputComponent={f.checkBox('principleOnSiteSupervisor')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridItem {...centerStyle}>5</GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        colStart={2}
+                        colEnd={4}
+                        borderRight="1px"
+                        pl="8px"
+                    >
+                        收工前，施工地點應整理妥當，將水電氣設施及防護設備/措施復原。
+                    </GridItem>
+                    <GridItem borderBottom="1px" />
+                    <GridItem borderBottom="1px" />
+                    <GridInputItem
+                        fieldName="restorationKnockOff"
+                        inputComponent={f.checkBox('restorationKnockOff')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridInputItem
+                        fieldName="restorationSupervisor"
+                        inputComponent={f.checkBox('restorationSupervisor')}
+                        style={{ borderBottom: '1px', borderRight: '1px' }}
+                    />
+                    <GridItem borderLeft="1px" borderBottom="1px" />
+                    <GridItem
+                        colStart={2}
+                        colEnd={4}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        borderLeft="1px"
+                    />
+                    <GridItem borderBottom="1px" />
+                    <GridItem borderBottom="1px" />
+                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem borderLeft="1px" borderBottom="1px" />
+                    <GridItem
+                        colStart={2}
+                        colEnd={4}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        borderLeft="1px"
+                    />
+                    <GridItem borderBottom="1px" />
+                    <GridItem borderBottom="1px" />
+                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={14}
+                        {...centerStyle}
+                        letterSpacing="0.5em"
+                        sx={{ writingMode: 'vertical-lr' }}
+                    >
+                        巡視紀錄
+                    </GridItem>
+                    <GridItem rowStart={10} rowEnd={14} {...centerStyle} />
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        {...centerStyle}
+                        borderRight="1px"
+                    >
+                        <Text textAlign="center">
+                            巡檢人員
+                            <br /> 簽名
+                        </Text>
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        pb="2px"
+                    >
+                        <SignaturePad
+                            title="施工前 - 簽名"
+                            signatureName="before-work-signature.png"
+                            state={
+                                signatures.contractingCorpStaffSignatureFirst
+                            }
+                            placeHolderText="承商人員"
+                            showTime={false}
+                        />
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        pb="2px"
+                    >
+                        <SignaturePad
+                            title="施工中 - 簽名"
+                            signatureName="during-work-signature.png"
+                            state={
+                                signatures.contractingCorpStaffSignatureSecond
+                            }
+                            placeHolderText="承商人員"
+                            showTime={false}
+                        />
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        pb="2px"
+                    >
+                        <SignaturePad
+                            title="施工中 - 簽名"
+                            signatureName="knock-off-signature.png"
+                            state={
+                                signatures.contractingCorpStaffSignatureThird
+                            }
+                            placeHolderText="承商人員"
+                            showTime={false}
+                        />
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        pb="2px"
+                    >
+                        <SignaturePad
+                            title="監工單位 - 簽名"
+                            signatureName="knock-off-signature.png"
+                            state={signatures.systemEngineerSignature}
+                            placeHolderText="系統工程師"
+                            showTime={false}
+                        />
+                    </GridItem>
+                    <GridItem {...centerStyle} borderRight="1px">
+                        檢查時間(時/分)
+                    </GridItem>
+                    <GridItem {...centerStyle} borderLeft="0px">
+                        {f.checkTimeInput(
+                            signatures.contractingCorpStaffSignatureFirst
+                        )}
+                    </GridItem>
+                    <GridItem {...centerStyle} borderLeft="0px">
+                        {f.checkTimeInput(
+                            signatures.contractingCorpStaffSignatureSecond
+                        )}
+                    </GridItem>
+                    <GridItem {...centerStyle} borderLeft="0px" borderRight="1px">
+                        {f.checkTimeInput(
+                            signatures.contractingCorpStaffSignatureThird
+                        )}
+                    </GridItem>
+                    <GridItem {...centerStyle} borderLeft="0px" borderRight="1px">
+                        {f.checkTimeInput(
+                            signatures.systemEngineerSignature
+                        )}
+                    </GridItem>
+                </Grid>
             </Box>
         </Form>
     );

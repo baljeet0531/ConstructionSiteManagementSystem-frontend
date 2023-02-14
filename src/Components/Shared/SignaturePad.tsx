@@ -10,25 +10,30 @@ import {
     Button,
     Box,
     Text,
+    Image,
     VStack,
     useDisclosure,
 } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
-import {
-    MultiSignatureStateItem,
-    SignatureStateItem,
-} from '../../Interface/Signature';
+import { SignatureStateItem } from '../../Interface/Signature';
+import dayjs from 'dayjs';
 
 export default function SignaturePad({
     title,
     signatureName,
     state,
+    h = '100%',
+    showTime = true,
+    placeHolderText = '請簽核',
     Disable = false,
 }: {
     title: string;
     signatureName: string;
     state: SignatureStateItem;
+    h?: string;
+    showTime?: boolean;
+    placeHolderText?: string;
     Disable?: boolean;
 }) {
     const [signature, setSignature] = state;
@@ -69,7 +74,7 @@ export default function SignaturePad({
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
             image: new File([blob], signatureName),
-            time: new Date(),
+            time: dayjs(),
             owner: new Cookies().get('username'),
         });
         onClose();
@@ -91,21 +96,32 @@ export default function SignaturePad({
         <VStack w="100%" h="100%">
             <Box
                 w="100%"
-                h="100%"
+                h={h}
                 display="flex"
-                backgroundImage={imageURL}
-                backgroundRepeat="no-repeat"
-                backgroundSize="contain"
-                backgroundPosition="center"
                 alignItems="center"
                 justifyContent="center"
+                flexDirection="column"
                 onClick={Disable ? () => {} : onOpen}
             >
-                {signature?.image ? '' : <Text color="#66708080">請簽核</Text>}
+                {signature?.image ? (
+                    <Image
+                        src={imageURL}
+                        minHeight="80%"
+                        maxWidth="100%"
+                        maxHeight="80%"
+                        fit="contain"
+                    />
+                ) : (
+                    <Text color="#66708080">{placeHolderText}</Text>
+                )}
+                {showTime && (
+                    <Text pr="4px" w="100%" fontSize={2} align="right">
+                        {signature?.time
+                            ? signature.time.format('YYYY-MM-DD HH:mm')
+                            : ''}
+                    </Text>
+                )}
             </Box>
-            <Text pr={1} w="100%" fontSize="1.2vw" align="right">
-                {signature?.time ? signature.time.toLocaleString() : null}
-            </Text>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
                 <ModalContent>
