@@ -1,4 +1,12 @@
-import { Checkbox, Input, Text, Flex, Textarea } from '@chakra-ui/react';
+import {
+    Checkbox,
+    Input,
+    Text,
+    Flex,
+    Textarea,
+    HStack,
+    VStack,
+} from '@chakra-ui/react';
 import {
     AutoComplete,
     AutoCompleteInput,
@@ -7,9 +15,9 @@ import {
     AutoCompleteCreatable,
     AutoCompleteTag,
 } from '@choc-ui/chakra-autocomplete';
-import { FormikProps } from 'formik';
+import { Field, FormikProps } from 'formik';
 import { filledPlaceholderStyle, placeholderStyle } from './Styles';
-import { SetStateAction, Dispatch, useState, useRef } from 'react';
+import { SetStateAction, Dispatch, useState, useRef, useEffect } from 'react';
 import { IToolbox, IToolboxData } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
@@ -150,6 +158,60 @@ export default class FormFactory {
                     setSignature({ ...signature, time: newDate });
                 }}
             />
+        );
+    }
+    abnormalRecord() {
+        const [enable, setEnable] = useState(
+            this.formProps.values.abnormalRecord ? true : false
+        );
+        useEffect(() => {
+            if (!enable) {
+                this.formProps.setFieldValue('abnormalRecord', '');
+            }
+            if (enable) {
+                this.formProps.setFieldValue('abnormal', false);
+            }
+        }, [enable]);
+
+        return (
+            <VStack w="100%" h="100%">
+                <HStack w="100%" spacing={4} pl={2} pt={2}>
+                    <Checkbox
+                        isChecked={this.formProps.values.abnormal}
+                        onChange={(e) => {
+                            const value: boolean = e.target.checked;
+                            this.formProps.setFieldValue('abnormal', value);
+                            if (value) {
+                                setEnable(false);
+                            }
+                        }}
+                    >
+                        NA (無異常及改善情形)
+                    </Checkbox>
+                    <Checkbox
+                        isChecked={enable}
+                        onChange={() => {
+                            setEnable(!enable);
+                        }}
+                    >
+                        異常及改善情形說明
+                    </Checkbox>
+                </HStack>
+                <Textarea
+                    h='100%'
+                    disabled={!enable}
+                    value={this.formProps.values.abnormalRecord}
+                    _placeholder={placeholderStyle}
+                    placeholder="請填寫"
+                    resize="none"
+                    onChange={(e) => {
+                        this.formProps.setFieldValue(
+                            'abnormalRecord',
+                            e.target.value
+                        );
+                    }}
+                />
+            </VStack>
         );
     }
     selectContractingCorpInput(fieldName: string) {

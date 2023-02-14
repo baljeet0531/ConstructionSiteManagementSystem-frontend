@@ -591,7 +591,7 @@ export default function ToolboxForm({
                 <Grid
                     height="600px"
                     templateColumns="30fr 300fr 110fr repeat(4, 80fr)"
-                    templateRows="repeat(14, 1fr)"
+                    templateRows="repeat(13, 1fr)"
                 >
                     <GridItem
                         rowStart={1}
@@ -833,7 +833,9 @@ export default function ToolboxForm({
                     >
                         巡視紀錄
                     </GridItem>
-                    <GridItem rowStart={10} rowEnd={14} {...centerStyle} />
+                    <GridItem rowStart={10} rowEnd={14} {...contentStyle}>
+                        {f.abnormalRecord()}
+                    </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
@@ -922,17 +924,29 @@ export default function ToolboxForm({
                             signatures.contractingCorpStaffSignatureSecond
                         )}
                     </GridItem>
-                    <GridItem {...centerStyle} borderLeft="0px" borderRight="1px">
+                    <GridItem
+                        {...centerStyle}
+                        borderLeft="0px"
+                        borderRight="1px"
+                    >
                         {f.checkTimeInput(
                             signatures.contractingCorpStaffSignatureThird
                         )}
                     </GridItem>
-                    <GridItem {...centerStyle} borderLeft="0px" borderRight="1px">
-                        {f.checkTimeInput(
-                            signatures.systemEngineerSignature
-                        )}
+                    <GridItem
+                        {...centerStyle}
+                        borderLeft="0px"
+                        borderRight="1px"
+                    >
+                        {f.checkTimeInput(signatures.systemEngineerSignature)}
                     </GridItem>
                 </Grid>
+                <Flex justifyContent="space-between">
+                    <Text>
+                        ※主承攬商監工人員施工前/中/收工前各須巡檢一次，監工單位監工每天至少巡檢一次。
+                    </Text>
+                    <Text>EE-4411-15A</Text>
+                </Flex>
             </Box>
         </Form>
     );
