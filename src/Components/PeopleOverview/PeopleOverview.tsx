@@ -14,6 +14,7 @@ import {
     Tabs,
     Text,
     useToast,
+    useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Cookies } from 'react-cookie';
@@ -26,6 +27,7 @@ import {
     SearchIcon,
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';
 
 export const ALL_HUMAN_RESOURCE = gql`
@@ -79,15 +81,6 @@ export const ALL_HUMAN_RESOURCE = gql`
             osStatus
             o2Status
             no
-        }
-    }
-`;
-
-const DELETE_HUMAN_RESOURCE = gql`
-    mutation DeleteHumanResource($idno: [String!]) {
-        deleteHumanResource(idno: $idno) {
-            ok
-            message
         }
     }
 `;
@@ -476,7 +469,7 @@ export const tabMap = {
 };
 
 export interface humanTableValues {
-    name: string | null | undefined;
+    name: string;
     gender: string | null | undefined;
     birthday: string | null | undefined;
     bloodType: string | null | undefined;
@@ -512,7 +505,7 @@ export interface humanTableValues {
     saCertificationDate: string | null | undefined;
     osCertificationDate: string | null | undefined;
     o2CertificationDate: string | null | undefined;
-    idno: string | undefined;
+    idno: string;
     sixStatus: string | null | undefined;
     certificationStatus: string | null | undefined;
     aStatus: string | null | undefined;
@@ -544,6 +537,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const username: string = new Cookies().get('username');
 
     const [tableValue, setTableValue] = React.useState<{
@@ -581,34 +575,6 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         fetchPolicy: 'network-only',
     });
 
-    const [deleteHumanResource, { loading: deleteLoading }] = useMutation(
-        DELETE_HUMAN_RESOURCE,
-        {
-            onCompleted: ({ deleteHumanResource }) => {
-                if (deleteHumanResource.ok) {
-                    toast({
-                        title: deleteHumanResource.message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
-                }
-            },
-            onError: (err) => {
-                console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: `${err}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
-            },
-            refetchQueries: [ALL_HUMAN_RESOURCE],
-            fetchPolicy: 'network-only',
-        }
-    );
-
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
         fetchPolicy: 'network-only',
     });
@@ -645,10 +611,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     };
 
     const [selectedHuman, setSelectedHuman] = React.useState<
-        (
-            | { no: number | null | undefined; idno: string | undefined }
-            | undefined
-        )[]
+        { no: number | null | undefined; idno: string; name: string }[]
     >([]);
 
     const [exportHumanResource, { loading: exportLaoding }] = useMutation(
@@ -717,9 +680,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             setSelectedHuman(
                 Object.values(tableValue).flatMap((info) =>
                     info['isCheck']
-                        ? { no: info['no'], idno: info['idno'] }
+                        ? { no: info.no, idno: info.idno, name: info.name }
                         : []
-                ) || []
+                )
             );
         }
     }, [tableValue]);
@@ -793,7 +756,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             onClick={() => {
                                 if (selectedHuman.length !== 0) {
                                     const idnos = selectedHuman.map(
-                                        (selectedHuman) => selectedHuman?.idno
+                                        (selectedHuman) => selectedHuman.idno
                                     );
                                     exportHumanResource({
                                         variables: {
@@ -810,17 +773,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     <Button
                         leftIcon={<DeleteIcon />}
                         variant={'buttonGrayOutline'}
-                        onClick={() => {
-                            if (selectedHuman) {
-                                deleteHumanResource({
-                                    variables: {
-                                        idno: Object.values(selectedHuman).map(
-                                            (info) => info?.idno
-                                        ),
-                                    },
-                                });
-                            }
-                        }}
+                        onClick={onOpen}
                     >
                         刪除
                     </Button>
@@ -849,7 +802,19 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     })}
                 </TabPanels>
             </Tabs>
-            {(loading || deleteLoading || exportLaoding) && (
+            <DeleteModal
+                isOpen={isOpen}
+                onClose={onClose}
+                selected={
+                    tableValue &&
+                    selectedHuman &&
+                    selectedHuman.map((info) => ({
+                        name: info.name,
+                        idno: info.idno,
+                    }))
+                }
+            ></DeleteModal>
+            {(loading || exportLaoding) && (
                 <Center
                     position={'absolute'}
                     top={0}
