@@ -19,13 +19,12 @@ import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
-import GridInputItem from './GridInputItem';
+import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,
     contentStyle,
     lastStyle,
     numberStyle,
-    inputStyle,
     workContentStyle,
     workContentInputStyle,
 } from './Styles';
@@ -194,7 +193,7 @@ export default function WorkPermitForm({
                         fieldName={'supplyDate'}
                         inputComponent={<Input type="date" border="0px" />}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem
                         colStart={4}
@@ -249,14 +248,14 @@ export default function WorkPermitForm({
                         fieldName="area"
                         inputComponent={f.selectAreaInput()}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
                     <GridInputItem
                         fieldName="zone"
                         inputComponent={f.selectZoneInput()}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>4</GridItem>
@@ -268,7 +267,7 @@ export default function WorkPermitForm({
                             <Input type="datetime-local" border="0px" />
                         }
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>至</GridItem>
                     <GridInputItem
@@ -278,7 +277,7 @@ export default function WorkPermitForm({
                             <Input type="datetime-local" border="0px" />
                         }
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>5</GridItem>
@@ -287,7 +286,7 @@ export default function WorkPermitForm({
                         gridRange={[6, 7, 3, 6]}
                         fieldName="supervisorCorp"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>6</GridItem>
@@ -296,14 +295,14 @@ export default function WorkPermitForm({
                         gridRange={[7, 8, 3, 4]}
                         fieldName="supervisor"
                         inputComponent={f.textInput()}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>
                     <GridInputItem
                         gridRange={[7, 8, 5, 6]}
                         fieldName="tel"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>7</GridItem>
@@ -312,14 +311,14 @@ export default function WorkPermitForm({
                         gridRange={[8, 9, 3, 4]}
                         fieldName="siteId"
                         inputComponent={f.textInput()}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>工程名稱：</GridItem>
                     <GridInputItem
                         gridRange={[8, 9, 5, 6]}
                         fieldName="projectName"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
                 </Grid>
                 <Grid
