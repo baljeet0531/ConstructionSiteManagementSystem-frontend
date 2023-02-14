@@ -20,7 +20,7 @@ export default function Sidebar(props: {
     const { username, role, sitesList, setSelectedSite, featureMap } = props;
 
     return (
-        <VStack mt="50px" w="20vw" h={'100vh'}>
+        <VStack pt="50px" pb="50px" w="20vw" h={'100%'} overflowY={'auto'}>
             <AspectRatio w="50%" ratio={1}>
                 <Avatar name="" src={`${AvatarIcon}`} bg="#4C7DE7"></Avatar>
             </AspectRatio>
