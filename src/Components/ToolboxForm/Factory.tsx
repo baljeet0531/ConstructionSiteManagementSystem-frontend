@@ -1,23 +1,13 @@
-import {
-    Checkbox,
-    Input,
-    Text,
-    Flex,
-    Textarea,
-    HStack,
-    VStack,
-} from '@chakra-ui/react';
+import { Checkbox, Input, Textarea, HStack, VStack } from '@chakra-ui/react';
 import {
     AutoComplete,
     AutoCompleteInput,
     AutoCompleteItem,
     AutoCompleteList,
-    AutoCompleteCreatable,
-    AutoCompleteTag,
 } from '@choc-ui/chakra-autocomplete';
-import { Field, FormikProps } from 'formik';
+import { FormikProps } from 'formik';
 import { filledPlaceholderStyle, placeholderStyle } from './Styles';
-import { SetStateAction, Dispatch, useState, useRef, useEffect } from 'react';
+import { SetStateAction, Dispatch, useState, useEffect } from 'react';
 import { IToolbox, IToolboxData } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
@@ -198,7 +188,7 @@ export default class FormFactory {
                     </Checkbox>
                 </HStack>
                 <Textarea
-                    h='100%'
+                    h="100%"
                     disabled={!enable}
                     value={this.formProps.values.abnormalRecord}
                     _placeholder={placeholderStyle}
