@@ -135,9 +135,15 @@ export default function ReactWindowTable(props: {
 
     React.useEffect(() => {
         const watchResize = () => {
-            setTableViewWidth(window.innerWidth * pageRatio - 2 * pagePadding);
+            setTableViewWidth(
+                tableViewWidth
+                    ? tableViewWidth
+                    : window.innerWidth * pageRatio - 2 * pagePadding
+            );
             setTableViewHeight(
-                window.innerHeight - tablePaddingTop - tablePaddingBottom
+                tableViewHeight
+                    ? tableViewHeight
+                    : window.innerHeight - tablePaddingTop - tablePaddingBottom
             );
             variableSizeHeaderRef.current &&
                 variableSizeHeaderRef.current.resetAfterColumnIndex(0);
