@@ -87,6 +87,8 @@ export default function Layout(props: { page: featureName }) {
             direction={'row'}
             align="top"
             backgroundImage={`url(${Background})`}
+            width={'100vw'}
+            height={'100vh'}
         >
             <Sidebar
                 username={username}

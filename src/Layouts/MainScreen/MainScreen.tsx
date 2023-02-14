@@ -10,13 +10,7 @@ export default function MainScreen(props: {
     // const Children = React.cloneElement(children, { siteId: siteId });
     // const Children = props.children
     return (
-        <Box
-            h={'100vh'}
-            w={'80vw'}
-            minW={'80vw'}
-            maxH={'80vw'}
-            borderLeft={'1px solid #000000'}
-        >
+        <Box h={'100vh'} w={'80vw'} borderLeft={'1px solid #000000'}>
             {props.children}
         </Box>
     );
