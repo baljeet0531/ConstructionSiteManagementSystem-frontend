@@ -17,6 +17,7 @@ import {
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
 import { MultiSignatureStateItem } from '../../Interface/Signature';
+import dayjs from 'dayjs';
 
 const buttonStyle = {
     border: '2px solid #919AA9',
@@ -30,14 +31,18 @@ export default function SignaturePad({
     signatureName,
     state,
     idx,
-    h,
+    h = '100%',
+    showTime = true,
+    placeHolderText = '請簽核',
     Disable = false,
 }: {
     title: string;
     signatureName: string;
     state: MultiSignatureStateItem;
     idx: number;
-    h: string;
+    h?: string;
+    showTime?: boolean;
+    placeHolderText?: string;
     Disable?: boolean;
 }) {
     const [signatures, setSignatures] = state;
@@ -77,7 +82,7 @@ export default function SignaturePad({
         const blob = await fetch(base64string).then((res) => res.blob());
         const new_item = {
             image: new File([blob], signatureName),
-            time: new Date(),
+            time: dayjs(),
             owner: new Cookies().get('username'),
         };
         if (signatures[idx]) {
@@ -98,15 +103,15 @@ export default function SignaturePad({
 
     const getDatetimeString = () => {
         if (signatures[idx]) {
-            const dt = signatures[idx].time as Date;
-            return dt.toLocaleString();
+            const dt = signatures[idx].time as dayjs.Dayjs;
+            return dt.format('YYYY-MM-DD HH:mm');
         } else {
             return '';
         }
     };
 
     return (
-        <VStack>
+        <VStack w="100%" h="100%">
             <Box
                 w="100%"
                 h={h}
@@ -117,13 +122,21 @@ export default function SignaturePad({
                 onClick={Disable ? () => {} : onOpen}
             >
                 {signatures[idx]?.image ? (
-                    <Image src={imageURL} minHeight="80%" maxWidth="100%" maxHeight="80%" fit="contain"/>
+                    <Image
+                        src={imageURL}
+                        minHeight="80%"
+                        maxWidth="100%"
+                        maxHeight="80%"
+                        fit="contain"
+                    />
                 ) : (
-                    <Text color="#66708080">請簽核</Text>
+                    <Text color="#66708080">{placeHolderText}</Text>
                 )}
-                <Text pr="4px" w="100%" fontSize={2} align="right">
-                    {getDatetimeString()}
-                </Text>
+                {showTime && (
+                    <Text pr="4px" w="100%" fontSize={2} align="right">
+                        {getDatetimeString()}
+                    </Text>
+                )}
             </Box>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
