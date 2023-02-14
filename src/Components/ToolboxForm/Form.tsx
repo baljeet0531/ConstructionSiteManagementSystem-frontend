@@ -2,17 +2,14 @@ import React, { useState } from 'react';
 import {
     Box,
     Button,
-    Checkbox,
     Grid,
     GridItem,
     Image,
-    Input,
     Flex,
     Text,
-    HStack,
     VStack,
 } from '@chakra-ui/react';
-import { FormikProps, Form, Field } from 'formik';
+import { FormikProps, Form } from 'formik';
 import { useQuery, gql } from '@apollo/client';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import {
