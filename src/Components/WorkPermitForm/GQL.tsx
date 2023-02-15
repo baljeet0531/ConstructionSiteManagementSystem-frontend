@@ -181,8 +181,7 @@ export function parseWorkPermit(
         t.zone = t.zone.split(',');
     }
 
-    if (modified) {
-        t.number = '';
+    if (modified && !t.number.includes('異')) {
         t.modified = true;
         t.applied = false;
         for (let name of signatureColName) {

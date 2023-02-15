@@ -62,6 +62,7 @@ export default function WorkPermitForm({
         projects: [],
     });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
+    document.title = `工作許可單(${number})`;
 
     useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
@@ -118,22 +119,7 @@ export default function WorkPermitForm({
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.applied}
-                                    onChange={(e) => {
-                                        const value = e.target.checked;
-                                        if (
-                                            value &&
-                                            formProps.values['modified']
-                                        ) {
-                                            formProps.setFieldValue(
-                                                'modified',
-                                                false
-                                            );
-                                        }
-                                        formProps.setFieldValue(
-                                            'applied',
-                                            value
-                                        );
-                                    }}
+                                    disabled={true}
                                 >
                                     初次申請
                                 </Checkbox>
@@ -144,22 +130,7 @@ export default function WorkPermitForm({
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.modified}
-                                    onChange={(e) => {
-                                        const value = e.target.checked;
-                                        if (
-                                            value &&
-                                            formProps.values['applied']
-                                        ) {
-                                            formProps.setFieldValue(
-                                                'applied',
-                                                false
-                                            );
-                                        }
-                                        formProps.setFieldValue(
-                                            'modified',
-                                            value
-                                        );
-                                    }}
+                                    disabled={true}
                                 >
                                     申請異動
                                 </Checkbox>
