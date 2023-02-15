@@ -42,7 +42,9 @@ export default function Layout(props: { page: featureName }) {
     }>();
 
     const featureMap = getFeatureMap({
-        siteId: selectedSite ? selectedSite.siteId : '',
+        site: selectedSite
+            ? { siteId: selectedSite.siteId, siteName: selectedSite.siteName }
+            : { siteId: '', siteName: '' },
     });
 
     useQuery(QUERY_ACCOUNT_SITES, {
