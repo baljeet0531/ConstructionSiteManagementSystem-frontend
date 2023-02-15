@@ -11,7 +11,7 @@ import Schedule from '../Components/Schedule/Schedule';
 import Report from '../Components/Report/Report';
 import Photo from '../Components/Photo/Photo';
 import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
-import ToolboxForm from '../Components/ToolboxForm/ToolboxForm';
+import ToolboxFormOverview from '../Components/ToolboxForm/Overview';
 import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
 import SpecialForm from '../Components/SpecialForm/SpecialForm';
@@ -160,8 +160,7 @@ export function getFeatureMap({
         eng_toolbox_form: {
             name: '工具箱會議',
             path: '/eng/form/toolbox',
-            // page: <ToolboxForm />,
-            page: noContentPage,
+            page: <ToolboxFormOverview siteId={siteId} />,
         },
         eng_fault_form: {
             name: '工安缺失單',

@@ -1,98 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Formik } from 'formik';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
-import { useToast } from '@chakra-ui/react';
+import {
+    useToast,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Box,
+    Button,
+    VStack,
+    useDisclosure,
+} from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { ISignature, SignatureStateItem } from '../../Interface/Signature';
 import { IWorkPermit, SignatureName } from '../../Interface/WorkPermit';
 import WorkPermitForm from './Form';
-
-const GQL_WORK_PERMIT = gql`
-    mutation uwp(
-        $approved: signatureInput
-        $applicant: String!
-        $applied: Boolean
-        $area: String
-        $modified: Boolean
-        $opAssemble: Boolean
-        $opAloft: Boolean
-        $opCage: Boolean
-        $opChemical: Boolean
-        $opConfined: Boolean
-        $opDetach: Boolean
-        $opElectric: Boolean
-        $opElse: String
-        $opFire: Boolean
-        $opHole: Boolean
-        $opLift: Boolean
-        $project: String
-        $projectName: String
-        $review: signatureInput
-        $siteId: String!
-        $supervisor: String
-        $supervisorCorp: String
-        $supplier: signatureInput
-        $supplierManager: signatureInput
-        $supplyDate: Date
-        $system: String
-        $systemBranch: String
-        $tel: String
-        $workStart: DateTime!
-        $workEnd: DateTime!
-        $zone: String
-    ) {
-        updateWorkPermit(
-            applicant: $applicant
-            applied: $applied
-            approved: $approved
-            area: $area
-            modified: $modified
-            opAloft: $opAloft
-            opAssemble: $opAssemble
-            opCage: $opCage
-            opChemical: $opChemical
-            opConfined: $opConfined
-            opDetach: $opDetach
-            opElectric: $opElectric
-            opElse: $opElse
-            opFire: $opFire
-            opHole: $opHole
-            opLift: $opLift
-            project: $project
-            projectName: $projectName
-            review: $review
-            siteId: $siteId
-            supervisor: $supervisor
-            supervisorCorp: $supervisorCorp
-            supplier: $supplier
-            supplierManager: $supplierManager
-            supplyDate: $supplyDate
-            system: $system
-            systemBranch: $systemBranch
-            tel: $tel
-            workEnd: $workEnd
-            workStart: $workStart
-            zone: $zone
-        ) {
-            ok
-            message
-        }
-    }
-`;
+import { GQL_WORK_PERMIT_MUTATION } from './GQL';
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
-    const singleWorkPermitObject = JSON.parse(
-        localStorage.getItem('singleWorkPermitObject') as string
-    );
-    const value = JSON.parse(
-        localStorage.getItem('singleWorkPermit') as string
-    ) as IWorkPermit;
-    const username: string = new Cookies().get('username');
-    console.log(singleWorkPermitObject);
-    const initialValues: IWorkPermit = value || {
-        applicant: username,
+
+    const initialValues: IWorkPermit = {
+        applicant: new Cookies().get('username'),
         applied: true,
         area: '',
         modified: false,
@@ -136,6 +70,7 @@ export default function WorkPermitFormik() {
         supplier: undefined,
     };
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
         approved: useState<ISignature>(initialValues.approved as ISignature),
         review: useState<ISignature>(initialValues.review as ISignature),
@@ -146,14 +81,18 @@ export default function WorkPermitFormik() {
     };
 
     const toast = useToast();
-    const [updateWorkPermit] = useMutation(GQL_WORK_PERMIT, {
+    const [updateWorkPermit] = useMutation(GQL_WORK_PERMIT_MUTATION, {
         onCompleted: ({ updateWorkPermit }) => {
             if (updateWorkPermit.ok) {
                 toast({
                     title: updateWorkPermit.message,
+                    description: '視窗將於 3 秒後關閉',
                     status: 'success',
                     duration: 3000,
                     isClosable: true,
+                    onCloseComplete: () => {
+                        window.close();
+                    },
                 });
             }
         },
@@ -169,32 +108,56 @@ export default function WorkPermitFormik() {
         },
     });
 
+    useEffect(() => {
+        onOpen();
+    }, []);
+
     return (
-        <Formik
-            initialValues={initialValues}
-            validateOnChange={false}
-            onSubmit={(values, actions) => {
-                actions.setSubmitting(true);
-                const submitValues = { ...values };
-                if (submitValues.zone instanceof Array) {
-                    submitValues['zone'] = submitValues.zone.join(',');
-                }
-                let key: keyof Record<SignatureName, SignatureStateItem>;
-                for (key in signatures) {
-                    const [signature] = signatures[key];
-                    submitValues[key] = { ...signature };
-                }
-                updateWorkPermit({ variables: submitValues });
-                actions.setSubmitting(false);
-            }}
-        >
-            {(props) => (
-                <WorkPermitForm
-                    siteId={siteId}
-                    formProps={props}
-                    signatures={signatures}
-                />
-            )}
-        </Formik>
+        <>
+            <Formik
+                initialValues={initialValues}
+                validateOnChange={false}
+                onSubmit={(values, actions) => {
+                    actions.setSubmitting(true);
+                    const submitValues = { ...values };
+                    if (submitValues.zone instanceof Array) {
+                        submitValues['zone'] = submitValues.zone.join(',');
+                    }
+                    let key: keyof Record<SignatureName, SignatureStateItem>;
+                    for (key in signatures) {
+                        const [signature] = signatures[key];
+                        submitValues[key] = { ...signature };
+                    }
+                    updateWorkPermit({ variables: submitValues });
+                    actions.setSubmitting(false);
+                }}
+            >
+                {(props) => (
+                    <WorkPermitForm formProps={props} signatures={signatures} />
+                )}
+            </Formik>
+            <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                <ModalOverlay />
+                <ModalContent color="#667080">
+                    <ModalHeader>簽核時間注意事項</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <VStack>
+                            <Box w="100%">
+                                依規定，工具箱會議及巡檢紀錄建議簽核時間如下：
+                            </Box>
+                            <Box w="100%">施工前 08:30~09:30 </Box>
+                            <Box w="100%">施工中 13:00~14:00</Box>
+                            <Box w="100%">收工前 16:30~17:30</Box>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="buttonBlueSolid" onClick={onClose}>
+                            了解
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     );
 }

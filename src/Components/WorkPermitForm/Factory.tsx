@@ -88,6 +88,13 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
+                    value={this.formProps.values.area}
+                    onChange={(e) =>
+                        this.formProps.setFieldValue(
+                            'area',
+                            e.target.value
+                        )
+                    }
                 />
                 <AutoCompleteList>
                     {areas.map((area: string, cid: number) => (
@@ -176,6 +183,13 @@ export default class FormFactory {
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
+                    value={this.formProps.values.system}
+                    onChange={(e) =>
+                        this.formProps.setFieldValue(
+                            'system',
+                            e.target.value
+                        )
+                    }
                 />
                 <AutoCompleteList>
                     {SystemConstants.map((system: string, cid: number) => (
