@@ -133,7 +133,7 @@ export default function SignaturePad({
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
                 {showTime && (
-                    <Text pr="4px" w="100%" fontSize={2} align="right">
+                    <Text pr="4px" w="100%" fontSize="0.75rem" align="right">
                         {getDatetimeString()}
                     </Text>
                 )}
