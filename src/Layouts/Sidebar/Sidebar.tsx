@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import Menu from './Menu';
-import { VStack, Avatar, Text, AspectRatio, Box } from '@chakra-ui/react';
-// import { AvatarIcon } from '../../Icons/Icons';
+import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
 import Admin from '../../Images/Avatars/Admin.svg';
@@ -15,16 +13,6 @@ import SecurityStaff from '../../Images/Avatars/SecurityStaff.svg';
 import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
 
-// const roleAvatarMap = {
-//     系統管理員: 'Admin',
-//     專案經理: 'ProjectManager',
-//     工地經理: 'SiteManager',
-//     專案工程師: 'ProjectEngineer',
-//     系統工程師: 'SystemEngineer',
-//     工安人員: 'SecurityStaff',
-//     外包商: 'OutSourcer',
-//     業主: 'Owner',
-// };
 const roleAvatarMap = {
     系統管理員: Admin,
     專案經理: ProjectManager,
