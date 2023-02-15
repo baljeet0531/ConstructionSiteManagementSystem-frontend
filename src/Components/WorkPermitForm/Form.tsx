@@ -14,7 +14,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
@@ -35,39 +35,21 @@ import {
     IWorkPermitOptions,
     SignatureName,
 } from '../../Interface/WorkPermit';
-
-export const QUERY_WORK_PERMIT_OPTIONS = gql`
-    query workPermitOptions($siteId: String!) {
-        workContent(siteId: $siteId) {
-            content {
-                name
-                system {
-                    name
-                    systemBranch {
-                        name
-                        project
-                    }
-                }
-            }
-        }
-        siteAreas(siteId: $siteId) {
-            name
-            zone
-        }
-    }
-`;
+import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
 
 export default function WorkPermitForm({
-    siteId,
     formProps,
     signatures,
 }: {
-    siteId: string;
     formProps: FormikProps<IWorkPermit>;
     signatures: Record<SignatureName, SignatureStateItem>;
 }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
+
+    let { number, modified } = JSON.parse(
+        localStorage.getItem('singleWorkPermitObject') as string
+    );
 
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
@@ -81,18 +63,30 @@ export default function WorkPermitForm({
     });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
 
-    useQuery(QUERY_WORK_PERMIT_OPTIONS, {
+    useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
-            siteId: siteId,
+            siteId: localStorage.getItem('siteId'),
+            number: number,
         },
         onCompleted: (d) => {
             setData({
                 siteAreas: d.siteAreas,
                 workContents: d.workContent.content,
             });
+
+            const singleFormData = parseWorkPermit(
+                d.workPermit,
+                modified,
+                signatures
+            );
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
         },
         fetchPolicy: 'network-only',
     });
+
+    // console.log(formProps.values);
 
     return (
         <Form>
@@ -104,7 +98,6 @@ export default function WorkPermitForm({
                 top={'10px'}
                 right={'37px'}
                 isLoading={formProps.isSubmitting}
-                onClick={formProps.submitForm}
             >
                 完成編輯
             </Button>
