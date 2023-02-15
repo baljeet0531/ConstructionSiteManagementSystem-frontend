@@ -24,14 +24,10 @@ import { GQL_WORK_PERMIT_MUTATION } from './GQL';
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
-    const { number } = JSON.parse(
-        localStorage.getItem('singleWorkPermitObject') as string
-    );
-    document.title = `工作許可單(${number})`;
 
     const initialValues: IWorkPermit = {
         applicant: new Cookies().get('username'),
-        applied: false,
+        applied: true,
         area: '',
         modified: false,
         number: '',
