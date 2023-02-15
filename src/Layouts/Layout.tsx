@@ -41,11 +41,11 @@ export default function Layout(props: { page: featureName }) {
         role: string;
     }>();
 
-    const featureMap = getFeatureMap({
-        site: selectedSite
+    const featureMap = getFeatureMap(
+        selectedSite
             ? { siteId: selectedSite.siteId, siteName: selectedSite.siteName }
-            : { siteId: '', siteName: '' },
-    });
+            : { siteId: '', siteName: '' }
+    );
 
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {
