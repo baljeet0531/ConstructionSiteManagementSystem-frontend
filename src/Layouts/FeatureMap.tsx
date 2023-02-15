@@ -91,10 +91,11 @@ const noContentPage = (
 );
 
 export function getFeatureMap({
-    siteId,
+    site,
 }: {
-    siteId: string;
+    site: { siteId: string; siteName: string };
 }): Record<featureName, featureItem> {
+    const { siteId, siteName } = site;
     return {
         dashboard: {
             name: '總覽',
@@ -133,7 +134,12 @@ export function getFeatureMap({
         project_schedule: {
             name: '排程管理',
             path: '/project/schedule',
-            page: siteId == '' ? emptySiteIdPage : <Schedule siteId={siteId} />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Schedule siteId={siteId} siteName={siteName} />
+                ),
         },
         project_report: {
             name: '進度報表',
@@ -154,13 +160,17 @@ export function getFeatureMap({
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <WorkPermitFormOverview siteId={siteId} />
+                    <WorkPermitFormOverview
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
                 ),
         },
         eng_toolbox_form: {
             name: '工具箱會議',
             path: '/eng/form/toolbox',
-            page: <ToolboxFormOverview siteId={siteId} />,
+            // page: <ToolboxFormOverview siteId={siteId} siteName={siteName} />,
+            page: noContentPage,
         },
         eng_fault_form: {
             name: '工安缺失單',
@@ -217,7 +227,10 @@ export function getFeatureMap({
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <WorkPermitFormOverview siteId={siteId} />
+                    <WorkPermitFormOverview
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
                 ),
         },
         outsource_toolbox_form: {
