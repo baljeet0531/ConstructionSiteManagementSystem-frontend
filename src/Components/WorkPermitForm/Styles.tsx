@@ -30,17 +30,11 @@ export const placeholderStyle = {
     color: '#667080',
     opacity: 0.5,
 };
-
-export const inputStyle = {
-    paddingTop: '8px',
-};
-
 export const workContentStyle = {
     border: '0px',
-    paddingTop: '10px',
+    paddingTop: '8px',
 };
 
 export const workContentInputStyle = {
     border: '0px',
-    paddingTop: '2px',
 };
