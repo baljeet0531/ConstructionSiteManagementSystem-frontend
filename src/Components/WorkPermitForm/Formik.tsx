@@ -128,7 +128,6 @@ export default function WorkPermitFormik() {
                         const [signature] = signatures[key];
                         submitValues[key] = { ...signature };
                     }
-                    console.log(submitValues)
                     updateWorkPermit({ variables: submitValues });
                     actions.setSubmitting(false);
                 }}
