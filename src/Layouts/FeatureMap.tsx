@@ -90,10 +90,9 @@ const noContentPage = (
     </Center>
 );
 
-export function getFeatureMap({
-    site,
-}: {
-    site: { siteId: string; siteName: string };
+export function getFeatureMap(site: {
+    siteId: string;
+    siteName: string;
 }): Record<featureName, featureItem> {
     const { siteId, siteName } = site;
     return {
