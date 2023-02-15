@@ -1,4 +1,4 @@
-import { ISignature } from './Signature';
+import { IGQLSignature, ISignature } from './Signature';
 import { ISiteArea, IWorkContent } from './Site';
 export interface IWorkPermitData {
     siteAreas: ISiteArea[];
@@ -51,4 +51,11 @@ export interface IWorkPermit {
     review: ISignature | undefined;
     supplierManager: ISignature | undefined;
     supplier: ISignature | undefined;
+}
+
+export interface IGQLWorkPermit extends IWorkPermit {
+    approvedRef: IGQLSignature | undefined;
+    reviewRef: IGQLSignature | undefined;
+    supplierManagerRef: IGQLSignature | undefined;
+    supplierRef: IGQLSignature | undefined;
 }

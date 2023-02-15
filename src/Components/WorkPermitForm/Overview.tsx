@@ -19,8 +19,9 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
 import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { Cookies } from 'react-cookie';
 
-const QUERY_WORK_PEFMIT = gql`
+export const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
         $siteId: String!
         $number: String
@@ -102,8 +103,8 @@ const AREAS_AND_SYSTEMS = gql`
 `;
 
 const EXPORT_WORK_PREMIT = gql`
-    mutation ExportWorkPermit($number: [String]!, $siteId: String!) {
-        exportWorkPermit(number: $number, siteId: $siteId) {
+    mutation ExportWorkPermit($number: [String]!, $siteId: String!, $username: String!) {
+        exportWorkPermit(number: $number, siteId: $siteId, username: $username) {
             ok
             message
             path
@@ -177,7 +178,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
 
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
-        localStorage.setItem('siteId', siteId);
         localStorage.setItem(
             'singleWorkPermitObject',
             JSON.stringify({ number: number, modified: modified })
@@ -207,21 +207,20 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         { name: '儀控系統', isChecked: false },
     ]);
 
-    const { loading } = useQuery(QUERY_WORK_PEFMIT, {
+    const { loading, startPolling } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
             siteId: siteId,
         },
-        // pollInterval: 10000,
         onCompleted: ({ workPermit }: { workPermit: workPermit[] }) => {
             const workPermitHashed = workPermit.map((info) => ({
                 [info['number']]: { ...info, isCheck: false },
             }));
             setOverviewTableData(Object.assign({}, ...workPermitHashed));
+            startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
         },
-        fetchPolicy: 'network-only',
     });
 
     const handleSearchCheckboxClick = (
@@ -332,7 +331,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 top={'20px'}
                 right={'42px'}
             >
-                穩懋南科路竹廠機電一期新建工程
+                {localStorage.getItem('siteName')}
             </Text>
             <Text variant={'pageTitle'}>工作許可單</Text>
             <Flex align={'center'} justify={'space-between'}>
@@ -452,7 +451,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         leftIcon={<AddIcon />}
                         variant={'buttonBlueSolid'}
                         onClick={() => {
-                            navSingleWorkPermit('', false);
+                            navSingleWorkPermit('new', false);
                         }}
                     >
                         新增工單
@@ -468,6 +467,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                             );
                             exportWorkPermit({
                                 variables: {
+                                    username: new Cookies().get('username'),
                                     number: selectedNumber,
                                     siteId: siteId,
                                 },

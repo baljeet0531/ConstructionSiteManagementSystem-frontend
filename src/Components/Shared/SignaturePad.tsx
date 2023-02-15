@@ -115,7 +115,7 @@ export default function SignaturePad({
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
                 {showTime && (
-                    <Text pr="4px" w="100%" fontSize={2} align="right">
+                    <Text pr="4px" w="100%" fontSize="1rem" align="right">
                         {signature?.time
                             ? signature.time.format('YYYY-MM-DD HH:mm')
                             : ''}
