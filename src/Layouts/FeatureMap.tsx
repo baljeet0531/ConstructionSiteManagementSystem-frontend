@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import Dashboard from '../Components/Dashboard/Dashboard';
@@ -19,9 +20,10 @@ import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
 import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
 import MachineryEstablishment from '../Components/MachineryEstablishment/MachineryEstablishment';
 import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
+import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
-import { Center } from '@chakra-ui/react';
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 
 export type featureName =
     | 'dashboard'
@@ -63,6 +65,29 @@ const emptySiteIdPage = (
     </Center>
 );
 
+const noContentPage = (
+    <Center w={'100%'} h={'100%'}>
+        <Flex direction={'column'} gap={'35px'} justify={'center'}>
+            <Box
+                width={'600px'}
+                height={'430.08px'}
+                backgroundImage={`url(${NoContentPageIcon})`}
+            ></Box>
+            <Text
+                fontFamily={'Inter'}
+                fontStyle={'normal'}
+                fontWeight={700}
+                fontSize={'24px'}
+                lineHeight={'20px'}
+                color={'#4C7DE7'}
+                textAlign={'center'}
+            >
+                目前頁面施工中，敬請期待
+            </Text>
+        </Flex>
+    </Center>
+);
+
 export function getFeatureMap({
     siteId,
 }: {
@@ -73,7 +98,8 @@ export function getFeatureMap({
             name: '總覽',
             path: '/dashboard',
             icon: DashboardIcon,
-            page: <Dashboard />,
+            // page: <Dashboard />,
+            page: noContentPage,
         },
         site: {
             name: '專案建置',
@@ -84,7 +110,8 @@ export function getFeatureMap({
         organization: {
             name: '專案人員組織',
             path: '/organization',
-            page: <Organization />,
+            // page: <Organization />,
+            page: noContentPage,
         },
         people_overview: {
             name: '人員資料總覽',
@@ -109,12 +136,14 @@ export function getFeatureMap({
         project_report: {
             name: '進度報表',
             path: '/project/report',
-            page: <Report />,
+            // page: <Report />,
+            page: noContentPage,
         },
         project_photo: {
             name: '相片管理',
             path: '/project/photo',
-            page: <Photo />,
+            // page: <Photo />,
+            page: noContentPage,
         },
         eng_work_permit_form: {
             name: '工作許可單',
@@ -129,77 +158,96 @@ export function getFeatureMap({
         eng_toolbox_form: {
             name: '工具箱會議',
             path: '/eng/form/toolbox',
-            page: <ToolboxForm />,
+            // page: <ToolboxForm />,
+            page: noContentPage,
         },
         eng_fault_form: {
             name: '工安缺失單',
             path: '/eng/form/fault',
-            page: <EngFaultForm />,
+            // page: <EngFaultForm />,
+            page: noContentPage,
         },
         eng_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/eng/form/env-security',
-            page: <EnvSecurityForm />,
+            // page: <EnvSecurityForm />,
+            page: noContentPage,
         },
         eng_special_form: {
             name: '特殊作業自主檢點表',
             path: '/eng/form/special',
-            page: <SpecialForm />,
+            // page: <SpecialForm />,
+            page: noContentPage,
         },
         eng_photo: {
             name: '相片管理',
             path: '/eng/photo',
-            page: <Photo />,
+            // page: <Photo />,
+            page: noContentPage,
         },
         ehs_form: {
             name: '工安自主檢查',
             path: '/ehs/form/ehs-form',
-            page: <EHSForm />,
+            // page: <EHSForm />,
+            page: noContentPage,
         },
         ehs_fault_form: {
             name: '工安缺失單',
             path: '/ehs/form/fault',
-            page: <EHSFaultForm />,
+            // page: <EHSFaultForm />,
+            page: noContentPage,
         },
         ehs_machinery_management: {
             name: '機具檢點管理',
             path: '/ehs/machinery/management',
-            page: <MachineryManagement />,
+            // page: <MachineryManagement />,
+            page: noContentPage,
         },
         ehs_photo: {
             name: '相片管理',
             path: '/ehs/photo',
-            page: <Photo />,
+            // page: <Photo />,
+            page: noContentPage,
         },
         outsource_work_permit_form: {
             name: '工作許可單',
             path: '/outsource/form/work-permit',
-            page: <MachineryEstablishment />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <WorkPermitFormOverview siteId={siteId} />
+                ),
         },
         outsource_toolbox_form: {
             name: '工具箱會議',
             path: '/outsource/form/toolbox',
-            page: <MachineryEstablishment />,
+            // page: <MachineryEstablishment />,
+            page: noContentPage,
         },
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/outsource/form/env-security',
-            page: <MachineryEstablishment />,
+            // page: <MachineryEstablishment />,
+            page: noContentPage,
         },
         outsource_special_form: {
             name: '特殊作業自主檢點表',
             path: '/outsource/form/special',
-            page: <MachineryEstablishment />,
+            // page: <MachineryEstablishment />,
+            page: noContentPage,
         },
         outsource_machinery_establishment: {
             name: '機具清單建置',
             path: '/outsource/machinery/establishment',
-            page: <MachineryEstablishment />,
+            // page: <MachineryEstablishment />,
+            page: noContentPage,
         },
         outsource_fault_form: {
             name: '工安缺失單',
             path: '/outsource/form/fault',
-            page: <OutsourceFaultForm />,
+            // page: <OutsourceFaultForm />,
+            page: noContentPage,
         },
     };
 }
