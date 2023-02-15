@@ -178,7 +178,6 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
 
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
-        localStorage.setItem('siteId', siteId);
         localStorage.setItem(
             'singleWorkPermitObject',
             JSON.stringify({ number: number, modified: modified })

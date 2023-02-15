@@ -86,8 +86,6 @@ export default function WorkPermitForm({
         fetchPolicy: 'network-only',
     });
 
-    // console.log(formProps.values);
-
     return (
         <Form>
             <Button
