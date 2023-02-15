@@ -181,7 +181,8 @@ export function parseWorkPermit(
         t.zone = t.zone.split(',');
     }
 
-    if (modified && !t.number.includes('異')) {
+    // 異動申請
+    if (modified) {
         t.modified = true;
         t.applied = false;
         for (let name of signatureColName) {
@@ -195,7 +196,12 @@ export function parseWorkPermit(
             .hour(23)
             .minute(30)
             .format('YYYY-MM-DDTHH:mm:ss');
+    // 1. 初次申請 2. 修改初次申請 3. 修改異動單
     } else {
+        // 1. 初次申請
+        if (!t.applied && !t.modified) {
+            t.applied = true;
+        }
         for (let i = 0; i < signatureColName.length; i++) {
             const GQLkey = gqlSignatureColName[i] as keyof IGQLWorkPermit;
             const GQLsign = t[GQLkey] as IGQLSignature | undefined;
