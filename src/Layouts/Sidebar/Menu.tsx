@@ -76,6 +76,7 @@ export default function Menu(props: {
             ...sitesList[selectValue],
         });
         localStorage.setItem('siteName', sitesList[selectValue]?.siteName);
+        localStorage.setItem('siteId', sitesList[selectValue]?.siteId);
     }, [sitesList, selectValue]);
 
     return (
