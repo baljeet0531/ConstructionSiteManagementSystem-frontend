@@ -14,18 +14,17 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import SignaturePad from '../Shared/SignaturePad';
-import GridInputItem from './GridInputItem';
+import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,
     contentStyle,
     lastStyle,
     numberStyle,
-    inputStyle,
     workContentStyle,
     workContentInputStyle,
 } from './Styles';
@@ -36,39 +35,21 @@ import {
     IWorkPermitOptions,
     SignatureName,
 } from '../../Interface/WorkPermit';
-
-export const QUERY_WORK_PERMIT_OPTIONS = gql`
-    query workPermitOptions($siteId: String!) {
-        workContent(siteId: $siteId) {
-            content {
-                name
-                system {
-                    name
-                    systemBranch {
-                        name
-                        project
-                    }
-                }
-            }
-        }
-        siteAreas(siteId: $siteId) {
-            name
-            zone
-        }
-    }
-`;
+import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
 
 export default function WorkPermitForm({
-    siteId,
     formProps,
     signatures,
 }: {
-    siteId: string;
     formProps: FormikProps<IWorkPermit>;
     signatures: Record<SignatureName, SignatureStateItem>;
 }) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
+
+    let { number, modified } = JSON.parse(
+        localStorage.getItem('singleWorkPermitObject') as string
+    );
 
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
@@ -81,16 +62,27 @@ export default function WorkPermitForm({
         projects: [],
     });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
+    document.title = `工作許可單(${number})`;
 
-    useQuery(QUERY_WORK_PERMIT_OPTIONS, {
+    useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
-            siteId: siteId,
+            siteId: localStorage.getItem('siteId'),
+            number: number,
         },
         onCompleted: (d) => {
             setData({
                 siteAreas: d.siteAreas,
                 workContents: d.workContent.content,
             });
+
+            const singleFormData = parseWorkPermit(
+                d.workPermit,
+                modified,
+                signatures
+            );
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
         },
         fetchPolicy: 'network-only',
     });
@@ -105,7 +97,6 @@ export default function WorkPermitForm({
                 top={'10px'}
                 right={'37px'}
                 isLoading={formProps.isSubmitting}
-                onClick={formProps.submitForm}
             >
                 完成編輯
             </Button>
@@ -128,22 +119,7 @@ export default function WorkPermitForm({
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.applied}
-                                    onChange={(e) => {
-                                        const value = e.target.checked;
-                                        if (
-                                            value &&
-                                            formProps.values['modified']
-                                        ) {
-                                            formProps.setFieldValue(
-                                                'modified',
-                                                false
-                                            );
-                                        }
-                                        formProps.setFieldValue(
-                                            'applied',
-                                            value
-                                        );
-                                    }}
+                                    disabled={true}
                                 >
                                     初次申請
                                 </Checkbox>
@@ -154,22 +130,7 @@ export default function WorkPermitForm({
                             inputComponent={
                                 <Checkbox
                                     isChecked={formProps.values.modified}
-                                    onChange={(e) => {
-                                        const value = e.target.checked;
-                                        if (
-                                            value &&
-                                            formProps.values['applied']
-                                        ) {
-                                            formProps.setFieldValue(
-                                                'applied',
-                                                false
-                                            );
-                                        }
-                                        formProps.setFieldValue(
-                                            'modified',
-                                            value
-                                        );
-                                    }}
+                                    disabled={true}
                                 >
                                     申請異動
                                 </Checkbox>
@@ -194,7 +155,7 @@ export default function WorkPermitForm({
                         fieldName={'supplyDate'}
                         inputComponent={<Input type="date" border="0px" />}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem
                         colStart={4}
@@ -249,14 +210,14 @@ export default function WorkPermitForm({
                         fieldName="area"
                         inputComponent={f.selectAreaInput()}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>施工區域：</GridItem>
                     <GridInputItem
                         fieldName="zone"
                         inputComponent={f.selectZoneInput()}
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>4</GridItem>
@@ -268,7 +229,7 @@ export default function WorkPermitForm({
                             <Input type="datetime-local" border="0px" />
                         }
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>至</GridItem>
                     <GridInputItem
@@ -278,7 +239,7 @@ export default function WorkPermitForm({
                             <Input type="datetime-local" border="0px" />
                         }
                         inputRightComponent={<ChevronDownIcon />}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>5</GridItem>
@@ -287,7 +248,7 @@ export default function WorkPermitForm({
                         gridRange={[6, 7, 3, 6]}
                         fieldName="supervisorCorp"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>6</GridItem>
@@ -296,14 +257,14 @@ export default function WorkPermitForm({
                         gridRange={[7, 8, 3, 4]}
                         fieldName="supervisor"
                         inputComponent={f.textInput()}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>
                     <GridInputItem
                         gridRange={[7, 8, 5, 6]}
                         fieldName="tel"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
 
                     <GridItem {...numberStyle}>7</GridItem>
@@ -312,14 +273,14 @@ export default function WorkPermitForm({
                         gridRange={[8, 9, 3, 4]}
                         fieldName="siteId"
                         inputComponent={f.textInput()}
-                        style={{ ...contentStyle, ...inputStyle }}
+                        style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>工程名稱：</GridItem>
                     <GridInputItem
                         gridRange={[8, 9, 5, 6]}
                         fieldName="projectName"
                         inputComponent={f.textInput()}
-                        style={{ ...lastStyle, ...inputStyle }}
+                        style={{ ...lastStyle }}
                     />
                 </Grid>
                 <Grid
