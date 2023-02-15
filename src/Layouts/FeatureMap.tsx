@@ -23,7 +23,7 @@ import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultF
 import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
-import { Box, Center, Flex, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
 
 export type featureName =
     | 'dashboard'
@@ -67,18 +67,20 @@ const emptySiteIdPage = (
 
 const noContentPage = (
     <Center w={'100%'} h={'100%'}>
-        <Flex direction={'column'} gap={'35px'} justify={'center'}>
-            <Box
-                width={'600px'}
-                height={'430.08px'}
-                backgroundImage={`url(${NoContentPageIcon})`}
-            ></Box>
+        <Flex
+            w={'60%'}
+            direction={'column'}
+            gap={'35px'}
+            justify={'center'}
+            align={'center'}
+        >
+            <Image src={NoContentPageIcon}></Image>
             <Text
                 fontFamily={'Inter'}
                 fontStyle={'normal'}
                 fontWeight={700}
-                fontSize={'24px'}
-                lineHeight={'20px'}
+                fontSize={'1.5rem'}
+                lineHeight={'1.25rem'}
                 color={'#4C7DE7'}
                 textAlign={'center'}
             >
