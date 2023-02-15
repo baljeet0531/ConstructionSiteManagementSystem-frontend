@@ -23,7 +23,6 @@ import {
     ReplyIcon,
     SearchIcon,
 } from '../../Icons/Icons';
-import AddPeopleModal from './AddPeopleModal';
 import ReactWindowTable, {
     dataCellStyle,
     defalutElement,
@@ -32,10 +31,11 @@ import ReactWindowTable, {
     ISizes,
 } from './ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import DeleteLaborModal from './DeleteLaborModal';
-import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { Cookies } from 'react-cookie';
 import BACKEND from '../../Constants/EnvConstants';
+import CreateLaborModal from './CreateLaborModal';
+import DeleteLaborModal from './DeleteLaborModal';
+import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $idno: String, $corp: String) {
@@ -91,7 +91,7 @@ type tableData = {
     [idno: string]: ISiteLaborChecked;
 };
 
-type modalName = 'createLabor' | 'deleteLabor';
+export type modalName = 'createLabor' | 'deleteLabor' | 'multiCreate';
 
 export default function Organization(props: { siteId: string }) {
     if (!IsPermit('organization')) return <Navigate to="/" replace={true} />;
@@ -444,6 +444,10 @@ export default function Organization(props: { siteId: string }) {
                     <Button
                         leftIcon={<ReplyIcon />}
                         variant={'buttonGrayOutline'}
+                        onClick={() => {
+                            setModalName('multiCreate');
+                            onOpen();
+                        }}
                     >
                         批次輸入
                     </Button>
@@ -492,11 +496,16 @@ export default function Organization(props: { siteId: string }) {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
             />
-            <AddPeopleModal
+            <CreateLaborModal
                 siteId={siteId}
                 onClose={onClose}
-                isOpen={modalName == 'createLabor' ? isOpen : false}
-            ></AddPeopleModal>
+                isOpen={
+                    modalName == 'createLabor' || modalName == 'multiCreate'
+                        ? isOpen
+                        : false
+                }
+                modalName={modalName}
+            ></CreateLaborModal>
             <DeleteLaborModal
                 siteId={siteId}
                 onClose={onClose}

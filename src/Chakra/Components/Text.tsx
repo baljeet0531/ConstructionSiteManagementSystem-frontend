@@ -42,6 +42,13 @@ const Text = {
             lineHeight: '20px',
             color: '#667080',
         },
+        w400s14: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            color: '#667080',
+        },
     },
 };
 
