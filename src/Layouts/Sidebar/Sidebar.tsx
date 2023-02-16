@@ -12,6 +12,7 @@ import SystemEngineer from '../../Images/Avatars/SystemEngineer.svg';
 import SecurityStaff from '../../Images/Avatars/SecurityStaff.svg';
 import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
+import { ISiteObject } from '../Layout';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -27,15 +28,19 @@ const roleAvatarMap = {
 export default function Sidebar(props: {
     username: string;
     role: string;
-    sitesList: {
-        siteId: string;
-        siteName: string;
-        role: string;
-    }[];
-    setSelectedSite: Function;
+    sitesObject: ISiteObject;
+    selectedSiteId?: string;
+    setSelectedSiteId: Function;
     featureMap: Record<featureName, featureItem>;
 }) {
-    const { username, role, sitesList, setSelectedSite, featureMap } = props;
+    const {
+        username,
+        role,
+        sitesObject,
+        selectedSiteId,
+        setSelectedSiteId,
+        featureMap,
+    } = props;
 
     return (
         <VStack mt="50px" w="20vw" minW={'20vw'} maxH={'20VW'}>
@@ -59,9 +64,10 @@ export default function Sidebar(props: {
             </Text>
 
             <Menu
-                sitesList={sitesList}
+                sitesObject={sitesObject}
                 featureMap={featureMap}
-                setSelectedSite={setSelectedSite}
+                selectedSiteId={selectedSiteId}
+                setSelectedSiteId={setSelectedSiteId}
             ></Menu>
         </VStack>
     );
