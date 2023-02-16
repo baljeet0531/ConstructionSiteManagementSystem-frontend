@@ -1,0 +1,34 @@
+- name: staging
+  hosts: staging
+  gather_facts: no
+  tasks:
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /home/ubuntu/mic-iem-frontend
+        state: directory
+
+    - name: copy docker-compose.yml to remote server
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/mic-iem-frontend/docker-compose.yml
+
+    - name: copy .env to remote server
+      ansible.builtin.copy:
+        src: ../.env
+        dest: /home/ubuntu/mic-iem-frontend/.env
+        
+    - name: Extract build.tar.gz into /home/ubuntu/mic-iem-frontend/
+      ansible.builtin.unarchive:
+        src: ../build.tar.gz
+        dest: /home/ubuntu/mic-iem-frontend/
+
+    - name: copy nginx directory to remote server
+      ansible.builtin.copy:
+        src: ../nginx
+        dest: /home/ubuntu/mic-iem-frontend/
+
+    - name: Pull and start services
+      community.docker.docker_compose:
+        project_src: mic-iem-frontend
+        pull: yes
+        env_file: mic-iem-frontend/.env
