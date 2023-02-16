@@ -19,7 +19,6 @@ import {
 import React from 'react';
 import { Cookies } from 'react-cookie';
 import { Navigate, useNavigate } from 'react-router-dom';
-import BACKEND from '../../Constants/EnvConstants';
 import {
     DeleteIcon,
     EditIcon,
@@ -27,6 +26,7 @@ import {
     SearchIcon,
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';
 
@@ -617,48 +617,18 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const [exportHumanResource, { loading: exportLaoding }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
-            onCompleted: ({
+            onCompleted: async ({
                 exportHumanResource,
             }: {
                 exportHumanResource: {
-                    ok: Boolean;
-                    message: String;
-                    path: String;
+                    ok: boolean;
+                    message: string;
+                    path: [string];
                 };
             }) => {
                 if (exportHumanResource.ok) {
-                    const cookieValue = new Cookies().get('jwt');
-                    const { path } = exportHumanResource;
-                    fetch(BACKEND + `/${path}`, {
-                        cache: 'no-cache',
-                        headers: {
-                            Authorization: `Bearer ${cookieValue}`,
-                        },
-                        method: 'GET',
-                    })
-                        .then((data) => {
-                            toast({
-                                title: exportHumanResource.message,
-                                description: '成功匯出',
-                                status: 'success',
-                                duration: 3000,
-                                isClosable: true,
-                            });
-                            return data.blob();
-                        })
-                        .then((blob) => {
-                            const url = window.URL.createObjectURL(blob);
-                            const filename = path.slice(
-                                path.lastIndexOf('/') + 1
-                            );
-                            let fileLink = document.createElement('a');
-                            fileLink.href = url;
-                            fileLink.download = filename;
-                            document.body.appendChild(fileLink);
-                            fileLink.click();
-                            fileLink.remove();
-                        })
-                        .catch((err) => console.log(err));
+                    const { path, message } = exportHumanResource;
+                    await exportFile(path[0], message, toast);
                 }
             },
             onError: (err) => {
