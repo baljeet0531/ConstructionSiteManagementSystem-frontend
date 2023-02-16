@@ -84,6 +84,9 @@ export default function WorkPermitForm({
                 formProps.setValues(singleFormData, false);
             }
         },
+        onError: (err) => {
+            console.error(err);
+        },
         fetchPolicy: 'network-only',
     });
 
