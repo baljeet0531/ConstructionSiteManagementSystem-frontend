@@ -218,7 +218,6 @@ export default function WorkPermitFormOverview(props: {
         { name: '儀控系統', isChecked: false },
     ]);
 
-    // eslint-disable-next-line no-unused-vars
     const { loading, startPolling } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
             siteId: siteId,
@@ -228,7 +227,7 @@ export default function WorkPermitFormOverview(props: {
                 [info['number']]: { ...info, isCheck: false },
             }));
             setOverviewTableData(Object.assign({}, ...workPermitHashed));
-            // startPolling(3000);
+            startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
