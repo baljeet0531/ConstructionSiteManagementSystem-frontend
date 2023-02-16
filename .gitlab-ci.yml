@@ -38,6 +38,25 @@ dev_build:
     - build.tar.gz
     expire_in: 30 day
 
+<<<<<<< Updated upstream
+=======
+staging_build:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
+  image: registry.${CI_PROJECT_PATH}:base
+  script:
+    # node_modules already in /root/ of the image
+    # If new package is added, the image should be rebuild
+    - mv /root/* .
+    - yarn build
+    - tar zcvf build.tar.gz build
+  artifacts:
+    paths:
+    - build.tar.gz
+    expire_in: 30 day
+
+>>>>>>> Stashed changes
 prod_build:
   stage: delivery
   rules:
