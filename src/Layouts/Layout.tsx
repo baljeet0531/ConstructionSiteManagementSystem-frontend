@@ -26,9 +26,9 @@ export interface siteValue {
     role: string;
 }
 
-export type ISiteObject = {
+export interface ISiteObject {
     [siteId: string]: siteValue;
-};
+}
 
 export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
