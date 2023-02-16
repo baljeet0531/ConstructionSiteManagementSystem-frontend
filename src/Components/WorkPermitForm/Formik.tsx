@@ -100,7 +100,7 @@ export default function WorkPermitFormik() {
             console.log(err);
             toast({
                 title: '錯誤',
-                description: `${err}`,
+                description: `伺服器錯誤，請稍後重試。`,
                 status: 'error',
                 duration: 3000,
                 isClosable: true,
