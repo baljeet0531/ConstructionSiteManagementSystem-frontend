@@ -65,10 +65,11 @@ const CREATE_SCHEDULE = gql`
     }
 `;
 
-export default function Schedule(props: { siteId: string }) {
-    if (!IsPermit('project_schedule')) return <Navigate to="/" replace={true} />;
+export default function Schedule(props: { siteId: string; siteName: string }) {
+    if (!IsPermit('project_schedule'))
+        return <Navigate to="/" replace={true} />;
 
-    const siteId = props.siteId;
+    const { siteId, siteName } = props;
 
     const [preview, setPreview] = React.useState<Boolean>(false);
     const [srcFile, setSrcFile] = React.useState<File>();
@@ -212,7 +213,7 @@ export default function Schedule(props: { siteId: string }) {
                 top={'20px'}
                 right={'30px'}
             >
-                穩懋南科路竹廠機電一期新建工程
+                {siteName}
             </Text>
             {!preview && (
                 <Flex w={'100%'} h={'fit-content'} direction={'column'}>

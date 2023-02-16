@@ -41,37 +41,45 @@ export default function Layout(props: { page: featureName }) {
         role: string;
     }>();
 
-    const featureMap = getFeatureMap({
-        siteId: selectedSite ? selectedSite.siteId : '',
-    });
+    const featureMap = getFeatureMap(
+        selectedSite
+            ? { siteId: selectedSite.siteId, siteName: selectedSite.siteName }
+            : { siteId: '', siteName: '' }
+    );
 
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {
             const sitesListFormatted = accountSite.map(
-                (
-                    site: {
-                        siteId: string;
-                        role: string;
-                        siteRef: {
-                            name: string;
-                        };
-                    },
-                    index: number
-                ) => {
-                    const { siteRef, ...siteIdRole } = site;
-                    if (index == 0) {
-                        setSelectedSite({
-                            ...siteIdRole,
-                            siteName: siteRef.name,
-                        });
-                    }
+                (site: {
+                    siteId: string;
+                    role: string;
+                    siteRef: {
+                        name: string;
+                    };
+                }) => {
+                    const { siteRef, siteId, role } = site;
                     return {
-                        ...siteIdRole,
-                        siteName: siteRef.name,
+                        [siteId]: {
+                            siteId,
+                            role,
+                            siteName: siteRef.name,
+                        },
                     };
                 }
             );
-            setSitesList(sitesListFormatted);
+            const sitesListObject: {
+                [siteId: string]: {
+                    siteId: string;
+                    siteName: string;
+                    role: string;
+                };
+            } = Object.assign({}, ...sitesListFormatted);
+            const sitesList = Object.values(sitesListObject);
+            const defaultSiteId = localStorage.getItem('siteId');
+            defaultSiteId && sitesListObject[defaultSiteId]
+                ? setSelectedSite(sitesListFormatted[defaultSiteId])
+                : setSelectedSite(sitesList[0]);
+            setSitesList(sitesList);
         },
         onError: (error) => {
             console.log(error);
