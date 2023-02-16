@@ -142,7 +142,7 @@ export default function WPOverViewTable(props: {
                   )
                 : {}
             : overviewTableData;
-    const primarykeys = Object.keys(displayTableData);
+    const primarykeys = Object.keys(displayTableData).sort();
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
