@@ -43,7 +43,7 @@ export default function Sidebar(props: {
     } = props;
 
     return (
-        <VStack mt="50px" w="20vw" minW={'20vw'} maxH={'20VW'}>
+        <VStack pt="50px" pb="50px" w="20vw" h={'100%'} overflowY={'auto'}>
             <AspectRatio w="50%" ratio={1}>
                 <Avatar
                     name=""

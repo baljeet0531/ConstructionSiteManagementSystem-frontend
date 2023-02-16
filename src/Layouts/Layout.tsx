@@ -100,6 +100,8 @@ export default function Layout(props: { page: featureName }) {
             direction={'row'}
             align="top"
             backgroundImage={`url(${Background})`}
+            width={'100vw'}
+            height={'100vh'}
         >
             <Sidebar
                 username={username}
@@ -109,9 +111,7 @@ export default function Layout(props: { page: featureName }) {
                 setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
-            <MainScreen key={selectedSiteValue?.siteId}>
-                {featureMap[page].page}
-            </MainScreen>
+            <MainScreen>{featureMap[page].page}</MainScreen>
         </Flex>
     );
 }
