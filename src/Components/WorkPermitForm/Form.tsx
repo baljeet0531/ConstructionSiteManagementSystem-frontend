@@ -12,6 +12,8 @@ import {
     Text,
     HStack,
     VStack,
+    Center,
+    Spinner,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -64,7 +66,7 @@ export default function WorkPermitForm({
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工作許可單(${number})`;
 
-    useQuery(GQL_WORK_PERMIT_QUERY, {
+    const { loading } = useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
             siteId: localStorage.getItem('siteId'),
             number: number,
@@ -103,7 +105,7 @@ export default function WorkPermitForm({
             >
                 完成編輯
             </Button>
-            <Box margin="10px 37px 0px 27px" color="#667080">
+            <Box margin="10px 37px 20px 27px" color="#667080">
                 <Flex direction="column">
                     <Image w="150px" h="51px" src={'/mic-icon.png'} />
                     <VStack
@@ -467,6 +469,18 @@ export default function WorkPermitForm({
                     </GridItem>
                 </Grid>
             </Box>
+            {(loading || formProps.isSubmitting) && (
+                <Center
+                    position='fixed'
+                    top={0}
+                    w='100vw'
+                    h='100vh'
+                    bg={'#D9D9D980'}
+                    zIndex={1}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
         </Form>
     );
 }

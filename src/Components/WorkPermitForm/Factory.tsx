@@ -42,6 +42,7 @@ export default class FormFactory {
         return (
             <Checkbox
                 w="100%"
+                h="100%"
                 spacing="2rem"
                 isChecked={this.formProps.values[name] as boolean}
                 onChange={this.formProps.handleChange}
@@ -90,10 +91,7 @@ export default class FormFactory {
                     _placeholder={placeholderStyle}
                     value={this.formProps.values.area}
                     onChange={(e) =>
-                        this.formProps.setFieldValue(
-                            'area',
-                            e.target.value
-                        )
+                        this.formProps.setFieldValue('area', e.target.value)
                     }
                 />
                 <AutoCompleteList>
@@ -115,9 +113,13 @@ export default class FormFactory {
     }
 
     getZones(area: string) {
+        console.log(
+            this.data.siteAreas.filter((v) => v.name == area ).map((v) => v.zone).filter((v) => v !== ' ')
+        );
         return this.data.siteAreas
             .filter((v) => v.name == area)
-            .map((v) => v.zone);
+            .map((v) => v.zone)
+            .filter((v) => v !== ' ');
     }
 
     selectZoneInput() {
@@ -142,7 +144,7 @@ export default class FormFactory {
                             <AutoCompleteTag
                                 size="md"
                                 w={50 + tag.label.length * 8 + 'px'}
-                                color='#667080'
+                                color="#667080"
                                 key={tid}
                                 label={tag.label}
                                 onRemove={tag.onRemove}
@@ -185,10 +187,7 @@ export default class FormFactory {
                     _placeholder={placeholderStyle}
                     value={this.formProps.values.system}
                     onChange={(e) =>
-                        this.formProps.setFieldValue(
-                            'system',
-                            e.target.value
-                        )
+                        this.formProps.setFieldValue('system', e.target.value)
                     }
                 />
                 <AutoCompleteList>
@@ -281,10 +280,7 @@ export default class FormFactory {
                     _placeholder={placeholderStyle}
                     value={this.formProps.values.project}
                     onChange={(e) =>
-                        this.formProps.setFieldValue(
-                            'project',
-                            e.target.value
-                        )
+                        this.formProps.setFieldValue('project', e.target.value)
                     }
                 ></AutoCompleteInput>
                 <AutoCompleteList>

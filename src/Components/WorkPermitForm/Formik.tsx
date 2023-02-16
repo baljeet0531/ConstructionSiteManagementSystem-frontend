@@ -129,7 +129,6 @@ export default function WorkPermitFormik() {
                         submitValues[key] = { ...signature };
                     }
                     updateWorkPermit({ variables: submitValues });
-                    actions.setSubmitting(false);
                 }}
             >
                 {(props) => (
