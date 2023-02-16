@@ -103,8 +103,16 @@ const AREAS_AND_SYSTEMS = gql`
 `;
 
 const EXPORT_WORK_PREMIT = gql`
-    mutation ExportWorkPermit($number: [String]!, $siteId: String!, $username: String!) {
-        exportWorkPermit(number: $number, siteId: $siteId, username: $username) {
+    mutation ExportWorkPermit(
+        $number: [String]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportWorkPermit(
+            number: $number
+            siteId: $siteId
+            username: $username
+        ) {
             ok
             message
             path
@@ -172,10 +180,13 @@ export interface workPermitRef extends workPermit {
 export interface workPermitChecked extends workPermitRef {
     isChecked: boolean;
 }
-export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
+export default function WorkPermitFormOverview(props: {
+    siteId: string;
+    siteName: string;
+}) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
-
+    const { siteId, siteName } = props;
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem(
@@ -331,7 +342,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 top={'20px'}
                 right={'42px'}
             >
-                {localStorage.getItem('siteName')}
+                {siteName}
             </Text>
             <Text variant={'pageTitle'}>工作許可單</Text>
             <Flex align={'center'} justify={'space-between'}>
