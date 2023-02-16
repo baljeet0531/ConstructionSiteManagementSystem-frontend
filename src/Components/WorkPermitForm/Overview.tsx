@@ -353,6 +353,23 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setStartDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(e.target.value && {
+                                        startDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                    ...(endDate && {
+                                        endDate: `${endDate}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         max={endDate}
                     ></Input>
@@ -362,6 +379,23 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setEndDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(startDate && {
+                                        startDate: `${startDate}T08:30:00`,
+                                    }),
+                                    ...(e.target.value && {
+                                        endDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         min={startDate}
                     ></Input>
@@ -497,6 +531,7 @@ export default function WorkPermitFormOverview(props: {
             ></WPOverViewTable>
             {(loading || searchLoading || exportLoading) && (
                 <Center
+                    position={'absolute'}
                     top={0}
                     left={'20vw'}
                     w={'80vw'}

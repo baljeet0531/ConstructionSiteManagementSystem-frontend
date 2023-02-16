@@ -137,7 +137,11 @@ export function getFeatureMap(site: {
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <Schedule siteId={siteId} siteName={siteName} />
+                    <Schedule
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
                 ),
         },
         project_report: {
@@ -160,6 +164,7 @@ export function getFeatureMap(site: {
                     emptySiteIdPage
                 ) : (
                     <WorkPermitFormOverview
+                        key={siteId}
                         siteId={siteId}
                         siteName={siteName}
                     />
@@ -227,6 +232,7 @@ export function getFeatureMap(site: {
                     emptySiteIdPage
                 ) : (
                     <WorkPermitFormOverview
+                        key={siteId}
                         siteId={siteId}
                         siteName={siteName}
                     />
