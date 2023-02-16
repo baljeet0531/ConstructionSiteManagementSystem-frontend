@@ -146,8 +146,11 @@ export default function WorkPermitForm({
                 <Grid
                     width="92.5vw"
                     height="60vh"
-                    templateColumns={'50fr 120fr 183fr 120fr 287fr'}
-                    templateRows={'36fr 50fr 50fr 80px repeat(4, 50fr)'}
+                    maxH="500px"
+                    templateColumns={'50fr 120fr 203fr 120fr 247fr'}
+                    templateRows={
+                        '36fr 50fr 50fr minmax(80px, 50fr) repeat(4, 50fr)'
+                    }
                 >
                     <GridItem colStart={1} colEnd={6} {...titleStyle}>
                         一、申請資料：
@@ -291,6 +294,7 @@ export default function WorkPermitForm({
                 <Grid
                     width="92.5vw"
                     height="40vh"
+                    maxH="300px"
                     templateColumns={'repeat(3, 50fr 203fr)'}
                     templateRows={'36fr repeat(4, 50fr)'}
                 >
@@ -388,7 +392,8 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="40vh"
+                    height="50vh"
+                    maxH="400px"
                     templateColumns="50fr 710fr"
                     templateRows="36fr 72fr 90fr repeat(3, 36fr)"
                 >
@@ -430,8 +435,9 @@ export default function WorkPermitForm({
                 <Grid
                     width="92.5vw"
                     height="30vh"
+                    maxH="200px"
                     templateColumns="repeat(4, 1fr)"
-                    templateRows="36fr 100fr"
+                    templateRows="36fr 120fr"
                 >
                     <GridItem {...numberStyle}>核准</GridItem>
                     <GridItem {...numberStyle}>審核</GridItem>
