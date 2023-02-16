@@ -38,19 +38,10 @@ dev_build:
     - build.tar.gz
     expire_in: 30 day
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 staging_build:
   stage: delivery
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
-=======
-staging_build:
-  stage: delivery
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "staging"
->>>>>>> d69f209ddc5201597e9608269e4458ee35a96aec
   image: registry.${CI_PROJECT_PATH}:base
   script:
     # node_modules already in /root/ of the image
@@ -63,10 +54,6 @@ staging_build:
     - build.tar.gz
     expire_in: 30 day
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> d69f209ddc5201597e9608269e4458ee35a96aec
 prod_build:
   stage: delivery
   rules:
@@ -129,27 +116,6 @@ dev_deployment:
     - envsubst < sample.env > .env
     # deploy services
     - ansible-playbook -i ./deploy/hosts ./deploy/develop.yml
-
-staging_deployment:
-  stage: deployment
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
-    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "staging"
-  image: registry.19gale.ai/tap/ansible:2.9
-  variables:
-    PORT: 80
-    REACT_APP_BACKEND_URL: http://backend.mic.staging.19gale.ai/
-  script:
-    - chmod -v 700 $(pwd)
-    - mv ./deploy/.ansible.cfg ~/
-    - ansible-config view
-    # Make private key
-    - echo "$PRIVATE_KEY" | base64 --decode > "/private.pem"
-    - chmod 400 /private.pem
-    # Make .env file
-    - envsubst < sample.env > .env
-    # deploy services
-    - ansible-playbook -i ./deploy/hosts ./deploy/staging.yml
 
 prod_deployment:
   stage: deployment
