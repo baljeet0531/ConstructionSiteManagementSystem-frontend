@@ -19,7 +19,7 @@ const Pin = (props: { label: JSX.Element | ''; sign: number }) => {
     const [isLabelOpen, setIsLabelOpen] = React.useState(false);
 
     return (
-        <Tooltip label={label} isOpen={isLabelOpen}>
+        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
             <Button
                 w={'40px'}
                 h={'10px'}
