@@ -48,7 +48,6 @@ export default function Sidebar(props: {
                 <Avatar
                     name=""
                     src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
-                    bg="#4C7DE7"
                     ignoreFallback
                 ></Avatar>
             </AspectRatio>
