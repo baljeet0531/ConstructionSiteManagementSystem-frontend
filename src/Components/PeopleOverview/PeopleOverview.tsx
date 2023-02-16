@@ -528,7 +528,7 @@ export interface humanTableValues {
     HImgs: string | null | undefined;
 
     no: number | null | undefined;
-    index: number | undefined;
+    index: number;
     isCheck: boolean | undefined;
 }
 
