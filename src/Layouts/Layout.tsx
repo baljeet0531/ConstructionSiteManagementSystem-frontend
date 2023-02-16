@@ -20,6 +20,16 @@ export const QUERY_ACCOUNT_SITES = gql`
     }
 `;
 
+export interface siteValue {
+    siteId: string;
+    siteName: string;
+    role: string;
+}
+
+export interface ISiteObject {
+    [siteId: string]: siteValue;
+}
+
 export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
@@ -28,28 +38,24 @@ export default function Layout(props: { page: featureName }) {
 
     const { page } = props;
 
-    const [sitesList, setSitesList] = React.useState<
-        {
-            siteId: string;
-            siteName: string;
-            role: string;
-        }[]
-    >([]);
-    const [selectedSite, setSelectedSite] = React.useState<{
-        siteId: string;
-        siteName: string;
-        role: string;
-    }>();
-
+    const [sitesObject, setSitesObject] = React.useState<ISiteObject>({});
+    const [selectedSiteId, setSelectedSiteId] = React.useState<string>();
+    const siteValues = Object.values(sitesObject);
+    const selectedSiteValue = selectedSiteId
+        ? sitesObject[selectedSiteId]
+        : siteValues[0];
     const featureMap = getFeatureMap(
-        selectedSite
-            ? { siteId: selectedSite.siteId, siteName: selectedSite.siteName }
+        selectedSiteValue
+            ? {
+                  siteId: selectedSiteValue.siteId,
+                  siteName: selectedSiteValue.siteName,
+              }
             : { siteId: '', siteName: '' }
     );
 
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {
-            const sitesListFormatted = accountSite.map(
+            const sitesListFormatted: ISiteObject[] = accountSite.map(
                 (site: {
                     siteId: string;
                     role: string;
@@ -67,19 +73,18 @@ export default function Layout(props: { page: featureName }) {
                     };
                 }
             );
-            const sitesListObject: {
-                [siteId: string]: {
-                    siteId: string;
-                    siteName: string;
-                    role: string;
-                };
-            } = Object.assign({}, ...sitesListFormatted);
-            const sitesList = Object.values(sitesListObject);
-            const defaultSiteId = localStorage.getItem('siteId');
-            defaultSiteId && sitesListObject[defaultSiteId]
-                ? setSelectedSite(sitesListFormatted[defaultSiteId])
-                : setSelectedSite(sitesList[0]);
-            setSitesList(sitesList);
+            const sitesObject: ISiteObject = Object.assign(
+                {},
+                ...sitesListFormatted
+            );
+            const siteValues = Object.values(sitesObject);
+            const storeSiteId = localStorage.getItem('siteId');
+            const defaultSiteId =
+                storeSiteId && sitesObject[storeSiteId]
+                    ? sitesObject[storeSiteId].siteId
+                    : siteValues[0].siteId;
+            setSelectedSiteId(defaultSiteId);
+            setSitesObject(sitesObject);
         },
         onError: (error) => {
             console.log(error);
@@ -95,17 +100,18 @@ export default function Layout(props: { page: featureName }) {
             direction={'row'}
             align="top"
             backgroundImage={`url(${Background})`}
+            width={'100vw'}
+            height={'100vh'}
         >
             <Sidebar
                 username={username}
-                role={selectedSite?.role || ''}
-                sitesList={sitesList}
-                setSelectedSite={setSelectedSite}
+                role={selectedSiteValue?.role || ''}
+                sitesObject={sitesObject}
+                selectedSiteId={selectedSiteId}
+                setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
-            <MainScreen key={selectedSite?.siteId}>
-                {featureMap[page].page}
-            </MainScreen>
+            <MainScreen>{featureMap[page].page}</MainScreen>
         </Flex>
     );
 }

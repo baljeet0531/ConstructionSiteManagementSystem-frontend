@@ -14,6 +14,24 @@ import React from 'react';
 import { VariableSizeGrid, areEqual } from 'react-window';
 import { workPermit, workPermitChecked } from './Overview';
 
+const Pin = (props: { label: JSX.Element | ''; sign: number }) => {
+    const { label, sign } = props;
+    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
+
+    return (
+        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+            <Button
+                w={'40px'}
+                h={'10px'}
+                bg={sign ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
+                borderRadius={'4px'}
+                onMouseLeave={() => setIsLabelOpen(false)}
+                onClick={() => setIsLabelOpen((prevState) => !prevState)}
+            ></Button>
+        </Tooltip>
+    );
+};
+
 const columnMap = {
     日期: {
         width: 99,
@@ -142,7 +160,7 @@ export default function WPOverViewTable(props: {
                   )
                 : {}
             : overviewTableData;
-    const primarykeys = Object.keys(displayTableData);
+    const primarykeys = Object.keys(displayTableData).sort();
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
@@ -236,21 +254,7 @@ export default function WPOverViewTable(props: {
                     ) : (
                         ''
                     );
-                    return (
-                        <Tooltip label={label} key={index}>
-                            <Button
-                                key={index}
-                                w={'40px'}
-                                h={'10px'}
-                                bg={
-                                    sign
-                                        ? '#9CE3DE'
-                                        : 'rgba(102, 112, 128, 0.1)'
-                                }
-                                borderRadius={'4px'}
-                            ></Button>
-                        </Tooltip>
-                    );
+                    return <Pin key={index} label={label} sign={sign}></Pin>;
                 });
 
                 return (

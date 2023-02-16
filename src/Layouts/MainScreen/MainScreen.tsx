@@ -11,11 +11,10 @@ export default function MainScreen(props: {
     // const Children = props.children
     return (
         <Box
-            h={'100vh'}
+            h={'100%'}
             w={'80vw'}
-            minW={'80vw'}
-            maxH={'80vw'}
             borderLeft={'1px solid #000000'}
+            overflowY={'auto'}
         >
             {props.children}
         </Box>

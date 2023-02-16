@@ -89,8 +89,11 @@ export default function OverViewTable(props: {
                   )
                 : {}
             : tableValue;
-
-    const primarykeys = tableViewData ? Object.keys(tableViewData) : [];
+    const primarykeys = tableViewData
+        ? Object.keys(tableViewData).sort(
+              (a, b) => tableViewData[a].index - tableViewData[b].index
+          )
+        : [];
     const columnInfo = Object.values(tabItem);
     const memorizedTable = React.memo(
         ({
