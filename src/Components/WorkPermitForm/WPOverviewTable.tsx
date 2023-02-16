@@ -25,7 +25,6 @@ const Pin = (props: { label: JSX.Element | ''; sign: number }) => {
                 h={'10px'}
                 bg={sign ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
                 borderRadius={'4px'}
-                onMouseEnter={() => setIsLabelOpen(true)}
                 onMouseLeave={() => setIsLabelOpen(false)}
                 onClick={() => setIsLabelOpen((prevState) => !prevState)}
             ></Button>
