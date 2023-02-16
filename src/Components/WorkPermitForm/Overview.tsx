@@ -14,12 +14,14 @@ import {
     PopoverTrigger,
     Spinner,
     Text,
+    useToast,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
 import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
+import { exportFile } from '../../Utils/Resources';
 
 export const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
@@ -187,6 +189,7 @@ export default function WorkPermitFormOverview(props: {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
+    const toast = useToast();
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem(
@@ -313,8 +316,20 @@ export default function WorkPermitFormOverview(props: {
     const [exportWorkPermit, { loading: exportLoading }] = useMutation(
         EXPORT_WORK_PREMIT,
         {
-            onCompleted: ({ exportWorkPermit }) => {
+            onCompleted: async ({
+                exportWorkPermit,
+            }: {
+                exportWorkPermit: {
+                    ok: boolean;
+                    message: string;
+                    path: [string];
+                };
+            }) => {
                 console.log(exportWorkPermit);
+                if (exportWorkPermit.ok) {
+                    const { path, message } = exportWorkPermit;
+                    await exportFile(path[0], message, toast);
+                }
             },
             onError: (err) => {
                 console.log(err);
@@ -353,6 +368,23 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setStartDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(e.target.value && {
+                                        startDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                    ...(endDate && {
+                                        endDate: `${endDate}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         max={endDate}
                     ></Input>
@@ -362,6 +394,23 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setEndDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(startDate && {
+                                        startDate: `${startDate}T08:30:00`,
+                                    }),
+                                    ...(e.target.value && {
+                                        endDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         min={startDate}
                     ></Input>
@@ -497,6 +546,7 @@ export default function WorkPermitFormOverview(props: {
             ></WPOverViewTable>
             {(loading || searchLoading || exportLoading) && (
                 <Center
+                    position={'absolute'}
                     top={0}
                     left={'20vw'}
                     w={'80vw'}

@@ -19,3 +19,39 @@ export async function getImage(imgPath: string) {
         return await response.blob();
     }
 }
+
+export async function exportFile(
+    path: string,
+    message: string,
+    toast: Function
+) {
+    const cookieValue = new Cookies().get('jwt');
+    fetch(BACKEND + `/${path}`, {
+        cache: 'no-cache',
+        headers: {
+            Authorization: `Bearer ${cookieValue}`,
+        },
+        method: 'GET',
+    })
+        .then((data) => {
+            toast({
+                title: message,
+                description: '成功匯出',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            return data.blob();
+        })
+        .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const filename = path.slice(path.lastIndexOf('/') + 1);
+            let fileLink = document.createElement('a');
+            fileLink.href = url;
+            fileLink.download = filename;
+            document.body.appendChild(fileLink);
+            fileLink.click();
+            fileLink.remove();
+        })
+        .catch((err) => console.log(err));
+}
