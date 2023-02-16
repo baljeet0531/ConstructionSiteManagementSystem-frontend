@@ -142,7 +142,7 @@ export default function WPOverViewTable(props: {
                   )
                 : {}
             : overviewTableData;
-    const primarykeys = Object.keys(displayTableData);
+    const primarykeys = Object.keys(displayTableData).sort();
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
@@ -237,7 +237,7 @@ export default function WPOverViewTable(props: {
                         ''
                     );
                     return (
-                        <Tooltip label={label} key={index}>
+                        <Tooltip label={label} key={index} closeOnClick={false}>
                             <Button
                                 key={index}
                                 w={'40px'}
