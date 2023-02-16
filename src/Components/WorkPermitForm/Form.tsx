@@ -439,28 +439,28 @@ export default function WorkPermitForm({
                     <GridItem {...numberStyle} borderRight="1px">
                         申請人
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="核准 - 簽名"
                             signatureName="approved-signature.png"
                             state={signatures.approved}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="審核 - 簽名"
                             signatureName="review-signature.png"
                             state={signatures.review}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="申請單位主管 - 簽名"
                             signatureName="supplierManager-signature.png"
                             state={signatures.supplierManager}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle} borderRight="1px">
+                    <GridItem {...numberStyle} minH="80px" borderRight="1px">
                         <SignaturePad
                             title="申請人 - 簽名"
                             signatureName="supplier-signature.png"
@@ -471,10 +471,10 @@ export default function WorkPermitForm({
             </Box>
             {(loading || formProps.isSubmitting) && (
                 <Center
-                    position='fixed'
+                    position="fixed"
                     top={0}
-                    w='100vw'
-                    h='100vh'
+                    w="100vw"
+                    h="100vh"
                     bg={'#D9D9D980'}
                     zIndex={1}
                 >
