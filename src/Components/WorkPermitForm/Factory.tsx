@@ -113,9 +113,6 @@ export default class FormFactory {
     }
 
     getZones(area: string) {
-        console.log(
-            this.data.siteAreas.filter((v) => v.name == area ).map((v) => v.zone).filter((v) => v !== ' ')
-        );
         return this.data.siteAreas
             .filter((v) => v.name == area)
             .map((v) => v.zone)
