@@ -11,12 +11,11 @@ import {
     Flex,
     Button,
     useToast,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
@@ -152,19 +151,7 @@ export default function DeleteModal(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {loading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {loading && <PageLoading />}
         </>
     );
 }

@@ -8,7 +8,6 @@ import {
     GridItem,
     Input,
     Select,
-    Center,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -17,7 +16,6 @@ import {
     ModalBody,
     useDisclosure,
     useToast,
-    Spinner,
     Box,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
@@ -38,6 +36,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 
 type imageType =
     | 'F6Img'
@@ -1270,19 +1269,7 @@ export default function FromPage(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {(submitLoading || uploadLoading) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(submitLoading || uploadLoading) && <PageLoading />}
         </Flex>
     );
 }

@@ -11,8 +11,6 @@ import {
     Flex,
     Button,
     useToast,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { SITE_LABOR } from './Organization';
@@ -20,6 +18,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 
 const DELETE_SITE_LABOR = gql`
     mutation DeleteSiteLabor($idno: [String]!, $siteId: String!) {
@@ -155,19 +154,7 @@ export default function DeleteLaborModal(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {loading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {loading && <PageLoading />}
         </>
     );
 }
