@@ -16,6 +16,10 @@ import {
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { SITE_LABOR } from './Organization';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 const DELETE_SITE_LABOR = gql`
     mutation DeleteSiteLabor($idno: [String]!, $siteId: String!) {
@@ -37,23 +41,12 @@ export default function DeleteLaborModal(props: {
     const [deleteSiteLabor, { loading }] = useMutation(DELETE_SITE_LABOR, {
         onCompleted: ({ deleteSiteLabor }) => {
             if (deleteSiteLabor.ok) {
-                toast({
-                    title: deleteSiteLabor.message,
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultSuccessToast(toast, deleteSiteLabor.message);
             }
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
         refetchQueries: [
             {

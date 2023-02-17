@@ -26,6 +26,7 @@ import {
     SearchIcon,
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';
@@ -633,13 +634,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             },
             onError: (err) => {
                 console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: `${err}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultErrorToast(toast);
             },
             fetchPolicy: 'network-only',
         }

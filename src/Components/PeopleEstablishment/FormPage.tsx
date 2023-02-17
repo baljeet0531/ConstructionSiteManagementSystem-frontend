@@ -34,6 +34,10 @@ import {
 import { Cookies } from 'react-cookie';
 import GridIdnoItem from './GridIdnoItem';
 import dayjs from 'dayjs';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 type imageType =
     | 'F6Img'
@@ -187,12 +191,7 @@ export default function FromPage(props: {
         {
             onCompleted: ({ uploadHRZip }) => {
                 if (uploadHRZip.ok) {
-                    toast({
-                        title: uploadHRZip.message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultSuccessToast(toast, uploadHRZip.message);
                     setZipFile(undefined);
                 }
             },
@@ -302,13 +301,7 @@ export default function FromPage(props: {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
         fetchPolicy: 'network-only',
     });

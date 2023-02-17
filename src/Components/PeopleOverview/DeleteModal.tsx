@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
+import { defaultSuccessToast } from '../../Utils/DefaultToast';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
@@ -38,12 +39,7 @@ export default function DeleteModal(props: {
         {
             onCompleted: ({ deleteHumanResource }) => {
                 if (deleteHumanResource.ok) {
-                    toast({
-                        title: deleteHumanResource.message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultSuccessToast(toast, deleteHumanResource.message);
                 }
             },
             onError: (err) => {
