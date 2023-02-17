@@ -623,12 +623,12 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 exportHumanResource: {
                     ok: boolean;
                     message: string;
-                    path: [string];
+                    path: string;
                 };
             }) => {
                 if (exportHumanResource.ok) {
                     const { path, message } = exportHumanResource;
-                    await exportFile(path[0], message, toast);
+                    await exportFile(path, message, toast);
                 }
             },
             onError: (err) => {

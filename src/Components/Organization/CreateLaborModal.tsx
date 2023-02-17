@@ -27,7 +27,7 @@ import ReactWindowTable, {
     IColumnMap,
     ISizes,
 } from './ReactWindowTable';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SITE_LABOR, modalName } from './Organization';
 import MultiCreateModalContent from './MultiCreateModalContent';
 
@@ -54,6 +54,14 @@ const CREATE_SITE_LABOR = gql`
 const CONTRACTING_COMPANY = gql`
     query ContractingConpany($context: String!) {
         contractingConpany(context: $context)
+    }
+`;
+
+const SEARCH_HUMAN_BY_CERTAIN_CORP = gql`
+    query SearchHumanByCertainCorp($idno: String, $corp: String) {
+        humanInSiteLabor(idno: $idno, corp: $corp) {
+            idno
+        }
     }
 `;
 
@@ -97,6 +105,10 @@ export default function AddPeopleModal(props: {
     const [existedIdno, setExistedIdno] = React.useState<string[]>([]);
     const [unexistedIdno, setUnexistedIdno] = React.useState<string[]>([]);
     const [step, setStep] = React.useState<1 | 2>(1);
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const timeout = React.useRef<any>();
 
     useQuery(ORGANIZATION_POOL, {
         variables: {
@@ -131,6 +143,7 @@ export default function AddPeopleModal(props: {
                     duration: 3000,
                     isClosable: true,
                 });
+                setFilteredPrimaryKey(undefined);
                 setTextareaValue(undefined);
                 setStep(1);
             }
@@ -145,7 +158,14 @@ export default function AddPeopleModal(props: {
                 isClosable: true,
             });
         },
-        refetchQueries: [SITE_LABOR],
+        refetchQueries: [
+            {
+                query: SITE_LABOR,
+                variables: {
+                    siteId: siteId,
+                },
+            },
+        ],
         fetchPolicy: 'network-only',
     });
 
@@ -165,6 +185,43 @@ export default function AddPeopleModal(props: {
         },
         fetchPolicy: 'network-only',
     });
+
+    const [searchHumanByCertainCorp] = useLazyQuery(
+        SEARCH_HUMAN_BY_CERTAIN_CORP,
+        {
+            onCompleted: ({ humanInSiteLabor }) => {
+                console.log(humanInSiteLabor);
+                const searchResult = humanInSiteLabor.map(
+                    (info: { idno: string }) => info.idno
+                );
+                setFilteredPrimaryKey(
+                    searchResult.length != 0 ? searchResult : undefined
+                );
+            },
+            onError: (err) => {
+                console.log(err);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const handleDebounceSearch = () => {
+        clearTimeout(timeout.current);
+
+        timeout.current = setTimeout(() => {
+            searchHumanByCertainCorp({
+                variables: {
+                    ...(searchInputRef.current?.value && {
+                        idno: searchInputRef.current?.value,
+                    }),
+                    ...(companySelected.current?.value && {
+                        corp: companySelected.current.value,
+                    }),
+                },
+            });
+        }, 300);
+    };
+
     const columnMap: IColumnMap[] = [
         {
             title: '承攬公司',
@@ -268,39 +325,64 @@ export default function AddPeopleModal(props: {
                                 gap={'20px'}
                             >
                                 <Flex
-                                    width={'220px'}
+                                    width={'100%'}
                                     h={'36px'}
                                     align={'center'}
-                                    justify={'space-between'}
+                                    justify={'flex-start'}
                                     gap={'11px'}
                                 >
-                                    <Text>承攬公司</Text>
+                                    <Text minW={'80px'}>承攬公司</Text>
                                     <Select
                                         ref={companySelected}
                                         width={'120px'}
                                         h={'36px'}
                                         variant={'formOutline'}
+                                        onChange={() => {
+                                            searchHumanByCertainCorp({
+                                                variables: {
+                                                    ...(searchInputRef.current
+                                                        ?.value && {
+                                                        idno: searchInputRef
+                                                            .current?.value,
+                                                    }),
+                                                    ...(companySelected.current
+                                                        ?.value && {
+                                                        corp: companySelected
+                                                            .current.value,
+                                                    }),
+                                                },
+                                            });
+                                        }}
                                     >
                                         {companyOptions}
                                     </Select>
                                 </Flex>
                                 <Flex
-                                    width={'220px'}
+                                    width={'100%'}
                                     align={'center'}
-                                    justify={'space-between'}
+                                    justify={'flex-start'}
                                     gap={'11px'}
                                 >
-                                    <Text>身分證字號</Text>
+                                    <Text minW={'80px'}>身分證字號</Text>
                                     <Input
+                                        ref={searchInputRef}
                                         width={'120px'}
                                         placeholder={'請輸入'}
                                         variant={'formOutline'}
+                                        onChange={handleDebounceSearch}
                                     ></Input>
+                                    <Text variant={'w400s12'} color={'#DB504A'}>
+                                        {!filteredPrimaryKey ||
+                                        filteredPrimaryKey.length == 0
+                                            ? '*查無此身分證字號'
+                                            : ''}
+                                    </Text>
                                 </Flex>
                                 <ReactWindowTable
                                     tableData={tableData}
                                     columnMap={columnMap}
                                     sizes={sizes}
+                                    filteredPrimaryKey={filteredPrimaryKey}
                                 />
                             </Flex>
                         </ModalBody>

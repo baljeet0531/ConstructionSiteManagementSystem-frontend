@@ -322,13 +322,13 @@ export default function WorkPermitFormOverview(props: {
                 exportWorkPermit: {
                     ok: boolean;
                     message: string;
-                    path: [string];
+                    path: string;
                 };
             }) => {
                 console.log(exportWorkPermit);
                 if (exportWorkPermit.ok) {
                     const { path, message } = exportWorkPermit;
-                    await exportFile(path[0], message, toast);
+                    await exportFile(path, message, toast);
                 }
             },
             onError: (err) => {
