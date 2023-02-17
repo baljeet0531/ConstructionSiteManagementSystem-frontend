@@ -119,6 +119,8 @@ export default function AddPeopleModal(props: {
                     duration: 3000,
                     isClosable: true,
                 });
+                setTextareaValue(undefined);
+                setStep(1);
             }
         },
         onError: (err) => {
@@ -315,7 +317,7 @@ export default function AddPeopleModal(props: {
                             contentElement={
                                 <Flex
                                     width={'100%'}
-                                    height={'100%'}
+                                    height={'242px'}
                                     direction={'column'}
                                     gap={'8px'}
                                 >
@@ -323,12 +325,13 @@ export default function AddPeopleModal(props: {
                                         請輸入身分證字號
                                     </Text>
                                     <Textarea
+                                        flexGrow={1}
                                         ref={textareaRef}
                                         defaultValue={textareaValue}
+                                        variant={'w400s14'}
                                         bg={'#FFFFFF'}
                                         resize={'none'}
-                                        h={'180px'}
-                                        placeholder={`A012345678\nA012345678`}
+                                        placeholder={`A012345678\nZ987654321`}
                                         border={'2px solid #919AA9'}
                                         borderRadius={'4px'}
                                     />
@@ -363,7 +366,7 @@ export default function AddPeopleModal(props: {
                             contentElement={
                                 <Flex
                                     width={'100%'}
-                                    height={'100%'}
+                                    height={'242px'}
                                     direction={'column'}
                                     gap={'12px'}
                                 >
@@ -374,6 +377,8 @@ export default function AddPeopleModal(props: {
                                         筆
                                     </Text>
                                     <Grid
+                                        w={'100%'}
+                                        h={'100%'}
                                         columnGap={'10px'}
                                         rowGap={'12px'}
                                         templateColumns={'repeat(2,1fr)'}
@@ -390,24 +395,33 @@ export default function AddPeopleModal(props: {
                                             </Text>
                                         </GridItem>
                                         <GridItem>
-                                            {existedIdno.map((idno) => (
-                                                <Text>{idno}</Text>
-                                            ))}
+                                            <Textarea
+                                                variant={'w400s14'}
+                                                h={'100%'}
+                                                resize={'none'}
+                                                borderRadius={'2px'}
+                                                disabled
+                                                _disabled={{
+                                                    bg: '#FFFFFF',
+                                                    border: '2px solid #919AA9',
+                                                }}
+                                                value={existedIdno.join('\n')}
+                                            ></Textarea>
                                         </GridItem>
                                         <GridItem>
-                                            {unexistedIdno.map((idno) => (
-                                                <Text>{idno}</Text>
-                                            ))}
+                                            <Textarea
+                                                variant={'w400s14'}
+                                                h={'100%'}
+                                                resize={'none'}
+                                                borderRadius={'2px'}
+                                                disabled
+                                                _disabled={{
+                                                    bg: '#FFFFFF',
+                                                    border: '2px solid #919AA9',
+                                                }}
+                                                value={unexistedIdno.join('\n')}
+                                            ></Textarea>
                                         </GridItem>
-                                        {/* <Textarea
-                                        ref={textareaRef}
-                                        bg={'#FFFFFF'}
-                                        resize={'none'}
-                                        h={'180px'}
-                                        placeholder={`A012345678\nA012345678`}
-                                        border={'2px solid #919AA9'}
-                                        borderRadius={'4px'}
-                                    /> */}
                                     </Grid>
                                 </Flex>
                             }
@@ -427,101 +441,6 @@ export default function AddPeopleModal(props: {
                             }}
                         ></MultiCreateModalContent>
                     )}
-                    {/* <ModalContent
-                        maxWidth={'380px'}
-                        maxHeight={'466px'}
-                        minHeight={'394px'}
-                        padding={'30px 45px 22px 45px'}
-                    >
-                        <ModalHeader padding={0}>
-                            <Flex direction={'column'} width={'100%'}>
-                                <Text
-                                    fontStyle={'normal'}
-                                    fontWeight={700}
-                                    fontSize={'20px'}
-                                    lineHeight={'20px'}
-                                >
-                                    批次輸入
-                                </Text>
-                                <Text
-                                    textAlign={'end'}
-                                    fontStyle={'normal'}
-                                    fontWeight={500}
-                                    fontSize={'12px'}
-                                    lineHeight={'20px'}
-                                >
-                                    穩懋南科路竹廠機電一期新建工程
-                                </Text>
-                            </Flex>
-                        </ModalHeader>
-                        <ModalBody
-                            bg={'#E3ECFF'}
-                            padding={'40px 30px'}
-                            borderRadius={'10px'}
-                        >
-                            <Flex
-                                width={'100%'}
-                                height={'100%'}
-                                direction={'column'}
-                                gap={'8px'}
-                            >
-                                <Text variant={'w400s14'}>
-                                    請輸入身分證字號
-                                </Text>
-                                <Textarea
-                                    ref={textareaRef}
-                                    bg={'#FFFFFF'}
-                                    resize={'none'}
-                                    h={'180px'}
-                                    placeholder={`A012345678\nA012345678`}
-                                    border={'2px solid #919AA9'}
-                                    borderRadius={'4px'}
-                                />
-                            </Flex>
-                        </ModalBody>
-                        <ModalFooter padding={0}>
-                            <Flex
-                                mt={'20px'}
-                                justify={'space-between'}
-                                width={'100%'}
-                            >
-                                <Button
-                                    variant={'buttonGrayOutline'}
-                                    size={'sm'}
-                                    mr={3}
-                                    onClick={onClose}
-                                >
-                                    取消
-                                </Button>
-                                <Button
-                                    variant={'buttonGrayOutline'}
-                                    size={'sm'}
-                                    onClick={() => {
-                                        const idnos =
-                                            textareaRef.current?.value.split(
-                                                '\n'
-                                            );
-                                        let existedIdno: Set<string> =
-                                            new Set();
-                                        let unexistedIdno: Set<string> =
-                                            new Set();
-                                        idnos?.forEach((idno) => {
-                                            tableData[idno]
-                                                ? existedIdno.add(idno)
-                                                : unexistedIdno.add(idno);
-                                        });
-                                        setExistedIdno(Array.from(existedIdno));
-                                        setUnexistedIdno(
-                                            Array.from(unexistedIdno)
-                                        );
-                                        setStep(2);
-                                    }}
-                                >
-                                    下一步
-                                </Button>
-                            </Flex>
-                        </ModalFooter>
-                    </ModalContent> */}
                 </Modal>
             )}
             {loading && (
