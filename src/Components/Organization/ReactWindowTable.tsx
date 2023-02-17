@@ -90,18 +90,20 @@ export default function ReactWindowTable(props: {
         [primaryKey: string]: object;
     } =
         tableData && filteredPrimaryKey
-            ? Object.assign(
-                  {},
-                  ...filteredPrimaryKey.map((primaryKey) => {
-                      return {
-                          [primaryKey]: {
-                              ...tableData[
-                                  primaryKey as keyof typeof tableData
-                              ],
-                          },
-                      };
-                  })
-              )
+            ? filteredPrimaryKey.length != 0
+                ? Object.assign(
+                      {},
+                      ...filteredPrimaryKey.map((primaryKey) => {
+                          return {
+                              [primaryKey]: {
+                                  ...tableData[
+                                      primaryKey as keyof typeof tableData
+                                  ],
+                              },
+                          };
+                      })
+                  )
+                : {}
             : tableData;
     const primarykeys = Object.keys(displayTableData);
     const [allChecked, setAllChecked] = React.useState<boolean>(false);

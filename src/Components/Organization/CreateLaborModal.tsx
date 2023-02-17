@@ -143,6 +143,14 @@ export default function AddPeopleModal(props: {
                     duration: 3000,
                     isClosable: true,
                 });
+                const keys = Object.keys(tableData);
+                keys.forEach((key) => {
+                    const info = tableData[key];
+                    tableData[key] = {
+                        ...info,
+                        isChecked: false,
+                    };
+                });
                 setFilteredPrimaryKey(undefined);
                 setTextareaValue(undefined);
                 setStep(1);
@@ -194,9 +202,7 @@ export default function AddPeopleModal(props: {
                 const searchResult = humanInSiteLabor.map(
                     (info: { idno: string }) => info.idno
                 );
-                setFilteredPrimaryKey(
-                    searchResult.length != 0 ? searchResult : undefined
-                );
+                setFilteredPrimaryKey(searchResult);
             },
             onError: (err) => {
                 console.log(err);
@@ -208,6 +214,13 @@ export default function AddPeopleModal(props: {
     const handleDebounceSearch = () => {
         clearTimeout(timeout.current);
 
+        if (
+            !searchInputRef.current?.value.trim() &&
+            !companySelected.current?.value.trim()
+        ) {
+            setFilteredPrimaryKey(undefined);
+            return;
+        }
         timeout.current = setTimeout(() => {
             searchHumanByCertainCorp({
                 variables: {
@@ -372,8 +385,7 @@ export default function AddPeopleModal(props: {
                                         onChange={handleDebounceSearch}
                                     ></Input>
                                     <Text variant={'w400s12'} color={'#DB504A'}>
-                                        {!filteredPrimaryKey ||
-                                        filteredPrimaryKey.length == 0
+                                        {filteredPrimaryKey?.length == 0
                                             ? '*查無此身分證字號'
                                             : ''}
                                     </Text>

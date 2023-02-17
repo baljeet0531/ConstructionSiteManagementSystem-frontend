@@ -32,7 +32,6 @@ import ReactWindowTable, {
 } from './ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Cookies } from 'react-cookie';
-// import BACKEND from '../../Constants/EnvConstants';
 import CreateLaborModal from './CreateLaborModal';
 import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
@@ -67,9 +66,7 @@ export interface organizationDataChecked extends organizationData {
 }
 
 const sizes: ISizes = {
-    // tableViewHeight: 570,
     tableFigmaWidth: 877,
-    // tableViewWidth: 860,
     headerHeight: 56,
     cellHeight: 30,
 };
@@ -288,9 +285,7 @@ export default function Organization(props: {
     const [searchSiteLabor] = useLazyQuery(SITE_LABOR, {
         onCompleted: ({ siteLabor }) => {
             const searchResult = siteLabor.map((info: ISiteLabor) => info.idno);
-            setFilteredPrimaryKey(
-                searchResult.length != 0 ? searchResult : undefined
-            );
+            setFilteredPrimaryKey(searchResult);
         },
         onError: (err) => {
             console.log(err);
