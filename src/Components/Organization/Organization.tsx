@@ -32,14 +32,15 @@ import ReactWindowTable, {
 } from './ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Cookies } from 'react-cookie';
-import BACKEND from '../../Constants/EnvConstants';
+// import BACKEND from '../../Constants/EnvConstants';
 import CreateLaborModal from './CreateLaborModal';
 import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
+import { exportFile } from '../../Utils/Resources';
 
 export const SITE_LABOR = gql`
-    query SiteLabor($siteId: String!, $idno: String, $corp: String) {
-        siteLabor(siteId: $siteId, idno: $idno, corp: $corp) {
+    query SiteLabor($siteId: String!, $context: String) {
+        siteLabor(siteId: $siteId, context: $context) {
             corp
             name
             idno
@@ -284,7 +285,18 @@ export default function Organization(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [searchSiteLabor] = useLazyQuery(SITE_LABOR);
+    const [searchSiteLabor] = useLazyQuery(SITE_LABOR, {
+        onCompleted: ({ siteLabor }) => {
+            const searchResult = siteLabor.map((info: ISiteLabor) => info.idno);
+            setFilteredPrimaryKey(
+                searchResult.length != 0 ? searchResult : undefined
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
     const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -300,19 +312,9 @@ export default function Organization(props: {
             searchSiteLabor({
                 variables: {
                     siteId: siteId,
-                    idno: searchInputRef.current?.value,
-                    // corp: corp,
-                },
-                onCompleted: ({ siteLabor }) => {
-                    const searchResult = siteLabor.map(
-                        (info: ISiteLabor) => info.idno
-                    );
-                    setFilteredPrimaryKey(
-                        searchResult.length != 0 ? searchResult : undefined
-                    );
-                },
-                onError: (err) => {
-                    console.log(err);
+                    ...(searchInputRef.current?.value && {
+                        context: searchInputRef.current.value,
+                    }),
                 },
             });
         }, 300);
@@ -320,48 +322,18 @@ export default function Organization(props: {
     const [exportHumanResource, { loading: exportLaoding }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
-            onCompleted: ({
+            onCompleted: async ({
                 exportHumanResource,
             }: {
                 exportHumanResource: {
-                    ok: Boolean;
-                    message: String;
-                    path: String;
+                    ok: boolean;
+                    message: string;
+                    path: string;
                 };
             }) => {
                 if (exportHumanResource.ok) {
-                    const cookieValue = new Cookies().get('jwt');
-                    const { path } = exportHumanResource;
-                    fetch(BACKEND + `/${path}`, {
-                        cache: 'no-cache',
-                        headers: {
-                            Authorization: `Bearer ${cookieValue}`,
-                        },
-                        method: 'GET',
-                    })
-                        .then((data) => {
-                            toast({
-                                title: exportHumanResource.message,
-                                description: '成功匯出',
-                                status: 'success',
-                                duration: 3000,
-                                isClosable: true,
-                            });
-                            return data.blob();
-                        })
-                        .then((blob) => {
-                            const url = window.URL.createObjectURL(blob);
-                            const filename = path.slice(
-                                path.lastIndexOf('/') + 1
-                            );
-                            let fileLink = document.createElement('a');
-                            fileLink.href = url;
-                            fileLink.download = filename;
-                            document.body.appendChild(fileLink);
-                            fileLink.click();
-                            fileLink.remove();
-                        })
-                        .catch((err) => console.log(err));
+                    const { path, message } = exportHumanResource;
+                    await exportFile(path, message, toast);
                 }
             },
             onError: (err) => {
