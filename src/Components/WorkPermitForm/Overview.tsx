@@ -14,13 +14,16 @@ import {
     PopoverTrigger,
     Spinner,
     Text,
+    useToast,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import WPOverViewTable from './WPOverviewTable';
 import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { Cookies } from 'react-cookie';
+import { exportFile } from '../../Utils/Resources';
 
-const QUERY_WORK_PEFMIT = gql`
+export const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
         $siteId: String!
         $number: String
@@ -102,8 +105,16 @@ const AREAS_AND_SYSTEMS = gql`
 `;
 
 const EXPORT_WORK_PREMIT = gql`
-    mutation ExportWorkPermit($number: [String]!, $siteId: String!) {
-        exportWorkPermit(number: $number, siteId: $siteId) {
+    mutation ExportWorkPermit(
+        $number: [String]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportWorkPermit(
+            number: $number
+            siteId: $siteId
+            username: $username
+        ) {
             ok
             message
             path
@@ -171,13 +182,16 @@ export interface workPermitRef extends workPermit {
 export interface workPermitChecked extends workPermitRef {
     isChecked: boolean;
 }
-export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
+export default function WorkPermitFormOverview(props: {
+    siteId: string;
+    siteName: string;
+}) {
     if (!IsPermit('eng_work_permit_form'))
         return <Navigate to="/" replace={true} />;
-
+    const { siteId, siteName } = props;
+    const toast = useToast();
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
-        localStorage.setItem('siteId', siteId);
         localStorage.setItem(
             'singleWorkPermitObject',
             JSON.stringify({ number: number, modified: modified })
@@ -207,21 +221,20 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
         { name: '儀控系統', isChecked: false },
     ]);
 
-    const { loading } = useQuery(QUERY_WORK_PEFMIT, {
+    const { loading, startPolling } = useQuery(QUERY_WORK_PEFMIT, {
         variables: {
             siteId: siteId,
         },
-        // pollInterval: 10000,
         onCompleted: ({ workPermit }: { workPermit: workPermit[] }) => {
             const workPermitHashed = workPermit.map((info) => ({
                 [info['number']]: { ...info, isCheck: false },
             }));
             setOverviewTableData(Object.assign({}, ...workPermitHashed));
+            startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
         },
-        fetchPolicy: 'network-only',
     });
 
     const handleSearchCheckboxClick = (
@@ -303,8 +316,20 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
     const [exportWorkPermit, { loading: exportLoading }] = useMutation(
         EXPORT_WORK_PREMIT,
         {
-            onCompleted: ({ exportWorkPermit }) => {
+            onCompleted: async ({
+                exportWorkPermit,
+            }: {
+                exportWorkPermit: {
+                    ok: boolean;
+                    message: string;
+                    path: [string];
+                };
+            }) => {
                 console.log(exportWorkPermit);
+                if (exportWorkPermit.ok) {
+                    const { path, message } = exportWorkPermit;
+                    await exportFile(path[0], message, toast);
+                }
             },
             onError: (err) => {
                 console.log(err);
@@ -332,7 +357,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                 top={'20px'}
                 right={'42px'}
             >
-                穩懋南科路竹廠機電一期新建工程
+                {siteName}
             </Text>
             <Text variant={'pageTitle'}>工作許可單</Text>
             <Flex align={'center'} justify={'space-between'}>
@@ -343,6 +368,23 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setStartDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(e.target.value && {
+                                        startDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                    ...(endDate && {
+                                        endDate: `${endDate}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         max={endDate}
                     ></Input>
@@ -352,6 +394,23 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setEndDate(e.target.value);
+                            searchWorkpermit({
+                                variables: {
+                                    siteId: siteId,
+                                    area: areas.flatMap((area) =>
+                                        area.isChecked ? area.name : []
+                                    ),
+                                    system: systems.flatMap((system) =>
+                                        system.isChecked ? system.name : []
+                                    ),
+                                    ...(startDate && {
+                                        startDate: `${startDate}T08:30:00`,
+                                    }),
+                                    ...(e.target.value && {
+                                        endDate: `${e.target.value}T08:30:00`,
+                                    }),
+                                },
+                            });
                         }}
                         min={startDate}
                     ></Input>
@@ -452,7 +511,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                         leftIcon={<AddIcon />}
                         variant={'buttonBlueSolid'}
                         onClick={() => {
-                            navSingleWorkPermit('', false);
+                            navSingleWorkPermit('new', false);
                         }}
                     >
                         新增工單
@@ -468,6 +527,7 @@ export default function WorkPermitFormOverview({ siteId }: { siteId: string }) {
                             );
                             exportWorkPermit({
                                 variables: {
+                                    username: new Cookies().get('username'),
                                     number: selectedNumber,
                                     siteId: siteId,
                                 },
