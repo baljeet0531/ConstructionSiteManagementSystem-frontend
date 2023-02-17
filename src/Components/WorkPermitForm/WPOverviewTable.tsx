@@ -14,6 +14,24 @@ import React from 'react';
 import { VariableSizeGrid, areEqual } from 'react-window';
 import { workPermit, workPermitChecked } from './Overview';
 
+const Pin = (props: { label: JSX.Element | ''; sign: number }) => {
+    const { label, sign } = props;
+    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
+
+    return (
+        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+            <Button
+                w={'40px'}
+                h={'10px'}
+                bg={sign ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
+                borderRadius={'4px'}
+                onMouseLeave={() => setIsLabelOpen(false)}
+                onClick={() => setIsLabelOpen((prevState) => !prevState)}
+            ></Button>
+        </Tooltip>
+    );
+};
+
 const columnMap = {
     日期: {
         width: 99,
@@ -142,7 +160,7 @@ export default function WPOverViewTable(props: {
                   )
                 : {}
             : overviewTableData;
-    const primarykeys = Object.keys(displayTableData);
+    const primarykeys = Object.keys(displayTableData).sort();
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
@@ -195,7 +213,7 @@ export default function WPOverViewTable(props: {
                     </Box>
                 );
             } else if (variable == 'signStatus') {
-                if (!info['applied']) {
+                if (!info['applied'] && !info['modified']) {
                     return (
                         <Box style={style} {...dataCellStyle}>
                             尚未申請
@@ -236,21 +254,7 @@ export default function WPOverViewTable(props: {
                     ) : (
                         ''
                     );
-                    return (
-                        <Tooltip label={label} key={index}>
-                            <Button
-                                key={index}
-                                w={'40px'}
-                                h={'10px'}
-                                bg={
-                                    sign
-                                        ? '#9CE3DE'
-                                        : 'rgba(102, 112, 128, 0.1)'
-                                }
-                                borderRadius={'4px'}
-                            ></Button>
-                        </Tooltip>
-                    );
+                    return <Pin key={index} label={label} sign={sign}></Pin>;
                 });
 
                 return (
@@ -272,23 +276,11 @@ export default function WPOverViewTable(props: {
                 const diff = now.diff(workEnd, 'day');
                 return (
                     <Box style={style} {...dataCellStyle}>
-                        {!info['applied'] ? (
-                            <Button
-                                variant={'buttonBlueSolid'}
-                                height={'20px'}
-                                width={'36px'}
-                                fontSize={'10px'}
-                                onClick={() => {
-                                    navSingleWorkPermit(info['number'], false);
-                                }}
-                            >
-                                申請
-                            </Button>
-                        ) : info['modified'] ? (
+                        {info['modified'] ? (
                             '異動單'
                         ) : diff > 0 ? (
                             ''
-                        ) : (
+                        ) : info['applied'] ? (
                             <Button
                                 variant={'buttonBlueSolid'}
                                 height={'20px'}
@@ -301,6 +293,18 @@ export default function WPOverViewTable(props: {
                                 }}
                             >
                                 異動
+                            </Button>
+                        ) : (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], false);
+                                }}
+                            >
+                                申請
                             </Button>
                         )}
                     </Box>

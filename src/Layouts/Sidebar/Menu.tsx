@@ -18,25 +18,25 @@ import {
     EHSIcon,
     OutsourcingIcon,
 } from '../../Icons/Icons';
+import { ISiteObject } from '../Layout';
 
 export default function Menu(props: {
-    sitesList: {
-        siteId: string;
-        siteName: string;
-        role: string;
-    }[];
+    sitesObject: ISiteObject;
     featureMap: Record<featureName, featureItem>;
-    setSelectedSite: Function;
+    selectedSiteId?: string;
+    setSelectedSiteId: Function;
 }) {
-    const [selectValue, setSelectValue] = React.useState<number>(0);
-    const { sitesList, featureMap, setSelectedSite } = props;
-    const siteSelectElements = sitesList.map(({ siteName }, index) => {
-        return (
-            <option key={index} value={index}>
-                {siteName}
-            </option>
-        );
-    });
+    const { sitesObject, featureMap, selectedSiteId, setSelectedSiteId } =
+        props;
+    const siteSelectElements = Object.values(sitesObject).map(
+        ({ siteName, siteId }, index) => {
+            return (
+                <option key={index} value={siteId}>
+                    {siteName}
+                </option>
+            );
+        }
+    );
     const buttonStyle = {
         display: 'flex',
         alignItems: 'center',
@@ -63,20 +63,6 @@ export default function Menu(props: {
         pb: '0',
         pr: '0',
     };
-
-    React.useEffect(() => {
-        if (sitesList.length == 0) {
-            setSelectValue(-1);
-        } else if (sitesList.length != 0 && selectValue == -1) {
-            setSelectValue(0);
-        } else if (selectValue > sitesList.length - 1) {
-            setSelectValue(0);
-        }
-        setSelectedSite({
-            ...sitesList[selectValue],
-        });
-        localStorage.setItem('siteName', sitesList[selectValue]?.siteName);
-    }, [sitesList, selectValue]);
 
     return (
         <VStack
@@ -109,10 +95,14 @@ export default function Menu(props: {
                     </AccordionPanel>
                 </AccordionItem>
                 <Select
-                    value={selectValue}
-                    onChange={(e) =>
-                        setSelectValue(Number(e.currentTarget.value))
-                    }
+                    value={selectedSiteId}
+                    onChange={(e) => {
+                        const { siteId, siteName } =
+                            sitesObject[e.target.value];
+                        localStorage.setItem('siteId', siteId);
+                        localStorage.setItem('siteName', siteName);
+                        setSelectedSiteId(e.target.value);
+                    }}
                 >
                     {siteSelectElements}
                 </Select>

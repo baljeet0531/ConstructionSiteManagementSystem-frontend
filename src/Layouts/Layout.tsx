@@ -20,6 +20,16 @@ export const QUERY_ACCOUNT_SITES = gql`
     }
 `;
 
+export interface siteValue {
+    siteId: string;
+    siteName: string;
+    role: string;
+}
+
+export interface ISiteObject {
+    [siteId: string]: siteValue;
+}
+
 export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
@@ -28,50 +38,53 @@ export default function Layout(props: { page: featureName }) {
 
     const { page } = props;
 
-    const [sitesList, setSitesList] = React.useState<
-        {
-            siteId: string;
-            siteName: string;
-            role: string;
-        }[]
-    >([]);
-    const [selectedSite, setSelectedSite] = React.useState<{
-        siteId: string;
-        siteName: string;
-        role: string;
-    }>();
-
-    const featureMap = getFeatureMap({
-        siteId: selectedSite ? selectedSite.siteId : '',
-    });
+    const [sitesObject, setSitesObject] = React.useState<ISiteObject>({});
+    const [selectedSiteId, setSelectedSiteId] = React.useState<string>();
+    const siteValues = Object.values(sitesObject);
+    const selectedSiteValue = selectedSiteId
+        ? sitesObject[selectedSiteId]
+        : siteValues[0];
+    const featureMap = getFeatureMap(
+        selectedSiteValue
+            ? {
+                  siteId: selectedSiteValue.siteId,
+                  siteName: selectedSiteValue.siteName,
+              }
+            : { siteId: '', siteName: '' }
+    );
 
     useQuery(QUERY_ACCOUNT_SITES, {
         onCompleted: ({ accountSite }) => {
-            const sitesListFormatted = accountSite.map(
-                (
-                    site: {
-                        siteId: string;
-                        role: string;
-                        siteRef: {
-                            name: string;
-                        };
-                    },
-                    index: number
-                ) => {
-                    const { siteRef, ...siteIdRole } = site;
-                    if (index == 0) {
-                        setSelectedSite({
-                            ...siteIdRole,
-                            siteName: siteRef.name,
-                        });
-                    }
+            const sitesListFormatted: ISiteObject[] = accountSite.map(
+                (site: {
+                    siteId: string;
+                    role: string;
+                    siteRef: {
+                        name: string;
+                    };
+                }) => {
+                    const { siteRef, siteId, role } = site;
                     return {
-                        ...siteIdRole,
-                        siteName: siteRef.name,
+                        [siteId]: {
+                            siteId,
+                            role,
+                            siteName: siteRef.name,
+                        },
                     };
                 }
             );
-            setSitesList(sitesListFormatted);
+            const sitesObject: ISiteObject = Object.assign(
+                {},
+                ...sitesListFormatted
+            );
+            const siteValues = Object.values(sitesObject);
+            const storeSiteId = localStorage.getItem('siteId');
+            const defaultSiteId =
+                storeSiteId && sitesObject[storeSiteId]
+                    ? sitesObject[storeSiteId].siteId
+                    : siteValues[0].siteId;
+            setSelectedSiteId(defaultSiteId);
+            setSitesObject(sitesObject);
         },
         onError: (error) => {
             console.log(error);
@@ -92,9 +105,10 @@ export default function Layout(props: { page: featureName }) {
         >
             <Sidebar
                 username={username}
-                role={selectedSite?.role || ''}
-                sitesList={sitesList}
-                setSelectedSite={setSelectedSite}
+                role={selectedSiteValue?.role || ''}
+                sitesObject={sitesObject}
+                selectedSiteId={selectedSiteId}
+                setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
             <MainScreen>{featureMap[page].page}</MainScreen>

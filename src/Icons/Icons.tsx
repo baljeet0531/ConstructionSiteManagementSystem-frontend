@@ -1,3 +1,4 @@
+import { CheckboxIconProps, Icon } from '@chakra-ui/react';
 import React from 'react';
 
 export function AvatarIcon() {
@@ -1708,5 +1709,20 @@ export function ArrowDropDownIcon() {
                 fill="currentColor"
             />
         </svg>
+    );
+}
+
+export function ThreeStateIcon(props: CheckboxIconProps) {
+    const { isIndeterminate, ...rest} = props;
+    const d = isIndeterminate
+        ? 'M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z'
+        : 'M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z';
+    const viewBox = isIndeterminate ? '0 0 24 24' : '0 0 17.837 17.837';
+    delete rest.isChecked;
+
+    return (
+        <Icon viewBox={viewBox} {...rest}>
+            <path fill="currentColor" d={d} />
+        </Icon>
     );
 }
