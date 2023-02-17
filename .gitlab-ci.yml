@@ -27,6 +27,26 @@ dev_build:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "develop"
   image: registry.${CI_PROJECT_PATH}:base
+  variables:
+    REACT_APP_BACKEND_URL: http://backend.mic.dev.19gale.ai
+  script:
+    # node_modules already in /root/ of the image
+    # If new package is added, the image should be rebuild
+    - mv /root/* .
+    - yarn build
+    - tar zcvf build.tar.gz build
+  artifacts:
+    paths:
+    - build.tar.gz
+    expire_in: 30 day
+
+staging_build:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
+  image: registry.${CI_PROJECT_PATH}:base
+  variables:
+    REACT_APP_BACKEND_URL: http://backend.mic.staging.19gale.ai
   script:
     # node_modules already in /root/ of the image
     # If new package is added, the image should be rebuild
@@ -88,7 +108,6 @@ dev_deployment:
   image: registry.19gale.ai/tap/ansible:2.9
   variables:
     PORT: 80
-    REACT_APP_BACKEND_URL: http://backend.mic.dev.19gale.ai/
   script:
     - chmod -v 700 $(pwd)
     - mv ./deploy/.ansible.cfg ~/
@@ -100,6 +119,26 @@ dev_deployment:
     - envsubst < sample.env > .env
     # deploy services
     - ansible-playbook -i ./deploy/hosts ./deploy/develop.yml
+
+staging_deployment:
+  stage: deployment
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "staging"
+  image: registry.19gale.ai/tap/ansible:2.9
+  variables:
+    PORT: 80
+  script:
+    - chmod -v 700 $(pwd)
+    - mv ./deploy/.ansible.cfg ~/
+    - ansible-config view
+    # Make private key
+    - echo "$PRIVATE_KEY" | base64 --decode > "/private.pem"
+    - chmod 400 /private.pem
+    # Make .env file
+    - envsubst < sample.env > .env
+    # deploy services
+    - ansible-playbook -i ./deploy/hosts ./deploy/staging.yml
 
 prod_deployment:
   stage: deployment
