@@ -26,7 +26,7 @@ import ReactWindowTable, {
     dataCellStyle,
     IColumnMap,
     ISizes,
-} from './ReactWindowTable';
+} from '../../Utils/ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SITE_LABOR, modalName } from './Organization';
 import MultiCreateModalContent from './MultiCreateModalContent';

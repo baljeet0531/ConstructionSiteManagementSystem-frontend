@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Center, ChakraProps, Checkbox, Flex } from '@chakra-ui/react';
-import { VariableSizeGrid } from 'react-window';
+import { areEqual, VariableSizeGrid } from 'react-window';
 
 const tableCellStyle: ChakraProps = {
     border: '1px solid #919AA9',
@@ -59,6 +58,7 @@ export interface IColumnMap {
     title: string;
     width: number;
     variable: string;
+    // eslint-disable-next-line no-unused-vars
     getElement: (props: getElementProps) => JSX.Element;
 }
 
@@ -104,7 +104,7 @@ export default function ReactWindowTable(props: {
                   }))
               ));
 
-    const primarykeys = Object.keys(displayTableData);
+    const primaryKeys = Object.keys(displayTableData);
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
@@ -159,6 +159,28 @@ export default function ReactWindowTable(props: {
         };
     }, []);
 
+    const memorizedTable = React.memo(
+        (props: {
+            columnIndex: number;
+            rowIndex: number;
+            style: React.CSSProperties;
+            data: {
+                [primaryKey: string]: any;
+            };
+        }) => {
+            const { columnIndex, rowIndex, style, data } = props;
+            const info = data[primaryKeys[rowIndex]];
+            const columnInfo = columnMap[columnIndex];
+            const element = columnInfo.getElement({
+                style: style,
+                info: info,
+                variable: columnInfo.variable,
+            });
+            return element;
+        },
+        areEqual
+    );
+
     return (
         <Flex direction={'column'}>
             <VariableSizeGrid
@@ -183,7 +205,7 @@ export default function ReactWindowTable(props: {
                                     isChecked={allChecked}
                                     onChange={(e) => {
                                         setAllChecked(e.target.checked);
-                                        primarykeys.forEach((primaryKey) => {
+                                        primaryKeys.forEach((primaryKey) => {
                                             const info = tableData[primaryKey];
                                             tableData[primaryKey] = {
                                                 ...info,
@@ -211,21 +233,12 @@ export default function ReactWindowTable(props: {
                 columnCount={columnMap.length}
                 columnWidth={getColumnWidth}
                 height={tableHeight}
-                rowCount={Object.values(displayTableData).length}
+                rowCount={primaryKeys.length}
                 rowHeight={() => cellHeight}
                 width={tableWidth}
+                itemData={displayTableData}
             >
-                {(props) => {
-                    const { columnIndex, rowIndex, style } = props;
-                    const info = Object.values(displayTableData)[rowIndex];
-                    const columnInfo = columnMap[columnIndex];
-                    const element = columnMap[columnIndex].getElement({
-                        style: style,
-                        info: info,
-                        variable: columnInfo.variable,
-                    });
-                    return element;
-                }}
+                {memorizedTable}
             </VariableSizeGrid>
         </Flex>
     );
