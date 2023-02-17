@@ -55,7 +55,14 @@ export default function DeleteLaborModal(props: {
                 isClosable: true,
             });
         },
-        refetchQueries: [SITE_LABOR],
+        refetchQueries: [
+            {
+                query: SITE_LABOR,
+                variables: {
+                    siteId: siteId,
+                },
+            },
+        ],
         fetchPolicy: 'network-only',
     });
 
