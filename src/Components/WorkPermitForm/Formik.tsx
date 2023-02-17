@@ -21,6 +21,7 @@ import { ISignature, SignatureStateItem } from '../../Interface/Signature';
 import { IWorkPermit, SignatureName } from '../../Interface/WorkPermit';
 import WorkPermitForm from './Form';
 import { GQL_WORK_PERMIT_MUTATION } from './GQL';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
@@ -98,13 +99,7 @@ export default function WorkPermitFormik() {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `伺服器錯誤，請稍後重試。`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
     });
 

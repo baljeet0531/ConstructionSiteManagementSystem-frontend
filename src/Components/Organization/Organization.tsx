@@ -36,6 +36,7 @@ import CreateLaborModal from './CreateLaborModal';
 import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { exportFile } from '../../Utils/Resources';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $context: String) {
@@ -270,13 +271,7 @@ export default function Organization(props: {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: '伺服器錯誤，請稍後重試。',
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
         fetchPolicy: 'network-only',
     });
@@ -332,13 +327,7 @@ export default function Organization(props: {
             },
             onError: (err) => {
                 console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: '伺服器錯誤，請稍後重試。',
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultErrorToast(toast);
             },
             fetchPolicy: 'network-only',
         }

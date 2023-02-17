@@ -30,6 +30,10 @@ import ReactWindowTable, {
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SITE_LABOR, modalName } from './Organization';
 import MultiCreateModalContent from './MultiCreateModalContent';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 const ORGANIZATION_POOL = gql`
     query OrganizationPool($errlist: Boolean!) {
@@ -137,12 +141,7 @@ export default function AddPeopleModal(props: {
     const [createSiteLabor, { loading }] = useMutation(CREATE_SITE_LABOR, {
         onCompleted: ({ createSiteLabor }) => {
             if (createSiteLabor.ok) {
-                toast({
-                    title: createSiteLabor.message,
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultSuccessToast(toast, createSiteLabor.message);
                 const keys = Object.keys(tableData);
                 keys.forEach((key) => {
                     const info = tableData[key];
@@ -158,13 +157,7 @@ export default function AddPeopleModal(props: {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
         refetchQueries: [
             {
