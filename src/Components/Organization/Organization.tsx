@@ -7,7 +7,7 @@ import {
     Center,
     Checkbox,
     Flex,
-    IconButton,
+    // IconButton,
     Input,
     InputGroup,
     InputLeftElement,
@@ -250,8 +250,7 @@ export default function Organization(props: {
     ];
     const { siteId, siteName } = props;
     const toast = useToast();
-    const disclosure = useDisclosure();
-    const { isOpen, onOpen, onClose } = disclosure;
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [tableData, setTableData] = React.useState<tableData>({});
     const [modalName, setModalName] = React.useState<modalName>('createLabor');
 
@@ -273,7 +272,7 @@ export default function Organization(props: {
             console.log(err);
             toast({
                 title: '錯誤',
-                description: `${err}`,
+                description: '伺服器錯誤，請稍後重試。',
                 status: 'error',
                 duration: 3000,
                 isClosable: true,
@@ -335,7 +334,7 @@ export default function Organization(props: {
                 console.log(err);
                 toast({
                     title: '錯誤',
-                    description: `${err}`,
+                    description: '伺服器錯誤，請稍後重試。',
                     status: 'error',
                     duration: 3000,
                     isClosable: true,
@@ -370,16 +369,10 @@ export default function Organization(props: {
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
                     <InputGroup w={'230px'}>
-                        <InputLeftElement>
-                            <IconButton
-                                aria-label="Search"
-                                icon={<SearchIcon />}
-                                background="transparent"
-                                _active={{ background: 'transparent' }}
-                                _focus={{ background: 'transparent' }}
-                                _hover={{ background: 'transparent' }}
-                            ></IconButton>
-                        </InputLeftElement>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            children={<SearchIcon />}
+                        />
                         <Input
                             ref={searchInputRef}
                             w={'fit-content'}
