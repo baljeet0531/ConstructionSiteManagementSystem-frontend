@@ -86,7 +86,6 @@ export const ALL_HUMAN_RESOURCE = gql`
 `;
 
 export const EXPORT_HUMAN_RESOURCE = gql`
->>>>>>> 5801a3449d5d437a6ee19ebb194a5bf4b9a6929a
     mutation ExportHumanResource($idnos: [String]!, $username: String!) {
         exportHumanResource(idnos: $idnos, username: $username) {
             ok
