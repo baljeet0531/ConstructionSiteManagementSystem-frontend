@@ -29,7 +29,7 @@ import ReactWindowTable, {
     getElementProps,
     IColumnMap,
     ISizes,
-} from './ReactWindowTable';
+} from '../../Utils/ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import CreateLaborModal from './CreateLaborModal';
