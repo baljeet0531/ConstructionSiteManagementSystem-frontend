@@ -409,7 +409,10 @@ export default function AddPeopleModal(props: {
                                     variant={'buttonGrayOutline'}
                                     size={'sm'}
                                     mr={3}
-                                    onClick={onClose}
+                                    onClick={() => {
+                                        setFilteredPrimaryKey(undefined);
+                                        onClose();
+                                    }}
                                 >
                                     取消新增
                                 </Button>

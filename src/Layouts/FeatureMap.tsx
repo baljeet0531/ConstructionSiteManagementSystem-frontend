@@ -61,30 +61,7 @@ export type featureItem = {
     page: JSX.Element;
 };
 
-const emptySiteIdPage = (
-    <Center w={'100%'} h={'100%'}>
-        <Flex direction={'column'} gap={'35px'} justify={'center'}>
-            <Box
-                width={'600px'}
-                height={'430.08px'}
-                backgroundImage={`url(${SelectSiteIdFirst})`}
-            ></Box>
-            <Text
-                fontFamily={'Inter'}
-                fontStyle={'normal'}
-                fontWeight={700}
-                fontSize={'24px'}
-                lineHeight={'20px'}
-                color={'#4C7DE7'}
-                textAlign={'center'}
-            >
-                請先選擇專案，以顯示內容
-            </Text>
-        </Flex>
-    </Center>
-);
-
-const noContentPage = (
+const noContentPageLayout = (label: string) => (
     <Center w={'100%'} h={'100%'}>
         <Flex
             w={'60%'}
@@ -103,11 +80,14 @@ const noContentPage = (
                 color={'#4C7DE7'}
                 textAlign={'center'}
             >
-                目前頁面施工中，敬請期待
+                {label}
             </Text>
         </Flex>
     </Center>
 );
+
+const emptySiteIdPage = noContentPageLayout('請先選擇專案，以顯示內容');
+const noContentPage = noContentPageLayout('目前頁面施工中，敬請期待');
 
 export function getFeatureMap(site: {
     siteId: string;
