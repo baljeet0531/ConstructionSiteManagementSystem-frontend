@@ -22,7 +22,7 @@ import {
 } from '../../Icons/Icons';
 import ReactWindowTable, {
     dataCellStyle,
-    defalutElement,
+    defaultElement,
     getElementProps,
     IColumnMap,
     ISizes,
@@ -101,7 +101,7 @@ export default function Organization(props: {
             width: 70,
             variable: 'index',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -116,7 +116,7 @@ export default function Organization(props: {
             width: 125,
             variable: 'corp',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -131,7 +131,7 @@ export default function Organization(props: {
             width: 125,
             variable: 'name',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -146,7 +146,7 @@ export default function Organization(props: {
             width: 125,
             variable: 'idno',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -161,7 +161,7 @@ export default function Organization(props: {
             width: 125,
             variable: 'birth',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -176,7 +176,7 @@ export default function Organization(props: {
             width: 50,
             variable: 'gender',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -191,7 +191,7 @@ export default function Organization(props: {
             width: 50,
             variable: 'blood',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -206,7 +206,7 @@ export default function Organization(props: {
             width: 125,
             variable: 'tel',
             getElement: (props) =>
-                defalutElement({
+                defaultElement({
                     ...props,
                     style: {
                         ...props.style,
@@ -306,7 +306,7 @@ export default function Organization(props: {
             });
         }, 300);
     };
-    const [exportHumanResource, { loading: exportLaoding }] = useMutation(
+    const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
             onCompleted: async ({
@@ -463,7 +463,7 @@ export default function Organization(props: {
                         : []
                 )}
             ></DeleteLaborModal>
-            {(loading || exportLaoding) && <PageLoading />}
+            {(loading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }

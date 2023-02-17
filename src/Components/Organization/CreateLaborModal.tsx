@@ -19,7 +19,7 @@ import {
     GridItem,
 } from '@chakra-ui/react';
 import ReactWindowTable, {
-    defalutElement,
+    defaultElement,
     getElementProps,
     dataCellStyle,
     IColumnMap,
@@ -106,7 +106,7 @@ export default function AddPeopleModal(props: {
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [textareaValue, setTextareaValue] = React.useState<string>();
     const [existedIdno, setExistedIdno] = React.useState<string[]>([]);
-    const [unexistedIdno, setUnexistedIdno] = React.useState<string[]>([]);
+    const [nonExistedIdno, setNonExistedIdno] = React.useState<string[]>([]);
     const [step, setStep] = React.useState<1 | 2>(1);
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
@@ -232,25 +232,25 @@ export default function AddPeopleModal(props: {
             title: '承攬公司',
             width: 100,
             variable: 'contractingCompanyName',
-            getElement: defalutElement,
+            getElement: defaultElement,
         },
         {
             title: '姓名',
             width: 100,
             variable: 'name',
-            getElement: defalutElement,
+            getElement: defaultElement,
         },
         {
             title: '身分證字號',
             width: 100,
             variable: 'idno',
-            getElement: defalutElement,
+            getElement: defaultElement,
         },
         {
             title: '出生日期',
             width: 100,
             variable: 'birthday',
-            getElement: defalutElement,
+            getElement: defaultElement,
         },
         {
             title: '全選',
@@ -475,15 +475,15 @@ export default function AddPeopleModal(props: {
                                 const idnos =
                                     textareaRef.current?.value.split('\n');
                                 let existedIdno: Set<string> = new Set();
-                                let unexistedIdno: Set<string> = new Set();
+                                let nonExistedIdno: Set<string> = new Set();
                                 idnos?.forEach((idno) => {
                                     tableData[idno]
                                         ? existedIdno.add(idno)
-                                        : unexistedIdno.add(idno);
+                                        : nonExistedIdno.add(idno);
                                 });
                                 setTextareaValue(textareaRef.current?.value);
                                 setExistedIdno(Array.from(existedIdno));
-                                setUnexistedIdno(Array.from(unexistedIdno));
+                                setNonExistedIdno(Array.from(nonExistedIdno));
                                 setStep(2);
                             }}
                         ></MultiCreateModalContent>
@@ -501,7 +501,7 @@ export default function AddPeopleModal(props: {
                                     <Text variant={'w400s14'}>
                                         總共：
                                         {existedIdno.length +
-                                            unexistedIdno.length}
+                                            nonExistedIdno.length}
                                         筆
                                     </Text>
                                     <Grid
@@ -519,7 +519,8 @@ export default function AddPeopleModal(props: {
                                         </GridItem>
                                         <GridItem>
                                             <Text variant={'w400s14'}>
-                                                不存在：{unexistedIdno.length}人
+                                                不存在：{nonExistedIdno.length}
+                                                人
                                             </Text>
                                         </GridItem>
                                         <GridItem>
@@ -547,7 +548,9 @@ export default function AddPeopleModal(props: {
                                                     bg: '#FFFFFF',
                                                     border: '2px solid #919AA9',
                                                 }}
-                                                value={unexistedIdno.join('\n')}
+                                                value={nonExistedIdno.join(
+                                                    '\n'
+                                                )}
                                             ></Textarea>
                                         </GridItem>
                                     </Grid>
