@@ -12,6 +12,8 @@ import {
     Text,
     HStack,
     VStack,
+    Center,
+    Spinner,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -64,7 +66,7 @@ export default function WorkPermitForm({
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工作許可單(${number})`;
 
-    useQuery(GQL_WORK_PERMIT_QUERY, {
+    const { loading } = useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
             siteId: localStorage.getItem('siteId'),
             number: number,
@@ -84,6 +86,9 @@ export default function WorkPermitForm({
                 formProps.setValues(singleFormData, false);
             }
         },
+        onError: (err) => {
+            console.error(err);
+        },
         fetchPolicy: 'network-only',
     });
 
@@ -100,7 +105,7 @@ export default function WorkPermitForm({
             >
                 完成編輯
             </Button>
-            <Box margin="10px 37px 0px 27px" color="#667080">
+            <Box margin="10px 37px 20px 27px" color="#667080">
                 <Flex direction="column">
                     <Image w="150px" h="51px" src={'/mic-icon.png'} />
                     <VStack
@@ -140,9 +145,12 @@ export default function WorkPermitForm({
                 </Flex>
                 <Grid
                     width="92.5vw"
-                    height="45vh"
-                    templateColumns={'50fr 120fr 183fr 120fr 287fr'}
-                    templateRows={'36fr repeat(7, 50fr)'}
+                    height="60vh"
+                    maxH="500px"
+                    templateColumns={'50fr 120fr 203fr 120fr 247fr'}
+                    templateRows={
+                        '36fr 50fr 50fr minmax(80px, 50fr) repeat(4, 50fr)'
+                    }
                 >
                     <GridItem colStart={1} colEnd={6} {...titleStyle}>
                         一、申請資料：
@@ -285,7 +293,8 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="30vh"
+                    height="40vh"
+                    maxH="300px"
                     templateColumns={'repeat(3, 50fr 203fr)'}
                     templateRows={'36fr repeat(4, 50fr)'}
                 >
@@ -383,7 +392,8 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="40vh"
+                    height="50vh"
+                    maxH="400px"
                     templateColumns="50fr 710fr"
                     templateRows="36fr 72fr 90fr repeat(3, 36fr)"
                 >
@@ -424,9 +434,10 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="20vh"
+                    height="30vh"
+                    maxH="200px"
                     templateColumns="repeat(4, 1fr)"
-                    templateRows="36fr 87fr"
+                    templateRows="36fr 120fr"
                 >
                     <GridItem {...numberStyle}>核准</GridItem>
                     <GridItem {...numberStyle}>審核</GridItem>
@@ -434,28 +445,28 @@ export default function WorkPermitForm({
                     <GridItem {...numberStyle} borderRight="1px">
                         申請人
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="核准 - 簽名"
                             signatureName="approved-signature.png"
                             state={signatures.approved}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="審核 - 簽名"
                             signatureName="review-signature.png"
                             state={signatures.review}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle}>
+                    <GridItem {...numberStyle} minH="80px">
                         <SignaturePad
                             title="申請單位主管 - 簽名"
                             signatureName="supplierManager-signature.png"
                             state={signatures.supplierManager}
                         />
                     </GridItem>
-                    <GridItem {...numberStyle} borderRight="1px">
+                    <GridItem {...numberStyle} minH="80px" borderRight="1px">
                         <SignaturePad
                             title="申請人 - 簽名"
                             signatureName="supplier-signature.png"
@@ -464,6 +475,18 @@ export default function WorkPermitForm({
                     </GridItem>
                 </Grid>
             </Box>
+            {(loading || formProps.isSubmitting) && (
+                <Center
+                    position="fixed"
+                    top={0}
+                    w="100vw"
+                    h="100vh"
+                    bg={'#D9D9D980'}
+                    zIndex={1}
+                >
+                    <Spinner size={'xl'} />
+                </Center>
+            )}
         </Form>
     );
 }

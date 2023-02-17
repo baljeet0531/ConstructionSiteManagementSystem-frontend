@@ -177,6 +177,11 @@ export function parseWorkPermit(
     ];
 
     const t = { ...list[0] } as IGQLWorkPermit;
+
+    if (t.zone === '') {
+        t.zone = [];
+    }
+
     if (typeof t.zone === 'string') {
         t.zone = t.zone.split(',');
     }
@@ -196,7 +201,7 @@ export function parseWorkPermit(
             .hour(23)
             .minute(30)
             .format('YYYY-MM-DDTHH:mm:ss');
-    // 1. 初次申請 2. 修改初次申請 3. 修改異動單
+        // 1. 初次申請 2. 修改初次申請 3. 修改異動單
     } else {
         // 1. 初次申請
         if (!t.applied && !t.modified) {
