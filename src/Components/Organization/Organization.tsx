@@ -93,7 +93,10 @@ type tableData = {
 
 export type modalName = 'createLabor' | 'deleteLabor' | 'multiCreate';
 
-export default function Organization(props: { siteId: string }) {
+export default function Organization(props: {
+    siteId: string;
+    siteName: string;
+}) {
     if (!IsPermit('organization')) return <Navigate to="/" replace={true} />;
     const columnMap: IColumnMap[] = [
         {
@@ -247,7 +250,7 @@ export default function Organization(props: { siteId: string }) {
             },
         },
     ];
-    const { siteId } = props;
+    const { siteId, siteName } = props;
     const toast = useToast();
     const disclosure = useDisclosure();
     const { isOpen, onOpen, onClose } = disclosure;
@@ -394,7 +397,7 @@ export default function Organization(props: { siteId: string }) {
                 top={'20px'}
                 right={'42px'}
             >
-                穩懋南科路竹廠機電一期新建工程
+                {siteName}
             </Text>
             <Text variant={'pageTitle'}>專案人員組織</Text>
             <Flex align={'center'} justify={'space-between'}>
@@ -486,10 +489,6 @@ export default function Organization(props: { siteId: string }) {
                     </Button>
                 </Flex>
             </Flex>
-            {/* <OrgTable
-                overviewTableData={organizationTableData}
-                setOverviewTableData={setOrganizationTableData}
-            ></OrgTable> */}
             <ReactWindowTable
                 tableData={tableData}
                 columnMap={columnMap}
@@ -498,6 +497,7 @@ export default function Organization(props: { siteId: string }) {
             />
             <CreateLaborModal
                 siteId={siteId}
+                siteName={siteName}
                 onClose={onClose}
                 isOpen={
                     modalName == 'createLabor' || modalName == 'multiCreate'

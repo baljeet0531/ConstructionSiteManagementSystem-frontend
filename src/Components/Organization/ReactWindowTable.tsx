@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Center, ChakraProps, Checkbox, Flex } from '@chakra-ui/react';
-import { GridChildComponentProps, VariableSizeGrid } from 'react-window';
+import { VariableSizeGrid } from 'react-window';
 
 const tableCellStyle: ChakraProps = {
     border: '1px solid #919AA9',
