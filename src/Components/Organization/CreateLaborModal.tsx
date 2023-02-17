@@ -51,6 +51,12 @@ const CREATE_SITE_LABOR = gql`
     }
 `;
 
+const CONTRACTING_COMPANY = gql`
+    query ContractingConpany($context: String!) {
+        contractingConpany(context: $context)
+    }
+`;
+
 interface OrgPool {
     name: string;
     contractingCompanyName: string;
@@ -82,6 +88,8 @@ export default function AddPeopleModal(props: {
 }) {
     const { siteId, isOpen, onClose, modalName } = props;
     const toast = useToast();
+    const [companyList, setCompanyList] = React.useState<string[]>([]);
+    const companySelected = React.useRef<HTMLSelectElement>(null);
     const [tableData, setTableData] = React.useState<tableData>({});
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
     const [textareaValue, setTextareaValue] = React.useState<string>();
@@ -106,6 +114,9 @@ export default function AddPeopleModal(props: {
             }));
 
             setTableData(Object.assign({}, ...reprocessingData));
+        },
+        onError: (err) => {
+            console.log(err);
         },
         fetchPolicy: 'network-only',
     });
@@ -137,6 +148,22 @@ export default function AddPeopleModal(props: {
         fetchPolicy: 'network-only',
     });
 
+    useQuery(CONTRACTING_COMPANY, {
+        variables: {
+            context: '',
+        },
+        onCompleted: ({
+            contractingConpany,
+        }: {
+            contractingConpany: string[];
+        }) => {
+            setCompanyList(contractingConpany);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
     const columnMap: IColumnMap[] = [
         {
             title: '承攬公司',
@@ -186,6 +213,14 @@ export default function AddPeopleModal(props: {
             },
         },
     ];
+
+    const companyOptions = ['', ...companyList].map((company, index) => {
+        return (
+            <option key={index} value={company}>
+                {company}
+            </option>
+        );
+    });
 
     return (
         <>
@@ -240,10 +275,13 @@ export default function AddPeopleModal(props: {
                                 >
                                     <Text>承攬公司</Text>
                                     <Select
+                                        ref={companySelected}
                                         width={'120px'}
                                         h={'36px'}
                                         variant={'formOutline'}
-                                    ></Select>
+                                    >
+                                        {companyOptions}
+                                    </Select>
                                 </Flex>
                                 <Flex
                                     width={'220px'}
