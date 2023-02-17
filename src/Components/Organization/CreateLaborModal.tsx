@@ -14,8 +14,6 @@ import {
     Box,
     Checkbox,
     useToast,
-    Center,
-    Spinner,
     Textarea,
     Grid,
     GridItem,
@@ -34,6 +32,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 
 const ORGANIZATION_POOL = gql`
     query OrganizationPool($errlist: Boolean!) {
@@ -572,19 +571,7 @@ export default function AddPeopleModal(props: {
                     )}
                 </Modal>
             )}
-            {loading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {loading && <PageLoading />}
         </>
     );
 }

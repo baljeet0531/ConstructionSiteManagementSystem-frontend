@@ -30,6 +30,7 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import FullCalendarElement from './FullCalenderElement';
 import Preview from './Preview';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import PageLoading from '../../Utils/PageLoading';
 
 export const QUERY_SCHEDULE = gql`
     query Schedule($siteId: String!) {
@@ -297,19 +298,7 @@ export default function Schedule(props: { siteId: string; siteName: string }) {
                     previewTableElements={previewTableElements}
                 ></Preview>
             )}
-            {createScheduleLoading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={0}
-                    w={'100vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {createScheduleLoading && <PageLoading />}
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}

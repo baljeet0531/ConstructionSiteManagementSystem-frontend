@@ -4,14 +4,11 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import {
     Box,
     Button,
-    Center,
     Checkbox,
     Flex,
-    // IconButton,
     Input,
     InputGroup,
     InputLeftElement,
-    Spinner,
     Text,
     useDisclosure,
     useToast,
@@ -37,6 +34,7 @@ import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { exportFile } from '../../Utils/Resources';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $context: String) {
@@ -465,19 +463,7 @@ export default function Organization(props: {
                         : []
                 )}
             ></DeleteLaborModal>
-            {(loading || exportLaoding) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || exportLaoding) && <PageLoading />}
         </Flex>
     );
 }

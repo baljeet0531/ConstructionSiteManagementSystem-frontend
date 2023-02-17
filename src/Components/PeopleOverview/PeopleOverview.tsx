@@ -1,13 +1,11 @@
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
-    Center,
     Flex,
     IconButton,
     Input,
     InputGroup,
     InputLeftElement,
-    Spinner,
     Tab,
     TabList,
     TabPanels,
@@ -27,6 +25,7 @@ import {
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
+import PageLoading from '../../Utils/PageLoading';
 import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';
@@ -779,19 +778,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     }))
                 }
             ></DeleteModal>
-            {(loading || exportLaoding) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || exportLaoding) && <PageLoading />}
         </Flex>
     );
 }

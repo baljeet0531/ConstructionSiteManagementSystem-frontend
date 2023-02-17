@@ -2,7 +2,6 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import {
     Button,
-    Center,
     Checkbox,
     Flex,
     Grid,
@@ -12,7 +11,6 @@ import {
     PopoverBody,
     PopoverContent,
     PopoverTrigger,
-    Spinner,
     Text,
     useToast,
 } from '@chakra-ui/react';
@@ -22,6 +20,7 @@ import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
+import PageLoading from '../../Utils/PageLoading';
 
 export const QUERY_WORK_PEFMIT = gql`
     query WorkPermit(
@@ -544,19 +543,7 @@ export default function WorkPermitFormOverview(props: {
                 setOverviewTableData={setOverviewTableData}
                 navSingleWorkPermit={navSingleWorkPermit}
             ></WPOverViewTable>
-            {(loading || searchLoading || exportLoading) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || searchLoading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }
