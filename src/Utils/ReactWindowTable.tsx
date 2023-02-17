@@ -42,7 +42,7 @@ export const dataCellStyle: ChakraProps = {
     pt: '12px',
 };
 
-export const defalutElement = ({ style, info, variable }: getElementProps) => (
+export const defaultElement = ({ style, info, variable }: getElementProps) => (
     <Box {...dataCellStyle} style={style}>
         {info[variable]}
     </Box>

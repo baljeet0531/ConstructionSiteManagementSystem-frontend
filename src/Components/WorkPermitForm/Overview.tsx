@@ -22,7 +22,7 @@ import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
 import PageLoading from '../../Utils/PageLoading';
 
-export const QUERY_WORK_PEFMIT = gql`
+export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(
         $siteId: String!
         $number: String
@@ -103,7 +103,7 @@ const AREAS_AND_SYSTEMS = gql`
     }
 `;
 
-const EXPORT_WORK_PREMIT = gql`
+const EXPORT_WORK_PERMIT = gql`
     mutation ExportWorkPermit(
         $number: [String]!
         $siteId: String!
@@ -220,7 +220,7 @@ export default function WorkPermitFormOverview(props: {
         { name: '儀控系統', isChecked: false },
     ]);
 
-    const { loading, startPolling } = useQuery(QUERY_WORK_PEFMIT, {
+    const { loading, startPolling } = useQuery(QUERY_WORK_PERMIT, {
         variables: {
             siteId: siteId,
         },
@@ -299,8 +299,8 @@ export default function WorkPermitFormOverview(props: {
         },
     });
 
-    const [searchWorkpermit, { loading: searchLoading }] = useLazyQuery(
-        QUERY_WORK_PEFMIT,
+    const [searchWorkPermit, { loading: searchLoading }] = useLazyQuery(
+        QUERY_WORK_PERMIT,
         {
             onCompleted: ({ workPermit }: { workPermit: workPermitRef[] }) => {
                 setSearchResultNumber(workPermit.map((info) => info['number']));
@@ -313,7 +313,7 @@ export default function WorkPermitFormOverview(props: {
     );
 
     const [exportWorkPermit, { loading: exportLoading }] = useMutation(
-        EXPORT_WORK_PREMIT,
+        EXPORT_WORK_PERMIT,
         {
             onCompleted: async ({
                 exportWorkPermit,
@@ -367,7 +367,7 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setStartDate(e.target.value);
-                            searchWorkpermit({
+                            searchWorkPermit({
                                 variables: {
                                     siteId: siteId,
                                     area: areas.flatMap((area) =>
@@ -393,7 +393,7 @@ export default function WorkPermitFormOverview(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             setEndDate(e.target.value);
-                            searchWorkpermit({
+                            searchWorkPermit({
                                 variables: {
                                     siteId: siteId,
                                     area: areas.flatMap((area) =>
@@ -473,7 +473,7 @@ export default function WorkPermitFormOverview(props: {
                                     <Button
                                         variant={'buttonBlueSolid'}
                                         onClick={() => {
-                                            searchWorkpermit({
+                                            searchWorkPermit({
                                                 variables: {
                                                     siteId: siteId,
                                                     area: areas.flatMap(
