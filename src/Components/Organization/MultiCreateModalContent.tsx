@@ -33,7 +33,7 @@ export default function MultiCreateModalContent(props: {
 
     return (
         <ModalContent
-            maxWidth={'380px'}
+            maxWidth={'400px'}
             maxHeight={'466px'}
             minHeight={'394px'}
             padding={'30px 45px 22px 45px'}
