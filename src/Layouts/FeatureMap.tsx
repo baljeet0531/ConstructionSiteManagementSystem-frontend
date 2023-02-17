@@ -135,7 +135,11 @@ export function getFeatureMap(site: {
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <Organization key={siteId} siteId={siteId} />
+                    <Organization
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
                 ),
         },
         people_overview: {

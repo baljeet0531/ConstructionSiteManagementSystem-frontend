@@ -82,11 +82,12 @@ const sizes: ISizes = {
 
 export default function AddPeopleModal(props: {
     siteId: string;
+    siteName: string;
     isOpen: boolean;
     onClose: () => void;
     modalName: modalName;
 }) {
-    const { siteId, isOpen, onClose, modalName } = props;
+    const { siteId, siteName, isOpen, onClose, modalName } = props;
     const toast = useToast();
     const [companyList, setCompanyList] = React.useState<string[]>([]);
     const companySelected = React.useRef<HTMLSelectElement>(null);
@@ -250,7 +251,7 @@ export default function AddPeopleModal(props: {
                                     fontSize={'12px'}
                                     lineHeight={'20px'}
                                 >
-                                    穩懋南科路竹廠機電一期新建工程
+                                    {siteName}
                                 </Text>
                             </Flex>
                         </ModalHeader>
@@ -350,7 +351,7 @@ export default function AddPeopleModal(props: {
                     <ModalOverlay />
                     {step == 1 ? (
                         <MultiCreateModalContent
-                            tableData={tableData}
+                            siteName={siteName}
                             header={'批次輸入'}
                             contentElement={
                                 <Flex
@@ -399,7 +400,7 @@ export default function AddPeopleModal(props: {
                         ></MultiCreateModalContent>
                     ) : (
                         <MultiCreateModalContent
-                            tableData={tableData}
+                            siteName={siteName}
                             header={'批次輸入'}
                             contentElement={
                                 <Flex

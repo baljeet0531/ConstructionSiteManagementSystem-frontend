@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     ModalContent,
@@ -8,12 +7,10 @@ import {
     Button,
     Flex,
     Text,
-    Textarea,
 } from '@chakra-ui/react';
-import { tableData } from './CreateLaborModal';
 
 export default function MultiCreateModalContent(props: {
-    tableData: tableData;
+    siteName: string;
     header: string;
     contentElement: JSX.Element;
     handleLeftButtonClick: Function;
@@ -22,7 +19,7 @@ export default function MultiCreateModalContent(props: {
     rightButtonText: string;
 }) {
     const {
-        tableData,
+        siteName,
         header,
         contentElement,
         handleLeftButtonClick,
@@ -55,7 +52,7 @@ export default function MultiCreateModalContent(props: {
                         fontSize={'12px'}
                         lineHeight={'20px'}
                     >
-                        穩懋南科路竹廠機電一期新建工程
+                        {siteName}
                     </Text>
                 </Flex>
             </ModalHeader>
