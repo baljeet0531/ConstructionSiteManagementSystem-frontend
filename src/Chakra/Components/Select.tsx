@@ -12,6 +12,7 @@ const Select = {
                     border: '2px solid',
                     borderColor: '#919AA9',
                     height: '36px',
+                    bg: '#FFFFFF',
                 },
                 rest,
             };

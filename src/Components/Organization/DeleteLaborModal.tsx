@@ -13,48 +13,50 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
-import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
-import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import { SITE_LABOR } from './Organization';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import PageLoading from '../Shared/PageLoading';
 
-const DELETE_HUMAN_RESOURCE = gql`
-    mutation DeleteHumanResource($idno: [String!]) {
-        deleteHumanResource(idno: $idno) {
+const DELETE_SITE_LABOR = gql`
+    mutation DeleteSiteLabor($idno: [String]!, $siteId: String!) {
+        deleteSiteLabor(idno: $idno, siteId: $siteId) {
             ok
             message
         }
     }
 `;
 
-export default function DeleteModal(props: {
+export default function DeleteLaborModal(props: {
+    siteId: string;
     isOpen: boolean;
     onClose: () => void;
     selected?: { name: string; idno: string }[];
 }) {
     const toast = useToast();
-    const { isOpen, onClose, selected } = props;
-    const [deleteHumanResource, { loading }] = useMutation(
-        DELETE_HUMAN_RESOURCE,
-        {
-            onCompleted: ({ deleteHumanResource }) => {
-                if (deleteHumanResource.ok) {
-                    defaultSuccessToast(toast, deleteHumanResource.message);
-                }
+    const { siteId, isOpen, onClose, selected } = props;
+    const [deleteSiteLabor, { loading }] = useMutation(DELETE_SITE_LABOR, {
+        onCompleted: ({ deleteSiteLabor }) => {
+            if (deleteSiteLabor.ok) {
+                defaultSuccessToast(toast, deleteSiteLabor.message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        refetchQueries: [
+            {
+                query: SITE_LABOR,
+                variables: {
+                    siteId: siteId,
+                },
             },
-            onError: (err) => {
-                console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: `${err}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
-            },
-            refetchQueries: [ALL_HUMAN_RESOURCE],
-            fetchPolicy: 'network-only',
-        }
-    );
+        ],
+        fetchPolicy: 'network-only',
+    });
 
     return (
         <>
@@ -73,7 +75,7 @@ export default function DeleteModal(props: {
                             fontSize={'20px'}
                             lineHeight={'20px'}
                         >
-                            確定刪除以下人員資料？
+                            確定將以下人員移除專案？
                         </Text>
                     </ModalHeader>
                     <ModalBody
@@ -131,7 +133,7 @@ export default function DeleteModal(props: {
                                 size={'sm'}
                                 onClick={() => {
                                     if (selected && selected.length != 0) {
-                                        deleteHumanResource({
+                                        deleteSiteLabor({
                                             variables: {
                                                 idno: Object.values(
                                                     selected
@@ -139,6 +141,7 @@ export default function DeleteModal(props: {
                                                     (selectedElement) =>
                                                         selectedElement.idno
                                                 ),
+                                                siteId: siteId,
                                             },
                                         });
                                     }

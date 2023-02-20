@@ -1,5 +1,3 @@
-// import { theme } from '@chakra-ui/react';
-
 const Text = {
     baseStyle: {
         fontFamily: 'Inter',
@@ -40,6 +38,20 @@ const Text = {
             fontWeight: '400',
             fontSize: '14px',
             lineHeight: '20px',
+            color: '#667080',
+        },
+        w400s14: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            color: '#667080',
+        },
+        w400s12: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '0.75rem',
+            lineHeight: '1.25rem',
             color: '#667080',
         },
     },

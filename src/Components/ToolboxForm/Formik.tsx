@@ -15,6 +15,10 @@ import {
     SignatureListName,
 } from '../../Interface/Toolbox';
 import ToolboxForm from './Form';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 const GQL_UPDATE_TOOLBOX = gql`
     mutation utm(
@@ -449,23 +453,12 @@ export default function WorkPermitFormik() {
     const [updateToolboxMeeting] = useMutation(GQL_UPDATE_TOOLBOX, {
         onCompleted: ({ updateToolboxMeeting }) => {
             if (updateToolboxMeeting.ok) {
-                toast({
-                    title: updateToolboxMeeting.message,
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultSuccessToast(toast, updateToolboxMeeting.message);
             }
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
     });
 
@@ -481,10 +474,13 @@ export default function WorkPermitFormik() {
                     const [signature] = signatures[key];
                     submitValues[key] = { ...signature };
                 }
-                let listKey: keyof Record<SignatureListName, MultiSignatureStateItem>;
+                let listKey: keyof Record<
+                    SignatureListName,
+                    MultiSignatureStateItem
+                >;
                 for (listKey in signatureLists) {
                     const [signatureList] = signatureLists[listKey];
-                    submitValues[listKey] = [...signatureList]
+                    submitValues[listKey] = [...signatureList];
                 }
 
                 updateToolboxMeeting({ variables: submitValues });
