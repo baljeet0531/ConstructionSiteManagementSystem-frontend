@@ -614,7 +614,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         { no: number | null | undefined; idno: string; name: string }[]
     >([]);
 
-    const [exportHumanResource, { loading: exportLaoding }] = useMutation(
+    const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
             onCompleted: async ({
@@ -769,16 +769,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             <DeleteModal
                 isOpen={isOpen}
                 onClose={onClose}
-                selected={
-                    tableValue &&
-                    selectedHuman &&
-                    selectedHuman.map((info) => ({
-                        name: info.name,
-                        idno: info.idno,
-                    }))
-                }
+                selected={tableValue && selectedHuman}
+                errorOnly={errorOnly}
             ></DeleteModal>
-            {(loading || exportLaoding) && <PageLoading />}
+            {(loading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }
