@@ -18,7 +18,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 const DELETE_SITE_LABOR = gql`
     mutation DeleteSiteLabor($idno: [String]!, $siteId: String!) {

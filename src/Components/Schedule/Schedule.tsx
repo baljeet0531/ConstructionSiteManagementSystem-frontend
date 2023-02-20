@@ -30,7 +30,7 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import FullCalendarElement from './FullCalenderElement';
 import Preview from './Preview';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 export const QUERY_SCHEDULE = gql`
     query Schedule($siteId: String!) {

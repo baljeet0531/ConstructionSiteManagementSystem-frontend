@@ -26,7 +26,7 @@ import ReactWindowTable, {
     getElementProps,
     IColumnMap,
     ISizes,
-} from '../../Utils/ReactWindowTable';
+} from '../Shared/ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import CreateLaborModal from './CreateLaborModal';
@@ -34,7 +34,7 @@ import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { exportFile } from '../../Utils/Resources';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $context: String) {
