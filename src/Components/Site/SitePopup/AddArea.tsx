@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { CloseIcon } from '../../../Icons/Icons';
 import { QUERY_SITE_AREAS } from '../SiteAreas';
+import { defaultErrorToast } from '../../../Utils/DefaultToast';
 
 const ADD_SITE_AREA = gql`
     mutation CreateSiteArea(
@@ -212,13 +213,10 @@ export default function AddArea(props: {
                                     });
                                     setShowPopup(false);
                                 } else {
-                                    toast({
-                                        title: '錯誤',
-                                        description: `廠區名稱不能為空`,
-                                        status: 'error',
-                                        duration: 3000,
-                                        isClosable: true,
-                                    });
+                                    defaultErrorToast(
+                                        toast,
+                                        '廠區名稱不能為空'
+                                    );
                                 }
                             }}
                         >

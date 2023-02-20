@@ -6,6 +6,7 @@ import FormPage from './FormPage';
 import { ApolloError, gql, useMutation } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
 import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
+import { defaultSuccessToast } from '../../Utils/DefaultToast';
 
 interface humanInfoValues {
     aCertificationDate: Date | string | undefined;
@@ -368,12 +369,7 @@ export default function PeopleEstablishment() {
                 const { HImgs, ...rest } = fileStates;
 
                 const handleCompeleted = (message: string) => {
-                    toast({
-                        title: message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultSuccessToast(toast, message);
                     setFileStates({
                         F6Img: undefined,
                         GImg: undefined,
