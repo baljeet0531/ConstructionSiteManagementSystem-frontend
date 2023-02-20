@@ -14,7 +14,7 @@ import {
 import { BackIcon, ReplyIcon } from '../../Icons/Icons';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_SCHEDULE } from './Schedule';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 const CREATE_SCHEDULE = gql`
     mutation createSchedule($siteId: String!, $srcFile: Upload!) {

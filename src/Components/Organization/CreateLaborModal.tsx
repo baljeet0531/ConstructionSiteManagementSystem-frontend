@@ -24,7 +24,7 @@ import ReactWindowTable, {
     dataCellStyle,
     IColumnMap,
     ISizes,
-} from '../../Utils/ReactWindowTable';
+} from '../Shared/ReactWindowTable';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SITE_LABOR, modalName } from './Organization';
 import MultiCreateModalContent from './MultiCreateModalContent';
@@ -32,7 +32,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 const ORGANIZATION_POOL = gql`
     query OrganizationPool($errlist: Boolean!) {
@@ -477,9 +477,11 @@ export default function AddPeopleModal(props: {
                                 let existedIdno: Set<string> = new Set();
                                 let nonExistedIdno: Set<string> = new Set();
                                 idnos?.forEach((idno) => {
-                                    tableData[idno]
-                                        ? existedIdno.add(idno)
-                                        : nonExistedIdno.add(idno);
+                                    const idnoTrimmed = idno.trim();
+                                    idnoTrimmed &&
+                                        (tableData[idnoTrimmed]
+                                            ? existedIdno.add(idnoTrimmed)
+                                            : nonExistedIdno.add(idnoTrimmed));
                                 });
                                 setTextareaValue(textareaRef.current?.value);
                                 setExistedIdno(Array.from(existedIdno));

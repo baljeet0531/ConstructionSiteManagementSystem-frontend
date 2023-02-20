@@ -15,7 +15,7 @@ import {
 import { gql, useMutation } from '@apollo/client';
 import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {

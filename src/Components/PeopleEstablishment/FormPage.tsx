@@ -36,7 +36,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import PageLoading from '../../Utils/PageLoading';
+import PageLoading from '../Shared/PageLoading';
 
 type imageType =
     | 'F6Img'
