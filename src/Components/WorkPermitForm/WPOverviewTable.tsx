@@ -160,7 +160,9 @@ export default function WPOverViewTable(props: {
                   )
                 : {}
             : overviewTableData;
-    const primarykeys = Object.keys(displayTableData).sort();
+    const primaryKeys = Object.keys(displayTableData).sort(
+        (a, b) => -a.localeCompare(b)
+    );
 
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
@@ -198,7 +200,7 @@ export default function WPOverViewTable(props: {
                 [primaryKey: string]: workPermitChecked;
             };
         }) => {
-            const info: workPermitChecked = data[primarykeys[rowIndex]];
+            const info: workPermitChecked = data[primaryKeys[rowIndex]];
             const variable = columnInfo[columnIndex]['variable'];
             if (variable == 'number') {
                 return (
@@ -317,7 +319,7 @@ export default function WPOverViewTable(props: {
                             onChange={(e) => {
                                 setOverviewTableData((prevState) => ({
                                     ...prevState,
-                                    [primarykeys[rowIndex]]: {
+                                    [primaryKeys[rowIndex]]: {
                                         ...info,
                                         isChecked: e.target.checked,
                                     },
@@ -378,7 +380,7 @@ export default function WPOverViewTable(props: {
                                     isChecked={allChecked}
                                     onChange={(e) => {
                                         setAllChecked(e.target.checked);
-                                        primarykeys.forEach(
+                                        primaryKeys.forEach(
                                             (primaryKey) =>
                                                 (displayTableData[primaryKey][
                                                     'isChecked'
@@ -400,7 +402,7 @@ export default function WPOverViewTable(props: {
                     );
                 }}
             </VariableSizeGrid>
-            {primarykeys.length != 0 && (
+            {primaryKeys.length != 0 && (
                 <VariableSizeGrid
                     ref={variableSizeDataRef}
                     style={{
@@ -410,11 +412,11 @@ export default function WPOverViewTable(props: {
                     columnCount={columnTitle.length}
                     columnWidth={getColumnWidth}
                     height={
-                        tableViewHeight < primarykeys.length * cellHeight
+                        tableViewHeight < primaryKeys.length * cellHeight
                             ? tableViewHeight
-                            : primarykeys.length * cellHeight
+                            : primaryKeys.length * cellHeight
                     }
-                    rowCount={primarykeys.length}
+                    rowCount={primaryKeys.length}
                     rowHeight={() => cellHeight}
                     width={tableViewWidth}
                     itemData={displayTableData}
