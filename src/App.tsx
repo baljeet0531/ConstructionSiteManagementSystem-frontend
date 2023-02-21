@@ -62,8 +62,8 @@ function App() {
                     element={<Layout page="eng_env_security_form" />}
                 />
                 <Route
-                    path="/eng/form/special"
-                    element={<Layout page="eng_special_form" />}
+                    path="/eng/form/opcheck"
+                    element={<Layout page="eng_op_check_form" />}
                 />
                 <Route
                     path="/eng/photo"
@@ -98,8 +98,8 @@ function App() {
                     element={<Layout page="outsource_env_security_form" />}
                 />
                 <Route
-                    path="/outsource/form/special"
-                    element={<Layout page="outsource_special_form" />}
+                    path="/outsource/form/opcheck"
+                    element={<Layout page="outsource_op_check_form" />}
                 />
                 <Route
                     path="/outsource/machinery/establishment"
