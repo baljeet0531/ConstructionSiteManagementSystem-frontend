@@ -6,6 +6,7 @@ import Select from '../Components/Select';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
 import Tabs from '../Components/Tabs';
+import Textarea from '../Components/Textarea';
 
 const myTheme = extendTheme({
     styles,
@@ -16,6 +17,7 @@ const myTheme = extendTheme({
         Input,
         Button,
         Tabs,
+        Textarea,
     },
 });
 

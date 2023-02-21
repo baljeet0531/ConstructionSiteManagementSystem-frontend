@@ -1,13 +1,11 @@
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
-    Center,
     Flex,
     IconButton,
     Input,
     InputGroup,
     InputLeftElement,
-    Spinner,
     Tab,
     TabList,
     TabPanels,
@@ -26,6 +24,8 @@ import {
     SearchIcon,
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+import PageLoading from '../Shared/PageLoading';
 import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';
@@ -85,7 +85,7 @@ export const ALL_HUMAN_RESOURCE = gql`
     }
 `;
 
-const EXPORT_HUMAN_RESOURCE = gql`
+export const EXPORT_HUMAN_RESOURCE = gql`
     mutation ExportHumanResource($idnos: [String]!, $username: String!) {
         exportHumanResource(idnos: $idnos, username: $username) {
             ok
@@ -614,7 +614,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         { no: number | null | undefined; idno: string; name: string }[]
     >([]);
 
-    const [exportHumanResource, { loading: exportLaoding }] = useMutation(
+    const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
             onCompleted: async ({
@@ -623,23 +623,17 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 exportHumanResource: {
                     ok: boolean;
                     message: string;
-                    path: [string];
+                    path: string;
                 };
             }) => {
                 if (exportHumanResource.ok) {
                     const { path, message } = exportHumanResource;
-                    await exportFile(path[0], message, toast);
+                    await exportFile(path, message, toast);
                 }
             },
             onError: (err) => {
                 console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: `${err}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultErrorToast(toast);
             },
             fetchPolicy: 'network-only',
         }
@@ -775,28 +769,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             <DeleteModal
                 isOpen={isOpen}
                 onClose={onClose}
-                selected={
-                    tableValue &&
-                    selectedHuman &&
-                    selectedHuman.map((info) => ({
-                        name: info.name,
-                        idno: info.idno,
-                    }))
-                }
+                selected={tableValue && selectedHuman}
+                errorOnly={errorOnly}
             ></DeleteModal>
-            {(loading || exportLaoding) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }
