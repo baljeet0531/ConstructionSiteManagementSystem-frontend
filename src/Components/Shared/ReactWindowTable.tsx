@@ -1,6 +1,17 @@
 import React from 'react';
-import { Box, Center, ChakraProps, Checkbox, Flex } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Center,
+    ChakraProps,
+    Checkbox,
+    Flex,
+    Tooltip,
+    Text,
+} from '@chakra-ui/react';
 import { areEqual, VariableSizeGrid } from 'react-window';
+import { IGQLSignature } from '../../Interface/Signature';
+import dayjs from 'dayjs';
 
 const tableCellStyle: ChakraProps = {
     border: '1px solid #919AA9',
@@ -48,9 +59,99 @@ export const defaultElement = ({ style, info, variable }: getElementProps) => (
     </Box>
 );
 
+export const CheckboxElement = (props: {
+    getElementProps: getElementProps;
+    setTableData: React.Dispatch<
+        React.SetStateAction<{
+            [primaryKey: string]: any;
+        }>
+    >;
+    primaryKey: string;
+}) => {
+    const { setTableData, getElementProps, primaryKey } = props;
+    const { style, info, variable } = getElementProps;
+    return (
+        <Box
+            {...dataCellStyle}
+            style={{
+                ...style,
+                paddingTop: '14px',
+                borderBottom: '1px solid #919AA9',
+            }}
+        >
+            <Checkbox
+                isChecked={info[variable]}
+                onChange={(e) => {
+                    setTableData((prevState) => ({
+                        ...prevState,
+                        [info[primaryKey]]: {
+                            ...info,
+                            isChecked: e.target.checked,
+                        },
+                    }));
+                }}
+            ></Checkbox>
+        </Box>
+    );
+};
+
+export const SignatureTooltip = (props: {
+    field: { signature: IGQLSignature; fieldLabel: string };
+}) => {
+    const { signature, fieldLabel } = props.field;
+    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
+    const label = signature ? (
+        <Text>
+            {`${fieldLabel}：`}
+            <br />
+            {signature.owner}
+            <br />
+            {dayjs(signature.time).format('YYYY-MM-DD HH:mm:ss')}
+        </Text>
+    ) : (
+        ''
+    );
+    return (
+        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+            <Button
+                w={'40px'}
+                h={'10px'}
+                bg={signature ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
+                borderRadius={'4px'}
+                onMouseLeave={() => setIsLabelOpen(false)}
+                onClick={() => setIsLabelOpen((prevState) => !prevState)}
+            ></Button>
+        </Tooltip>
+    );
+};
+
+export const SignatureStatusElement = (props: {
+    getElementProps: getElementProps;
+    signatureFieldList: { signature: IGQLSignature; fieldLabel: string }[];
+}) => {
+    const { getElementProps, signatureFieldList } = props;
+    const signatureStatusMap = signatureFieldList.map((field, index) => (
+        <SignatureTooltip key={index} field={field}></SignatureTooltip>
+    ));
+
+    return (
+        <Flex
+            style={getElementProps.style}
+            {...dataCellStyle}
+            gap={'2px'}
+            w={'170px'}
+            align={'center'}
+            justify={'center'}
+            height={'20px'}
+        >
+            {signatureStatusMap}
+        </Flex>
+    );
+};
+
 export interface getElementProps {
     style: React.CSSProperties;
-    info: { [primaryKey: string]: any };
+    info: any;
     variable: string;
 }
 
