@@ -11,12 +11,14 @@ import {
     PopoverArrow,
     PopoverBody,
     Grid,
+    useToast,
+    Checkbox,
 } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import PageLoading from '../Shared/PageLoading';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { IGQLSignature } from '../../Interface/Signature';
 import ReactWindowTable, {
@@ -27,6 +29,8 @@ import ReactWindowTable, {
     CheckboxElement,
     SignatureStatusElement,
 } from '../Shared/ReactWindowTable';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+import dayjs from 'dayjs';
 
 const QUERY_TOOLBOX = gql`
     ${SIGNATURE_FIELDS}
@@ -62,6 +66,12 @@ const QUERY_TOOLBOX = gql`
                 ...gqlSignatureFields
             }
         }
+    }
+`;
+
+const TOOLBOX_AREAS = gql`
+    query ToolboxArea($siteId: String!) {
+        toolboxArea(siteId: $siteId)
     }
 `;
 
@@ -190,15 +200,26 @@ export default function ToolboxFormOverview(props: {
             ),
         },
     ];
-
+    const toast = useToast();
     const { siteId, siteName } = props;
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-
+    const [areas, setAreas] = React.useState<
+        { name: string; isChecked: boolean }[]
+    >([]);
+    const [systems, setSystems] = React.useState<
+        { name: string; isChecked: boolean }[]
+    >([
+        { name: '空調系統', isChecked: false },
+        { name: '電力系統', isChecked: false },
+        { name: '消防系統', isChecked: false },
+        { name: '給排水系統', isChecked: false },
+        { name: '儀控系統', isChecked: false },
+    ]);
     const [tableData, setTableData] = React.useState<{
         [number: string]: IToolboxOverviewChecked;
     }>({});
-
-    console.log(tableData);
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
 
     const { loading } = useQuery(QUERY_TOOLBOX, {
         variables: {
@@ -226,6 +247,76 @@ export default function ToolboxFormOverview(props: {
         fetchPolicy: 'network-only',
     });
 
+    const [searchToolbox] = useLazyQuery(QUERY_TOOLBOX, {
+        onCompleted: ({
+            toolboxMeeting,
+        }: {
+            toolboxMeeting: IToolboxOverview[];
+        }) => {
+            const primaryKeys = toolboxMeeting.map((info) => info.number);
+            setFilteredPrimaryKey(primaryKeys);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+    const handleSearchCheckboxClick = (
+        setState: React.Dispatch<
+            React.SetStateAction<
+                {
+                    name: string;
+                    isChecked: boolean;
+                }[]
+            >
+        >,
+        index: number,
+        checked: boolean
+    ) => {
+        setState((prevState) => {
+            let newState = [...prevState];
+            newState[index] = { ...prevState[index], isChecked: checked };
+            return newState;
+        });
+    };
+    const areaCheckbox = areas.map((areaInfo, index) => (
+        <Checkbox
+            key={index}
+            isChecked={areaInfo.isChecked}
+            onChange={(e) =>
+                handleSearchCheckboxClick(setAreas, index, e.target.checked)
+            }
+        >
+            {areaInfo.name}
+        </Checkbox>
+    ));
+    const systemCheckbox = systems.map((systemInfo, index) => (
+        <Checkbox
+            key={index}
+            isChecked={systemInfo.isChecked}
+            onChange={(e) =>
+                handleSearchCheckboxClick(setSystems, index, e.target.checked)
+            }
+        >
+            {systemInfo.name}
+        </Checkbox>
+    ));
+    useQuery(TOOLBOX_AREAS, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ toolboxArea }: { toolboxArea: string[] }) => {
+            setAreas(
+                toolboxArea.flatMap((area) =>
+                    area != '' ? { name: area, isChecked: false } : []
+                )
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+    });
     return (
         <Flex
             direction={'column'}
@@ -243,7 +334,22 @@ export default function ToolboxFormOverview(props: {
                 <Flex gap={'10px'} align={'center'}>
                     <DateRangePicker
                         value={dateRange}
-                        onChange={(value) => setDateRange(value)}
+                        onChange={(value) => {
+                            searchToolbox({
+                                variables: {
+                                    siteId: siteId,
+                                    ...(value && {
+                                        startDate: `${dayjs(value[0]).format(
+                                            'YYYY-MM-DD'
+                                        )}T08:30:00`,
+                                        endDate: `${dayjs(value[1]).format(
+                                            'YYYY-MM-DD'
+                                        )}T17:30:00`,
+                                    }),
+                                },
+                            });
+                            setDateRange(value);
+                        }}
                     />
                     <Popover placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -281,7 +387,7 @@ export default function ToolboxFormOverview(props: {
                                             wordBreak={'break-word'}
                                             maxH={'202px'}
                                         >
-                                            {/* {areaCheckbox} */}
+                                            {areaCheckbox}
                                         </Flex>
                                     </Flex>
                                     <Flex
@@ -297,38 +403,44 @@ export default function ToolboxFormOverview(props: {
                                             wordBreak={'break-word'}
                                             maxH={'202px'}
                                         >
-                                            {/* {systemCheckbox} */}
+                                            {systemCheckbox}
                                         </Flex>
                                     </Flex>
                                 </Grid>
                                 <Flex justifyContent="flex-end">
                                     <Button
                                         variant={'buttonBlueSolid'}
-                                        // onClick={() => {
-                                        //     searchWorkpermit({
-                                        //         variables: {
-                                        //             siteId: siteId,
-                                        //             area: areas.flatMap(
-                                        //                 (area) =>
-                                        //                     area.isChecked
-                                        //                         ? area.name
-                                        //                         : []
-                                        //             ),
-                                        //             system: systems.flatMap(
-                                        //                 (system) =>
-                                        //                     system.isChecked
-                                        //                         ? system.name
-                                        //                         : []
-                                        //             ),
-                                        //             ...(startDate && {
-                                        //                 startDate: `${startDate}T08:30:00`,
-                                        //             }),
-                                        //             ...(endDate && {
-                                        //                 endDate: `${endDate}T08:30:00`,
-                                        //             }),
-                                        //         },
-                                        //     });
-                                        // }}
+                                        onClick={() => {
+                                            searchToolbox({
+                                                variables: {
+                                                    siteId: siteId,
+                                                    area: areas.flatMap(
+                                                        (area) =>
+                                                            area.isChecked
+                                                                ? area.name
+                                                                : []
+                                                    ),
+                                                    system: systems.flatMap(
+                                                        (system) =>
+                                                            system.isChecked
+                                                                ? system.name
+                                                                : []
+                                                    ),
+                                                    ...(dateRange && {
+                                                        startDate: `${dayjs(
+                                                            dateRange[0]
+                                                        ).format(
+                                                            'YYYY-MM-DD'
+                                                        )}T08:30:00`,
+                                                        endDate: `${dayjs(
+                                                            dateRange[1]
+                                                        ).format(
+                                                            'YYYY-MM-DD'
+                                                        )}T17:30:00`,
+                                                    }),
+                                                },
+                                            });
+                                        }}
                                     >
                                         確定搜尋
                                     </Button>
@@ -345,6 +457,7 @@ export default function ToolboxFormOverview(props: {
                 tableData={tableData}
                 columnMap={columnMap}
                 sizes={sizes}
+                filteredPrimaryKey={filteredPrimaryKey}
             />
             {loading && <PageLoading />}
         </Flex>
