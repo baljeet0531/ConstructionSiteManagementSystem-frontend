@@ -173,8 +173,16 @@ export function getFeatureMap(site: {
         eng_toolbox_form: {
             name: '工具箱會議',
             path: '/eng/form/toolbox',
-            // page: <ToolboxFormOverview siteId={siteId} siteName={siteName} />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <ToolboxFormOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_fault_form: {
             name: '工安缺失單',
