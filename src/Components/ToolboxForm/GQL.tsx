@@ -12,189 +12,162 @@ import {
     SignatureListName,
     SignatureName,
 } from '../../Interface/Toolbox';
+import {
+    SIGNATURE_FIELDS,
+    APPEARANCE_SIGN_FIELD,
+} from '../../Utils/GQLFragments';
 
 export const GQL_TOOLBOX_QUERY = gql`
-uery queryToolboxMeeting ($siteId: String!, $number: String){
-    query toolboxOptions($siteId: String!) {
+    ${SIGNATURE_FIELDS}
+    ${APPEARANCE_SIGN_FIELD}
+    query queryToolboxMeeting($siteId: String!, $number: String) {
         contractingCorpName(siteId: $siteId)
+        toolboxMeeting(siteId: $siteId, number: $number) {
+            siteId
+            number
+            system
+            systemBranch
+            project
+            area
+            laborAmount
+            meetingDatetime
+            meetingPlace
+            primeContractCorp
+            primeContractStaff
+            minorContractCorpOne
+            minorContractOneStaff
+            minorContractCorpTwo
+            minorContractTwoStaff
+            minorContractCorpThree
+            minorContractThreeStaff
+            workContent
+            workPlace
+            physicalFall
+            scrape
+            objectFall
+            foreignEnterEye
+            heatTouch
+            microthermTouch
+            noise
+            eletricDisaster
+            collapse
+            radiation
+            chemicalBurn
+            chemicalInhalation
+            fireDisaster
+            explode
+            otherDisasterNone
+            hypoxia
+            biologicalHazard
+            outdoorHeat
+            otherDisaster
+            chemicalNone
+            chemicalInclude
+            gasNone
+            gasInclude
+            head
+            headWorkspace
+            headElectric
+            headPlastic
+            eye
+            eyeMechanical
+            eyeRadia
+            ear
+            earEarplugs
+            earEarmuffs
+            breathe
+            breatheDust
+            breatheFiltration
+            breatheScba
+            breathePapr
+            breathOxygen
+            hand
+            handCut
+            handGrand
+            handHeat
+            handElectirc
+            haneChemical
+            foot
+            footNormal
+            footChemical
+            body
+            bodyBelt
+            bodyMask
+            bodyClothing
+            bodyVest
+            fall
+            fallTrestleLadder
+            fallTravelLadder
+            fallScaffold
+            fallAerialVehicle
+            fallSafeLine
+            fallCage
+            fallFence
+            fallCover
+            fallSafeNet
+            fallWarningFence
+            fallArrestor
+            electric
+            electricBreaker
+            electricShockPrevention
+            electricElectroscope
+            fire
+            fireExtinguisher
+            fireBlanket
+            fireBackfire
+            oxygen
+            oxygenVentilation
+            oxygenLifeDetection
+            oxygenGasDetection
+            oxygenLifting
+            oxygenRescue
+            ohterPrevention
+            publicityMatters
+            contentConformBeforeWork
+            contentConformDuringWork
+            contentConformSupervisor
+            safetyMeasureBeforeWork
+            safetyMeasureDuringWork
+            safetyMeasureKnockOff
+            safetyMeasureSupervisor
+            staffStateBeforeWork
+            staffStateDuringWork
+            staffStateKnockOff
+            staffStateSupervisor
+            principleOnSiteBeforeWork
+            principleOnSiteDuringWork
+            principleOnSiteKnockOff
+            principleOnSiteSupervisor
+            restorationKnockOff
+            restorationSupervisor
+            abnormal
+            abnormalRecord
+            contractingCorpStaffSignatureFirst {
+                ...gqlSignatureFields
+            }
+            contractingCorpStaffSignatureSecond {
+                ...gqlSignatureFields
+            }
+            contractingCorpStaffSignatureThird {
+                ...gqlSignatureFields
+            }
+            systemEngineerSignature {
+                ...gqlSignatureFields
+            }
+            primeAppearSignature {
+                ...gqlAppearFields
+            }
+            viceFirstAppearSignature {
+                ...gqlAppearFields
+            }
+            viceSecondAppearSignature {
+                ...gqlAppearFields
+            }
+            viceThirdAppearSignature {
+                ...gqlAppearFields
+            }
+        }
     }
-    toolboxMeeting(
-      siteId: $siteId
-      number: $number
-    ) {
-      siteId
-      number
-      system
-      systemBranch
-      project
-      area
-      laborAmount
-      meetingDatetime
-      meetingPlace
-      primeContractCorp
-      primeContractStaff
-      minorContractCorpOne
-      minorContractOneStaff
-      minorContractCorpTwo
-      minorContractTwoStaff
-      minorContractCorpThree
-      minorContractThreeStaff
-      workContent
-      workPlace
-      physicalFall
-      scrape
-      objectFall
-      foreignEnterEye
-      heatTouch
-      microthermTouch
-      noise
-      eletricDisaster
-      collapse
-      radiation
-      chemicalBurn
-      chemicalInhalation
-      fireDisaster
-      explode
-      otherDisasterNone
-      hypoxia
-      biologicalHazard
-      outdoorHeat
-      otherDisaster
-      chemicalNone
-      chemicalInclude
-      gasNone
-      gasInclude
-      head
-      headWorkspace
-      headElectric
-      headPlastic
-      eye
-      eyeMechanical
-      eyeRadia
-      ear
-      earEarplugs
-      earEarmuffs
-      breathe
-      breatheDust
-      breatheFiltration
-      breatheScba
-      breathePapr
-      breathOxygen
-      hand
-      handCut
-      handGrand
-      handHeat
-      handElectirc
-      haneChemical
-      foot
-      footNormal
-      footChemical
-      body
-      bodyBelt
-      bodyMask
-      bodyClothing
-      bodyVest
-      fall
-      fallTrestleLadder
-      fallTravelLadder
-      fallScaffold
-      fallAerialVehicle
-      fallSafeLine
-      fallCage
-      fallFence
-      fallCover
-      fallSafeNet
-      fallWarningFence
-      fallArrestor
-      electric
-      electricBreaker
-      electricShockPrevention
-      electricElectroscope
-      fire
-      fireExtinguisher
-      fireBlanket
-      fireBackfire
-      oxygen
-      oxygenVentilation
-      oxygenLifeDetection
-      oxygenGasDetection
-      oxygenLifting
-      oxygenRescue
-      ohterPrevention
-      publicityMatters
-      contentConformBeforeWork
-      contentConformDuringWork
-      contentConformSupervisor
-      safetyMeasureBeforeWork
-      safetyMeasureDuringWork
-      safetyMeasureKnockOff
-      safetyMeasureSupervisor
-      staffStateBeforeWork
-      staffStateDuringWork
-      staffStateKnockOff
-      staffStateSupervisor
-      principleOnSiteBeforeWork
-      principleOnSiteDuringWork
-      principleOnSiteKnockOff
-      principleOnSiteSupervisor
-      restorationKnockOff
-      restorationSupervisor
-      abnormal
-      abnormalRecord
-      contractingCorpStaffSignatureFirst {
-        no
-        path
-        time
-        owner
-      }
-      contractingCorpStaffSignatureSecond {
-        no
-        path
-        time
-        owner
-      }
-      contractingCorpStaffSignatureThird {
-        no
-        path
-        time
-        owner
-      }
-      systemEngineerSignature {
-        no
-        path
-        time
-        owner
-      }
-      primeAppearSignature {
-        no
-        path
-        time
-        owner
-        stype
-      }
-      viceFirstAppearSignature {
-        no
-        path
-        time
-        owner
-        stype
-      }
-      viceSecondAppearSignature {
-        no
-        path
-        time
-        owner
-        stype
-      }
-      viceThirdAppearSignature {
-        no
-        path
-        time
-        owner
-        stype
-      }
-    }
-  }  
 `;
 
 export const GQL_TOOLBOX_UPDATE = gql`
@@ -490,6 +463,16 @@ export function parseToolbox(
         t.meetingTime = dt[1];
     }
 
+    if (!t.workContent) {
+        const cols: (keyof IGQLToolbox)[] = [
+            'system',
+            'systemBranch',
+            'project',
+        ];
+        const values = cols.flatMap((c) => (t[c] ? t[c] : []));
+        t.workContent = values.join('/');
+    }
+
     // Handle single singnatures
     for (let i = 0; i < signatureColName.length; i++) {
         const key = signatureColName[i];
@@ -517,4 +500,5 @@ export function parseToolbox(
         }
         setSignatureList(signList);
     }
+    return t;
 }
