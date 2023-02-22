@@ -138,11 +138,8 @@ export default function WorkPermitFormik() {
                     <ModalBody>
                         <VStack>
                             <Box w="100%">
-                                依規定，工具箱會議及巡檢紀錄建議簽核時間如下：
+                                依規定，工作許可單建議於工程前一天完成簽核程序。
                             </Box>
-                            <Box w="100%">施工前 08:30~09:30 </Box>
-                            <Box w="100%">施工中 13:00~14:00</Box>
-                            <Box w="100%">收工前 16:30~17:30</Box>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
