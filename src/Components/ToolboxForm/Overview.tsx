@@ -13,12 +13,14 @@ import {
     Grid,
     useToast,
     Checkbox,
+    Box,
+    Link,
 } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import PageLoading from '../Shared/PageLoading';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { IGQLSignature } from '../../Interface/Signature';
 import ReactWindowTable, {
@@ -28,9 +30,12 @@ import ReactWindowTable, {
     defaultElement,
     CheckboxElement,
     SignatureStatusElement,
+    dataCellStyle,
 } from '../Shared/ReactWindowTable';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
+import { exportFile } from '../../Utils/Resources';
+import { Cookies } from 'react-cookie';
 
 const QUERY_TOOLBOX = gql`
     ${SIGNATURE_FIELDS}
@@ -79,6 +84,24 @@ const TOOLBOX_AREAS = gql`
     }
 `;
 
+const EXPORT_TOOLBOX = gql`
+    mutation ExportToolboxMeeting(
+        $number: [String]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportToolboxMeeting(
+            number: $number
+            siteId: $siteId
+            username: $username
+        ) {
+            ok
+            message
+            path
+        }
+    }
+`;
+
 interface IToolboxOverview {
     number: string;
     system: string;
@@ -121,7 +144,17 @@ export default function ToolboxFormOverview(props: {
             title: '單號',
             width: 83,
             variable: 'number',
-            getElement: defaultElement,
+            getElement: ({ style, info, variable }) => (
+                <Box style={style} {...dataCellStyle}>
+                    <Link
+                        onClick={() => {
+                            navToolboxMeeting(info[variable]);
+                        }}
+                    >
+                        {info[variable]}
+                    </Link>
+                </Box>
+            ),
         },
         {
             title: '系統',
@@ -251,21 +284,45 @@ export default function ToolboxFormOverview(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [searchToolbox] = useLazyQuery(QUERY_TOOLBOX, {
-        onCompleted: ({
-            toolboxMeeting,
-        }: {
-            toolboxMeeting: IToolboxOverview[];
-        }) => {
-            const primaryKeys = toolboxMeeting.map((info) => info.number);
-            setFilteredPrimaryKey(primaryKeys);
-        },
-        onError: (err) => {
-            console.log(err);
-            defaultErrorToast(toast);
-        },
-        fetchPolicy: 'network-only',
-    });
+    const [searchToolbox, { loading: searchLoading }] = useLazyQuery(
+        QUERY_TOOLBOX,
+        {
+            onCompleted: ({
+                toolboxMeeting,
+            }: {
+                toolboxMeeting: IToolboxOverview[];
+            }) => {
+                const primaryKeys = toolboxMeeting.map((info) => info.number);
+                setFilteredPrimaryKey(primaryKeys);
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const handleSearch = (value: DateRange | null) => {
+        searchToolbox({
+            variables: {
+                siteId: siteId,
+                area: areas.flatMap((area) =>
+                    area.isChecked ? area.name : []
+                ),
+                system: systems.flatMap((system) =>
+                    system.isChecked ? system.name : []
+                ),
+                ...(value && {
+                    startDate: `${dayjs(value[0]).format(
+                        'YYYY-MM-DD'
+                    )}T08:30:00`,
+                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T17:30:00`,
+                }),
+            },
+        });
+    };
+
     const handleSearchCheckboxClick = (
         setState: React.Dispatch<
             React.SetStateAction<
@@ -322,24 +379,35 @@ export default function ToolboxFormOverview(props: {
         },
     });
 
-    const handleSearch = (value: DateRange | null) => {
-        searchToolbox({
-            variables: {
-                siteId: siteId,
-                area: areas.flatMap((area) =>
-                    area.isChecked ? area.name : []
-                ),
-                system: systems.flatMap((system) =>
-                    system.isChecked ? system.name : []
-                ),
-                ...(value && {
-                    startDate: `${dayjs(value[0]).format(
-                        'YYYY-MM-DD'
-                    )}T08:30:00`,
-                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T17:30:00`,
-                }),
+    const [exportToolbox, { loading: exportLoading }] = useMutation(
+        EXPORT_TOOLBOX,
+        {
+            onCompleted: async ({
+                exportToolboxMeeting,
+            }: {
+                exportToolboxMeeting: {
+                    ok: boolean;
+                    message: string;
+                    path: string;
+                };
+            }) => {
+                if (exportToolboxMeeting.ok) {
+                    const { path, message } = exportToolboxMeeting;
+                    await exportFile(path, message, toast);
+                }
             },
-        });
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const navToolboxMeeting = (number: string) => {
+        const url = `${window.location.origin}/form/toolbox`;
+        localStorage.setItem('toolboxNumber', number);
+        window.open(url, '_blank');
     };
 
     return (
@@ -359,6 +427,10 @@ export default function ToolboxFormOverview(props: {
                 <Flex gap={'10px'} align={'center'}>
                     <DateRangePicker
                         value={dateRange}
+                        style={{
+                            border: '2px solid #919AA9',
+                            borderRadius: '6px',
+                        }}
                         onChange={(value) => {
                             handleSearch(value);
                             setDateRange(value);
@@ -434,7 +506,23 @@ export default function ToolboxFormOverview(props: {
                         </PopoverContent>
                     </Popover>
                 </Flex>
-                <Button leftIcon={<LaunchIcon />} variant={'buttonGrayOutline'}>
+                <Button
+                    leftIcon={<LaunchIcon />}
+                    variant={'buttonGrayOutline'}
+                    onClick={() => {
+                        const username = new Cookies().get('username');
+                        const numbers = Object.values(tableData).flatMap(
+                            (info) => (info.isChecked ? info.number : [])
+                        );
+                        exportToolbox({
+                            variables: {
+                                number: numbers,
+                                siteId: siteId,
+                                username: username,
+                            },
+                        });
+                    }}
+                >
                     輸出
                 </Button>
             </Flex>
@@ -445,7 +533,7 @@ export default function ToolboxFormOverview(props: {
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
             />
-            {loading && <PageLoading />}
+            {(loading || searchLoading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }
