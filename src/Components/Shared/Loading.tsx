@@ -16,3 +16,18 @@ export default function PageLoading() {
         </Center>
     );
 }
+
+export function FormLoading() {
+    return (
+        <Center
+            position="fixed"
+            top={0}
+            w="100vw"
+            h="100vh"
+            bg={'#D9D9D980'}
+            zIndex={1}
+        >
+            <Spinner size={'xl'} />
+        </Center>
+    );
+}
