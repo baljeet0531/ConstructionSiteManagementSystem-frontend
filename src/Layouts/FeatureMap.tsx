@@ -98,7 +98,16 @@ export function getFeatureMap(site: {
             path: '/dashboard',
             icon: DashboardIcon,
             // page: <Dashboard />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Dashboard
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         site: {
             name: '專案建置',
