@@ -32,7 +32,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import PageLoading from '../Shared/Loading';
+import { PageLoading } from '../Shared/Loading';
 
 const ORGANIZATION_POOL = gql`
     query OrganizationPool($errlist: Boolean!) {
