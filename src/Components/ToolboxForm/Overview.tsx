@@ -316,8 +316,8 @@ export default function ToolboxFormOverview(props: {
                 ...(value && {
                     startDate: `${dayjs(value[0]).format(
                         'YYYY-MM-DD'
-                    )}T08:30:00`,
-                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T17:30:00`,
+                    )}T00:00:00`,
+                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T23:59:59`,
                 }),
             },
         });
