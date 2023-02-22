@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { dashboardGridItemStyle } from './Style';
+import InstantInfo from './InstantInfo';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
@@ -34,7 +35,9 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                 gap={'20px 17px'}
                 borderTop={'1px solid #667080'}
             >
-                <GridItem {...dashboardGridItemStyle} rowSpan={2}></GridItem>
+                <GridItem {...dashboardGridItemStyle} rowSpan={2}>
+                    <InstantInfo></InstantInfo>
+                </GridItem>
             </Grid>
         </Flex>
     );

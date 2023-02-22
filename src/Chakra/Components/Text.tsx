@@ -62,6 +62,22 @@ const Text = {
             lineHeight: '1.25rem',
             color: '#667080',
         },
+        w700s16: {
+            fontStyle: 'normal',
+            fontWeight: '700',
+            fontSize: '1rem',
+            lineHeight: '1.5rem',
+            color: '#667080',
+        },
+        dashboardList: {
+            fontStyle: 'normal',
+            fontWeight: '400',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            color: '#667080',
+            paddingTop: '7.5px',
+            paddingBottom: '7.5px',
+        },
     },
 };
 
