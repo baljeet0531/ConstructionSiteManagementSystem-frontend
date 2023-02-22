@@ -1,8 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Formik } from 'formik';
-import { gql, useMutation } from '@apollo/client';
-import { Cookies } from 'react-cookie';
-import { useToast } from '@chakra-ui/react';
+import { useMutation } from '@apollo/client';
+import {
+    Box,
+    Button,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure,
+    useToast,
+    VStack,
+} from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import {
     ISignature,
@@ -14,282 +26,13 @@ import {
     SignatureName,
     SignatureListName,
 } from '../../Interface/Toolbox';
+import { GQL_TOOLBOX_UPDATE } from './GQL';
 import ToolboxForm from './Form';
-import {
-    defaultErrorToast,
-    defaultSuccessToast,
-} from '../../Utils/DefaultToast';
-
-const GQL_UPDATE_TOOLBOX = gql`
-    mutation utm(
-        $abnormal: Boolean
-        $abnormalRecord: String
-        $area: String
-        $biologicalHazard: Boolean
-        $body: Boolean
-        $bodyBelt: Boolean
-        $bodyClothing: Boolean
-        $bodyMask: Boolean
-        $bodyVest: Boolean
-        $breathOxygen: Boolean
-        $breathe: Boolean
-        $breathePapr: Boolean
-        $breatheScba: Boolean
-        $breatheDust: Boolean
-        $breatheFiltration: Boolean
-        $chemicalBurn: Boolean
-        $chemicalInclude: String
-        $chemicalInhalation: Boolean
-        $chemicalNone: Boolean
-        $collapse: Boolean
-        $contentConformSupervisor: Boolean
-        $contentConformBeforeWork: Boolean
-        $contentConformDuringWork: Boolean
-        $contractingCorpStaffSignatureFirst: signatureInput
-        $contractingCorpStaffSignatureSecond: signatureInput
-        $contractingCorpStaffSignatureThird: signatureInput
-        $ear: Boolean
-        $earEarmuffs: Boolean
-        $earEarplugs: Boolean
-        $electric: Boolean
-        $electricBreaker: Boolean
-        $electricElectroscope: Boolean
-        $electricShockPrevention: Boolean
-        $eletricDisaster: Boolean
-        $explode: Boolean
-        $eye: Boolean
-        $eyeMechanical: Boolean
-        $eyeRadia: Boolean
-        $fall: Boolean
-        $fallAerialVehicle: Boolean
-        $fallArrestor: Boolean
-        $fallCage: Boolean
-        $fallCover: Boolean
-        $fallFence: Boolean
-        $fallSafeLine: Boolean
-        $fallSafeNet: Boolean
-        $fallScaffold: Boolean
-        $fallTravelLadder: Boolean
-        $fallTrestleLadder: Boolean
-        $fallWarningFence: Boolean
-        $fire: Boolean
-        $fireBackfire: Boolean
-        $fireBlanket: Boolean
-        $fireDisaster: Boolean
-        $fireExtinguisher: Boolean
-        $foot: Boolean
-        $footChemical: Boolean
-        $footNormal: Boolean
-        $foreignEnterEye: Boolean
-        $gasInclude: String
-        $gasNone: Boolean
-        $hand: Boolean
-        $handCut: Boolean
-        $handElectirc: Boolean
-        $handGrand: Boolean
-        $handHeat: Boolean
-        $haneChemical: Boolean
-        $head: Boolean
-        $headElectric: Boolean
-        $headPlastic: Boolean
-        $headWorkspace: Boolean
-        $heatTouch: Boolean
-        $hypoxia: Boolean
-        $meetingDatetime: DateTime
-        $meetingPlace: String
-        $microthermTouch: Boolean
-        $minorContractCorpOne: String
-        $minorContractCorpThree: String
-        $minorContractCorpTwo: String
-        $minorContractOneStaff: String
-        $minorContractThreeStaff: String
-        $minorContractTwoStaff: String
-        $noise: Boolean
-        $number: String!
-        $objectFall: Boolean
-        $ohterPrevention: String
-        $otherDisaster: String
-        $otherDisasterNone: Boolean
-        $outdoorHeat: Boolean
-        $oxygen: Boolean
-        $oxygenGasDetection: Boolean
-        $oxygenLifeDetection: Boolean
-        $oxygenLifting: Boolean
-        $oxygenRescue: Boolean
-        $oxygenVentilation: Boolean
-        $primeContractCorp: String
-        $primeContractStaff: String
-        $primeContractingCorpAppearance: [signatureInput]
-        $principleOnSiteBeforeWork: Boolean
-        $principleOnSiteDuringWork: Boolean
-        $principleOnSiteKnockOff: Boolean
-        $principleOnSiteSupervisor: Boolean
-        $project: String
-        $publicityMatters: String
-        $radiation: Boolean
-        $restorationKnockOff: Boolean
-        $restorationSupervisor: Boolean
-        $safetyMeasureBeforeWork: Boolean
-        $safetyMeasureDuringWork: Boolean
-        $safetyMeasureKnockOff: Boolean
-        $safetyMeasureSupervisor: Boolean
-        $scrape: Boolean
-        $siteId: String!
-        $staffStateBeforeWork: Boolean
-        $staffStateDuringWork: Boolean
-        $staffStateKnockOff: Boolean
-        $staffStateSupervisor: Boolean
-        $system: String
-        $systemBranch: String
-        $systemEngineerSignature: signatureInput
-        $username: String!
-        $viceFirstContractingCorpAppearance: [signatureInput]
-        $viceSecondContractingCorpAppearance: [signatureInput]
-        $viceThirdContractingCorpAppearance: [signatureInput]
-        $workContent: String
-        $workPlace: String
-    ) {
-        updateToolboxMeeting(
-            abnormal: $abnormal
-            abnormalRecord: $abnormalRecord
-            area: $area
-            biologicalHazard: $biologicalHazard
-            body: $body
-            bodyBelt: $bodyBelt
-            bodyClothing: $bodyClothing
-            bodyMask: $bodyMask
-            bodyVest: $bodyVest
-            breathOxygen: $breathOxygen
-            breathe: $breathe
-            breathePapr: $breathePapr
-            breatheScba: $breatheScba
-            breatheDust: $breatheDust
-            breatheFiltration: $breatheFiltration
-            chemicalBurn: $chemicalBurn
-            chemicalInclude: $chemicalInclude
-            chemicalInhalation: $chemicalInhalation
-            chemicalNone: $chemicalNone
-            collapse: $collapse
-            contentConformSupervisor: $contentConformSupervisor
-            contentConformBeforeWork: $contentConformBeforeWork
-            contentConformDuringWork: $contentConformDuringWork
-            contractingCorpStaffSignatureFirst: $contractingCorpStaffSignatureFirst
-            contractingCorpStaffSignatureSecond: $contractingCorpStaffSignatureSecond
-            contractingCorpStaffSignatureThird: $contractingCorpStaffSignatureThird
-            ear: $ear
-            earEarmuffs: $earEarmuffs
-            earEarplugs: $earEarplugs
-            electric: $electric
-            electricBreaker: $electricBreaker
-            electricElectroscope: $electricElectroscope
-            electricShockPrevention: $electricShockPrevention
-            eletricDisaster: $eletricDisaster
-            explode: $explode
-            eye: $eye
-            eyeMechanical: $eyeMechanical
-            eyeRadia: $eyeRadia
-            fall: $fall
-            fallAerialVehicle: $fallAerialVehicle
-            fallArrestor: $fallArrestor
-            fallCage: $fallCage
-            fallCover: $fallCover
-            fallFence: $fallFence
-            fallSafeLine: $fallSafeLine
-            fallSafeNet: $fallSafeNet
-            fallScaffold: $fallScaffold
-            fallTravelLadder: $fallTravelLadder
-            fallTrestleLadder: $fallTrestleLadder
-            fallWarningFence: $fallWarningFence
-            fire: $fire
-            fireBackfire: $fireBackfire
-            fireBlanket: $fireBlanket
-            fireDisaster: $fireDisaster
-            fireExtinguisher: $fireExtinguisher
-            foot: $foot
-            footChemical: $footChemical
-            footNormal: $footNormal
-            foreignEnterEye: $foreignEnterEye
-            gasInclude: $gasInclude
-            gasNone: $gasNone
-            hand: $hand
-            handCut: $handCut
-            handElectirc: $handElectirc
-            handGrand: $handGrand
-            handHeat: $handHeat
-            haneChemical: $haneChemical
-            head: $head
-            headElectric: $headElectric
-            headPlastic: $headPlastic
-            headWorkspace: $headWorkspace
-            heatTouch: $heatTouch
-            hypoxia: $hypoxia
-            meetingDatetime: $meetingDatetime
-            meetingPlace: $meetingPlace
-            microthermTouch: $microthermTouch
-            minorContractCorpOne: $minorContractCorpOne
-            minorContractCorpThree: $minorContractCorpThree
-            minorContractCorpTwo: $minorContractCorpTwo
-            minorContractOneStaff: $minorContractOneStaff
-            minorContractThreeStaff: $minorContractThreeStaff
-            minorContractTwoStaff: $minorContractTwoStaff
-            noise: $noise
-            number: $number
-            objectFall: $objectFall
-            ohterPrevention: $ohterPrevention
-            otherDisaster: $otherDisaster
-            otherDisasterNone: $otherDisasterNone
-            outdoorHeat: $outdoorHeat
-            oxygen: $oxygen
-            oxygenGasDetection: $oxygenGasDetection
-            oxygenLifeDetection: $oxygenLifeDetection
-            oxygenLifting: $oxygenLifting
-            oxygenRescue: $oxygenRescue
-            oxygenVentilation: $oxygenVentilation
-            primeContractCorp: $primeContractCorp
-            primeContractStaff: $primeContractStaff
-            primeContractingCorpAppearance: $primeContractingCorpAppearance
-            principleOnSiteBeforeWork: $principleOnSiteBeforeWork
-            principleOnSiteDuringWork: $principleOnSiteDuringWork
-            principleOnSiteKnockOff: $principleOnSiteKnockOff
-            principleOnSiteSupervisor: $principleOnSiteSupervisor
-            project: $project
-            publicityMatters: $publicityMatters
-            radiation: $radiation
-            restorationKnockOff: $restorationKnockOff
-            restorationSupervisor: $restorationSupervisor
-            safetyMeasureBeforeWork: $safetyMeasureBeforeWork
-            safetyMeasureDuringWork: $safetyMeasureDuringWork
-            safetyMeasureKnockOff: $safetyMeasureKnockOff
-            safetyMeasureSupervisor: $safetyMeasureSupervisor
-            scrape: $scrape
-            siteId: $siteId
-            staffStateBeforeWork: $staffStateBeforeWork
-            staffStateDuringWork: $staffStateDuringWork
-            staffStateKnockOff: $staffStateKnockOff
-            staffStateSupervisor: $staffStateSupervisor
-            system: $system
-            systemBranch: $systemBranch
-            systemEngineerSignature: $systemEngineerSignature
-            username: $username
-            viceFirstContractingCorpAppearance: $viceFirstContractingCorpAppearance
-            viceSecondContractingCorpAppearance: $viceSecondContractingCorpAppearance
-            viceThirdContractingCorpAppearance: $viceThirdContractingCorpAppearance
-            workContent: $workContent
-            workPlace: $workPlace
-        ) {
-            ok
-            message
-        }
-    }
-`;
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
-    const number = localStorage.getItem('ToolboxNumber') as string;
-    // const value = getToolbox(siteId, number)
-    const value = undefined;
-    const username: string = new Cookies().get('username');
-    const initialValues: IToolbox = value || {
+    const initialValues: IToolbox = {
         abnormal: false,
         abnormalRecord: '',
         area: '',
@@ -363,6 +106,7 @@ export default function WorkPermitFormik() {
         headWorkspace: undefined,
         heatTouch: undefined,
         hypoxia: undefined,
+        laborAmount: undefined,
         meetingDate: dayjs().format('YYYY-MM-DD'),
         meetingTime: dayjs().format('HH:mm'),
         meetingPlace: undefined,
@@ -374,7 +118,7 @@ export default function WorkPermitFormik() {
         minorContractThreeStaff: undefined,
         minorContractTwoStaff: undefined,
         noise: undefined,
-        number: number,
+        number: '',
         objectFall: undefined,
         ohterPrevention: undefined,
         otherDisaster: undefined,
@@ -386,9 +130,10 @@ export default function WorkPermitFormik() {
         oxygenLifting: undefined,
         oxygenRescue: undefined,
         oxygenVentilation: undefined,
+        physicalFall: undefined,
         primeContractCorp: undefined,
         primeContractStaff: undefined,
-        primeContractingCorpAppearance: [],
+        primeAppearSignature: [],
         principleOnSiteBeforeWork: undefined,
         principleOnSiteDuringWork: undefined,
         principleOnSiteKnockOff: undefined,
@@ -411,14 +156,15 @@ export default function WorkPermitFormik() {
         system: undefined,
         systemBranch: undefined,
         systemEngineerSignature: undefined,
-        username: username,
-        viceFirstContractingCorpAppearance: [],
-        viceSecondContractingCorpAppearance: [],
-        viceThirdContractingCorpAppearance: [],
+        username: '',
+        viceFirstAppearSignature: [],
+        viceSecondAppearSignature: [],
+        viceThirdAppearSignature: [],
         workContent: undefined,
         workPlace: undefined,
     };
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
         contractingCorpStaffSignatureFirst: useState<ISignature>(
             initialValues.contractingCorpStaffSignatureFirst as ISignature
@@ -435,25 +181,34 @@ export default function WorkPermitFormik() {
     };
 
     const signatureLists: Record<SignatureListName, MultiSignatureStateItem> = {
-        primeContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.primeContractingCorpAppearance as ISignature[]
+        primeAppearSignature: useState<ISignature[]>(
+            initialValues.primeAppearSignature as ISignature[]
         ),
-        viceFirstContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceFirstContractingCorpAppearance as ISignature[]
+        viceFirstAppearSignature: useState<ISignature[]>(
+            initialValues.viceFirstAppearSignature as ISignature[]
         ),
-        viceSecondContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceSecondContractingCorpAppearance as ISignature[]
+        viceSecondAppearSignature: useState<ISignature[]>(
+            initialValues.viceSecondAppearSignature as ISignature[]
         ),
-        viceThirdContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceThirdContractingCorpAppearance as ISignature[]
+        viceThirdAppearSignature: useState<ISignature[]>(
+            initialValues.viceThirdAppearSignature as ISignature[]
         ),
     };
 
     const toast = useToast();
-    const [updateToolboxMeeting] = useMutation(GQL_UPDATE_TOOLBOX, {
+    const [updateToolboxMeeting] = useMutation(GQL_TOOLBOX_UPDATE, {
         onCompleted: ({ updateToolboxMeeting }) => {
             if (updateToolboxMeeting.ok) {
-                defaultSuccessToast(toast, updateToolboxMeeting.message);
+                toast({
+                    title: updateToolboxMeeting.message,
+                    description: '視窗將於 3 秒後關閉',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                    onCloseComplete: () => {
+                        window.close();
+                    },
+                });
             }
         },
         onError: (err) => {
@@ -462,38 +217,64 @@ export default function WorkPermitFormik() {
         },
     });
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            validateOnChange={false}
-            onSubmit={(values, actions) => {
-                actions.setSubmitting(true);
-                const submitValues = { ...values };
-                let key: keyof Record<SignatureName, SignatureStateItem>;
-                for (key in signatures) {
-                    const [signature] = signatures[key];
-                    submitValues[key] = { ...signature };
-                }
-                let listKey: keyof Record<
-                    SignatureListName,
-                    MultiSignatureStateItem
-                >;
-                for (listKey in signatureLists) {
-                    const [signatureList] = signatureLists[listKey];
-                    submitValues[listKey] = [...signatureList];
-                }
+    useEffect(() => {
+        onOpen();
+    }, []);
 
-                updateToolboxMeeting({ variables: submitValues });
-                actions.setSubmitting(false);
-            }}
-        >
-            {(props) => (
-                <ToolboxForm
-                    formProps={props}
-                    signatures={signatures}
-                    signatureLists={signatureLists}
-                />
-            )}
-        </Formik>
+    return (
+        <>
+            <Formik
+                initialValues={initialValues}
+                validateOnChange={false}
+                onSubmit={(values, actions) => {
+                    actions.setSubmitting(true);
+                    const submitValues = { ...values };
+                    let key: keyof Record<SignatureName, SignatureStateItem>;
+                    for (key in signatures) {
+                        const [signature] = signatures[key];
+                        submitValues[key] = { ...signature };
+                    }
+                    let listKey: keyof Record<
+                        SignatureListName,
+                        MultiSignatureStateItem
+                    >;
+                    for (listKey in signatureLists) {
+                        const [signatureList] = signatureLists[listKey];
+                        submitValues[listKey] = [...signatureList];
+                    }
+                    updateToolboxMeeting({ variables: submitValues });
+                }}
+            >
+                {(props) => (
+                    <ToolboxForm
+                        formProps={props}
+                        signatures={signatures}
+                        signatureLists={signatureLists}
+                    />
+                )}
+            </Formik>
+            <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                <ModalOverlay />
+                <ModalContent color="#667080">
+                    <ModalHeader>簽核時間注意事項</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <VStack>
+                            <Box w="100%">
+                                依規定，工具箱會議及巡檢紀錄建議簽核時間如下：
+                            </Box>
+                            <Box w="100%">施工前 08:30~09:30 </Box>
+                            <Box w="100%">施工中 13:00~14:00</Box>
+                            <Box w="100%">收工前 16:30~17:30</Box>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="buttonBlueSolid" onClick={onClose}>
+                            了解
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     );
 }
