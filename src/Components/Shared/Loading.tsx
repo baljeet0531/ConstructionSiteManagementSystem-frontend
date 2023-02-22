@@ -1,7 +1,7 @@
 import { Center, Spinner } from '@chakra-ui/react';
 import React from 'react';
 
-export default function PageLoading() {
+export function PageLoading() {
     return (
         <Center
             position={'absolute'}

@@ -19,7 +19,7 @@ import {
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
-import PageLoading from '../Shared/PageLoading';
+import { PageLoading } from '../Shared/Loading';
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { IGQLSignature } from '../../Interface/Signature';
