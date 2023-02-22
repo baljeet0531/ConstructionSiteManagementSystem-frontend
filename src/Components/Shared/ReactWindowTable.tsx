@@ -141,7 +141,7 @@ export const SignatureStatusElement = (props: {
             gap={'2px'}
             w={'170px'}
             align={'center'}
-            justify={'center'}
+            justify={'flex-start'}
             height={'20px'}
         >
             {signatureStatusMap}
@@ -178,8 +178,15 @@ export default function ReactWindowTable(props: {
     columnMap: IColumnMap[];
     sizes: ISizes;
     filteredPrimaryKey?: string[];
+    sortReversed?: boolean;
 }) {
-    const { tableData, columnMap, sizes, filteredPrimaryKey } = props;
+    const {
+        tableData,
+        columnMap,
+        sizes,
+        filteredPrimaryKey,
+        sortReversed = false,
+    } = props;
     const {
         tableViewHeight,
         tableFigmaWidth,
@@ -189,7 +196,7 @@ export default function ReactWindowTable(props: {
     } = sizes;
 
     const displayTableData: {
-        [primaryKey: string]: object;
+        [primaryKey: string]: any;
     } =
         tableData &&
         (!filteredPrimaryKey
@@ -205,7 +212,12 @@ export default function ReactWindowTable(props: {
                   }))
               ));
 
-    const primaryKeys = Object.keys(displayTableData);
+    const sortingFunction = (a: string, b: string) => {
+        const diff = displayTableData[a].index - displayTableData[b].index;
+        return sortReversed ? -diff : diff;
+    };
+    const primaryKeys = Object.keys(displayTableData).sort(sortingFunction);
+
     const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
