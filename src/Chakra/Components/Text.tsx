@@ -40,6 +40,14 @@ const Text = {
             lineHeight: '20px',
             color: '#667080',
         },
+        pageSiteName: {
+            fontWeight: 500,
+            fontSize: '14px',
+            lineHeight: '20px',
+            position: 'absolute',
+            top: '20px',
+            right: '42px',
+        },
         w400s14: {
             fontStyle: 'normal',
             fontWeight: '400',
