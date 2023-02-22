@@ -11,10 +11,10 @@ export type SignatureName =
 "systemEngineerSignature"
 
 export type SignatureListName = 
-"primeContractingCorpAppearance" |
-"viceFirstContractingCorpAppearance" |
-"viceSecondContractingCorpAppearance" |
-"viceThirdContractingCorpAppearance" 
+"primeAppearSignature" |
+"viceFirstAppearSignature" |
+"viceSecondAppearSignature" |
+"viceThirdAppearSignature" 
 
 export interface IToolbox {
     abnormal: boolean | undefined;
@@ -90,6 +90,7 @@ export interface IToolbox {
     headWorkspace: boolean | undefined;
     heatTouch: boolean | undefined;
     hypoxia: boolean | undefined;
+    laborAmount: number | undefined;
     meetingDate: string | undefined;
     meetingTime: string | undefined;
     meetingPlace: string | undefined;
@@ -113,9 +114,10 @@ export interface IToolbox {
     oxygenLifting: boolean | undefined;
     oxygenRescue: boolean | undefined;
     oxygenVentilation: boolean | undefined;
+    physicalFall: boolean | undefined;
     primeContractCorp: string | undefined;
     primeContractStaff: string | undefined;
-    primeContractingCorpAppearance: ISignature[] | undefined;
+    primeAppearSignature: ISignature[] | undefined;
     principleOnSiteBeforeWork: boolean | undefined;
     principleOnSiteDuringWork: boolean | undefined;
     principleOnSiteKnockOff: boolean | undefined;
@@ -139,9 +141,13 @@ export interface IToolbox {
     systemBranch: string | undefined;
     systemEngineerSignature: ISignature | undefined;
     username: string | undefined;
-    viceFirstContractingCorpAppearance: ISignature[] | undefined;
-    viceSecondContractingCorpAppearance: ISignature[] | undefined;
-    viceThirdContractingCorpAppearance: ISignature[] | undefined;
+    viceFirstAppearSignature: ISignature[] | undefined;
+    viceSecondAppearSignature: ISignature[] | undefined;
+    viceThirdAppearSignature: ISignature[] | undefined;
     workContent: string | undefined;
     workPlace: string | undefined;
+}
+
+export interface IGQLToolbox extends IToolbox {
+    meetingDatetime: string | undefined;
 }
