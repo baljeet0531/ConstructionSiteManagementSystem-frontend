@@ -12,8 +12,6 @@ import {
     Text,
     HStack,
     VStack,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
