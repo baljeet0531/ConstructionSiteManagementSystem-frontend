@@ -39,6 +39,17 @@ const Button = {
                 color: '#667080',
             };
         },
+        whiteOutline: (props: StyleFunctionProps) => {
+            const outlineProps =
+                theme.components.Button.variants?.outline(props);
+            return {
+                ...outlineProps,
+                bg: '#FFFFFF',
+                color: '#667080',
+                border: '2px solid',
+                borderColor: '#919AA9',
+            };
+        },
     },
 };
 
