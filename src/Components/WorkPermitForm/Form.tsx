@@ -12,8 +12,6 @@ import {
     Text,
     HStack,
     VStack,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -38,6 +36,7 @@ import {
     SignatureName,
 } from '../../Interface/WorkPermit';
 import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
+import { FormLoading } from '../Shared/Loading';
 
 export default function WorkPermitForm({
     formProps,
@@ -102,6 +101,7 @@ export default function WorkPermitForm({
                 top={'10px'}
                 right={'37px'}
                 isLoading={formProps.isSubmitting}
+                zIndex={2}
             >
                 完成編輯
             </Button>
@@ -476,16 +476,7 @@ export default function WorkPermitForm({
                 </Grid>
             </Box>
             {(loading || formProps.isSubmitting) && (
-                <Center
-                    position="fixed"
-                    top={0}
-                    w="100vw"
-                    h="100vh"
-                    bg={'#D9D9D980'}
-                    zIndex={1}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
+                <FormLoading/>
             )}
         </Form>
     );
