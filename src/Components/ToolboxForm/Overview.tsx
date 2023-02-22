@@ -39,12 +39,16 @@ const QUERY_TOOLBOX = gql`
         $number: String
         $startDate: DateTime
         $endDate: DateTime
+        $area: [String]
+        $system: [String]
     ) {
         toolboxMeeting(
             siteId: $siteId
             number: $number
             startDate: $startDate
             endDate: $endDate
+            area: $area
+            system: $system
         ) {
             number
             system
@@ -317,6 +321,27 @@ export default function ToolboxFormOverview(props: {
             console.log(err);
         },
     });
+
+    const handleSearch = (value: DateRange | null) => {
+        searchToolbox({
+            variables: {
+                siteId: siteId,
+                area: areas.flatMap((area) =>
+                    area.isChecked ? area.name : []
+                ),
+                system: systems.flatMap((system) =>
+                    system.isChecked ? system.name : []
+                ),
+                ...(value && {
+                    startDate: `${dayjs(value[0]).format(
+                        'YYYY-MM-DD'
+                    )}T08:30:00`,
+                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T17:30:00`,
+                }),
+            },
+        });
+    };
+
     return (
         <Flex
             direction={'column'}
@@ -335,19 +360,7 @@ export default function ToolboxFormOverview(props: {
                     <DateRangePicker
                         value={dateRange}
                         onChange={(value) => {
-                            searchToolbox({
-                                variables: {
-                                    siteId: siteId,
-                                    ...(value && {
-                                        startDate: `${dayjs(value[0]).format(
-                                            'YYYY-MM-DD'
-                                        )}T08:30:00`,
-                                        endDate: `${dayjs(value[1]).format(
-                                            'YYYY-MM-DD'
-                                        )}T17:30:00`,
-                                    }),
-                                },
-                            });
+                            handleSearch(value);
                             setDateRange(value);
                         }}
                     />
@@ -411,35 +424,7 @@ export default function ToolboxFormOverview(props: {
                                     <Button
                                         variant={'buttonBlueSolid'}
                                         onClick={() => {
-                                            searchToolbox({
-                                                variables: {
-                                                    siteId: siteId,
-                                                    area: areas.flatMap(
-                                                        (area) =>
-                                                            area.isChecked
-                                                                ? area.name
-                                                                : []
-                                                    ),
-                                                    system: systems.flatMap(
-                                                        (system) =>
-                                                            system.isChecked
-                                                                ? system.name
-                                                                : []
-                                                    ),
-                                                    ...(dateRange && {
-                                                        startDate: `${dayjs(
-                                                            dateRange[0]
-                                                        ).format(
-                                                            'YYYY-MM-DD'
-                                                        )}T08:30:00`,
-                                                        endDate: `${dayjs(
-                                                            dateRange[1]
-                                                        ).format(
-                                                            'YYYY-MM-DD'
-                                                        )}T17:30:00`,
-                                                    }),
-                                                },
-                                            });
+                                            handleSearch(dateRange);
                                         }}
                                     >
                                         確定搜尋
@@ -458,6 +443,7 @@ export default function ToolboxFormOverview(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
+                sortReversed={true}
             />
             {loading && <PageLoading />}
         </Flex>
