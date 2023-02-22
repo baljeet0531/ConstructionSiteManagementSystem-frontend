@@ -258,7 +258,7 @@ export default function ToolboxFormOverview(props: {
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
 
-    const { loading } = useQuery(QUERY_TOOLBOX, {
+    const { loading, startPolling } = useQuery(QUERY_TOOLBOX, {
         variables: {
             siteId: siteId,
         },
@@ -277,6 +277,7 @@ export default function ToolboxFormOverview(props: {
             }));
             const dataObject = Object.assign({}, ...data);
             setTableData(dataObject);
+            startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
