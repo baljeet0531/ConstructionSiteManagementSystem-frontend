@@ -177,6 +177,7 @@ export function parseWorkPermit(
     ];
 
     const t = { ...list[0] } as IGQLWorkPermit;
+    console.log(t);
 
     if (t.zone === '') {
         t.zone = [];

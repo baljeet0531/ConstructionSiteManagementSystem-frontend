@@ -6,4 +6,12 @@ export const SIGNATURE_FIELDS = gql`
         time
         owner
     }
+`
+
+export const APPEARANCE_SIGN_FIELD = gql`
+fragment gqlAppearFields on gqlAppearanceSignature {
+    path
+    time
+    owner
+}
 `;
