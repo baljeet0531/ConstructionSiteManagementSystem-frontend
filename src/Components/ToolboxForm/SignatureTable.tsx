@@ -31,10 +31,10 @@ export default function SignatureTable(
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>
 ) {
     const {
-        primeContractingCorpAppearance,
-        viceFirstContractingCorpAppearance,
-        viceSecondContractingCorpAppearance,
-        viceThirdContractingCorpAppearance,
+        primeAppearSignature,
+        viceFirstAppearSignature,
+        viceSecondAppearSignature,
+        viceThirdAppearSignature,
     } = signatureLists;
     const getMaxRow = (
         signatureLists: Record<SignatureListName, MultiSignatureStateItem>
@@ -59,7 +59,7 @@ export default function SignatureTable(
                     <SignatureListPad
                         title={`主承攬商出席人員 - 簽名`}
                         signatureName={`prime-app-${idx + 1}.png`}
-                        state={primeContractingCorpAppearance}
+                        state={primeAppearSignature}
                         idx={idx}
                         h="100px"
                     />
@@ -68,7 +68,7 @@ export default function SignatureTable(
                     <SignatureListPad
                         title={`次承攬商(1)出席人員 - 簽名`}
                         signatureName={`vice-first-app-${idx + 1}.png`}
-                        state={viceFirstContractingCorpAppearance}
+                        state={viceFirstAppearSignature}
                         idx={idx}
                         h="100px"
                     />
@@ -77,7 +77,7 @@ export default function SignatureTable(
                     <SignatureListPad
                         title={`次承攬商(2)出席人員 - 簽名`}
                         signatureName={`vice-second-app-${idx + 1}.png`}
-                        state={viceSecondContractingCorpAppearance}
+                        state={viceSecondAppearSignature}
                         idx={idx}
                         h="100px"
                     />
@@ -86,7 +86,7 @@ export default function SignatureTable(
                     <SignatureListPad
                         title={`次承攬商(3)出席人員 - 簽名`}
                         signatureName={`vice-third-app-${idx + 1}.png`}
-                        state={viceThirdContractingCorpAppearance}
+                        state={viceThirdAppearSignature}
                         idx={idx}
                         h="100px"
                     />

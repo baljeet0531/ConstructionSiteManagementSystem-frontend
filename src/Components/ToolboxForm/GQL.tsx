@@ -1,7 +1,23 @@
 import { gql } from '@apollo/client';
+import {
+    getSignature,
+    IGQLSignature,
+    ISignature,
+    MultiSignatureStateItem,
+    SignatureStateItem,
+} from '../../Interface/Signature';
+import {
+    IGQLToolbox,
+    IToolbox,
+    SignatureListName,
+    SignatureName,
+} from '../../Interface/Toolbox';
 
 export const GQL_TOOLBOX_QUERY = gql`
 uery queryToolboxMeeting ($siteId: String!, $number: String){
+    query toolboxOptions($siteId: String!) {
+        contractingCorpName(siteId: $siteId)
+    }
     toolboxMeeting(
       siteId: $siteId
       number: $number
@@ -179,7 +195,7 @@ uery queryToolboxMeeting ($siteId: String!, $number: String){
       }
     }
   }  
-`
+`;
 
 export const GQL_TOOLBOX_UPDATE = gql`
     mutation utm(
@@ -445,3 +461,60 @@ export const GQL_TOOLBOX_UPDATE = gql`
         }
     }
 `;
+
+export function parseToolbox(
+    list: IGQLToolbox[],
+    signatures: Record<SignatureName, SignatureStateItem>,
+    signatureLists: Record<SignatureListName, MultiSignatureStateItem>
+): IToolbox | undefined {
+    if (!list[0]) return;
+    const signatureColName: SignatureName[] = [
+        'contractingCorpStaffSignatureFirst',
+        'contractingCorpStaffSignatureSecond',
+        'contractingCorpStaffSignatureThird',
+        'systemEngineerSignature',
+    ];
+    const signatureListColName: SignatureListName[] = [
+        'primeAppearSignature',
+        'viceFirstAppearSignature',
+        'viceSecondAppearSignature',
+        'viceThirdAppearSignature',
+    ];
+
+    const t = { ...list[0] } as IGQLToolbox;
+
+    if (t.meetingDatetime && t.meetingDatetime !== '') {
+        // t.meetingDatetime like ""2023-02-06T08:10:00""
+        const dt = t.meetingDatetime.split('T');
+        t.meetingDate = dt[0];
+        t.meetingTime = dt[1];
+    }
+
+    // Handle single singnatures
+    for (let i = 0; i < signatureColName.length; i++) {
+        const key = signatureColName[i];
+        const [, setSignature] = signatures[key];
+        const GQLsign = t[key] as IGQLSignature | undefined;
+        if (GQLsign) {
+            getSignature(GQLsign).then((item) => {
+                setSignature(item);
+            });
+        }
+    }
+
+    // Handle signature list
+    for (let i = 0; i < signatureListColName.length; i++) {
+        const key = signatureListColName[i];
+        const [, setSignatureList] = signatureLists[key];
+        const GQLsignList = t[key] as IGQLSignature[] | undefined;
+        const signList = [] as ISignature[];
+        if (GQLsignList) {
+            for (let GQLsign of GQLsignList) {
+                getSignature(GQLsign).then((item) => {
+                    signList.push(item);
+                });
+            }
+        }
+        setSignatureList(signList);
+    }
+}
