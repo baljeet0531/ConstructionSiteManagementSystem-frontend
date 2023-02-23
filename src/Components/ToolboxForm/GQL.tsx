@@ -492,7 +492,8 @@ export function parseToolbox(
     for (let i = 0; i < signatureListColName.length; i++) {
         const key = signatureListColName[i];
         const [, setSignatureList] = signatureLists[key];
-        const GQLsignList = t[key] as IGQLSignature[] | undefined;
+        const GQLkey = signatureListGQLColName[i] as keyof IGQLToolbox;
+        const GQLsignList = t[GQLkey] as IGQLSignature[] | undefined;
         const signList = [] as ISignature[];
         if (GQLsignList) {
             for (let GQLsign of GQLsignList) {
