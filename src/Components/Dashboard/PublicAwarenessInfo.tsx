@@ -55,7 +55,13 @@ export default function PublicAwarenessInfo() {
                 disabled={editDisabled}
             ></Textarea>
             <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
-                <Button size={'xs'} variant={'whiteOutline'}>
+                <Button
+                    size={'xs'}
+                    variant={'whiteOutline'}
+                    onClick={() => {
+                        setEditDisabled(true);
+                    }}
+                >
                     取消
                 </Button>
                 <Button
