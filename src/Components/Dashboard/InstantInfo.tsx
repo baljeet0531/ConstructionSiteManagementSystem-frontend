@@ -18,6 +18,53 @@ import { warningText } from './Style';
 
 export default function InstantInfo() {
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
+    const administrationRef = React.useRef<any>();
+    const [adminInfo, setAdminInfo] = React.useState([
+        { name: '承商A', target: '40' },
+        { name: '承商B', target: '本週須完成管架施工' },
+        { name: '承商C', target: '下週須完成管路施工' },
+    ]);
+
+    const getMap: () => Map<string, HTMLTextAreaElement> = () =>
+        administrationRef.current || (administrationRef.current = new Map());
+
+    const saveChange = () => {
+        const myMap = getMap();
+        const newAdminInfo = Array.from(myMap).map((item) => ({
+            name: item[0],
+            target: item[1].value,
+        }));
+        setAdminInfo(newAdminInfo);
+    };
+
+    const cancelChange = () => {
+        const myMap = getMap();
+        let index = 0;
+        myMap.forEach((item) => {
+            item.value = adminInfo[index].target;
+            index += 1;
+        });
+    };
+
+    const adminElement = adminInfo.map((element, index) => {
+        const { name, target } = element;
+        return (
+            <Tr key={index}>
+                <Td>{name}</Td>
+                <Td padding={0}>
+                    <Textarea
+                        ref={(node) => {
+                            const map = getMap();
+                            node ? map.set(name, node) : map.delete(name);
+                        }}
+                        defaultValue={target}
+                        variant={'dashboardAdministration'}
+                        disabled={editDisabled}
+                    ></Textarea>
+                </Td>
+            </Tr>
+        );
+    });
 
     return (
         <Flex direction={'column'}>
@@ -115,38 +162,7 @@ export default function InstantInfo() {
                             <Th w={'240px'}>目標值</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>承商A</Td>
-                            <Td padding={0}>
-                                <Textarea
-                                    defaultValue={'40'}
-                                    variant={'dashboardAdministration'}
-                                    disabled={editDisabled}
-                                ></Textarea>
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td>承商B</Td>
-                            <Td padding={0}>
-                                <Textarea
-                                    defaultValue={'本週須完成管架施工'}
-                                    variant={'dashboardAdministration'}
-                                    disabled={editDisabled}
-                                ></Textarea>
-                            </Td>
-                        </Tr>
-                        <Tr>
-                            <Td>承商C</Td>
-                            <Td padding={0}>
-                                <Textarea
-                                    defaultValue={'下週須完成管路施工'}
-                                    variant={'dashboardAdministration'}
-                                    disabled={editDisabled}
-                                ></Textarea>
-                            </Td>
-                        </Tr>
-                    </Tbody>
+                    <Tbody>{adminElement}</Tbody>
                 </Table>
             </TableContainer>
             <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
@@ -154,6 +170,7 @@ export default function InstantInfo() {
                     size={'xs'}
                     variant={'whiteOutline'}
                     onClick={() => {
+                        cancelChange();
                         setEditDisabled(true);
                     }}
                 >
@@ -163,6 +180,7 @@ export default function InstantInfo() {
                     size={'xs'}
                     variant={'buttonBlueSolid'}
                     onClick={() => {
+                        saveChange();
                         setEditDisabled(true);
                     }}
                 >

@@ -26,12 +26,14 @@ const Textarea = {
                 resize: 'none',
                 textAlign: 'center',
                 verticalAlign: 'middle',
-                color: '#000000',
+                color: '#667080',
+                border: 'none',
+                borderRadius: '0px',
+                bg: '#66708030',
                 _disabled: {
                     cursor: 'default',
-                    border: 'none',
                     opacity: 1,
-                    color: '#667080',
+                    bg: '#FFFFFF',
                 },
             };
         },
