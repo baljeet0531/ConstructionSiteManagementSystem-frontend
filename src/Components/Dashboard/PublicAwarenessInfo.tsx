@@ -2,6 +2,7 @@ import React from 'react';
 import {
     Button,
     Flex,
+    IconButton,
     Table,
     TableContainer,
     Tbody,
@@ -12,30 +13,58 @@ import {
     Thead,
     Tr,
 } from '@chakra-ui/react';
+import { EditIcon } from '../../Icons/Icons';
 export default function PublicAwarenessInfo() {
+    const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
+
     return (
         <Flex direction={'column'} mr={'11px'}>
-            <Text variant={'w700s16'}>宣導事項</Text>
+            <Flex align={'center'} justify={'space-between'}>
+                <Text variant={'w700s16'}>宣導事項</Text>
+                <IconButton
+                    size={'xs'}
+                    h={'20px'}
+                    color={'#667080'}
+                    bg={'#FFFFFF'}
+                    aria-label="edit awareness"
+                    icon={<EditIcon />}
+                    onClick={() => {
+                        setEditDisabled(false);
+                    }}
+                />
+            </Flex>
             <Textarea
+                defaultValue={
+                    '1. 災情資訊_警示內容（含災後各項檢查提醒）\n2. 應辦理及注意事項'
+                }
                 mt={'15px'}
                 ml={'11px'}
                 h={'205px'}
                 w={'auto'}
-                border={'2px dashed'}
-                borderColor={'#EA9895'}
                 resize={'none'}
-                _hover={{
-                    borderColor: '#EA989580',
+                color={'#000000'}
+                _disabled={{
+                    border: '2px dashed #EA9895',
+                    cursor: 'default',
+                    opacity: 1,
+                    color: '#667080',
+                    _hover: {
+                        borderColor: '#EA989580',
+                    },
                 }}
-                value={
-                    '1. 災情資訊_警示內容（含災後各項檢查提醒）\n2. 應辦理及注意事項'
-                }
+                disabled={editDisabled}
             ></Textarea>
             <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
                 <Button size={'xs'} variant={'whiteOutline'}>
                     取消
                 </Button>
-                <Button size={'xs'} variant={'buttonBlueSolid'}>
+                <Button
+                    size={'xs'}
+                    variant={'buttonBlueSolid'}
+                    onClick={() => {
+                        setEditDisabled(true);
+                    }}
+                >
                     確定
                 </Button>
             </Flex>

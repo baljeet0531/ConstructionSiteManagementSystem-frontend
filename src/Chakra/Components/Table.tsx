@@ -62,8 +62,8 @@ const Table = {
         dashboardBlue: {
             table: {
                 fontWeight: 400,
-                fontSize: '12px',
-                lineHeight: '20px',
+                fontSize: '0.75rem',
+                lineHeight: '1.25rem',
                 border: '1px solid #919AA9',
                 tableLayout: 'fixed',
             },
