@@ -168,6 +168,87 @@ export const GQL_TOOLBOX_QUERY = gql`
                 ...gqlAppearFields
             }
         }
+        toolboxHint(siteId: $siteId, number: $number) {
+            physicalFall
+            scrape
+            objectFall
+            foreignEnterEye
+            heatTouch
+            microthermTouch
+            noise
+            eletricDisaster
+            collapse
+            radiation
+            chemicalBurn
+            chemicalInhalation
+            fireDisaster
+            explode
+            otherDisasterNone
+            hypoxia
+            biologicalHazard
+            outdoorHeat
+            otherDisaster
+            chemicalNone
+            chemicalName
+            gasNone
+            gasName
+            head
+            headWorkspace
+            headElectric
+            headPlastic
+            eye
+            eyeMechanical
+            eyeRadia
+            ear
+            earEarplugs
+            earEarmuffs
+            breathe
+            breatheDust
+            breatheFiltration
+            breatheScba
+            breathePapr
+            breathOxygen
+            hand
+            handCut
+            handGrand
+            handHeat
+            handElectirc
+            haneChemical
+            foot
+            footNormal
+            footChemical
+            body
+            bodyBelt
+            bodyMask
+            bodyClothing
+            bodyVest
+            fall
+            fallTrestleLadder
+            fallTravelLadder
+            fallScaffold
+            fallAerialVehicle
+            fallSafeLine
+            fallCage
+            fallFence
+            fallCover
+            fallSafeNet
+            fallWarningFence
+            fallArrestor
+            electric
+            electricBreaker
+            electricShockPrevention
+            electricElectroscope
+            fire
+            fireExtinguisher
+            fireBlanket
+            fireBackfire
+            oxygen
+            oxygenVentilation
+            oxygenLifeDetection
+            oxygenGasDetection
+            oxygenLifting
+            oxygenRescue
+          }
     }
 `;
 

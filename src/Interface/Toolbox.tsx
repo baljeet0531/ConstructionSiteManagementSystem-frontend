@@ -1,7 +1,16 @@
 import { IGQLSignature, ISignature } from './Signature';
 
+export interface IToolboxHint {
+    [key: string]: boolean | undefined;
+}
+
 export interface IToolboxData {
     contractingCorpName: string[] | undefined;
+    toolboxHint: IToolboxHint ;
+}
+
+export interface IToolboxOptions {
+    toolboxHint: IToolboxHint ;
 }
 
 export type SignatureName =

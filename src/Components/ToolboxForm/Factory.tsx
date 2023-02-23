@@ -8,7 +8,12 @@ import {
 import { FormikProps } from 'formik';
 import { filledPlaceholderStyle, placeholderStyle } from './Styles';
 import { SetStateAction, Dispatch, useState, useEffect } from 'react';
-import { IToolbox, IToolboxData } from '../../Interface/Toolbox';
+import {
+    IToolbox,
+    IToolboxData,
+    IToolboxHint,
+    IToolboxOptions,
+} from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import dayjs from 'dayjs';
@@ -17,15 +22,31 @@ export default class FormFactory {
     formProps: FormikProps<IToolbox>;
     data: IToolboxData;
     setData: Dispatch<SetStateAction<IToolboxData>>;
+    options: IToolboxOptions;
+    setOptions: Dispatch<SetStateAction<IToolboxOptions>>;
+    hintRelation: { [key: string]: string[] };
 
     constructor(
         formProps: FormikProps<IToolbox>,
         data: IToolboxData,
-        setData: Dispatch<SetStateAction<IToolboxData>>
+        setData: Dispatch<SetStateAction<IToolboxData>>,
+        options: IToolboxOptions,
+        setOptions: Dispatch<SetStateAction<IToolboxOptions>>
     ) {
         this.formProps = formProps;
         this.data = data;
         this.setData = setData;
+        this.options = options;
+        this.setOptions = setOptions;
+        this.hintRelation = {
+            physicalFall: ['fall'],
+            foreignEnterEye: ['eye'],
+            noise: ['ear'],
+            eletricDisaster: ['electric'],
+            fireDisaster: ['fire'],
+            explode: ['fire'],
+            hypoxia: ['oxygen'],
+        };
     }
 
     filledDateInput() {
@@ -67,8 +88,33 @@ export default class FormFactory {
             />
         );
     }
+    handleHint(name: keyof IToolboxHint, current: boolean | undefined) {
+        if (this.data.toolboxHint[name]) return;
+        let update = {};
+        const relation = this.hintRelation[name];
+        relation.map((n) => {
+            update = { ...update, [n]: current };
+        });
+        for (let r in this.hintRelation) {
+            const relation = this.hintRelation[r];
+            const before = this.formProps.values[r as keyof IToolbox];
+            if (r != name && before) {
+                relation.map((n) => {
+                    update = { ...update, [n]: true };
+                });
+            }
+        }
+        this.setOptions({
+            toolboxHint: {
+                ...this.data.toolboxHint,
+                ...update,
+            },
+        });
+    }
     threeStateCheckbox(name: keyof IToolbox, text: string) {
-        const value = this.formProps.values[name];
+        const value = this.formProps.values[name] as boolean;
+        const key = name as keyof IToolboxOptions['toolboxHint'];
+        const hint = this.options.toolboxHint[key];
         return (
             <Checkbox
                 pl={3}
@@ -77,12 +123,16 @@ export default class FormFactory {
                 isChecked={value ? true : false}
                 isIndeterminate={value === false ? true : false}
                 onChange={() => {
+                    let target = undefined;
                     value
-                        ? this.formProps.setFieldValue(name, false)
+                        ? (target = false)
                         : value === false
-                        ? this.formProps.setFieldValue(name, undefined)
-                        : this.formProps.setFieldValue(name, true);
+                        ? (target = undefined)
+                        : (target = true);
+                    this.formProps.setFieldValue(name, target);
+                    this.handleHint(name as keyof IToolboxHint, target);
                 }}
+                variant={hint ? 'hint' : ''}
             >
                 {text}
             </Checkbox>
