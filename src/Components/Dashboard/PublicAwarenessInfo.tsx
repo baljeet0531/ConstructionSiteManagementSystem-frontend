@@ -16,6 +16,10 @@ import {
 import { EditIcon } from '../../Icons/Icons';
 export default function PublicAwarenessInfo() {
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
+    const awarenessInfoRef = React.useRef<HTMLTextAreaElement>(null);
+    const [awarenessInfoValue, setAwarenessInfoValue] = React.useState<
+        string | undefined
+    >('1. 災情資訊_警示內容（含災後各項檢查提醒）\n2. 應辦理及注意事項');
 
     return (
         <Flex direction={'column'} mr={'11px'}>
@@ -34,23 +38,24 @@ export default function PublicAwarenessInfo() {
                 />
             </Flex>
             <Textarea
-                defaultValue={
-                    '1. 災情資訊_警示內容（含災後各項檢查提醒）\n2. 應辦理及注意事項'
-                }
+                ref={awarenessInfoRef}
+                defaultValue={awarenessInfoValue}
                 mt={'15px'}
                 ml={'11px'}
                 h={'205px'}
                 w={'auto'}
                 resize={'none'}
-                color={'#000000'}
+                border={'2px dashed '}
+                borderColor={'#EA9895'}
+                color={'#667080'}
+                bg={'#66708030'}
+                _hover={{
+                    borderColor: '#EA9895',
+                }}
                 _disabled={{
-                    border: '2px dashed #EA9895',
                     cursor: 'default',
                     opacity: 1,
-                    color: '#667080',
-                    _hover: {
-                        borderColor: '#EA989580',
-                    },
+                    bg: '#FFFFFF',
                 }}
                 disabled={editDisabled}
             ></Textarea>
@@ -59,6 +64,8 @@ export default function PublicAwarenessInfo() {
                     size={'xs'}
                     variant={'whiteOutline'}
                     onClick={() => {
+                        if (awarenessInfoRef.current && awarenessInfoValue)
+                            awarenessInfoRef.current.value = awarenessInfoValue;
                         setEditDisabled(true);
                     }}
                 >
@@ -68,6 +75,7 @@ export default function PublicAwarenessInfo() {
                     size={'xs'}
                     variant={'buttonBlueSolid'}
                     onClick={() => {
+                        setAwarenessInfoValue(awarenessInfoRef.current?.value);
                         setEditDisabled(true);
                     }}
                 >
