@@ -32,6 +32,7 @@ import {
     IToolboxData,
     SignatureName,
     SignatureListName,
+    IToolboxOptions,
 } from '../../Interface/Toolbox';
 import SignatureTable from './SignatureTable';
 import { GQL_TOOLBOX_QUERY, parseToolbox } from './GQL';
@@ -47,8 +48,9 @@ export default function ToolboxForm({
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>;
 }) {
     const number = localStorage.getItem('toolboxNumber') as string;
-    const [data, setData] = useState<IToolboxData>({ contractingCorpName: [] });
-    const f = new FormFactory(formProps, data, setData);
+    const [data, setData] = useState<IToolboxData>({ contractingCorpName: [], toolboxHint: {} });
+    const [options, setOptions] = useState<IToolboxOptions>({toolboxHint: {}})
+    const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工具箱會議及巡檢紀錄(${number})`;
     const { loading } = useQuery(GQL_TOOLBOX_QUERY, {
         variables: {
@@ -58,6 +60,11 @@ export default function ToolboxForm({
         onCompleted: (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
+                toolboxHint: d.toolboxHint
+            });
+
+            setOptions({
+                toolboxHint: d.toolboxHint
             });
 
             const singleFormData = parseToolbox(
@@ -66,7 +73,6 @@ export default function ToolboxForm({
                 signatureLists
             );
             if (singleFormData) {
-                console.log(singleFormData);
                 formProps.setValues(singleFormData, false);
             }
         },
