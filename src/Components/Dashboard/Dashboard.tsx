@@ -6,6 +6,7 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
+import PublicAwarenessInfo from './PublicAwarenessInfo';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
@@ -41,6 +42,9 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <TodoList />
+                </GridItem>
+                <GridItem {...dashboardGridItemStyle}>
+                    <PublicAwarenessInfo />
                 </GridItem>
             </Grid>
         </Flex>
