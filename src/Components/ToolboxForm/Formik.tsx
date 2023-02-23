@@ -133,7 +133,7 @@ export default function WorkPermitFormik() {
         physicalFall: undefined,
         primeContractCorp: undefined,
         primeContractStaff: undefined,
-        primeAppearSignature: [],
+        primeContractingCorpAppearance: [],
         principleOnSiteBeforeWork: undefined,
         principleOnSiteDuringWork: undefined,
         principleOnSiteKnockOff: undefined,
@@ -157,9 +157,9 @@ export default function WorkPermitFormik() {
         systemBranch: undefined,
         systemEngineerSignature: undefined,
         username: '',
-        viceFirstAppearSignature: [],
-        viceSecondAppearSignature: [],
-        viceThirdAppearSignature: [],
+        viceFirstContractingCorpAppearance: [],
+        viceSecondContractingCorpAppearance: [],
+        viceThirdContractingCorpAppearance: [],
         workContent: undefined,
         workPlace: undefined,
     };
@@ -181,17 +181,17 @@ export default function WorkPermitFormik() {
     };
 
     const signatureLists: Record<SignatureListName, MultiSignatureStateItem> = {
-        primeAppearSignature: useState<ISignature[]>(
-            initialValues.primeAppearSignature as ISignature[]
+        primeContractingCorpAppearance: useState<ISignature[]>(
+            initialValues.primeContractingCorpAppearance as ISignature[]
         ),
-        viceFirstAppearSignature: useState<ISignature[]>(
-            initialValues.viceFirstAppearSignature as ISignature[]
+        viceFirstContractingCorpAppearance: useState<ISignature[]>(
+            initialValues.viceFirstContractingCorpAppearance as ISignature[]
         ),
-        viceSecondAppearSignature: useState<ISignature[]>(
-            initialValues.viceSecondAppearSignature as ISignature[]
+        viceSecondContractingCorpAppearance: useState<ISignature[]>(
+            initialValues.viceSecondContractingCorpAppearance as ISignature[]
         ),
-        viceThirdAppearSignature: useState<ISignature[]>(
-            initialValues.viceThirdAppearSignature as ISignature[]
+        viceThirdContractingCorpAppearance: useState<ISignature[]>(
+            initialValues.viceThirdContractingCorpAppearance as ISignature[]
         ),
     };
 
@@ -212,8 +212,9 @@ export default function WorkPermitFormik() {
             }
         },
         onError: (err) => {
-            console.log(err);
+            console.error(err);
             defaultErrorToast(toast);
+            throw new Error();
         },
     });
 
@@ -242,7 +243,9 @@ export default function WorkPermitFormik() {
                         const [signatureList] = signatureLists[listKey];
                         submitValues[listKey] = [...signatureList];
                     }
-                    updateToolboxMeeting({ variables: submitValues });
+                    updateToolboxMeeting({ variables: submitValues }).catch(
+                        () => actions.setSubmitting(false)
+                    );
                 }}
             >
                 {(props) => (

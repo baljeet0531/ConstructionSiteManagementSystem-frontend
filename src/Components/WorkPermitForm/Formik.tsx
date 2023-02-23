@@ -100,6 +100,7 @@ export default function WorkPermitFormik() {
         onError: (err) => {
             console.log(err);
             defaultErrorToast(toast);
+            throw new Error();
         },
     });
 
@@ -123,7 +124,9 @@ export default function WorkPermitFormik() {
                         const [signature] = signatures[key];
                         submitValues[key] = { ...signature };
                     }
-                    updateWorkPermit({ variables: submitValues });
+                    updateWorkPermit({ variables: submitValues }).catch(() =>
+                        actions.setSubmitting(false)
+                    );
                 }}
             >
                 {(props) => (
