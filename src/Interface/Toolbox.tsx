@@ -1,20 +1,26 @@
-import { ISignature } from './Signature';
+import { IGQLSignature, ISignature } from './Signature';
 
 export interface IToolboxData {
     contractingCorpName: string[] | undefined;
 }
 
-export type SignatureName = 
-"contractingCorpStaffSignatureFirst" |
-"contractingCorpStaffSignatureSecond" |
-"contractingCorpStaffSignatureThird" |
-"systemEngineerSignature"
+export type SignatureName =
+    | 'contractingCorpStaffSignatureFirst'
+    | 'contractingCorpStaffSignatureSecond'
+    | 'contractingCorpStaffSignatureThird'
+    | 'systemEngineerSignature';
 
-export type SignatureListName = 
-"primeAppearSignature" |
-"viceFirstAppearSignature" |
-"viceSecondAppearSignature" |
-"viceThirdAppearSignature" 
+export type SignatureListName =
+    | 'primeContractingCorpAppearance'
+    | 'viceFirstContractingCorpAppearance'
+    | 'viceSecondContractingCorpAppearance'
+    | 'viceThirdContractingCorpAppearance';
+
+export type SignatureListGQLName =
+    | 'primeAppearSignature'
+    | 'viceFirstAppearSignature'
+    | 'viceSecondAppearSignature'
+    | 'viceThirdAppearSignature';
 
 export interface IToolbox {
     abnormal: boolean | undefined;
@@ -117,7 +123,7 @@ export interface IToolbox {
     physicalFall: boolean | undefined;
     primeContractCorp: string | undefined;
     primeContractStaff: string | undefined;
-    primeAppearSignature: ISignature[] | undefined;
+    primeContractingCorpAppearance: ISignature[] | undefined;
     principleOnSiteBeforeWork: boolean | undefined;
     principleOnSiteDuringWork: boolean | undefined;
     principleOnSiteKnockOff: boolean | undefined;
@@ -141,13 +147,17 @@ export interface IToolbox {
     systemBranch: string | undefined;
     systemEngineerSignature: ISignature | undefined;
     username: string | undefined;
-    viceFirstAppearSignature: ISignature[] | undefined;
-    viceSecondAppearSignature: ISignature[] | undefined;
-    viceThirdAppearSignature: ISignature[] | undefined;
+    viceFirstContractingCorpAppearance: ISignature[] | undefined;
+    viceSecondContractingCorpAppearance: ISignature[] | undefined;
+    viceThirdContractingCorpAppearance: ISignature[] | undefined;
     workContent: string | undefined;
     workPlace: string | undefined;
 }
 
 export interface IGQLToolbox extends IToolbox {
     meetingDatetime: string | undefined;
+    primeAppearSignature: IGQLSignature[] | undefined;
+    viceFirstAppearSignature: IGQLSignature[] | undefined;
+    viceSecondAppearSignature: IGQLSignature[] | undefined;
+    viceThirdAppearSignature: IGQLSignature[] | undefined;
 }

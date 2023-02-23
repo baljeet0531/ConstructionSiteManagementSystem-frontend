@@ -9,6 +9,7 @@ import {
 import {
     IGQLToolbox,
     IToolbox,
+    SignatureListGQLName,
     SignatureListName,
     SignatureName,
 } from '../../Interface/Toolbox';
@@ -270,7 +271,7 @@ export const GQL_TOOLBOX_UPDATE = gql`
         $physicalFall: Boolean
         $primeContractCorp: String
         $primeContractStaff: String
-        $primeAppearSignature: [signatureInput]
+        $primeContractingCorpAppearance: [signatureInput]
         $principleOnSiteBeforeWork: Boolean
         $principleOnSiteDuringWork: Boolean
         $principleOnSiteKnockOff: Boolean
@@ -294,9 +295,9 @@ export const GQL_TOOLBOX_UPDATE = gql`
         $systemBranch: String
         $systemEngineerSignature: signatureInput
         $username: String!
-        $viceFirstAppearSignature: [signatureInput]
-        $viceSecondAppearSignature: [signatureInput]
-        $viceThirdAppearSignature: [signatureInput]
+        $viceFirstContractingCorpAppearance: [signatureInput]
+        $viceSecondContractingCorpAppearance: [signatureInput]
+        $viceThirdContractingCorpAppearance: [signatureInput]
         $workContent: String
         $workPlace: String
     ) {
@@ -399,7 +400,7 @@ export const GQL_TOOLBOX_UPDATE = gql`
             physicalFall: $physicalFall
             primeContractCorp: $primeContractCorp
             primeContractStaff: $primeContractStaff
-            primeAppearSignature: $primeAppearSignature
+            primeContractingCorpAppearance: $primeContractingCorpAppearance
             principleOnSiteBeforeWork: $principleOnSiteBeforeWork
             principleOnSiteDuringWork: $principleOnSiteDuringWork
             principleOnSiteKnockOff: $principleOnSiteKnockOff
@@ -423,9 +424,9 @@ export const GQL_TOOLBOX_UPDATE = gql`
             systemBranch: $systemBranch
             systemEngineerSignature: $systemEngineerSignature
             username: $username
-            viceFirstAppearSignature: $viceFirstAppearSignature
-            viceSecondAppearSignature: $viceSecondAppearSignature
-            viceThirdAppearSignature: $viceThirdAppearSignature
+            viceFirstContractingCorpAppearance: $viceFirstContractingCorpAppearance
+            viceSecondContractingCorpAppearance: $viceSecondContractingCorpAppearance
+            viceThirdContractingCorpAppearance: $viceThirdContractingCorpAppearance
             workContent: $workContent
             workPlace: $workPlace
         ) {
@@ -448,6 +449,12 @@ export function parseToolbox(
         'systemEngineerSignature',
     ];
     const signatureListColName: SignatureListName[] = [
+        'primeContractingCorpAppearance',
+        'viceFirstContractingCorpAppearance',
+        'viceSecondContractingCorpAppearance',
+        'viceThirdContractingCorpAppearance',
+    ];
+    const signatureListGQLColName: SignatureListGQLName[] = [
         'primeAppearSignature',
         'viceFirstAppearSignature',
         'viceSecondAppearSignature',
@@ -464,12 +471,8 @@ export function parseToolbox(
     }
 
     if (!t.workContent) {
-        const cols: (keyof IGQLToolbox)[] = [
-            'system',
-            'systemBranch',
-            'project',
-        ];
-        const values = cols.flatMap((c) => (t[c] ? t[c] : []));
+        const cols = [t.system, t.systemBranch, t.project];
+        const values = cols.flatMap((c) => c || []);
         t.workContent = values.join('/');
     }
 
