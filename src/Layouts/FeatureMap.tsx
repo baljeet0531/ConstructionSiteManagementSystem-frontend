@@ -23,7 +23,7 @@ import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultF
 import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
-import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
+import { Center, Flex, Image, Text } from '@chakra-ui/react';
 
 export type featureName =
     | 'dashboard'
@@ -59,13 +59,7 @@ export type featureItem = {
     page: JSX.Element;
 };
 
-const emptySiteIdPage = (
-    <Center w={'100%'} h={'100%'}>
-        請選擇專案
-    </Center>
-);
-
-const noContentPage = (
+const noContentPageLayout = (label: string) => (
     <Center w={'100%'} h={'100%'}>
         <Flex
             w={'60%'}
@@ -84,11 +78,14 @@ const noContentPage = (
                 color={'#4C7DE7'}
                 textAlign={'center'}
             >
-                目前頁面施工中，敬請期待
+                {label}
             </Text>
         </Flex>
     </Center>
 );
+
+const emptySiteIdPage = noContentPageLayout('請先選擇專案，以顯示內容');
+const noContentPage = noContentPageLayout('目前頁面施工中，敬請期待');
 
 export function getFeatureMap(site: {
     siteId: string;
@@ -112,8 +109,16 @@ export function getFeatureMap(site: {
         organization: {
             name: '專案人員組織',
             path: '/organization',
-            // page: <Organization />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Organization
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         people_overview: {
             name: '人員資料總覽',
@@ -173,8 +178,16 @@ export function getFeatureMap(site: {
         eng_toolbox_form: {
             name: '工具箱會議',
             path: '/eng/form/toolbox',
-            // page: <ToolboxFormOverview siteId={siteId} siteName={siteName} />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <ToolboxFormOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_fault_form: {
             name: '工安缺失單',

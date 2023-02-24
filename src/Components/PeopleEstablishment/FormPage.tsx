@@ -8,7 +8,6 @@ import {
     GridItem,
     Input,
     Select,
-    Center,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -17,7 +16,6 @@ import {
     ModalBody,
     useDisclosure,
     useToast,
-    Spinner,
     Box,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
@@ -34,6 +32,11 @@ import {
 import { Cookies } from 'react-cookie';
 import GridIdnoItem from './GridIdnoItem';
 import dayjs from 'dayjs';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import { PageLoading } from '../Shared/Loading';
 
 type imageType =
     | 'F6Img'
@@ -187,12 +190,7 @@ export default function FromPage(props: {
         {
             onCompleted: ({ uploadHRZip }) => {
                 if (uploadHRZip.ok) {
-                    toast({
-                        title: uploadHRZip.message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultSuccessToast(toast, uploadHRZip.message);
                     setZipFile(undefined);
                 }
             },
@@ -302,13 +300,7 @@ export default function FromPage(props: {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `${err}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
         },
         fetchPolicy: 'network-only',
     });
@@ -1277,19 +1269,7 @@ export default function FromPage(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {(submitLoading || uploadLoading) && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(submitLoading || uploadLoading) && <PageLoading />}
         </Flex>
     );
 }

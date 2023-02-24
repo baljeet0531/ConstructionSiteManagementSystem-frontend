@@ -11,11 +11,14 @@ import {
     Flex,
     Button,
     useToast,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import { PageLoading } from '../Shared/Loading';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
@@ -26,40 +29,91 @@ const DELETE_HUMAN_RESOURCE = gql`
     }
 `;
 
+const DELETE_ERROR_HUMAN_RESOURCE = gql`
+    mutation DeleteErrHR($nos: [Int!]) {
+        deleteErrHR(nos: $nos) {
+            ok
+            message
+        }
+    }
+`;
+
 export default function DeleteModal(props: {
     isOpen: boolean;
     onClose: () => void;
-    selected?: { name: string; idno: string }[];
+    selected?: {
+        no: number | null | undefined;
+        idno: string;
+        name: string;
+    }[];
+    errorOnly: boolean;
 }) {
     const toast = useToast();
-    const { isOpen, onClose, selected } = props;
+    const { isOpen, onClose, selected, errorOnly } = props;
     const [deleteHumanResource, { loading }] = useMutation(
         DELETE_HUMAN_RESOURCE,
         {
             onCompleted: ({ deleteHumanResource }) => {
                 if (deleteHumanResource.ok) {
-                    toast({
-                        title: deleteHumanResource.message,
-                        status: 'success',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultSuccessToast(toast, deleteHumanResource.message);
                 }
             },
             onError: (err) => {
                 console.log(err);
-                toast({
-                    title: '錯誤',
-                    description: `${err}`,
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultErrorToast(toast);
             },
-            refetchQueries: [ALL_HUMAN_RESOURCE],
+            refetchQueries: [
+                {
+                    query: ALL_HUMAN_RESOURCE,
+                    variables: { errlist: errorOnly },
+                },
+            ],
+            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
             fetchPolicy: 'network-only',
         }
     );
+    const [deleteErrorHumanResource, { loading: errorLoading }] = useMutation(
+        DELETE_ERROR_HUMAN_RESOURCE,
+        {
+            onCompleted: ({ deleteErrHR }) => {
+                if (deleteErrHR.ok) {
+                    defaultSuccessToast(toast, deleteErrHR.message);
+                }
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            refetchQueries: [
+                {
+                    query: ALL_HUMAN_RESOURCE,
+                    variables: { errlist: errorOnly },
+                },
+            ],
+            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const handleConfirm = () => {
+        if (selected && selected.length != 0) {
+            errorOnly
+                ? deleteErrorHumanResource({
+                      variables: {
+                          nos: selected.map(
+                              (selectedElement) => selectedElement.no
+                          ),
+                      },
+                  })
+                : deleteHumanResource({
+                      variables: {
+                          idno: selected.map(
+                              (selectedElement) => selectedElement.idno
+                          ),
+                      },
+                  });
+        }
+    };
 
     return (
         <>
@@ -98,26 +152,22 @@ export default function DeleteModal(props: {
                             gap={'10px'}
                         >
                             {selected &&
-                                Object.values(selected).map(
-                                    (selectedElement, index) => {
-                                        const { name, idno } = selectedElement;
-                                        return (
-                                            <Grid
-                                                key={index}
-                                                width={'164px'}
-                                                h={'36px'}
-                                                gap={'10px'}
-                                                templateColumns={
-                                                    'repeat(2,1fr)'
-                                                }
-                                                alignItems={'center'}
-                                            >
-                                                <Text>{name}</Text>
-                                                <Text>{idno}</Text>
-                                            </Grid>
-                                        );
-                                    }
-                                )}
+                                selected.map((selectedElement, index) => {
+                                    const { name, idno } = selectedElement;
+                                    return (
+                                        <Grid
+                                            key={index}
+                                            width={'164px'}
+                                            h={'36px'}
+                                            gap={'10px'}
+                                            templateColumns={'repeat(2,1fr)'}
+                                            alignItems={'center'}
+                                        >
+                                            <Text>{name}</Text>
+                                            <Text>{idno}</Text>
+                                        </Grid>
+                                    );
+                                })}
                         </Flex>
                     </ModalBody>
 
@@ -135,18 +185,7 @@ export default function DeleteModal(props: {
                                 variant={'buttonGrayOutline'}
                                 size={'sm'}
                                 onClick={() => {
-                                    if (selected && selected.length != 0) {
-                                        deleteHumanResource({
-                                            variables: {
-                                                idno: Object.values(
-                                                    selected
-                                                ).map(
-                                                    (selectedElement) =>
-                                                        selectedElement.idno
-                                                ),
-                                            },
-                                        });
-                                    }
+                                    handleConfirm();
                                     onClose();
                                 }}
                             >
@@ -156,19 +195,7 @@ export default function DeleteModal(props: {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            {loading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={'20vw'}
-                    w={'80vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || errorLoading) && <PageLoading />}
         </>
     );
 }

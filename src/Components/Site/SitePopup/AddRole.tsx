@@ -21,6 +21,10 @@ import { QUERY_SITE_ROLES } from '../SiteRoles';
 
 import { rolesList } from '../SiteRoles';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
 
 const QUERY_ACCOUNT_LIST = gql`
     query AccountList($name: String!) {
@@ -129,12 +133,7 @@ export default function AddRole(props: {
     const [createAccount] = useMutation(CREATE_ACCOUNT, {
         onCompleted: ({ createAccount }) => {
             if (createAccount.ok) {
-                toast({
-                    title: createAccount.message,
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                defaultSuccessToast(toast, createAccount.message);
                 addSiteRole({
                     variables: {
                         role: role,
@@ -161,16 +160,9 @@ export default function AddRole(props: {
         onCompleted: () => {
             setShowPopup(false);
         },
-        onError: ({ graphQLErrors }) => {
-            for (let i = 0; i < graphQLErrors.length; i++) {
-                toast({
-                    title: '錯誤',
-                    description: graphQLErrors[i].message,
-                    status: 'error',
-                    duration: null,
-                    isClosable: true,
-                });
-            }
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
         },
         refetchQueries: [
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },

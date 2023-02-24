@@ -10,12 +10,11 @@ import {
     Text,
     Flex,
     Button,
-    Center,
-    Spinner,
 } from '@chakra-ui/react';
 import { BackIcon, ReplyIcon } from '../../Icons/Icons';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_SCHEDULE } from './Schedule';
+import { PageLoading } from '../Shared/Loading';
 
 const CREATE_SCHEDULE = gql`
     mutation createSchedule($siteId: String!, $srcFile: Upload!) {
@@ -133,19 +132,7 @@ export default function Preview(props: {
                     <Tbody>{previewTableElements}</Tbody>
                 </Table>
             </TableContainer>
-            {loading && (
-                <Center
-                    position={'absolute'}
-                    top={0}
-                    left={0}
-                    w={'100vw'}
-                    h={'100vh'}
-                    bg={'#D9D9D980'}
-                    zIndex={2}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {loading && <PageLoading />}
         </Flex>
     );
 }

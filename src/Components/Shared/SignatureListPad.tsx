@@ -81,6 +81,7 @@ export default function SignaturePad({
         const base64string = fillBackground(canvas).toDataURL();
         const blob = await fetch(base64string).then((res) => res.blob());
         const new_item = {
+            no: undefined,
             image: new File([blob], signatureName),
             time: dayjs(),
             owner: new Cookies().get('username'),
