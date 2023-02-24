@@ -5,6 +5,7 @@ import { gql, useMutation } from '@apollo/client';
 import { QUERY_SITE_ROLES } from '../SiteRoles';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
 import { Cookies } from 'react-cookie';
+import { defaultErrorToast } from '../../../Utils/DefaultToast';
 
 const DELETE_SITE_ROLE = gql`
     mutation DeleteSiteRole($siteId: String!, $username: String!) {
@@ -28,23 +29,9 @@ export default function DeleteRole(props: {
         onCompleted: () => {
             setShowPopup(false);
         },
-        onError: ({ message, graphQLErrors }) => {
-            toast({
-                title: '錯誤',
-                description: message,
-                status: 'error',
-                duration: null,
-                isClosable: true,
-            });
-            for (let i = 0; i < graphQLErrors.length; i++) {
-                toast({
-                    title: '錯誤',
-                    description: graphQLErrors[i].message,
-                    status: 'error',
-                    duration: null,
-                    isClosable: true,
-                });
-            }
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
         },
         refetchQueries: [
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },

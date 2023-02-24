@@ -10,7 +10,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import {
     MultiSignatureStateItem,
@@ -32,14 +32,11 @@ import {
     IToolboxData,
     SignatureName,
     SignatureListName,
+    IToolboxOptions,
 } from '../../Interface/Toolbox';
 import SignatureTable from './SignatureTable';
-
-export const QUERY_TOOLBOX_OPTIONS = gql`
-    query toolboxOptions($siteId: String!) {
-        contractingCorpName(siteId: $siteId)
-    }
-`;
+import { GQL_TOOLBOX_QUERY, parseToolbox } from './GQL';
+import { FormLoading } from '../Shared/Loading';
 
 export default function ToolboxForm({
     formProps,
@@ -50,16 +47,42 @@ export default function ToolboxForm({
     signatures: Record<SignatureName, SignatureStateItem>;
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>;
 }) {
-    const [data, setData] = useState<IToolboxData>({ contractingCorpName: [] });
-    const f = new FormFactory(formProps, data, setData);
-    useQuery(QUERY_TOOLBOX_OPTIONS, {
+    const number = localStorage.getItem('toolboxNumber') as string;
+    const [data, setData] = useState<IToolboxData>({
+        contractingCorpName: [],
+        toolboxHint: {},
+    });
+    const [options, setOptions] = useState<IToolboxOptions>({
+        toolboxHint: {},
+    });
+    const f = new FormFactory(formProps, data, setData, options, setOptions);
+    document.title = `工具箱會議及巡檢紀錄(${number})`;
+    const { loading } = useQuery(GQL_TOOLBOX_QUERY, {
         variables: {
-            siteId: formProps.values.siteId,
+            siteId: localStorage.getItem('siteId'),
+            number: number,
         },
-        onCompleted: (d) => {
+        onCompleted: async (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
+                toolboxHint: d.toolboxHint,
             });
+
+            setOptions({
+                toolboxHint: d.toolboxHint,
+            });
+
+            const singleFormData = await parseToolbox(
+                d.toolboxMeeting,
+                signatures,
+                signatureLists
+            );
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
+        },
+        onError: (err) => {
+            console.error(err);
         },
         fetchPolicy: 'network-only',
     });
@@ -74,7 +97,7 @@ export default function ToolboxForm({
                 top={'10px'}
                 right={'37px'}
                 isLoading={formProps.isSubmitting}
-                onClick={formProps.submitForm}
+                zIndex={2}
             >
                 完成編輯
             </Button>
@@ -231,7 +254,7 @@ export default function ToolboxForm({
                         {...titleStyle}
                         flexWrap="wrap"
                     >
-                        {f.threeStateCheckbox('fall', '跌墜落')}
+                        {f.threeStateCheckbox('physicalFall', '跌墜落')}
                         {f.threeStateCheckbox(
                             'scrape',
                             '擦、刺、扭、壓、夾、碰撞、割傷'
@@ -945,6 +968,7 @@ export default function ToolboxForm({
                     <Text>EE-4411-15A</Text>
                 </Flex>
             </Box>
+            {(loading || formProps.isSubmitting) && <FormLoading />}
         </Form>
     );
 }

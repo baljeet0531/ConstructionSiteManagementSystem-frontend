@@ -17,10 +17,15 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import { ISignature, SignatureStateItem } from '../../Interface/Signature';
+import {
+    convertSignature,
+    ISignature,
+    SignatureStateItem,
+} from '../../Interface/Signature';
 import { IWorkPermit, SignatureName } from '../../Interface/WorkPermit';
 import WorkPermitForm from './Form';
 import { GQL_WORK_PERMIT_MUTATION } from './GQL';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 export default function WorkPermitFormik() {
     const siteId = localStorage.getItem('siteId') as string;
@@ -98,15 +103,18 @@ export default function WorkPermitFormik() {
         },
         onError: (err) => {
             console.log(err);
-            toast({
-                title: '錯誤',
-                description: `伺服器錯誤，請稍後重試。`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            defaultErrorToast(toast);
+            throw new Error();
         },
     });
+
+    const handleSignatures = (submit: IWorkPermit) => {
+        let key: keyof Record<SignatureName, SignatureStateItem>;
+        for (key in signatures) {
+            const [signature] = signatures[key];
+            submit[key] = convertSignature(signature) as ISignature;
+        }
+    };
 
     useEffect(() => {
         onOpen();
@@ -123,12 +131,10 @@ export default function WorkPermitFormik() {
                     if (submitValues.zone instanceof Array) {
                         submitValues['zone'] = submitValues.zone.join(',');
                     }
-                    let key: keyof Record<SignatureName, SignatureStateItem>;
-                    for (key in signatures) {
-                        const [signature] = signatures[key];
-                        submitValues[key] = { ...signature };
-                    }
-                    updateWorkPermit({ variables: submitValues });
+                    handleSignatures(submitValues);
+                    updateWorkPermit({ variables: submitValues }).catch(() =>
+                        actions.setSubmitting(false)
+                    );
                 }}
             >
                 {(props) => (
@@ -143,11 +149,8 @@ export default function WorkPermitFormik() {
                     <ModalBody>
                         <VStack>
                             <Box w="100%">
-                                依規定，工具箱會議及巡檢紀錄建議簽核時間如下：
+                                依規定，工作許可單建議於工程前一天完成簽核程序。
                             </Box>
-                            <Box w="100%">施工前 08:30~09:30 </Box>
-                            <Box w="100%">施工中 13:00~14:00</Box>
-                            <Box w="100%">收工前 16:30~17:30</Box>
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
