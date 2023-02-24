@@ -17,7 +17,11 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import { ISignature, SignatureStateItem } from '../../Interface/Signature';
+import {
+    convertSignature,
+    ISignature,
+    SignatureStateItem,
+} from '../../Interface/Signature';
 import { IWorkPermit, SignatureName } from '../../Interface/WorkPermit';
 import WorkPermitForm from './Form';
 import { GQL_WORK_PERMIT_MUTATION } from './GQL';
@@ -104,6 +108,14 @@ export default function WorkPermitFormik() {
         },
     });
 
+    const handleSignatures = (submit: IWorkPermit) => {
+        let key: keyof Record<SignatureName, SignatureStateItem>;
+        for (key in signatures) {
+            const [signature] = signatures[key];
+            submit[key] = convertSignature(signature) as ISignature;
+        }
+    };
+
     useEffect(() => {
         onOpen();
     }, []);
@@ -119,11 +131,7 @@ export default function WorkPermitFormik() {
                     if (submitValues.zone instanceof Array) {
                         submitValues['zone'] = submitValues.zone.join(',');
                     }
-                    let key: keyof Record<SignatureName, SignatureStateItem>;
-                    for (key in signatures) {
-                        const [signature] = signatures[key];
-                        submitValues[key] = { ...signature };
-                    }
+                    handleSignatures(submitValues);
                     updateWorkPermit({ variables: submitValues }).catch(() =>
                         actions.setSubmitting(false)
                     );
