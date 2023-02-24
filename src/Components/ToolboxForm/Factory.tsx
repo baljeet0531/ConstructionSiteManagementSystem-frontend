@@ -11,7 +11,6 @@ import { SetStateAction, Dispatch, useState, useEffect } from 'react';
 import {
     IToolbox,
     IToolboxData,
-    IToolboxHint,
     IToolboxOptions,
 } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
@@ -88,8 +87,8 @@ export default class FormFactory {
             />
         );
     }
-    handleHint(name: keyof IToolboxHint, current: boolean | undefined) {
-        if (this.data.toolboxHint[name]) return;
+    handleHint(name: keyof IToolbox, current: boolean | null) {
+        if (this.data.toolboxHint[name] || !(name in this.hintRelation)) return;
         let update = {};
         const relation = this.hintRelation[name];
         relation.map((n) => {
@@ -123,14 +122,14 @@ export default class FormFactory {
                 isChecked={value ? true : false}
                 isIndeterminate={value === false ? true : false}
                 onChange={() => {
-                    let target = undefined;
+                    let target = null;
                     value
                         ? (target = false)
                         : value === false
-                        ? (target = undefined)
+                        ? (target = null)
                         : (target = true);
                     this.formProps.setFieldValue(name, target);
-                    this.handleHint(name as keyof IToolboxHint, target);
+                    this.handleHint(name, target);
                 }}
                 variant={hint ? 'hint' : ''}
             >
@@ -139,9 +138,17 @@ export default class FormFactory {
         );
     }
     othersField(name: keyof IToolbox, text: string, w: string = '120px') {
-        const [enable, setEnable] = useState(
-            this.formProps.values[name] ? true : false
-        );
+        const [enable, setEnable] = useState(false);
+        useEffect(() => {
+            if (
+                this.formProps.values[name] !== null &&
+                this.formProps.values[name] !== ''
+            ) {
+                setEnable(true);
+            } else {
+                setEnable(false);
+            }
+        }, [this.formProps.values]);
         return (
             <>
                 <Checkbox
@@ -201,37 +208,31 @@ export default class FormFactory {
         );
     }
     abnormalRecord() {
-        const [enable, setEnable] = useState(
-            this.formProps.values.abnormalRecord ? true : false
-        );
-        useEffect(() => {
-            if (!enable) {
-                this.formProps.setFieldValue('abnormalRecord', '');
-            }
-            if (enable) {
-                this.formProps.setFieldValue('abnormal', false);
-            }
-        }, [enable]);
-
         return (
             <VStack w="100%" h="100%">
                 <HStack w="100%" spacing={4} pl={2} pt={2}>
                     <Checkbox
-                        isChecked={this.formProps.values.abnormal}
+                        isChecked={!this.formProps.values.abnormal}
                         onChange={(e) => {
                             const value: boolean = e.target.checked;
-                            this.formProps.setFieldValue('abnormal', value);
                             if (value) {
-                                setEnable(false);
+                                this.formProps.setFieldValue('abnormal', false);
+                                this.formProps.setFieldValue(
+                                    'abnormalRecord',
+                                    ''
+                                );
                             }
                         }}
                     >
                         NA (無異常及改善情形)
                     </Checkbox>
                     <Checkbox
-                        isChecked={enable}
-                        onChange={() => {
-                            setEnable(!enable);
+                        isChecked={this.formProps.values.abnormal}
+                        onChange={(e) => {
+                            const value: boolean = e.target.checked;
+                            if (value) {
+                                this.formProps.setFieldValue('abnormal', true);
+                            }
                         }}
                     >
                         異常及改善情形說明
@@ -239,7 +240,7 @@ export default class FormFactory {
                 </HStack>
                 <Textarea
                     h="100%"
-                    disabled={!enable}
+                    disabled={!this.formProps.values.abnormal}
                     value={this.formProps.values.abnormalRecord}
                     _placeholder={placeholderStyle}
                     placeholder="請填寫"

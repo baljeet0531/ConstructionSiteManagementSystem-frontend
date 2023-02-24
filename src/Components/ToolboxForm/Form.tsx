@@ -48,8 +48,13 @@ export default function ToolboxForm({
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>;
 }) {
     const number = localStorage.getItem('toolboxNumber') as string;
-    const [data, setData] = useState<IToolboxData>({ contractingCorpName: [], toolboxHint: {} });
-    const [options, setOptions] = useState<IToolboxOptions>({toolboxHint: {}})
+    const [data, setData] = useState<IToolboxData>({
+        contractingCorpName: [],
+        toolboxHint: {},
+    });
+    const [options, setOptions] = useState<IToolboxOptions>({
+        toolboxHint: {},
+    });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工具箱會議及巡檢紀錄(${number})`;
     const { loading } = useQuery(GQL_TOOLBOX_QUERY, {
@@ -57,17 +62,17 @@ export default function ToolboxForm({
             siteId: localStorage.getItem('siteId'),
             number: number,
         },
-        onCompleted: (d) => {
+        onCompleted: async (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
-                toolboxHint: d.toolboxHint
+                toolboxHint: d.toolboxHint,
             });
 
             setOptions({
-                toolboxHint: d.toolboxHint
+                toolboxHint: d.toolboxHint,
             });
 
-            const singleFormData = parseToolbox(
+            const singleFormData = await parseToolbox(
                 d.toolboxMeeting,
                 signatures,
                 signatureLists
