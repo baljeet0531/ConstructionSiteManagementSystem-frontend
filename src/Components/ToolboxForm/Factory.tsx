@@ -255,7 +255,7 @@ export default class FormFactory {
             </VStack>
         );
     }
-    selectContractingCorpInput(fieldName: string) {
+    selectContractingCorpInput(fieldName: keyof IToolbox) {
         return (
             <AutoComplete
                 openOnFocus
@@ -268,6 +268,11 @@ export default class FormFactory {
                     border="0px"
                     placeholder="請選擇"
                     textAlign="center"
+                    value={this.formProps.values[fieldName] as string}
+                    onChange={(e) => {
+                        const target = e.target.value
+                        this.formProps.setFieldValue(fieldName, target);
+                    }}
                     _placeholder={placeholderStyle}
                 />
                 <AutoCompleteList>
