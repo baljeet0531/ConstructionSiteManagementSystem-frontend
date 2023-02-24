@@ -156,16 +156,16 @@ export const GQL_TOOLBOX_QUERY = gql`
                 ...gqlSignatureFields
             }
             primeAppearSignature {
-                ...gqlAppearFields
+                ...appearFields
             }
             viceFirstAppearSignature {
-                ...gqlAppearFields
+                ...appearFields
             }
             viceSecondAppearSignature {
-                ...gqlAppearFields
+                ...appearFields
             }
             viceThirdAppearSignature {
-                ...gqlAppearFields
+                ...appearFields
             }
         }
         toolboxHint(siteId: $siteId, number: $number) {
@@ -248,7 +248,7 @@ export const GQL_TOOLBOX_QUERY = gql`
             oxygenGasDetection
             oxygenLifting
             oxygenRescue
-          }
+        }
     }
 `;
 
@@ -375,7 +375,6 @@ export const GQL_TOOLBOX_UPDATE = gql`
         $system: String
         $systemBranch: String
         $systemEngineerSignature: signatureInput
-        $username: String!
         $viceFirstContractingCorpAppearance: [signatureInput]
         $viceSecondContractingCorpAppearance: [signatureInput]
         $viceThirdContractingCorpAppearance: [signatureInput]
@@ -504,7 +503,6 @@ export const GQL_TOOLBOX_UPDATE = gql`
             system: $system
             systemBranch: $systemBranch
             systemEngineerSignature: $systemEngineerSignature
-            username: $username
             viceFirstContractingCorpAppearance: $viceFirstContractingCorpAppearance
             viceSecondContractingCorpAppearance: $viceSecondContractingCorpAppearance
             viceThirdContractingCorpAppearance: $viceThirdContractingCorpAppearance
@@ -517,11 +515,11 @@ export const GQL_TOOLBOX_UPDATE = gql`
     }
 `;
 
-export function parseToolbox(
+export async function parseToolbox(
     list: IGQLToolbox[],
     signatures: Record<SignatureName, SignatureStateItem>,
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>
-): IToolbox | undefined {
+): Promise<IToolbox | undefined> {
     if (!list[0]) return;
     const signatureColName: SignatureName[] = [
         'contractingCorpStaffSignatureFirst',
@@ -557,11 +555,17 @@ export function parseToolbox(
         t.workContent = values.join('/');
     }
 
+    if (!t.workPlace) {
+        const cols = [t.area, t.zone];
+        const values = cols.flatMap((c) => c || []);
+        t.workPlace = values.join(' ');
+    }
+
     // Handle single singnatures
     for (let i = 0; i < signatureColName.length; i++) {
         const key = signatureColName[i];
         const [, setSignature] = signatures[key];
-        const GQLsign = t[key] as IGQLSignature | undefined;
+        const GQLsign = t[key] as IGQLSignature | null;
         if (GQLsign) {
             getSignature(GQLsign).then((item) => {
                 setSignature(item);
@@ -578,9 +582,8 @@ export function parseToolbox(
         const signList = [] as ISignature[];
         if (GQLsignList) {
             for (let GQLsign of GQLsignList) {
-                getSignature(GQLsign).then((item) => {
-                    signList.push(item);
-                });
+                const sign = await getSignature(GQLsign);
+                signList.push(sign);
             }
         }
         setSignatureList(signList);
