@@ -1,147 +1,173 @@
-import { ISignature } from './Signature';
+import { IGQLSignature, ISignature } from './Signature';
 
-export interface IToolboxData {
-    contractingCorpName: string[] | undefined;
+export interface IToolboxHint {
+    [key: string]: boolean | null;
 }
 
-export type SignatureName = 
-"contractingCorpStaffSignatureFirst" |
-"contractingCorpStaffSignatureSecond" |
-"contractingCorpStaffSignatureThird" |
-"systemEngineerSignature"
+export interface IToolboxData {
+    contractingCorpName: string[] | null;
+    toolboxHint: IToolboxHint ;
+}
 
-export type SignatureListName = 
-"primeContractingCorpAppearance" |
-"viceFirstContractingCorpAppearance" |
-"viceSecondContractingCorpAppearance" |
-"viceThirdContractingCorpAppearance" 
+export interface IToolboxOptions {
+    toolboxHint: IToolboxHint ;
+}
+
+export type SignatureName =
+    | 'contractingCorpStaffSignatureFirst'
+    | 'contractingCorpStaffSignatureSecond'
+    | 'contractingCorpStaffSignatureThird'
+    | 'systemEngineerSignature';
+
+export type SignatureListName =
+    | 'primeContractingCorpAppearance'
+    | 'viceFirstContractingCorpAppearance'
+    | 'viceSecondContractingCorpAppearance'
+    | 'viceThirdContractingCorpAppearance';
+
+export type SignatureListGQLName =
+    | 'primeAppearSignature'
+    | 'viceFirstAppearSignature'
+    | 'viceSecondAppearSignature'
+    | 'viceThirdAppearSignature';
 
 export interface IToolbox {
-    abnormal: boolean | undefined;
-    abnormalRecord: string | undefined;
-    area: string | undefined;
-    biologicalHazard: boolean | undefined;
-    body: boolean | undefined;
-    bodyBelt: boolean | undefined;
-    bodyClothing: boolean | undefined;
-    bodyMask: boolean | undefined;
-    bodyVest: boolean | undefined;
-    breathOxygen: boolean | undefined;
-    breathe: boolean | undefined;
-    breathePapr: boolean | undefined;
-    breatheScba: boolean | undefined;
-    breatheDust: boolean | undefined;
-    breatheFiltration: boolean | undefined;
-    chemicalBurn: boolean | undefined;
-    chemicalInclude: string | undefined;
-    chemicalInhalation: boolean | undefined;
-    chemicalNone: boolean | undefined;
-    collapse: boolean | undefined;
-    contentConformSupervisor: boolean | undefined;
-    contentConformBeforeWork: boolean | undefined;
-    contentConformDuringWork: boolean | undefined;
-    contractingCorpStaffSignatureFirst: ISignature | undefined;
-    contractingCorpStaffSignatureSecond: ISignature | undefined;
-    contractingCorpStaffSignatureThird: ISignature | undefined;
-    ear: boolean | undefined;
-    earEarmuffs: boolean | undefined;
-    earEarplugs: boolean | undefined;
-    electric: boolean | undefined;
-    electricBreaker: boolean | undefined;
-    electricElectroscope: boolean | undefined;
-    electricShockPrevention: boolean | undefined;
-    eletricDisaster: boolean | undefined;
-    explode: boolean | undefined;
-    eye: boolean | undefined;
-    eyeMechanical: boolean | undefined;
-    eyeRadia: boolean | undefined;
-    fall: boolean | undefined;
-    fallAerialVehicle: boolean | undefined;
-    fallArrestor: boolean | undefined;
-    fallCage: boolean | undefined;
-    fallCover: boolean | undefined;
-    fallFence: boolean | undefined;
-    fallSafeLine: boolean | undefined;
-    fallSafeNet: boolean | undefined;
-    fallScaffold: boolean | undefined;
-    fallTravelLadder: boolean | undefined;
-    fallTrestleLadder: boolean | undefined;
-    fallWarningFence: boolean | undefined;
-    fire: boolean | undefined;
-    fireBackfire: boolean | undefined;
-    fireBlanket: boolean | undefined;
-    fireDisaster: boolean | undefined;
-    fireExtinguisher: boolean | undefined;
-    foot: boolean | undefined;
-    footChemical: boolean | undefined;
-    footNormal: boolean | undefined;
-    foreignEnterEye: boolean | undefined;
-    gasInclude: string | undefined;
-    gasNone: boolean | undefined;
-    hand: boolean | undefined;
-    handCut: boolean | undefined;
-    handElectirc: boolean | undefined;
-    handGrand: boolean | undefined;
-    handHeat: boolean | undefined;
-    haneChemical: boolean | undefined;
-    head: boolean | undefined;
-    headElectric: boolean | undefined;
-    headPlastic: boolean | undefined;
-    headWorkspace: boolean | undefined;
-    heatTouch: boolean | undefined;
-    hypoxia: boolean | undefined;
-    meetingDate: string | undefined;
-    meetingTime: string | undefined;
-    meetingPlace: string | undefined;
-    microthermTouch: boolean | undefined;
-    minorContractCorpOne: string | undefined;
-    minorContractCorpThree: string | undefined;
-    minorContractCorpTwo: string | undefined;
-    minorContractOneStaff: string | undefined;
-    minorContractThreeStaff: string | undefined;
-    minorContractTwoStaff: string | undefined;
-    noise: boolean | undefined;
-    number: string | undefined;
-    objectFall: boolean | undefined;
-    ohterPrevention: string | undefined;
-    otherDisaster: string | undefined;
-    otherDisasterNone: boolean | undefined;
-    outdoorHeat: boolean | undefined;
-    oxygen: boolean | undefined;
-    oxygenGasDetection: boolean | undefined;
-    oxygenLifeDetection: boolean | undefined;
-    oxygenLifting: boolean | undefined;
-    oxygenRescue: boolean | undefined;
-    oxygenVentilation: boolean | undefined;
-    primeContractCorp: string | undefined;
-    primeContractStaff: string | undefined;
-    primeContractingCorpAppearance: ISignature[] | undefined;
-    principleOnSiteBeforeWork: boolean | undefined;
-    principleOnSiteDuringWork: boolean | undefined;
-    principleOnSiteKnockOff: boolean | undefined;
-    principleOnSiteSupervisor: boolean | undefined;
-    project: string | undefined;
-    publicityMatters: string | undefined;
-    radiation: boolean | undefined;
-    restorationKnockOff: boolean | undefined;
-    restorationSupervisor: boolean | undefined;
-    safetyMeasureBeforeWork: boolean | undefined;
-    safetyMeasureDuringWork: boolean | undefined;
-    safetyMeasureKnockOff: boolean | undefined;
-    safetyMeasureSupervisor: boolean | undefined;
-    scrape: boolean | undefined;
-    siteId: string | undefined;
-    staffStateBeforeWork: boolean | undefined;
-    staffStateDuringWork: boolean | undefined;
-    staffStateKnockOff: boolean | undefined;
-    staffStateSupervisor: boolean | undefined;
-    system: string | undefined;
-    systemBranch: string | undefined;
-    systemEngineerSignature: ISignature | undefined;
-    username: string | undefined;
-    viceFirstContractingCorpAppearance: ISignature[] | undefined;
-    viceSecondContractingCorpAppearance: ISignature[] | undefined;
-    viceThirdContractingCorpAppearance: ISignature[] | undefined;
-    workContent: string | undefined;
-    workPlace: string | undefined;
+    abnormal: boolean ;
+    abnormalRecord: string ;
+    area: string ;
+    biologicalHazard: boolean | null;
+    body: boolean | null;
+    bodyBelt: boolean | null;
+    bodyClothing: boolean | null;
+    bodyMask: boolean | null;
+    bodyVest: boolean | null;
+    breathOxygen: boolean | null;
+    breathe: boolean | null;
+    breathePapr: boolean | null;
+    breatheScba: boolean | null;
+    breatheDust: boolean | null;
+    breatheFiltration: boolean | null;
+    chemicalBurn: boolean | null;
+    chemicalInclude: string ;
+    chemicalInhalation: boolean | null;
+    chemicalNone: boolean | null;
+    collapse: boolean | null;
+    contentConformSupervisor: boolean | null;
+    contentConformBeforeWork: boolean | null;
+    contentConformDuringWork: boolean | null;
+    contractingCorpStaffSignatureFirst: ISignature | null;
+    contractingCorpStaffSignatureSecond: ISignature | null;
+    contractingCorpStaffSignatureThird: ISignature | null;
+    ear: boolean | null;
+    earEarmuffs: boolean | null;
+    earEarplugs: boolean | null;
+    electric: boolean | null;
+    electricBreaker: boolean | null;
+    electricElectroscope: boolean | null;
+    electricShockPrevention: boolean | null;
+    eletricDisaster: boolean | null;
+    explode: boolean | null;
+    eye: boolean | null;
+    eyeMechanical: boolean | null;
+    eyeRadia: boolean | null;
+    fall: boolean | null;
+    fallAerialVehicle: boolean | null;
+    fallArrestor: boolean | null;
+    fallCage: boolean | null;
+    fallCover: boolean | null;
+    fallFence: boolean | null;
+    fallSafeLine: boolean | null;
+    fallSafeNet: boolean | null;
+    fallScaffold: boolean | null;
+    fallTravelLadder: boolean | null;
+    fallTrestleLadder: boolean | null;
+    fallWarningFence: boolean | null;
+    fire: boolean | null;
+    fireBackfire: boolean | null;
+    fireBlanket: boolean | null;
+    fireDisaster: boolean | null;
+    fireExtinguisher: boolean | null;
+    foot: boolean | null;
+    footChemical: boolean | null;
+    footNormal: boolean | null;
+    foreignEnterEye: boolean | null;
+    gasInclude: string ;
+    gasNone: boolean | null;
+    hand: boolean | null;
+    handCut: boolean | null;
+    handElectirc: boolean | null;
+    handGrand: boolean | null;
+    handHeat: boolean | null;
+    haneChemical: boolean | null;
+    head: boolean | null;
+    headElectric: boolean | null;
+    headPlastic: boolean | null;
+    headWorkspace: boolean | null;
+    heatTouch: boolean | null;
+    hypoxia: boolean | null;
+    laborAmount: number | null;
+    meetingDate: string | null;
+    meetingTime: string | null;
+    meetingPlace: string | null;
+    microthermTouch: boolean | null;
+    minorContractCorpOne: string | null;
+    minorContractCorpThree: string | null;
+    minorContractCorpTwo: string | null;
+    minorContractOneStaff: string | null;
+    minorContractThreeStaff: string | null;
+    minorContractTwoStaff: string | null;
+    noise: boolean | null;
+    number: string | null;
+    objectFall: boolean | null;
+    ohterPrevention: string;
+    otherDisaster: string ;
+    otherDisasterNone: boolean | null;
+    outdoorHeat: boolean | null;
+    oxygen: boolean | null;
+    oxygenGasDetection: boolean | null;
+    oxygenLifeDetection: boolean | null;
+    oxygenLifting: boolean | null;
+    oxygenRescue: boolean | null;
+    oxygenVentilation: boolean | null;
+    physicalFall: boolean | null;
+    primeContractCorp: string | null;
+    primeContractStaff: string | null;
+    primeContractingCorpAppearance: ISignature[];
+    principleOnSiteBeforeWork: boolean | null;
+    principleOnSiteDuringWork: boolean | null;
+    principleOnSiteKnockOff: boolean | null;
+    principleOnSiteSupervisor: boolean | null;
+    project: string | null;
+    publicityMatters: string | null;
+    radiation: boolean | null;
+    restorationKnockOff: boolean | null;
+    restorationSupervisor: boolean | null;
+    safetyMeasureBeforeWork: boolean | null;
+    safetyMeasureDuringWork: boolean | null;
+    safetyMeasureKnockOff: boolean | null;
+    safetyMeasureSupervisor: boolean | null;
+    scrape: boolean | null;
+    siteId: string;
+    staffStateBeforeWork: boolean | null;
+    staffStateDuringWork: boolean | null;
+    staffStateKnockOff: boolean | null;
+    staffStateSupervisor: boolean | null;
+    system: string | null;
+    systemBranch: string | null;
+    systemEngineerSignature: ISignature | null;
+    username: string | null;
+    viceFirstContractingCorpAppearance: ISignature[] ;
+    viceSecondContractingCorpAppearance: ISignature[] ;
+    viceThirdContractingCorpAppearance: ISignature[] ;
+    workContent: string | null;
+    workPlace: string | null;
+    zone: string | null;
+}
+
+export interface IGQLToolbox extends IToolbox {
+    meetingDatetime: string | null;
+    primeAppearSignature: IGQLSignature[] | null;
+    viceFirstAppearSignature: IGQLSignature[] | null;
+    viceSecondAppearSignature: IGQLSignature[] | null;
+    viceThirdAppearSignature: IGQLSignature[] | null;
 }
