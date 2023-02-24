@@ -41,10 +41,10 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <InstantInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <TodoList />
+                    <TodoList siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <PublicAwarenessInfo />
+                    <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <Text variant={'w700s16'}>專案進度</Text>

@@ -12,14 +12,87 @@ import {
     Th,
     Thead,
     Tr,
+    useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../Icons/Icons';
-export default function PublicAwarenessInfo() {
+import { gql, useQuery } from '@apollo/client';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+
+interface IGQLTodayWorkList {
+    system: string;
+    area: string;
+    opType: string;
+    workItem: string;
+    corpName: string;
+    laborAmount: string;
+}
+
+const AWARENESS_INFO = gql`
+    query DashboardPublicMatters($siteId: String!) {
+        dashboardPublicMatters(siteId: $siteId)
+    }
+`;
+const WORK_LIST = gql`
+    query TodayWorkList($siteId: String!) {
+        todayWorkList(siteId: $siteId) {
+            system
+            area
+            opType
+            workItem
+            corpName
+            laborAmount
+        }
+    }
+`;
+
+export default function PublicAwarenessInfo(props: { siteId: string }) {
+    const { siteId } = props;
+    const toast = useToast();
+
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
     const awarenessInfoRef = React.useRef<HTMLTextAreaElement>(null);
-    const [awarenessInfoValue, setAwarenessInfoValue] = React.useState<
-        string | undefined
-    >('1. 災情資訊_警示內容（含災後各項檢查提醒）\n2. 應辦理及注意事項');
+    const [awarenessInfoValue, setAwarenessInfoValue] =
+        React.useState<string>('');
+    const [workList, setWorkList] = React.useState<IGQLTodayWorkList[]>([]);
+
+    const workListElement = workList.map(
+        ({ system, area, opType, workItem, corpName, laborAmount }, index) => (
+            <Tr key={index}>
+                <Td>{system}</Td>
+                <Td>{area}</Td>
+                <Td>{opType}</Td>
+                <Td>{workItem}</Td>
+                <Td>{corpName}</Td>
+                <Td>{laborAmount}</Td>
+            </Tr>
+        )
+    );
+
+    useQuery(AWARENESS_INFO, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ dashboardPublicMatters }) => {
+            setAwarenessInfoValue(dashboardPublicMatters);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+    });
+
+    useQuery(WORK_LIST, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ todayWorkList }) => {
+            setWorkList(todayWorkList);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+    });
 
     return (
         <Flex direction={'column'} mr={'11px'}>
@@ -75,7 +148,9 @@ export default function PublicAwarenessInfo() {
                     size={'xs'}
                     variant={'buttonBlueSolid'}
                     onClick={() => {
-                        setAwarenessInfoValue(awarenessInfoRef.current?.value);
+                        setAwarenessInfoValue(
+                            awarenessInfoRef.current?.value || ''
+                        );
                         setEditDisabled(true);
                     }}
                 >
@@ -97,40 +172,7 @@ export default function PublicAwarenessInfo() {
                             <Th w={'60px'}>施工人數</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>空調</Td>
-                            <Td>空調室</Td>
-                            <Td>吊掛作業</Td>
-                            <Td>管路施工</Td>
-                            <Td>承商A</Td>
-                            <Td>6</Td>
-                        </Tr>
-                        <Tr>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                        </Tr>
-                        <Tr>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                        </Tr>
-                        <Tr>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                            <Td></Td>
-                        </Tr>
-                    </Tbody>
+                    <Tbody>{workListElement}</Tbody>
                 </Table>
             </TableContainer>
         </Flex>
