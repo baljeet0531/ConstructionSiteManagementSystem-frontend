@@ -62,6 +62,7 @@ export default function SignaturePad({
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
             setSignature({
+                no: undefined,
                 image: undefined,
                 time: undefined,
                 owner: undefined,
@@ -73,6 +74,7 @@ export default function SignaturePad({
         const base64string = fillBackground(canvas).toDataURL();
         const blob = await fetch(base64string).then((res) => res.blob());
         setSignature({
+            no: undefined,
             image: new File([blob], signatureName),
             time: dayjs(),
             owner: new Cookies().get('username'),
