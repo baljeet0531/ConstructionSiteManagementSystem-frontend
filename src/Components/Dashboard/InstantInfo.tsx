@@ -1,3 +1,4 @@
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -11,19 +12,91 @@ import {
     Th,
     Thead,
     Tr,
+    useToast,
 } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import React from 'react';
 import { EditIcon } from '../../Icons/Icons';
-import { warningText } from './Style';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
-export default function InstantInfo() {
+interface IGQLOpInfo {
+    title: string;
+    workBefore: Date;
+    knockOff: Date;
+}
+
+interface IGQLToolboxInfo extends IGQLOpInfo {
+    workDuring: Date;
+}
+
+interface adminInfo {
+    contractingCorp: string;
+    goal: string;
+}
+
+const INSTANT_INFO = gql`
+    query InstantInfo($siteId: String!) {
+        instantInfo(siteId: $siteId) {
+            workPermitFinish
+            workPermitTotal
+            toolboxInfo {
+                title
+                workBefore
+                workDuring
+                knockOff
+            }
+            opInfo {
+                title
+                workBefore
+                knockOff
+            }
+        }
+    }
+`;
+
+const ADMIN_INFO = gql`
+    query DashboardAdministration($siteId: String!) {
+        dashboardAdministration(siteId: $siteId) {
+            contractingCorp
+            goal
+        }
+    }
+`;
+
+const CONTRACTING_CORP_NAME = gql`
+    query ContractingCorpName($siteId: String!) {
+        contractingCorpName(siteId: $siteId)
+    }
+`;
+const UPDATE_ADMIN = gql`
+    mutation UpdateDashboardAdministration(
+        $content: [gqlAdministrationInput]!
+        $siteId: String!
+    ) {
+        updateDashboardAdministration(content: $content, siteId: $siteId) {
+            ok
+            message
+        }
+    }
+`;
+
+export default function InstantInfo(props: { siteId: string }) {
+    const { siteId } = props;
+    const toast = useToast();
+
+    const adminInfoWithGoalAssigned = React.useRef(new Map<string, string>());
+
+    const [workPermitAmount, setWorkPermitAmount] =
+        React.useState<[string, string]>();
+    const [toolboxInfo, setToolboxInfo] = React.useState<IGQLToolboxInfo[]>([]);
+    const [opInfo, setOpInfo] = React.useState<IGQLOpInfo[]>([]);
+    const [adminInfo, setAdminInfo] = React.useState<adminInfo[]>([]);
+
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
     const administrationRef = React.useRef<any>();
-    const [adminInfo, setAdminInfo] = React.useState([
-        { name: '承商A', target: '40' },
-        { name: '承商B', target: '本週須完成管架施工' },
-        { name: '承商C', target: '下週須完成管路施工' },
-    ]);
 
     const getMap: () => Map<string, HTMLTextAreaElement> = () =>
         administrationRef.current || (administrationRef.current = new Map());
@@ -31,39 +104,154 @@ export default function InstantInfo() {
     const saveChange = () => {
         const myMap = getMap();
         const newAdminInfo = Array.from(myMap).map((item) => ({
-            name: item[0],
-            target: item[1].value,
+            contractingCorp: item[0],
+            goal: item[1].value,
         }));
         setAdminInfo(newAdminInfo);
+        updateAdmin({
+            variables: {
+                content: newAdminInfo,
+                siteId: siteId,
+            },
+        });
     };
 
     const cancelChange = () => {
         const myMap = getMap();
         let index = 0;
         myMap.forEach((item) => {
-            item.value = adminInfo[index].target;
+            item.value = adminInfo[index].goal;
             index += 1;
         });
     };
 
+    const formatDate = (date: Date | null) =>
+        date ? dayjs(date).format('HH:MM') : '-';
+
     const adminElement = adminInfo.map((element, index) => {
-        const { name, target } = element;
+        const { contractingCorp, goal } = element;
         return (
             <Tr key={index}>
-                <Td>{name}</Td>
+                <Td>{contractingCorp}</Td>
                 <Td padding={0}>
                     <Textarea
                         ref={(node) => {
                             const map = getMap();
-                            node ? map.set(name, node) : map.delete(name);
+                            node
+                                ? map.set(contractingCorp, node)
+                                : map.delete(contractingCorp);
                         }}
-                        defaultValue={target}
+                        defaultValue={goal}
                         variant={'dashboardAdministration'}
                         disabled={editDisabled}
                     ></Textarea>
                 </Td>
             </Tr>
         );
+    });
+
+    const toolboxElement = toolboxInfo.map((element, index) => {
+        const { title, workBefore, workDuring, knockOff } = element;
+
+        return (
+            <Tr key={index}>
+                <Td>{title}</Td>
+                <Td>{formatDate(workBefore)}</Td>
+                <Td>{formatDate(workDuring)}</Td>
+                <Td>{formatDate(knockOff)}</Td>
+            </Tr>
+        );
+    });
+    const opElement = opInfo.map((element, index) => {
+        const { title, workBefore, knockOff } = element;
+
+        return (
+            <Tr key={index}>
+                <Td>{title}</Td>
+                <Td>{formatDate(workBefore)}</Td>
+                <Td>{formatDate(knockOff)}</Td>
+            </Tr>
+        );
+    });
+
+    useQuery(INSTANT_INFO, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ instantInfo }) => {
+            const { workPermitFinish, workPermitTotal, toolboxInfo, opInfo } =
+                instantInfo;
+            setWorkPermitAmount([workPermitFinish, workPermitTotal]);
+            setToolboxInfo(toolboxInfo);
+            setOpInfo(opInfo);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    useQuery(ADMIN_INFO, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            dashboardAdministration,
+        }: {
+            dashboardAdministration: adminInfo[];
+        }) => {
+            dashboardAdministration.forEach((element) => {
+                const { contractingCorp, goal } = element;
+                adminInfoWithGoalAssigned.current.set(contractingCorp, goal);
+            });
+            getCorpName();
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [getCorpName] = useLazyQuery(CONTRACTING_CORP_NAME, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            contractingCorpName,
+        }: {
+            contractingCorpName: string[];
+        }) => {
+            const adminInfoAll = contractingCorpName.sort().map((corpName) => {
+                return {
+                    contractingCorp: corpName,
+                    goal: adminInfoWithGoalAssigned.current.get(corpName) || '',
+                };
+            });
+            setAdminInfo(adminInfoAll);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [updateAdmin] = useMutation(UPDATE_ADMIN, {
+        onCompleted: ({ updateDashboardAdministration }) => {
+            if (updateDashboardAdministration.ok) {
+                defaultSuccessToast(
+                    toast,
+                    updateDashboardAdministration.message
+                );
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
     });
 
     return (
@@ -78,7 +266,9 @@ export default function InstantInfo() {
                     fontWeight={700}
                     fontSize={'1rem'}
                 >
-                    3張/5張
+                    {workPermitAmount
+                        ? `${workPermitAmount[0]}張/${workPermitAmount[1]}張`
+                        : '--'}
                 </Text>
             </Flex>
             <Text variant={'dashboardList'}>工具箱會議</Text>
@@ -92,14 +282,7 @@ export default function InstantInfo() {
                             <Th w={'80px'}>收工前</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>CUB棟/給排水系統/管架</Td>
-                            <Td>18:17</Td>
-                            <Td {...warningText}>14:03</Td>
-                            <Td>17:30</Td>
-                        </Tr>
-                    </Tbody>
+                    <Tbody>{toolboxElement}</Tbody>
                 </Table>
             </TableContainer>
             <Text variant={'dashboardList'}>自主檢查</Text>
@@ -113,11 +296,11 @@ export default function InstantInfo() {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        <Tr>
+                        {/* <Tr>
                             <Td>ＯＯ工程/OB棟</Td>
                             <Td>09:15</Td>
                             <Td {...warningText}>尚未填寫</Td>
-                        </Tr>
+                        </Tr> */}
                     </Tbody>
                 </Table>
             </TableContainer>
@@ -131,13 +314,7 @@ export default function InstantInfo() {
                             <Th w={'120px'}>收工前</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>ＯＯ工程/OB棟</Td>
-                            <Td>09:02</Td>
-                            <Td>17:28</Td>
-                        </Tr>
-                    </Tbody>
+                    <Tbody>{opElement}</Tbody>
                 </Table>
             </TableContainer>
             <Flex align={'center'} justify={'space-between'}>
