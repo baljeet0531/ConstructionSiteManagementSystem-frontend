@@ -41,6 +41,7 @@ export default function TodoList(props: { siteId: string }) {
             console.log(err);
             defaultErrorToast(toast);
         },
+        fetchPolicy: 'network-only',
     });
 
     return (

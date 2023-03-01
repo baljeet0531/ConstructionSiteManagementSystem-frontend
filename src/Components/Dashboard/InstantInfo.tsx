@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -17,7 +17,10 @@ import {
 import dayjs from 'dayjs';
 import React from 'react';
 import { EditIcon } from '../../Icons/Icons';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 interface IGQLOpInfo {
     title: string;
@@ -63,9 +66,28 @@ const ADMIN_INFO = gql`
     }
 `;
 
+const CONTRACTING_CORP_NAME = gql`
+    query ContractingCorpName($siteId: String!) {
+        contractingCorpName(siteId: $siteId)
+    }
+`;
+const UPDATE_ADMIN = gql`
+    mutation UpdateDashboardAdministration(
+        $content: [gqlAdministrationInput]!
+        $siteId: String!
+    ) {
+        updateDashboardAdministration(content: $content, siteId: $siteId) {
+            ok
+            message
+        }
+    }
+`;
+
 export default function InstantInfo(props: { siteId: string }) {
     const { siteId } = props;
     const toast = useToast();
+
+    const adminInfoWithGoalAssigned = React.useRef(new Map<string, string>());
 
     const [workPermitAmount, setWorkPermitAmount] =
         React.useState<[string, string]>();
@@ -86,6 +108,12 @@ export default function InstantInfo(props: { siteId: string }) {
             goal: item[1].value,
         }));
         setAdminInfo(newAdminInfo);
+        updateAdmin({
+            variables: {
+                content: newAdminInfo,
+                siteId: siteId,
+            },
+        });
     };
 
     const cancelChange = () => {
@@ -161,19 +189,69 @@ export default function InstantInfo(props: { siteId: string }) {
             console.log(err);
             defaultErrorToast(toast);
         },
+        fetchPolicy: 'network-only',
     });
 
     useQuery(ADMIN_INFO, {
         variables: {
             siteId: siteId,
         },
-        onCompleted: ({ dashboardAdministration }) => {
-            setAdminInfo(dashboardAdministration);
+        onCompleted: ({
+            dashboardAdministration,
+        }: {
+            dashboardAdministration: adminInfo[];
+        }) => {
+            dashboardAdministration.forEach((element) => {
+                const { contractingCorp, goal } = element;
+                adminInfoWithGoalAssigned.current.set(contractingCorp, goal);
+            });
+            getCorpName();
         },
         onError: (err) => {
             console.log(err);
             defaultErrorToast(toast);
         },
+        fetchPolicy: 'network-only',
+    });
+
+    const [getCorpName] = useLazyQuery(CONTRACTING_CORP_NAME, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            contractingCorpName,
+        }: {
+            contractingCorpName: string[];
+        }) => {
+            const adminInfoAll = contractingCorpName.map((corpName) => {
+                return {
+                    contractingCorp: corpName,
+                    goal: adminInfoWithGoalAssigned.current.get(corpName) || '',
+                };
+            });
+            setAdminInfo(adminInfoAll);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [updateAdmin] = useMutation(UPDATE_ADMIN, {
+        onCompleted: ({ updateDashboardAdministration }) => {
+            if (updateDashboardAdministration.ok) {
+                defaultSuccessToast(
+                    toast,
+                    updateDashboardAdministration.message
+                );
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
     });
 
     return (
