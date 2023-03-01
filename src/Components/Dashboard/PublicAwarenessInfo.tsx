@@ -15,8 +15,11 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../Icons/Icons';
-import { gql, useQuery } from '@apollo/client';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 interface IGQLTodayWorkList {
     system: string;
@@ -41,6 +44,15 @@ const WORK_LIST = gql`
             workItem
             corpName
             laborAmount
+        }
+    }
+`;
+
+const UPDATE_AWARENESS = gql`
+    mutation UpdateDashboardMatters($matters: String!, $siteId: String!) {
+        updateDashboardMatters(matters: $matters, siteId: $siteId) {
+            ok
+            message
         }
     }
 `;
@@ -79,6 +91,20 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
             console.log(err);
             defaultErrorToast(toast);
         },
+        fetchPolicy: 'network-only',
+    });
+
+    const [updateAwareness] = useMutation(UPDATE_AWARENESS, {
+        onCompleted: ({ updateDashboardMatters }) => {
+            if (updateDashboardMatters.ok) {
+                defaultSuccessToast(toast, updateDashboardMatters.message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
     });
 
     useQuery(WORK_LIST, {
@@ -92,6 +118,7 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
             console.log(err);
             defaultErrorToast(toast);
         },
+        fetchPolicy: 'network-only',
     });
 
     return (
@@ -151,6 +178,12 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
                         setAwarenessInfoValue(
                             awarenessInfoRef.current?.value || ''
                         );
+                        updateAwareness({
+                            variables: {
+                                siteId: siteId,
+                                matters: awarenessInfoRef.current?.value || '',
+                            },
+                        });
                         setEditDisabled(true);
                     }}
                 >
