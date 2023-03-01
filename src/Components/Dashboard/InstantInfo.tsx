@@ -223,7 +223,7 @@ export default function InstantInfo(props: { siteId: string }) {
         }: {
             contractingCorpName: string[];
         }) => {
-            const adminInfoAll = contractingCorpName.map((corpName) => {
+            const adminInfoAll = contractingCorpName.sort().map((corpName) => {
                 return {
                     contractingCorp: corpName,
                     goal: adminInfoWithGoalAssigned.current.get(corpName) || '',
