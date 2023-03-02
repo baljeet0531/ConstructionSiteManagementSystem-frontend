@@ -12,7 +12,7 @@ export default function Pin({
     const childProps = {
         onMouseEnter: () => setIsLabelOpen(true),
         onMouseLeave: () => setIsLabelOpen(false),
-        onClick: () => setIsLabelOpen((prevState) => !prevState),
+        onClick: () => setIsLabelOpen(true),
     };
     const childWithProps = cloneElement(children, { ...childProps });
 
