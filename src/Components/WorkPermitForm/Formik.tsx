@@ -126,7 +126,6 @@ export default function WorkPermitFormik() {
                 initialValues={initialValues}
                 validateOnChange={false}
                 onSubmit={(values, actions) => {
-                    actions.setSubmitting(true);
                     const submitValues = { ...values };
                     if (submitValues.zone instanceof Array) {
                         submitValues['zone'] = submitValues.zone.join(',');
