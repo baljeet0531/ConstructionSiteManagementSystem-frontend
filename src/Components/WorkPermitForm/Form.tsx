@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import {
     Box,
@@ -12,6 +12,7 @@ import {
     Text,
     HStack,
     VStack,
+    useToast,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -37,6 +38,8 @@ import {
 } from '../../Interface/WorkPermit';
 import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
 import { FormLoading } from '../Shared/Loading';
+import dayjs from 'dayjs';
+import { defaultWarningToast } from '../../Utils/DefaultToast';
 
 export default function WorkPermitForm({
     formProps,
@@ -90,6 +93,17 @@ export default function WorkPermitForm({
         },
         fetchPolicy: 'network-only',
     });
+    const toast = useToast();
+
+    useEffect(() => {
+        if (formProps.isSubmitting && !formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isSubmitting]);
 
     return (
         <Form>
@@ -246,8 +260,15 @@ export default function WorkPermitForm({
                         inputComponent={
                             <Input type="datetime-local" border="0px" />
                         }
+                        handleValidate={(value: string) => {
+                            return (
+                                dayjs(formProps.values.workStart) > dayjs(value)
+                            );
+                        }}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
+                        invalidStyle={{ color: 'red', fontWeight: 'bold' }}
+                        invalidMsg="結束日期不得早於開始日期"
                     />
 
                     <GridItem {...numberStyle}>5</GridItem>
@@ -459,7 +480,6 @@ export default function WorkPermitForm({
                             signatureName="review-signature.png"
                             state={signatures.review}
                             disable={!!signatures.review[0]?.no}
-
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
@@ -480,9 +500,7 @@ export default function WorkPermitForm({
                     </GridItem>
                 </Grid>
             </Box>
-            {(loading || formProps.isSubmitting) && (
-                <FormLoading/>
-            )}
+            {(loading || formProps.isSubmitting) && <FormLoading />}
         </Form>
     );
 }
