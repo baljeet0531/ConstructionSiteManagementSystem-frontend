@@ -51,7 +51,7 @@ export default function WorkPermitForm({
     let { number, modified } = JSON.parse(
         localStorage.getItem('singleWorkPermitObject') as string
     );
-
+    const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
         workContents: [],
@@ -65,7 +65,7 @@ export default function WorkPermitForm({
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工作許可單(${number})`;
 
-    const { loading } = useQuery(GQL_WORK_PERMIT_QUERY, {
+   useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
             siteId: localStorage.getItem('siteId'),
             number: number,
@@ -84,6 +84,7 @@ export default function WorkPermitForm({
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
             }
+            setLoading(false);
         },
         onError: (err) => {
             console.error(err);
