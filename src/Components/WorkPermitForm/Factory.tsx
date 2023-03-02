@@ -140,7 +140,6 @@ export default class FormFactory {
                         tags.map((tag, tid) => (
                             <AutoCompleteTag
                                 size="md"
-                                w={50 + tag.label.length * 8 + 'px'}
                                 color="#667080"
                                 key={tid}
                                 label={tag.label}
