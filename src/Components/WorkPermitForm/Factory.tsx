@@ -11,7 +11,14 @@ import {
 import { FormikProps } from 'formik';
 import { placeholderStyle } from './Styles';
 import { SystemConstants } from '../../Constants/System';
-import { SetStateAction, Dispatch, useState } from 'react';
+import {
+    SetStateAction,
+    Dispatch,
+    useState,
+    useEffect,
+    useRef,
+    MutableRefObject,
+} from 'react';
 import {
     IWorkPermit,
     IWorkPermitData,
@@ -65,6 +72,12 @@ export default class FormFactory {
     }
 
     selectAreaInput() {
+        useEffect(() => {
+            this.setOptions({
+                ...this.options,
+                zones: this.getZones(this.formProps.values.area as string),
+            });
+        }, [this.formProps.values.area]);
         const areas = this.data.siteAreas
             ?.map((v) => v.name)
             .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
@@ -79,11 +92,6 @@ export default class FormFactory {
                         this.formProps.setFieldValue('zone', []);
                     }
                     this.formProps.setFieldValue('area', value);
-
-                    this.setOptions({
-                        ...this.options,
-                        zones: this.getZones(value),
-                    });
                 }}
             >
                 <AutoCompleteInput
@@ -122,6 +130,8 @@ export default class FormFactory {
 
     selectZoneInput() {
         const [tags, setTags] = useState<ItemTag[]>([]);
+        const [value, setValue] = useState('');
+        const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
         return (
             <AutoComplete
                 multiple
@@ -131,12 +141,19 @@ export default class FormFactory {
                 value={this.formProps.values.zone}
                 onChange={(value: string[]) => {
                     this.formProps.setFieldValue('zone', value);
+                    setValue('');
                 }}
                 onReady={({ tags }) => {
                     setTags(tags);
                 }}
             >
-                <Flex h="45px" mt={4} flexWrap="wrap" overflowY="auto">
+                <Flex
+                    h="45px"
+                    mt={4}
+                    flexWrap="wrap"
+                    overflowY="auto"
+                    onClick={() => inputRef.current.focus()}
+                >
                     {tags.map((tag, tid) => (
                         <AutoCompleteTag
                             size="md"
@@ -150,9 +167,14 @@ export default class FormFactory {
                 </Flex>
                 <AutoCompleteInput
                     p={0}
+                    value={value}
                     border="0px"
                     placeholder="填寫"
                     _placeholder={placeholderStyle}
+                    onChange={(e) => {
+                        setValue(e.target.value);
+                    }}
+                    ref={inputRef}
                 />
                 <AutoCompleteList>
                     {this.options.zones.map((zone: string, cid: number) => (
