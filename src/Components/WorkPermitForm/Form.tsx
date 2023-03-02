@@ -450,6 +450,7 @@ export default function WorkPermitForm({
                             title="核准 - 簽名"
                             signatureName="approved-signature.png"
                             state={signatures.approved}
+                            disable={!!signatures.approved[0]?.no}
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
@@ -457,6 +458,8 @@ export default function WorkPermitForm({
                             title="審核 - 簽名"
                             signatureName="review-signature.png"
                             state={signatures.review}
+                            disable={!!signatures.review[0]?.no}
+
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
@@ -464,6 +467,7 @@ export default function WorkPermitForm({
                             title="申請單位主管 - 簽名"
                             signatureName="supplierManager-signature.png"
                             state={signatures.supplierManager}
+                            disable={!!signatures.supplierManager[0]?.no}
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px" borderRight="1px">
@@ -471,6 +475,7 @@ export default function WorkPermitForm({
                             title="申請人 - 簽名"
                             signatureName="supplier-signature.png"
                             state={signatures.supplier}
+                            disable={!!signatures.supplier[0]?.no}
                         />
                     </GridItem>
                 </Grid>
