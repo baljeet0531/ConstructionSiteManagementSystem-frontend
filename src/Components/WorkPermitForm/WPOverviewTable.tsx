@@ -5,7 +5,6 @@ import {
     Flex,
     Text,
     Button,
-    Tooltip,
     Checkbox,
     Link,
 } from '@chakra-ui/react';
@@ -13,22 +12,20 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { VariableSizeGrid, areEqual } from 'react-window';
 import { workPermit, workPermitChecked } from './Overview';
+import Pin from '../Shared/Pin';
 
-const Pin = (props: { label: JSX.Element | ''; sign: number }) => {
+const StatusTooltip = (props: { label: JSX.Element | ''; sign: number }) => {
     const { label, sign } = props;
-    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
 
     return (
-        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+        <Pin msg={label}>
             <Button
                 w={'40px'}
                 h={'10px'}
                 bg={sign ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
                 borderRadius={'4px'}
-                onMouseLeave={() => setIsLabelOpen(false)}
-                onClick={() => setIsLabelOpen((prevState) => !prevState)}
             ></Button>
-        </Tooltip>
+        </Pin>
     );
 };
 
@@ -256,7 +253,7 @@ export default function WPOverViewTable(props: {
                     ) : (
                         ''
                     );
-                    return <Pin key={index} label={label} sign={sign}></Pin>;
+                    return <StatusTooltip key={index} label={label} sign={sign}></StatusTooltip>;
                 });
 
                 return (
