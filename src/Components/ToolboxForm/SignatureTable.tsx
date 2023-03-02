@@ -13,7 +13,7 @@ import { MultiSignatureStateItem } from '../../Interface/Signature';
 import SignatureListPad from '../Shared/SignatureListPad';
 
 const itemStyle = {
-    p: '0px',
+    p: '5px 0px 0px',
     border: '1px solid #919AA9',
 };
 
