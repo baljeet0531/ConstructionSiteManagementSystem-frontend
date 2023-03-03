@@ -16,7 +16,8 @@ import { OpCheckHandler } from '../../Utils/OpCheck/Handler';
 import { FormLoading } from '../Shared/Loading';
 import FormFactory from './Factory';
 import GridInputItem from '../Shared/GridInputItem';
-import { unboxStyle } from './Style';
+import SignaturePad from '../Shared/SignaturePad';
+import { baseStyle, filledStyle, tableStyle, unboxStyle } from './Styles';
 
 export default function OpCheckForm({
     formProps,
@@ -28,6 +29,8 @@ export default function OpCheckForm({
     handler: OpCheckHandler;
 }) {
     document.title = `特殊作業工安自主檢點表(${handler.number})`;
+    const onItemsCount = Object.keys(handler.onItems).length;
+    // const offItemsCount = Object.keys(handler.offItems).length;
     const f = new FormFactory(formProps, type, handler);
     const { loading } = useQuery(handler.query, {
         variables: {
@@ -35,7 +38,7 @@ export default function OpCheckForm({
             number: handler.number,
         },
         onCompleted: (d) => {
-            const singleFormData = handler.parse(d);
+            const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
             }
@@ -74,6 +77,7 @@ export default function OpCheckForm({
                 <Grid
                     height="80px"
                     w="90%"
+                    minW="600px"
                     mt="30px"
                     templateColumns="6em repeat(4, 1fr)"
                     templateRows="repeat(3, 1fr)"
@@ -85,7 +89,7 @@ export default function OpCheckForm({
                 <Grid
                     w="100%"
                     mt="15px"
-                    templateColumns="repeat(2, 80px 2fr 50px 2fr) "
+                    templateColumns="repeat(2, 80px 2fr 50px 2fr)"
                 >
                     <GridItem {...unboxStyle}>施工地點：</GridItem>
                     <GridInputItem
@@ -117,6 +121,88 @@ export default function OpCheckForm({
                         inputComponent={<Input type="date" size="sm" />}
                         style={{ ...unboxStyle }}
                     />
+                </Grid>
+                <Grid
+                    w="100%"
+                    mt="15px"
+                    templateColumns="45fr 60fr 460fr 50fr 50fr 95fr"
+                    templateRows={`20px 20px repeat(${onItemsCount}, minmax(min-content, auto))`}
+                >
+                    <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
+                        項目
+                    </GridItem>
+                    <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
+                        代碼
+                    </GridItem>
+                    <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
+                        檢點項目
+                    </GridItem>
+                    <GridItem
+                        colStart={4}
+                        colEnd={6}
+                        {...filledStyle}
+                        pl="1em"
+                        letterSpacing="1em"
+                        textAlign="center"
+                    >
+                        結果
+                    </GridItem>
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={3}
+                        colStart={6}
+                        colEnd={7}
+                        {...filledStyle}
+                    >
+                        異常改善措施
+                    </GridItem>
+                    <GridItem {...filledStyle}>正常</GridItem>
+                    <GridItem {...filledStyle}>異常</GridItem>
+                    <GridItem
+                        rowStart={3}
+                        rowEnd={onItemsCount + 3}
+                        {...baseStyle}
+                        borderTop="0px"
+                        justifyContent="center"
+                        letterSpacing="0.5em"
+                        sx={{ writingMode: 'vertical-lr' }}
+                    >
+                        一、施工前
+                    </GridItem>
+                    {f.getOnRows()}
+                    <GridItem colStart={1} colEnd={3} {...filledStyle}>
+                        監工
+                    </GridItem>
+                    <Grid
+                        templateColumns="178fr 105fr 178fr"
+                        templateRows="60px"
+                    >
+                        <GridItem {...tableStyle}>
+                            <SignaturePad
+                                title="施工前 - 監工 - 簽名"
+                                signatureName="supervisor-before-work-signature.png"
+                                state={handler.signatures.supervisorBefore}
+                                placeHolderText="簽名"
+                                showTime={false}
+                            />
+                        </GridItem>
+                        <GridItem {...filledStyle}>作業人員</GridItem>
+                        <GridItem {...tableStyle}>
+                            <SignaturePad
+                                title="施工前 - 作業人員 - 簽名"
+                                signatureName="staff-before-work-signature.png"
+                                state={handler.signatures.staffBefore}
+                                placeHolderText="簽名"
+                                showTime={false}
+                            />
+                        </GridItem>
+                    </Grid>
+                    <GridItem colStart={4} colEnd={6} {...filledStyle}>
+                        檢點時間
+                    </GridItem>
+                    <GridItem {...tableStyle}>
+                        {f.checkTimeInput(handler.signatures.staffBefore)}
+                    </GridItem>
                 </Grid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}
