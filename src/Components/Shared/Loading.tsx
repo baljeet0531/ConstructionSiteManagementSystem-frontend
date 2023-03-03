@@ -15,7 +15,7 @@ export function PageLoading() {
             w={'80vw'}
             h={'100vh'}
             bg={'#D9D9D980'}
-            zIndex={2}
+            zIndex={99}
         >
             <Spinner size={'xl'} />
         </Center>
@@ -30,7 +30,7 @@ export function FormLoading() {
             w="100vw"
             h="100vh"
             bg={'#D9D9D980'}
-            zIndex={1}
+            zIndex={99}
         >
             <Spinner size={'xl'} />
         </Center>
