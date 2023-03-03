@@ -1,9 +1,16 @@
-import { OpCheckName } from '../../Interface/OpCheck/Common';
+/* eslint-disable no-unused-vars */
+import { OpCheckName, SignatureName } from '../../Interface/OpCheck/Common';
+import { SignatureStateItem } from '../../Interface/Signature';
 import { OpCheckHandler } from './Handler';
 import { FireOpCheckHandler } from './Type/Fire';
 
-// TODO: Remember to map all handler to right value
-export const opCheckMap: Record<OpCheckName, typeof OpCheckHandler> = {
+type OpCheckConstructor = new (
+    siteId: string,
+    number: string,
+    signatures: Record<SignatureName, SignatureStateItem>
+) => OpCheckHandler;
+
+export const opCheckMap: Record<OpCheckName, OpCheckConstructor> = {
     assemble: FireOpCheckHandler,
     cage: FireOpCheckHandler,
     chemical: FireOpCheckHandler,
@@ -13,5 +20,5 @@ export const opCheckMap: Record<OpCheckName, typeof OpCheckHandler> = {
     hole: FireOpCheckHandler,
     lift: FireOpCheckHandler,
     pipeDistruct: FireOpCheckHandler,
-    scafold: FireOpCheckHandler
-}
+    scafold: FireOpCheckHandler,
+};

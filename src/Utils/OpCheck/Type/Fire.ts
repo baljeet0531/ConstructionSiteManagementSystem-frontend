@@ -13,7 +13,7 @@ interface IFireItem extends IOpCheckFillItem {
 }
 
 export class FireOpCheckHandler extends OpCheckHandler {
-    schema: IFireOpCheck;
+    queryName = 'fireOpCheck';
     query = gql`
         ${SIGNATURE_FIELDS}
         query fireOpCheck($siteId: String!, $number: String) {
@@ -79,8 +79,9 @@ export class FireOpCheckHandler extends OpCheckHandler {
             }
         }
     `;
+    mutationName = 'updateOpFire';
     mutation = gql`
-        mutation updateOpCage(
+        mutation updateOpFire(
             $AA19: Boolean
             $AA19Ameliorate: String
             $AA22: Boolean
@@ -97,14 +98,24 @@ export class FireOpCheckHandler extends OpCheckHandler {
             $AB05Ameliorate: String
             $AB06: Boolean
             $AB06Ameliorate: String
-            $BE01: Boolean
-            $BE01Ameliorate: String
-            $BE02: Boolean
-            $BE02Ameliorate: String
-            $BE03: Boolean
-            $BE03Ameliorate: String
-            $BE04: Boolean
-            $BE04Ameliorate: String
+            $BA01: Boolean
+            $BA01Ameliorate: String
+            $BA02: Boolean
+            $BA02Ameliorate: String
+            $BA03: Boolean
+            $BA03Ameliorate: String
+            $BA04: Boolean
+            $BA04Ameliorate: String
+            $BA05: Boolean
+            $BA05Ameliorate: String
+            $BA06: Boolean
+            $BA06Ameliorate: String
+            $BA07: Boolean
+            $BA07Ameliorate: String
+            $BA08: Boolean
+            $BA08Ameliorate: String
+            $BA09: Boolean
+            $BA09Ameliorate: String
             $area: String
             $day: Date
             $department: String
@@ -119,7 +130,7 @@ export class FireOpCheckHandler extends OpCheckHandler {
             $username: String!
             $zone: String
         ) {
-            updateOpCage(
+            updateOpFire(
                 AA19: $AA19
                 AA19Ameliorate: $AA19Ameliorate
                 AA22: $AA22
@@ -136,14 +147,24 @@ export class FireOpCheckHandler extends OpCheckHandler {
                 AB05Ameliorate: $AB05Ameliorate
                 AB06: $AB06
                 AB06Ameliorate: $AB06Ameliorate
-                BE01: $BE01
-                BE01Ameliorate: $BE01Ameliorate
-                BE02: $BE02
-                BE02Ameliorate: $BE02Ameliorate
-                BE03: $BE03
-                BE03Ameliorate: $BE03Ameliorate
-                BE04: $BE04
-                BE04Ameliorate: $BE04Ameliorate
+                BA01: $BA01
+                BA01Ameliorate: $BA01Ameliorate
+                BA02: $BA02
+                BA02Ameliorate: $BA02Ameliorate
+                BA03: $BA03
+                BA03Ameliorate: $BA03Ameliorate
+                BA04: $BA04
+                BA04Ameliorate: $BA04Ameliorate
+                BA05: $BA05
+                BA05Ameliorate: $BA05Ameliorate
+                BA06: $BA06
+                BA06Ameliorate: $BA06Ameliorate
+                BA07: $BA07
+                BA07Ameliorate: $BA07Ameliorate
+                BA08: $BA08
+                BA08Ameliorate: $BA08Ameliorate
+                BA09: $BA09
+                BA09Ameliorate: $BA09Ameliorate
                 area: $area
                 day: $day
                 department: $department
@@ -244,7 +265,6 @@ export class FireOpCheckHandler extends OpCheckHandler {
         signatures: Record<SignatureName, SignatureStateItem>
     ) {
         super(siteId, number, signatures);
-        this.schema = this.getInitialValues();
     }
 
     getInitialValues(): IFireOpCheck {

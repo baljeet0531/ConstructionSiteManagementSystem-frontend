@@ -17,9 +17,10 @@ export abstract class OpCheckHandler {
     siteId: string;
     number: string;
     signatures: Record<SignatureName, SignatureStateItem>;
+    abstract queryName: string;
     abstract query: DocumentNode;
+    abstract mutationName: string;
     abstract mutation: DocumentNode;
-    abstract schema: IOpCheck;
     // eslint-disable-next-line no-unused-vars
     abstract onItems: Record<string, IOpCheckFillItem>;
     abstract offItems: Record<string, IOpCheckFillItem>;
@@ -29,9 +30,9 @@ export abstract class OpCheckHandler {
         number: string,
         signatures: Record<SignatureName, SignatureStateItem>
     ) {
-        this.signatures = signatures;
         this.siteId = siteId;
         this.number = number;
+        this.signatures = signatures;
     }
 
     getInitialValues(): IOpCheck {
