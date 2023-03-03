@@ -18,19 +18,37 @@ export type SignatureName =
     | 'supervisorAfter'
     | 'staffAfter';
 
+export type GQLSignatureName =
+    | 'supervisorBeforeRef'
+    | 'staffBeforeRef'
+    | 'supervisorAfterRef'
+    | 'staffAfterRef';
+
+export const signatureColNames: SignatureName[] = [
+    'supervisorBefore',
+    'staffBefore',
+    'supervisorAfter',
+    'staffAfter',
+];
+export const gqlSignatureColNames: GQLSignatureName[] = [
+    'supervisorBeforeRef',
+    'staffBeforeRef',
+    'supervisorAfterRef',
+    'staffAfterRef',
+];
 export interface IOpCheck {
     siteId: string;
     number: string;
-    area: string | undefined;
-    zone: string | undefined;
-    department: string | undefined;
-    day: string | undefined;
+    area: string;
+    zone: string;
+    department: string;
+    day: string;
     supervisorBefore: ISignature | undefined;
     staffBefore: ISignature | undefined;
-    timeBefore: string | undefined;
+    timeBefore: string;
     supervisorAfter: ISignature | undefined;
     staffAfter: ISignature | undefined;
-    timeAfter: string | undefined;
+    timeAfter: string;
 }
 
 export interface IGQLOpCheck extends IOpCheck {
@@ -38,4 +56,9 @@ export interface IGQLOpCheck extends IOpCheck {
     staffBeforeRef: IGQLSignature | undefined;
     supervisorAfterRef: IGQLSignature | undefined;
     staffAfterRef: IGQLSignature | undefined;
+}
+
+export interface IOpCheckFillItem {
+    content: string,
+    ameliorate: string
 }
