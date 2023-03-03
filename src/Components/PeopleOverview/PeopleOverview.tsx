@@ -25,7 +25,7 @@ import {
 } from '../../Icons/Icons';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-import PageLoading from '../Shared/PageLoading';
+import { PageLoading } from '../Shared/Loading';
 import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import OverViewTable from './OverviewTable';

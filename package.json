@@ -7,6 +7,7 @@
         "@babel/core": "^7.20.12",
         "@babel/plugin-syntax-flow": "^7.18.6",
         "@babel/plugin-transform-react-jsx": "^7.20.13",
+        "@chakra-ui/icons": "^2.0.17",
         "@chakra-ui/react": "^2.3.4",
         "@chakra-ui/system": "^2.3.8",
         "@choc-ui/chakra-autocomplete": "^5.1.4",
@@ -43,6 +44,7 @@
         "react-scripts": "5.0.1",
         "react-signature-canvas": "^1.0.6",
         "react-window": "^1.8.8",
+        "rsuite": "^5.27.0",
         "typescript": "*",
         "web-vitals": "^2.1.4"
     },

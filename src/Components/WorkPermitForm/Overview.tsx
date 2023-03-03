@@ -20,7 +20,7 @@ import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
-import PageLoading from '../Shared/PageLoading';
+import { PageLoading } from '../Shared/Loading';
 
 export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(

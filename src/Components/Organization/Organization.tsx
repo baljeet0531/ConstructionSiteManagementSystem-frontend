@@ -34,7 +34,7 @@ import DeleteLaborModal from './DeleteLaborModal';
 import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { exportFile } from '../../Utils/Resources';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-import PageLoading from '../Shared/PageLoading';
+import { PageLoading } from '../Shared/Loading';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $context: String) {

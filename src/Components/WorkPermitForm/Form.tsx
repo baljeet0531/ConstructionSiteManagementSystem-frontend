@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import {
     Box,
@@ -12,8 +12,7 @@ import {
     Text,
     HStack,
     VStack,
-    Center,
-    Spinner,
+    useToast,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -38,6 +37,9 @@ import {
     SignatureName,
 } from '../../Interface/WorkPermit';
 import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
+import { FormLoading } from '../Shared/Loading';
+import dayjs from 'dayjs';
+import { defaultWarningToast } from '../../Utils/DefaultToast';
 
 export default function WorkPermitForm({
     formProps,
@@ -91,6 +93,17 @@ export default function WorkPermitForm({
         },
         fetchPolicy: 'network-only',
     });
+    const toast = useToast();
+
+    useEffect(() => {
+        if (formProps.isSubmitting && !formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isSubmitting]);
 
     return (
         <Form>
@@ -102,6 +115,7 @@ export default function WorkPermitForm({
                 top={'10px'}
                 right={'37px'}
                 isLoading={formProps.isSubmitting}
+                zIndex={2}
             >
                 完成編輯
             </Button>
@@ -246,8 +260,15 @@ export default function WorkPermitForm({
                         inputComponent={
                             <Input type="datetime-local" border="0px" />
                         }
+                        handleValidate={(value: string) => {
+                            return (
+                                dayjs(formProps.values.workStart) > dayjs(value)
+                            );
+                        }}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
+                        invalidStyle={{ color: 'red', fontWeight: 'bold' }}
+                        invalidMsg="結束日期不得早於開始日期"
                     />
 
                     <GridItem {...numberStyle}>5</GridItem>
@@ -450,6 +471,7 @@ export default function WorkPermitForm({
                             title="核准 - 簽名"
                             signatureName="approved-signature.png"
                             state={signatures.approved}
+                            disable={!!signatures.approved[0]?.no}
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
@@ -457,6 +479,7 @@ export default function WorkPermitForm({
                             title="審核 - 簽名"
                             signatureName="review-signature.png"
                             state={signatures.review}
+                            disable={!!signatures.review[0]?.no}
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
@@ -464,6 +487,7 @@ export default function WorkPermitForm({
                             title="申請單位主管 - 簽名"
                             signatureName="supplierManager-signature.png"
                             state={signatures.supplierManager}
+                            disable={!!signatures.supplierManager[0]?.no}
                         />
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px" borderRight="1px">
@@ -471,22 +495,12 @@ export default function WorkPermitForm({
                             title="申請人 - 簽名"
                             signatureName="supplier-signature.png"
                             state={signatures.supplier}
+                            disable={!!signatures.supplier[0]?.no}
                         />
                     </GridItem>
                 </Grid>
             </Box>
-            {(loading || formProps.isSubmitting) && (
-                <Center
-                    position="fixed"
-                    top={0}
-                    w="100vw"
-                    h="100vh"
-                    bg={'#D9D9D980'}
-                    zIndex={1}
-                >
-                    <Spinner size={'xl'} />
-                </Center>
-            )}
+            {(loading || formProps.isSubmitting) && <FormLoading />}
         </Form>
     );
 }
