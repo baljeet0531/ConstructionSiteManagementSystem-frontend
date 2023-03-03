@@ -62,7 +62,7 @@ export default function OpCheckFormik() {
             owner: undefined,
         }),
     };
-    const handler = new opCheckMap[type as OpCheckName](
+    const handler = new opCheckMap[type as OpCheckName].handler(
         siteId,
         number,
         signatures
@@ -118,7 +118,13 @@ export default function OpCheckFormik() {
                     );
                 }}
             >
-                {(props) => <OpCheckForm formProps={props} handler={handler} />}
+                {(props) => (
+                    <OpCheckForm
+                        formProps={props}
+                        type={type}
+                        handler={handler}
+                    />
+                )}
             </Formik>
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
                 <ModalOverlay />
