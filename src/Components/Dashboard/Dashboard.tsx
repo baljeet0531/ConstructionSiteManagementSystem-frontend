@@ -7,7 +7,7 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
-import ProjectProgress from './Charts/ChartLayout';
+import ChartLayout from './Charts/ChartLayout';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
@@ -48,7 +48,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <ProjectProgress siteId={siteId} title={'專案進度'} />
+                    <ChartLayout siteId={siteId} title={'專案進度'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <Text variant={'w700s16'}>申請作業類別與缺失數</Text>
@@ -57,7 +57,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <Text variant={'w700s16'}>危害告知訓練</Text>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>特殊作業</Text>
+                    <ChartLayout siteId={siteId} title={'特殊作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <Text variant={'w700s16'}>今日施工作業（缺氧）</Text>

@@ -6,9 +6,11 @@ import {
     TabPanels,
     Tabs,
     Flex,
+    Center,
 } from '@chakra-ui/react';
 import React from 'react';
 import ProjectProgress from './ProjectProgress';
+import SpecialOperation from './SpecialOperation';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 
@@ -19,7 +21,9 @@ const chartMap: chartMapType = {
     專案進度: (siteId: string, granularity: granularityType) => (
         <ProjectProgress siteId={siteId} granularity={granularity} />
     ),
-    特殊作業: () => {},
+    特殊作業: (siteId: string, granularity: granularityType) => (
+        <SpecialOperation siteId={siteId} granularity={granularity} />
+    ),
 };
 
 export default function ChartLayout(props: {
@@ -33,7 +37,9 @@ export default function ChartLayout(props: {
     ));
     const tabPanelElement = granularity.map((element, index) => (
         <TabPanel key={index} padding={0} width={'100%'} height={'100%'}>
-            {chartMap[title](siteId, element)}
+            <Center width={'100%'} h={'100%'}>
+                {chartMap[title](siteId, element)}
+            </Center>
         </TabPanel>
     ));
 
