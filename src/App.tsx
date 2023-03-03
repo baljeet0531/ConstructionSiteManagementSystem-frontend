@@ -1,5 +1,7 @@
 import React from 'react';
+import 'rsuite/dist/rsuite.min.css';
 import './App.css';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Layout from './Layouts/Layout';
@@ -117,10 +119,7 @@ function App() {
                     path="/form/work-permit"
                     element={<WorkPermitFormik />}
                 />
-                <Route
-                    path="/form/toolbox"
-                    element={<ToolboxFormik />}
-                />
+                <Route path="/form/toolbox" element={<ToolboxFormik />} />
             </Routes>
         </BrowserRouter>
     );

@@ -18,7 +18,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import PageLoading from '../Shared/PageLoading';
+import { PageLoading } from '../Shared/Loading';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
