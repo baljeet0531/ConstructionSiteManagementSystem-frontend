@@ -881,6 +881,7 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h='90%'
                         />
                     </GridItem>
                     <GridItem
@@ -897,6 +898,7 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h='90%'
                         />
                     </GridItem>
                     <GridItem
@@ -914,6 +916,7 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h='90%'
                         />
                     </GridItem>
                     <GridItem
@@ -929,6 +932,7 @@ export default function ToolboxForm({
                             state={signatures.systemEngineerSignature}
                             placeHolderText="系統工程師"
                             showTime={false}
+                            h='90%'
                         />
                     </GridItem>
                     <GridItem {...centerStyle} borderRight="1px">

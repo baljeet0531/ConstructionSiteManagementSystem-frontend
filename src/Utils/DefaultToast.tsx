@@ -16,3 +16,17 @@ export function defaultSuccessToast(toast: Function, title: string) {
         isClosable: true,
     });
 }
+
+export function defaultWarningToast(
+    toast: Function,
+    title: string,
+    description: string
+) {
+    toast({
+        title: title,
+        description: description,
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+    });
+}

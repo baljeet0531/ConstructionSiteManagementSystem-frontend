@@ -11,9 +11,9 @@ import {
     Box,
     Text,
     Image,
-    VStack,
     useDisclosure,
 } from '@chakra-ui/react';
+import { RepeatIcon } from '@chakra-ui/icons';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
 import { SignatureStateItem } from '../../Interface/Signature';
@@ -26,7 +26,7 @@ export default function SignaturePad({
     h = '100%',
     showTime = true,
     placeHolderText = '請簽核',
-    Disable = false,
+    disable = false,
 }: {
     title: string;
     signatureName: string;
@@ -34,7 +34,7 @@ export default function SignaturePad({
     h?: string;
     showTime?: boolean;
     placeHolderText?: string;
-    Disable?: boolean;
+    disable?: boolean;
 }) {
     const [signature, setSignature] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
@@ -58,15 +58,18 @@ export default function SignaturePad({
             return srcCanvas;
         }
     };
-    const clear = () => sigCanvas.current.clear();
+    const clearPad = () => sigCanvas.current.clear();
+    const removeSignature = () => {
+        setSignature({
+            no: undefined,
+            image: undefined,
+            time: undefined,
+            owner: undefined,
+        });
+    };
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
-            setSignature({
-                no: undefined,
-                image: undefined,
-                time: undefined,
-                owner: undefined,
-            });
+            removeSignature();
             onClose();
             return;
         }
@@ -95,29 +98,40 @@ export default function SignaturePad({
     }, [signature]);
 
     return (
-        <VStack w="100%" h="100%">
+        <>
+            {signature?.image && !signature?.no ? (
+                    <RepeatIcon
+                        boxSize={4}
+                        mt="4px"
+                        ml="4px"
+                        onClick={removeSignature}
+                        alignSelf='start'
+                    />
+                ) : (
+                    ''
+                )}
             <Box
                 w="100%"
-                h={h}
+                h={signature?.image ? h : '100%'}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 flexDirection="column"
-                onClick={Disable ? () => {} : onOpen}
+                onClick={disable ? () => {} : onOpen}
             >
+                
                 {signature?.image ? (
                     <Image
                         src={imageURL}
-                        minHeight="80%"
-                        maxWidth="100%"
-                        maxHeight="80%"
+                        flex= "1 1 auto"
+                        maxH="75%"
                         fit="contain"
                     />
                 ) : (
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
                 {showTime && (
-                    <Text pr="4px" w="100%" fontSize="1rem" align="right">
+                    <Text pr="4px" fontSize="1rem" alignSelf='end'>
                         {signature?.time
                             ? signature.time.format('YYYY-MM-DD HH:mm')
                             : ''}
@@ -154,7 +168,7 @@ export default function SignaturePad({
                         <Button onClick={onClose} {...buttonStyle}>
                             取消新增
                         </Button>
-                        <Button onClick={clear} {...buttonStyle}>
+                        <Button onClick={clearPad} {...buttonStyle}>
                             清除
                         </Button>
                         <Button
@@ -167,6 +181,6 @@ export default function SignaturePad({
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </VStack>
+        </>
     );
 }
