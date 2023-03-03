@@ -6,11 +6,11 @@ import {
     ChakraProps,
     Checkbox,
     Flex,
-    Tooltip,
     Text,
 } from '@chakra-ui/react';
 import { areEqual, VariableSizeGrid } from 'react-window';
 import { IGQLSignature } from '../../Interface/Signature';
+import Pin  from './Pin';
 import dayjs from 'dayjs';
 
 const tableCellStyle: ChakraProps = {
@@ -99,7 +99,6 @@ export const SignatureTooltip = (props: {
     field: { signature: IGQLSignature; fieldLabel: string };
 }) => {
     const { signature, fieldLabel } = props.field;
-    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
     const label = signature ? (
         <Text>
             {`${fieldLabel}：`}
@@ -112,16 +111,14 @@ export const SignatureTooltip = (props: {
         ''
     );
     return (
-        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+        <Pin msg={label}>
             <Button
                 w={'40px'}
                 h={'10px'}
                 bg={signature ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
                 borderRadius={'4px'}
-                onMouseLeave={() => setIsLabelOpen(false)}
-                onClick={() => setIsLabelOpen((prevState) => !prevState)}
             ></Button>
-        </Tooltip>
+        </Pin>
     );
 };
 

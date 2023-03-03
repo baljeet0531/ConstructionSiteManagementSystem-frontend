@@ -1,3 +1,4 @@
+import { WarningIcon } from '@chakra-ui/icons';
 import {
     GridItem,
     ResponsiveValue,
@@ -6,7 +7,8 @@ import {
     InputRightElement,
 } from '@chakra-ui/react';
 import { Field, FieldInputProps, FormikProps } from 'formik';
-import React from 'react';
+import { ReactElement } from 'react';
+import Pin from './Pin';
 
 export default function GridInputItem({
     gridRange,
@@ -19,22 +21,24 @@ export default function GridInputItem({
     handleValidate,
     style,
     invalidStyle,
+    invalidMsg = 'Invalid',
 }: {
     fieldName: string;
-    inputComponent: React.ReactElement;
+    inputComponent: ReactElement;
     gridRange?: [
         ResponsiveValue<number | 'auto'>,
         ResponsiveValue<number | 'auto'>,
         ResponsiveValue<number | 'auto'>,
         ResponsiveValue<number | 'auto'>
     ];
-    inputLeftComponent?: React.ReactElement;
+    inputLeftComponent?: ReactElement;
     inputLeftStyle?: object;
-    inputRightComponent?: React.ReactElement;
+    inputRightComponent?: ReactElement;
     inputRightStyle?: object;
     handleValidate?: Function;
     style?: object;
     invalidStyle?: object;
+    invalidMsg?: string;
 }) {
     const grid = gridRange || ['auto', 'auto', 'auto', 'auto'];
     return (
@@ -54,7 +58,13 @@ export default function GridInputItem({
                     form: FormikProps<any>;
                 }) => {
                     return (
-                        <InputGroup w="100%" h="100%" display="flex" alignItems="center" justifyContent="center">
+                        <InputGroup
+                            w="100%"
+                            h="100%"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
                             {inputLeftComponent && (
                                 <InputLeftElement
                                     h="100%"
@@ -63,17 +73,16 @@ export default function GridInputItem({
                                     {...inputLeftStyle}
                                 />
                             )}
-                            {form.errors[fieldName] &&
-                            form.touched[fieldName] ? (
+                            {form.errors[fieldName] ? (
                                 <inputComponent.type
                                     {...field}
                                     {...inputComponent.props}
+                                    {...invalidStyle}
                                 />
                             ) : (
                                 <inputComponent.type
                                     {...field}
                                     {...inputComponent.props}
-                                    {...invalidStyle}
                                 />
                             )}
                             {inputRightComponent && (
@@ -83,6 +92,13 @@ export default function GridInputItem({
                                     children={inputRightComponent}
                                     {...inputRightStyle}
                                 />
+                            )}
+                            {form.errors[fieldName] && (
+                                <InputRightElement h="100%">
+                                    <Pin msg={invalidMsg}>
+                                        <WarningIcon color="red" />
+                                    </Pin>
+                                </InputRightElement>
                             )}
                         </InputGroup>
                     );
