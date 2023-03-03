@@ -1,5 +1,17 @@
 import { IGQLSignature, ISignature } from '../Signature';
 
+export type OpCheckName =
+    | 'assemble' // 施工架組裝作業
+    | 'cage' // 吊籠作業
+    | 'chemical' // 化學作業
+    | 'confineSpace' // 侷限空間作業
+    | 'electric' // 電力作業
+    | 'fire' // 動火作業
+    | 'hole' // 管線拆離作業
+    | 'lift' // 起重吊掛作業
+    | 'pipeDistruct' // 管線拆離作業
+    | 'scafold'; // 高架作業
+
 export type SignatureName =
     | 'supervisorBefore'
     | 'staffBefore'
