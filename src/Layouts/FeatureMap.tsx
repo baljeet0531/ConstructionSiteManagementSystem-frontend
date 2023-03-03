@@ -14,7 +14,7 @@ import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
 import ToolboxFormOverview from '../Components/ToolboxForm/Overview';
 import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
-import OpCheckForm from '../Components/OpCheckForm/OpCheckForm';
+import OpCheckOverview from '../Components/OpCheckForm/Overview';
 import EHSForm from '../Components/EHSForm/EHSForm';
 import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
 import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
@@ -213,8 +213,7 @@ export function getFeatureMap(site: {
         eng_op_check_form: {
             name: '特殊作業自主檢點表',
             path: '/eng/form/opcheck',
-            // page: <SpecialForm />,
-            page: noContentPage,
+            page: siteId == '' ? emptySiteIdPage : <OpCheckOverview />,
         },
         eng_photo: {
             name: '相片管理',

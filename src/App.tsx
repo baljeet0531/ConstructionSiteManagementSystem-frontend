@@ -8,6 +8,7 @@ import Layout from './Layouts/Layout';
 import Login from './Components/Login/Login';
 import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 import ToolboxFormik from './Components/ToolboxForm/Formik';
+import OpCheckFormik from './Components/OpCheckForm/Formik';
 
 function App() {
     return (
@@ -120,6 +121,7 @@ function App() {
                     element={<WorkPermitFormik />}
                 />
                 <Route path="/form/toolbox" element={<ToolboxFormik />} />
+                <Route path="/form/opcheck" element={<OpCheckFormik />} />
             </Routes>
         </BrowserRouter>
     );
