@@ -2,11 +2,12 @@ import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { granularityType } from './ChartLayout';
 import {
-    gridOptions,
+    basicChartOptions,
+    chartStyle,
     labelTextStyle,
-    legendOptions,
     overlappedBarOptions,
 } from './ChartOptions';
+import { Text } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
 import dayjs from 'dayjs';
@@ -58,11 +59,7 @@ export default function ProjectProgress(props: {
         fetchPolicy: 'network-only',
     });
     const option: EChartsOption = {
-        tooltip: {
-            trigger: 'axis',
-        },
-        legend: legendOptions,
-        grid: gridOptions,
+        ...basicChartOptions,
         xAxis: {
             type: 'category',
             axisLabel: {
@@ -104,15 +101,9 @@ export default function ProjectProgress(props: {
 
     return loading ? (
         <CustomLoading />
+    ) : data.length === 0 ? (
+        <Text>暫無資料</Text>
     ) : (
-        <ReactECharts
-            ref={echartsRef}
-            option={option}
-            style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: '#E5E5E533',
-            }}
-        />
+        <ReactECharts ref={echartsRef} option={option} style={chartStyle} />
     );
 }
