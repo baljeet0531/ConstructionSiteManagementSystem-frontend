@@ -88,6 +88,7 @@ const Table = {
                 borderWidth: '0px 1px 1px 0px',
                 borderStyle: 'solid',
                 borderColor: '#919AA9',
+                overflowX: 'auto',
             },
         },
     },
