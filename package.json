@@ -30,6 +30,8 @@
         "@typescript-eslint/parser": "^5.50.0",
         "apollo-upload-client": "^17.0.0",
         "dayjs": "^1.11.7",
+        "echarts": "^5.4.1",
+        "echarts-for-react": "^3.0.2",
         "eslint": "^8.0.1",
         "formik": "^2.2.9",
         "framer-motion": "^7.4.0",

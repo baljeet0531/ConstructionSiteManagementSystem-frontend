@@ -7,6 +7,7 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
+import ProjectProgress from './Charts/ChartLayout';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
@@ -47,7 +48,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <Text variant={'w700s16'}>專案進度</Text>
+                    <ProjectProgress siteId={siteId} title={'專案進度'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <Text variant={'w700s16'}>申請作業類別與缺失數</Text>
