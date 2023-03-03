@@ -10,6 +10,7 @@ import {
     IWorkPermit,
     SignatureName,
 } from '../../Interface/WorkPermit';
+import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 
 export const GQL_WORK_PERMIT_MUTATION = gql`
     mutation uwp(
@@ -87,6 +88,7 @@ export const GQL_WORK_PERMIT_MUTATION = gql`
 `;
 
 export const GQL_WORK_PERMIT_QUERY = gql`
+    ${SIGNATURE_FIELDS}
     query getWorkPermit($siteId: String!, $number: String) {
         workContent(siteId: $siteId) {
             content {
@@ -134,24 +136,16 @@ export const GQL_WORK_PERMIT_QUERY = gql`
             opChemical
             opElse
             approvedRef {
-                path
-                time
-                owner
+                ...gqlSignatureFields
             }
             reviewRef {
-                path
-                time
-                owner
+                ...gqlSignatureFields
             }
             supplierManagerRef {
-                path
-                time
-                owner
+                ...gqlSignatureFields
             }
             supplierRef {
-                path
-                time
-                owner
+                ...gqlSignatureFields
             }
         }
     }
@@ -177,6 +171,7 @@ export function parseWorkPermit(
     ];
 
     const t = { ...list[0] } as IGQLWorkPermit;
+    console.log(t);
 
     if (t.zone === '') {
         t.zone = [];
