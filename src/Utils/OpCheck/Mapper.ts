@@ -10,15 +10,20 @@ type OpCheckConstructor = new (
     signatures: Record<SignatureName, SignatureStateItem>
 ) => OpCheckHandler;
 
-export const opCheckMap: Record<OpCheckName, OpCheckConstructor> = {
-    assemble: FireOpCheckHandler,
-    cage: FireOpCheckHandler,
-    chemical: FireOpCheckHandler,
-    confineSpace: FireOpCheckHandler,
-    electric: FireOpCheckHandler,
-    fire: FireOpCheckHandler,
-    hole: FireOpCheckHandler,
-    lift: FireOpCheckHandler,
-    pipeDistruct: FireOpCheckHandler,
-    scafold: FireOpCheckHandler,
+type OpCheckMapItem = {
+    name: string;
+    handler: OpCheckConstructor;
+};
+
+export const opCheckMap: Record<OpCheckName, OpCheckMapItem> = {
+    assemble: { name: '施工架組裝作業', handler: FireOpCheckHandler },
+    cage: { name: '吊籠作業', handler: FireOpCheckHandler },
+    chemical: { name: '化學作業', handler: FireOpCheckHandler },
+    confineSpace: { name: '侷限空間作業', handler: FireOpCheckHandler },
+    electric: { name: '電力作業', handler: FireOpCheckHandler },
+    fire: { name: '動火作業', handler: FireOpCheckHandler },
+    hole: { name: '開口作業', handler: FireOpCheckHandler },
+    lift: { name: '起重吊掛作業', handler: FireOpCheckHandler },
+    pipeDistruct: { name: '管線拆離作業', handler: FireOpCheckHandler },
+    scafold: { name: '高架作業', handler: FireOpCheckHandler },
 };
