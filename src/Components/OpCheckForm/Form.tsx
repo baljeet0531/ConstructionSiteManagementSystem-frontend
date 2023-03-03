@@ -8,6 +8,7 @@ import {
     Grid,
     GridItem,
     Input,
+    Flex,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { EditIcon } from '../../Icons/Icons';
@@ -30,7 +31,7 @@ export default function OpCheckForm({
 }) {
     document.title = `特殊作業工安自主檢點表(${handler.number})`;
     const onItemsCount = Object.keys(handler.onItems).length;
-    // const offItemsCount = Object.keys(handler.offItems).length;
+    const offItemsCount = Object.keys(handler.offItems).length;
     const f = new FormFactory(formProps, type, handler);
     const { loading } = useQuery(handler.query, {
         variables: {
@@ -78,7 +79,7 @@ export default function OpCheckForm({
                     height="80px"
                     w="90%"
                     minW="600px"
-                    mt="30px"
+                    mt="15px"
                     templateColumns="6em repeat(4, 1fr)"
                     templateRows="repeat(3, 1fr)"
                 >
@@ -202,6 +203,88 @@ export default function OpCheckForm({
                     </GridItem>
                     <GridItem {...tableStyle}>
                         {f.checkTimeInput(handler.signatures.staffBefore)}
+                    </GridItem>
+                </Grid>
+                <Grid
+                    w="100%"
+                    mt="30px"
+                    borderTop="1px"
+                    borderColor="#919AA9"
+                    templateColumns="45fr 60fr 460fr 50fr 50fr 95fr"
+                    templateRows={`repeat(${offItemsCount}, minmax(min-content, auto))`}
+                >
+                    <GridItem
+                        rowStart={1}
+                        rowEnd={offItemsCount + 1}
+                        {...baseStyle}
+                        borderTop="0px"
+                        justifyContent="center"
+                        letterSpacing="0.5em"
+                        sx={{ writingMode: 'vertical-lr' }}
+                    >
+                        二、收工前
+                    </GridItem>
+                    {f.getOffRows()}
+                    <GridItem colStart={1} colEnd={3} {...filledStyle}>
+                        監工
+                    </GridItem>
+                    <Grid
+                        templateColumns="178fr 105fr 178fr"
+                        templateRows="60px"
+                    >
+                        <GridItem {...tableStyle}>
+                            <SignaturePad
+                                title="收工前 - 監工 - 簽名"
+                                signatureName="supervisor-after-work-signature.png"
+                                state={handler.signatures.supervisorAfter}
+                                placeHolderText="簽名"
+                                showTime={false}
+                            />
+                        </GridItem>
+                        <GridItem {...filledStyle}>作業人員</GridItem>
+                        <GridItem {...tableStyle}>
+                            <SignaturePad
+                                title="收工前 - 作業人員 - 簽名"
+                                signatureName="staff-after-work-signature.png"
+                                state={handler.signatures.staffAfter}
+                                placeHolderText="簽名"
+                                showTime={false}
+                            />
+                        </GridItem>
+                    </Grid>
+                    <GridItem colStart={4} colEnd={6} {...filledStyle}>
+                        檢點時間
+                    </GridItem>
+                    <GridItem {...tableStyle}>
+                        {f.checkTimeInput(handler.signatures.staffAfter)}
+                    </GridItem>
+                </Grid>
+                <Flex flexDirection="column">
+                    <Text alignSelf="end">EE-4404-03A</Text>
+                    <Text alignSelf="start" fontWeight={700}>
+                        備註
+                    </Text>
+                </Flex>
+                <Grid
+                    w="100%"
+                    m="5px 0 25px"
+                    p="8px"
+                    border="2px solid #919AA9"
+                    borderRadius="4px"
+                    templateColumns="1fr"
+                    templateRows="repeat(${offItemsCount}, minmax(min-content, auto))"
+                >
+                    <GridItem {...unboxStyle}>
+                        1.使用時機：本表單應於每日作業前及收工前進行檢點；若分組作業時，各小組均應進行本表單之檢點並標示於明顯處。
+                    </GridItem>
+                    <GridItem {...unboxStyle}>
+                        2.檢點方式：作業人員請將檢點結果於適合的欄位打”V”。
+                    </GridItem>
+                    <GridItem {...unboxStyle}>
+                        3.歸檔：本表單應於每日作業檢點後，與工作許可單一併自存備查。
+                    </GridItem>
+                    <GridItem {...unboxStyle}>
+                        4.檢點項目：檢點內容不足時可自行填寫於空白處。
                     </GridItem>
                 </Grid>
             </Box>

@@ -66,6 +66,12 @@ export default class FormFactory extends SharedFactory{
             this.row(key, item)
         );
     }
+    getOffRows() {
+        const onItems = this.handler.offItems;
+        return Object.entries(onItems).map(([key, item]) =>
+            this.row(key, item)
+        );
+    }
     checkbox(id: string, ameliorate: string, target: boolean) {
         const value = this.formProps.values[id as keyof IOpCheck] as unknown;
         return (
@@ -90,7 +96,7 @@ export default class FormFactory extends SharedFactory{
         const value = this.formProps.values[id as keyof IOpCheck] as unknown;
         return (
             <>
-                <GridItem {...tableStyle} pl={2} justifyContent="center">
+                <GridItem {...tableStyle} justifyContent="center">
                     {id}
                 </GridItem>
                 <GridItem {...tableStyle} pl={2}>
