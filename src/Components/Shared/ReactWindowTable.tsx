@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { areEqual, VariableSizeGrid } from 'react-window';
 import { IGQLSignature } from '../../Interface/Signature';
-import Pin  from './Pin';
+import Pin from './Pin';
 import dayjs from 'dayjs';
 
 const tableCellStyle: ChakraProps = {
@@ -138,7 +138,7 @@ export const SignatureStatusElement = (props: {
             gap={'2px'}
             w={'170px'}
             align={'center'}
-            justify={'flex-start'}
+            justify={'center'}
             height={'20px'}
         >
             {signatureStatusMap}
