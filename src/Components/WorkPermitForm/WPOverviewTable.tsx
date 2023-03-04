@@ -253,7 +253,13 @@ export default function WPOverViewTable(props: {
                     ) : (
                         ''
                     );
-                    return <StatusTooltip key={index} label={label} sign={sign}></StatusTooltip>;
+                    return (
+                        <StatusTooltip
+                            key={index}
+                            label={label}
+                            sign={sign}
+                        ></StatusTooltip>
+                    );
                 });
 
                 return (
@@ -278,6 +284,8 @@ export default function WPOverViewTable(props: {
                         {info['modified'] ? (
                             '異動單'
                         ) : diff > 0 ? (
+                            ''
+                        ) : overviewTableData[`${info['number']}異`] ? (
                             ''
                         ) : info['applied'] ? (
                             <Button
