@@ -97,7 +97,6 @@ export function getFeatureMap(site: {
             name: '總覽',
             path: '/dashboard',
             icon: DashboardIcon,
-            // page: <Dashboard />,
             page:
                 siteId == '' ? (
                     emptySiteIdPage
@@ -213,8 +212,16 @@ export function getFeatureMap(site: {
         eng_special_form: {
             name: '特殊作業自主檢點表',
             path: '/eng/form/special',
-            // page: <SpecialForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <SpecialForm
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_photo: {
             name: '相片管理',
@@ -275,8 +282,16 @@ export function getFeatureMap(site: {
         outsource_special_form: {
             name: '特殊作業自主檢點表',
             path: '/outsource/form/special',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <SpecialForm
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_machinery_establishment: {
             name: '機具清單建置',
