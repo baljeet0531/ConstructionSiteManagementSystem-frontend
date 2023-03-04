@@ -4,6 +4,7 @@ import { SignatureStateItem } from '../../Interface/Signature';
 import { OpCheckHandler } from './Handler';
 import { AssembleOpCheckHandler } from './Type/Assemble';
 import { CageOpCheckHandler } from './Type/Cage';
+import { ChemicalOpCheckHandler } from './Type/Chemical';
 import { FireOpCheckHandler } from './Type/Fire';
 
 type OpCheckConstructor = new (
@@ -20,7 +21,7 @@ type OpCheckMapItem = {
 export const opCheckMap: Record<OpCheckName, OpCheckMapItem> = {
     assemble: { name: '施工架組裝作業', handler: AssembleOpCheckHandler },
     cage: { name: '吊籠作業', handler: CageOpCheckHandler },
-    chemical: { name: '化學作業', handler: FireOpCheckHandler },
+    chemical: { name: '化學作業', handler: ChemicalOpCheckHandler },
     confineSpace: { name: '侷限空間作業', handler: FireOpCheckHandler },
     electric: { name: '電力作業', handler: FireOpCheckHandler },
     fire: { name: '動火作業', handler: FireOpCheckHandler },
