@@ -42,13 +42,13 @@ export abstract class OpCheckHandler {
             area: '',
             zone: '',
             department: '',
-            day: '',
+            day: undefined,
             supervisorBefore: undefined,
             staffBefore: undefined,
-            timeBefore: '',
+            timeBefore: undefined,
             supervisorAfter: undefined,
             staffAfter: undefined,
-            timeAfter: '',
+            timeAfter: undefined,
         };
     }
 
