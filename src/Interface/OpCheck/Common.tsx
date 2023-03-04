@@ -4,7 +4,7 @@ export type OpCheckName =
     | 'assemble' // 施工架組裝作業
     | 'cage' // 吊籠作業
     | 'chemical' // 化學作業
-    | 'confinedSpace' // 侷限空間作業
+    | 'confineSpace' // 侷限空間作業
     | 'electric' // 電力作業
     | 'fire' // 動火作業
     | 'hole' // 開口作業
