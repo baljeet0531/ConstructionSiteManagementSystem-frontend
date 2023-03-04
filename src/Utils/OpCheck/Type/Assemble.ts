@@ -175,24 +175,24 @@ export class AssembleOpCheckHandler extends OpCheckHandler {
         }
     `;
     onItems: Record<onKeys, IAssembleItem> = {
-        BG01: { ameliorate: 'BG01Ameliorate', content: '' },
-        BG02: { ameliorate: 'BG02Ameliorate', content: '' },
-        BG03: { ameliorate: 'BG03Ameliorate', content: '' },
-        BG04: { ameliorate: 'BG04Ameliorate', content: '' },
-        BG05: { ameliorate: 'BG05Ameliorate', content: '' },
-        BG06: { ameliorate: 'BG06Ameliorate', content: '' },
-        BG07: { ameliorate: 'BG07Ameliorate', content: '' },
+        BG01: { ameliorate: 'BG01Ameliorate', content: '施工架組配作業主管於現場全程監督作業安全。' },
+        BG02: { ameliorate: 'BG02Ameliorate', content: '施工架組配之基腳無沈陷之虞。' },
+        BG03: { ameliorate: 'BG03Ameliorate', content: '遇地震時立即停止作業，使人員退避至安全避難場所。' },
+        BG04: { ameliorate: 'BG04Ameliorate', content: '地震或地質變化後，徹底檢查施工架後再行作業。' },
+        BG05: { ameliorate: 'BG05Ameliorate', content: '確實完成組配施工架之安全設備（如插銷、交叉連桿等）。' },
+        BG06: { ameliorate: 'BG06Ameliorate', content: '施工架組配物料運送前確實綁紮，無掉落之虞。' },
+        BG07: { ameliorate: 'BG07Ameliorate', content: '施工架組配作業靠近電線、輸配電設備，有護圍、絕緣或掩蔽。' },
     };
 
     offItems: Record<offKeys, IAssembleItem> = {
-        AA19: { ameliorate: 'AA19Ameliorate', content: '' },
-        AA22: { ameliorate: 'AA22Ameliorate', content: '' },
-        AB01: { ameliorate: 'AB01Ameliorate', content: '' },
-        AB02: { ameliorate: 'AB02Ameliorate', content: '' },
-        AB03: { ameliorate: 'AB03Ameliorate', content: '' },
-        AB04: { ameliorate: 'AB04Ameliorate', content: '' },
-        AB05: { ameliorate: 'AB05Ameliorate', content: '' },
-        AB06: { ameliorate: 'AB06Ameliorate', content: '' },
+        AA19: { ameliorate: 'AA19Ameliorate', content: '下班收工後已將電氣設備、氣體鋼瓶關閉。' },
+        AA22: { ameliorate: 'AA22Ameliorate', content: '已復原安全設施(如：安全網、平台護欄….等) 。' },
+        AB01: { ameliorate: 'AB01Ameliorate', content: '每日工程收工前，整理現場、收拾工具，使之恢復正常狀況。' },
+        AB02: { ameliorate: 'AB02Ameliorate', content: '每日工作後，將自動昇降機、A字梯、施工架等歸回定位。' },
+        AB03: { ameliorate: 'AB03Ameliorate', content: '每日工作後，將作業平台上工具及施工物件、材料等收拾完成。' },
+        AB04: { ameliorate: 'AB04Ameliorate', content: '庫存區、預置區、堆放區之機具、材料已分類、標示，廢棄物當日清除。' },
+        AB05: { ameliorate: 'AB05Ameliorate', content: '每日收工前將物料、工具置於暫存區並將當日垃圾清理乾淨。' },
+        AB06: { ameliorate: 'AB06Ameliorate', content: '生活廢棄物依照各區垃圾分類規定丟棄於各分類垃圾桶內。' },
     };
 
     constructor(
