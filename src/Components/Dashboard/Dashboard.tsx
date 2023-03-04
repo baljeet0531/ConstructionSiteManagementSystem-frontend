@@ -13,20 +13,24 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
     const { siteId, siteName } = props;
     return (
         <Flex direction={'column'} w={'100%'} h={'100%'}>
-            <Text variant={'pageSiteName'}>{siteName}</Text>
             <Flex
                 minH={'97px'}
                 w={'100%'}
                 padding={'5px 42px'}
+                gap={'11px'}
+                direction={'column'}
                 align={'flex-end'}
-                justify={'space-between'}
+                justify={'flex-end'}
             >
-                <Text variant={'pageTitle'}>總覽</Text>
-                <Flex gap={'10px'}>
-                    {/* {weather} */}
-                    <Text variant={'pageTitle'}>
-                        {dayjs().format('YYYY/MM/DD')}
-                    </Text>
+                <Text variant={'w500s14'}>{siteName}</Text>
+                <Flex justify={'space-between'} w={'100%'}>
+                    <Text variant={'pageTitle'}>總覽</Text>
+                    <Flex gap={'10px'}>
+                        {/* {weather} */}
+                        <Text variant={'pageTitle'}>
+                            {dayjs().format('YYYY/MM/DD')}
+                        </Text>
+                    </Flex>
                 </Flex>
             </Flex>
             <Grid
