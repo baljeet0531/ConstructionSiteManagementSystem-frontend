@@ -47,6 +47,7 @@ const Text = {
             position: 'absolute',
             top: '20px',
             right: '42px',
+            zIndex: 99,
         },
         w400s14: {
             fontStyle: 'normal',
