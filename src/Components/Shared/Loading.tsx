@@ -1,4 +1,9 @@
-import { Center, Spinner } from '@chakra-ui/react';
+import {
+    Center,
+    ChakraProps,
+    ResponsiveValue,
+    Spinner,
+} from '@chakra-ui/react';
 import React from 'react';
 
 export function PageLoading() {
@@ -28,6 +33,23 @@ export function FormLoading() {
             zIndex={99}
         >
             <Spinner size={'xl'} />
+        </Center>
+    );
+}
+
+export function CustomLoading(
+    chakraProps?: ChakraProps,
+    spinnerSize?: ResponsiveValue<
+        (string & {}) | 'sm' | 'md' | 'lg' | 'xl' | 'xs'
+    >
+) {
+    const size =
+        typeof spinnerSize === 'object' && Object.keys(spinnerSize).length === 0
+            ? 'xl'
+            : spinnerSize;
+    return (
+        <Center w={'100%'} h={'100%'} {...chakraProps}>
+            <Spinner size={size} />
         </Center>
     );
 }
