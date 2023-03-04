@@ -27,7 +27,7 @@ export const opCheckMap: Record<OpCheckName, OpCheckMapItem> = {
     assemble: { name: '施工架組裝作業', handler: AssembleOpCheckHandler },
     cage: { name: '吊籠作業', handler: CageOpCheckHandler },
     chemical: { name: '化學作業', handler: ChemicalOpCheckHandler },
-    confineSpace: { name: '侷限空間作業', handler: FireOpCheckHandler },
+    confinedSpace: { name: '侷限空間作業', handler: FireOpCheckHandler },
     electric: { name: '電力作業', handler: ElectricOpCheckHandler },
     fire: { name: '動火作業', handler: FireOpCheckHandler },
     hole: { name: '開口作業', handler: HoleOpCheckHandler },
