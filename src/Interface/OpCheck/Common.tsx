@@ -4,7 +4,7 @@ export type OpCheckName =
     | 'assemble' // 施工架組裝作業
     | 'cage' // 吊籠作業
     | 'chemical' // 化學作業
-    | 'confineSpace' // 侷限空間作業
+    | 'confinedSpace' // 侷限空間作業
     | 'electric' // 電力作業
     | 'fire' // 動火作業
     | 'hole' // 開口作業
@@ -42,13 +42,13 @@ export interface IOpCheck {
     area: string;
     zone: string;
     department: string;
-    day: string;
+    day: string | undefined;
     supervisorBefore: ISignature | undefined;
     staffBefore: ISignature | undefined;
-    timeBefore: string;
+    timeBefore: string | undefined;
     supervisorAfter: ISignature | undefined;
     staffAfter: ISignature | undefined;
-    timeAfter: string;
+    timeAfter: string | undefined;
 }
 
 export interface IGQLOpCheck extends IOpCheck {
