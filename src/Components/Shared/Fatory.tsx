@@ -13,6 +13,7 @@ export default class SharedFactory {
                 minW="100px"
                 textAlign="center"
                 p="0px"
+                disabled={!!signature?.no}
                 value={signature?.time ? signature.time.format('HH:mm') : ''}
                 onChange={(e) => {
                     const [hour, min] = e.target.value.split(':');

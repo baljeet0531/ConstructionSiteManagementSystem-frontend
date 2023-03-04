@@ -34,7 +34,7 @@ export default function SignatureListPad({
     h = '100%',
     showTime = true,
     placeHolderText = '請簽核',
-    Disable = false,
+    disable = false,
 }: {
     title: string;
     signatureName: string;
@@ -43,7 +43,7 @@ export default function SignatureListPad({
     h?: string;
     showTime?: boolean;
     placeHolderText?: string;
-    Disable?: boolean;
+    disable?: boolean;
 }) {
     const [signatures, setSignatures] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
@@ -73,7 +73,7 @@ export default function SignatureListPad({
             return index !== idx;
         });
         setSignatures(arr);
-    }
+    };
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
             removeSignature();
@@ -117,16 +117,16 @@ export default function SignatureListPad({
     return (
         <>
             {signatures[idx]?.image && !signatures[idx]?.no ? (
-                    <RepeatIcon
-                        boxSize={4}
-                        mt="4px"
-                        ml="4px"
-                        onClick={removeSignature}
-                        alignSelf='start'
-                    />
-                ) : (
-                    ''
-                )}
+                <RepeatIcon
+                    boxSize={4}
+                    mt="4px"
+                    ml="4px"
+                    onClick={removeSignature}
+                    alignSelf="start"
+                />
+            ) : (
+                ''
+            )}
             <Box
                 w="100%"
                 h={h}
@@ -134,12 +134,12 @@ export default function SignatureListPad({
                 alignItems="center"
                 justifyContent="center"
                 flexDirection="column"
-                onClick={Disable ? () => {} : onOpen}
+                onClick={disable ? () => {} : onOpen}
             >
                 {signatures[idx]?.image ? (
                     <Image
                         src={imageURL}
-                        flex= "1 1 auto"
+                        flex="1 1 auto"
                         h="75%"
                         fit="contain"
                     />
