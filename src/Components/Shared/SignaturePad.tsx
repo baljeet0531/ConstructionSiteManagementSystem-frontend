@@ -60,12 +60,7 @@ export default function SignaturePad({
     };
     const clearPad = () => sigCanvas.current.clear();
     const removeSignature = () => {
-        setSignature({
-            no: undefined,
-            image: undefined,
-            time: undefined,
-            owner: undefined,
-        });
+        setSignature(undefined);
     };
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {

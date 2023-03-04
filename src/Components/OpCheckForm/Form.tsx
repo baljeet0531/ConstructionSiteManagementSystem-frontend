@@ -185,6 +185,7 @@ export default function OpCheckForm({
                                 state={handler.signatures.supervisorBefore}
                                 placeHolderText="簽名"
                                 showTime={false}
+                                disable={!!handler.signatures.supervisorBefore[0]?.no}
                             />
                         </GridItem>
                         <GridItem {...filledStyle}>作業人員</GridItem>
@@ -195,6 +196,7 @@ export default function OpCheckForm({
                                 state={handler.signatures.staffBefore}
                                 placeHolderText="簽名"
                                 showTime={false}
+                                disable={!!handler.signatures.staffBefore[0]?.no}
                             />
                         </GridItem>
                     </Grid>
@@ -239,6 +241,7 @@ export default function OpCheckForm({
                                 state={handler.signatures.supervisorAfter}
                                 placeHolderText="簽名"
                                 showTime={false}
+                                disable={!!handler.signatures.supervisorAfter[0]?.no}
                             />
                         </GridItem>
                         <GridItem {...filledStyle}>作業人員</GridItem>
@@ -249,6 +252,7 @@ export default function OpCheckForm({
                                 state={handler.signatures.staffAfter}
                                 placeHolderText="簽名"
                                 showTime={false}
+                                disable={!!handler.signatures.staffAfter[0]?.no}
                             />
                         </GridItem>
                     </Grid>
