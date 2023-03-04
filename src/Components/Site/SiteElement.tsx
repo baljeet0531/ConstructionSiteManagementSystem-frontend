@@ -115,6 +115,7 @@ export default function Site(props: {
                 icon={<CloseIcon />}
                 bg={'none'}
                 position={'absolute'}
+                color={'#667080'}
                 top={0}
                 right={0}
                 onClick={onOpen}
@@ -156,7 +157,9 @@ export default function Site(props: {
                     top={0}
                     borderRadius={'10px'}
                 >
-                    <Button onClick={onOpen}>解除凍結</Button>
+                    <Button onClick={onOpen} color={'#667080'}>
+                        解除凍結
+                    </Button>
                 </Center>
             )}
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -174,6 +177,7 @@ export default function Site(props: {
                                 fontWeight={700}
                                 fontSize={'20px'}
                                 lineHeight={'20px'}
+                                color={'#667080'}
                             >
                                 {archived
                                     ? '確定解除凍結以下專案？'
@@ -187,7 +191,7 @@ export default function Site(props: {
                             height={'102px'}
                             overflowX={'auto'}
                         >
-                            <Text>{siteName}</Text>
+                            <Text color={'#667080'}>{siteName}</Text>
                         </Center>
                     </ModalBody>
 
