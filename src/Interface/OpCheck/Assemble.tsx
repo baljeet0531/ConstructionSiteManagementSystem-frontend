@@ -34,3 +34,22 @@ export interface IAssembleOpCheck extends IOpCheck {
 }
 
 export interface IGQLAssembleOpCheck extends IAssembleOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | 'BG01'
+    | 'BG02'
+    | 'BG03'
+    | 'BG04'
+    | 'BG05'
+    | 'BG06'
+    | 'BG07';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';
