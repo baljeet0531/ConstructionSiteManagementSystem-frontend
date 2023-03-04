@@ -9,11 +9,12 @@ import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
 
 export const QUERY_ACCOUNT_SITES = gql`
-    query AccountSite($username: String!) {
-        accountSite(username: $username) {
+    query AccountSite($username: String!, $archived: Boolean) {
+        accountSite(username: $username, archived: $archived) {
             siteId
             siteRef {
                 name
+                archived
             }
             role
         }
@@ -54,6 +55,10 @@ export default function Layout(props: { page: featureName }) {
     );
 
     useQuery(QUERY_ACCOUNT_SITES, {
+        variables: {
+            username: username,
+            archived: false,
+        },
         onCompleted: ({ accountSite }) => {
             const sitesListFormatted: ISiteObject[] = accountSite.map(
                 (site: {
@@ -88,9 +93,6 @@ export default function Layout(props: { page: featureName }) {
         },
         onError: (error) => {
             console.log(error);
-        },
-        variables: {
-            username: username,
         },
         fetchPolicy: 'cache-and-network',
     });
