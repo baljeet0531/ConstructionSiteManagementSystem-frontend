@@ -81,7 +81,7 @@ export class ChemicalOpCheckHandler extends OpCheckHandler {
             }
         }
     `;
-    mutationName = 'updateOpConfined';
+    mutationName = 'updateOpChemical';
     mutation = gql`
         mutation updateOpChemical(
             $AA19: Boolean
