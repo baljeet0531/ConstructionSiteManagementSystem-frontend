@@ -37,30 +37,10 @@ export default function OpCheckFormik() {
         localStorage.getItem('singleOpCheckObject') as string
     );
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        staffAfter: useState<ISignature>({
-            no: undefined,
-            image: undefined,
-            time: undefined,
-            owner: undefined,
-        }),
-        supervisorAfter: useState<ISignature>({
-            no: undefined,
-            image: undefined,
-            time: undefined,
-            owner: undefined,
-        }),
-        staffBefore: useState<ISignature>({
-            no: undefined,
-            image: undefined,
-            time: undefined,
-            owner: undefined,
-        }),
-        supervisorBefore: useState<ISignature>({
-            no: undefined,
-            image: undefined,
-            time: undefined,
-            owner: undefined,
-        }),
+        staffAfter: useState<ISignature>(),
+        supervisorAfter: useState<ISignature>(),
+        staffBefore: useState<ISignature>(),
+        supervisorBefore: useState<ISignature>(),
     };
     const handler = new opCheckMap[type as OpCheckName].handler(
         siteId,
