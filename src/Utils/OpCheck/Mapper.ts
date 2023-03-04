@@ -7,6 +7,7 @@ import { CageOpCheckHandler } from './Type/Cage';
 import { ChemicalOpCheckHandler } from './Type/Chemical';
 import { ElectricOpCheckHandler } from './Type/Electric';
 import { FireOpCheckHandler } from './Type/Fire';
+import { HoleOpCheckHandler } from './Type/Hole';
 
 type OpCheckConstructor = new (
     siteId: string,
@@ -26,7 +27,7 @@ export const opCheckMap: Record<OpCheckName, OpCheckMapItem> = {
     confineSpace: { name: '侷限空間作業', handler: FireOpCheckHandler },
     electric: { name: '電力作業', handler: ElectricOpCheckHandler },
     fire: { name: '動火作業', handler: FireOpCheckHandler },
-    hole: { name: '開口作業', handler: FireOpCheckHandler },
+    hole: { name: '開口作業', handler: HoleOpCheckHandler },
     lift: { name: '起重吊掛作業', handler: FireOpCheckHandler },
     pipeDistruct: { name: '管線拆離作業', handler: FireOpCheckHandler },
     scafold: { name: '高架作業', handler: FireOpCheckHandler },
