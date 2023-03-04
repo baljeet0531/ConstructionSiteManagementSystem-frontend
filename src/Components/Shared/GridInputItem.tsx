@@ -96,7 +96,7 @@ export default function GridInputItem({
                             {form.errors[fieldName] && (
                                 <InputRightElement h="100%">
                                     <Pin msg={invalidMsg}>
-                                        <WarningIcon color="red" />
+                                        <WarningIcon color="red.default" />
                                     </Pin>
                                 </InputRightElement>
                             )}
