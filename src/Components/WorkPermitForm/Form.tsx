@@ -267,7 +267,7 @@ export default function WorkPermitForm({
                         }}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
-                        invalidStyle={{ color: 'red', fontWeight: 'bold' }}
+                        invalidStyle={{ color: 'red.default', fontWeight: 'bold' }}
                         invalidMsg="結束日期不得早於開始日期"
                     />
 
