@@ -15,11 +15,17 @@ import ReactWindowTable, {
     ISizes,
     SignatureStatusElement,
 } from '../Shared/ReactWindowTable';
+import { LazyQueryResultTuple, useLazyQuery } from '@apollo/client';
+import {
+    OpCheckGQL,
+    OpCheckName,
+    OpCheckQueryType,
+    operationType,
+} from './GQL';
 
 export interface IOperationOverview {
     day: string;
     number: string;
-    type: operationType;
     area: string;
     department: string;
     supervisorBeforeRef: IGQLSignature | null;
@@ -30,39 +36,33 @@ export interface IOperationOverview {
 
 export interface IOperationOverviewChecked extends IOperationOverview {
     index: number;
+    type: operationType;
     isChecked: boolean;
 }
 
-export type operationType =
-    | '全部'
-    | '動火作業'
-    | '高架作業'
-    | '侷限空間作業'
-    | '電力作業'
-    | '吊籠作業'
-    | '起重吊掛作業'
-    | '施工架組裝作業'
-    | '管線拆離作業'
-    | '開口作業'
-    | '化學作業';
+const OpCheckMap: Map<
+    OpCheckQueryType,
+    {
+        name: operationType;
+        query?: LazyQueryResultTuple<any, { siteId: string }>;
+    }
+> = new Map([
+    ['all', { name: '全部' }],
+    ['assemble', { name: '施工架組裝作業' }],
+    ['cage', { name: '吊籠作業' }],
+    ['chemical', { name: '化學作業' }],
+    ['confineSpace', { name: '侷限空間作業' }],
+    ['electric', { name: '電力作業' }],
+    ['fire', { name: '動火作業' }],
+    ['hole', { name: '開口作業' }],
+    ['lift', { name: '起重吊掛作業' }],
+    ['pipeDistruct', { name: '管線拆離作業' }],
+    ['scafold', { name: '高架作業' }],
+]);
 
-const operationOptions: operationType[] = [
-    '全部',
-    '動火作業',
-    '高架作業',
-    '侷限空間作業',
-    '電力作業',
-    '吊籠作業',
-    '起重吊掛作業',
-    '施工架組裝作業',
-    '管線拆離作業',
-    '開口作業',
-    '化學作業',
-];
-
-const operationOptionsElements = operationOptions.map((type, index) => (
-    <option key={index} value={type}>
-        {type}
+const operationOptionsElements = Array.from(OpCheckMap).map((item, index) => (
+    <option key={index} value={item[0]}>
+        {item[1].name}
     </option>
 ));
 
@@ -169,6 +169,66 @@ export default function SpecialForm(props: {
     }>({});
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
+    OpCheckMap.forEach((value, key) => {
+        OpCheckMap.set(key, {
+            ...value,
+            query: useLazyQuery(OpCheckGQL(key), {
+                onCompleted: (data) => {
+                    let opCheckDataFormatted = [];
+                    if (key === 'all') {
+                        let i = 0;
+                        opCheckDataFormatted = Object.entries(data).flatMap(
+                            (item) => {
+                                const [key, value] = item as [
+                                    string,
+                                    IOperationOverview[]
+                                ];
+                                const opCheckName = key.slice(
+                                    0,
+                                    -7
+                                ) as OpCheckName;
+                                return value.map((info) => {
+                                    i += 1;
+                                    return {
+                                        [i]: {
+                                            ...info,
+                                            type: OpCheckMap.get(opCheckName)
+                                                ?.name,
+                                            index: i + 1,
+                                            isChecked: false,
+                                        },
+                                    };
+                                });
+                            }
+                        );
+                    } else {
+                        const opCheckData: IOperationOverview[] =
+                            data[`${key}OpCheck`];
+
+                        opCheckDataFormatted = opCheckData.map(
+                            (info, index) => ({
+                                [index]: {
+                                    ...info,
+                                    type: value.name,
+                                    index: index + 1,
+                                    isChecked: false,
+                                },
+                            })
+                        );
+                    }
+                    const dataObject = Object.assign(
+                        {},
+                        ...opCheckDataFormatted
+                    );
+                    setTableData(dataObject);
+                },
+                onError: (err) => {
+                    console.log(err);
+                },
+                fetchPolicy: 'network-only',
+            }),
+        });
+    });
 
     return (
         <Flex
@@ -196,7 +256,18 @@ export default function SpecialForm(props: {
                             setDateRange(value);
                         }}
                     />
-                    <Select variant={'formOutline'}>
+                    <Select
+                        defaultValue={'all'}
+                        variant={'formOutline'}
+                        onChange={(e) => {
+                            const val = e.target.value as OpCheckQueryType;
+                            const query = OpCheckMap.get(val)?.query;
+                            query &&
+                                query[0]({
+                                    variables: { siteId: siteId },
+                                });
+                        }}
+                    >
                         {operationOptionsElements}
                     </Select>
                 </Flex>
