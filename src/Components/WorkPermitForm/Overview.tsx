@@ -278,7 +278,7 @@ export default function WorkPermitFormOverview(props: {
             {systemInfo.name}
         </Checkbox>
     ));
-    useQuery(AREAS_AND_SYSTEMS, {
+    const { startPolling: startPollingArea } = useQuery(AREAS_AND_SYSTEMS, {
         variables: {
             siteId: siteId,
         },
@@ -293,6 +293,7 @@ export default function WorkPermitFormOverview(props: {
                     area != '' ? { name: area, isChecked: false } : []
                 )
             );
+            startPollingArea(3000);
         },
         onError: (err) => {
             console.log(err);
