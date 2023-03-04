@@ -10,6 +10,7 @@ import { FireOpCheckHandler } from './Type/Fire';
 import { HoleOpCheckHandler } from './Type/Hole';
 import { LiftOpCheckHandler } from './Type/Lift';
 import { PipeDistructOpCheckHandler } from './Type/PipeDistruct';
+import { ScafoldOpCheckHandler } from './Type/Scafold';
 
 type OpCheckConstructor = new (
     siteId: string,
@@ -32,5 +33,5 @@ export const opCheckMap: Record<OpCheckName, OpCheckMapItem> = {
     hole: { name: '開口作業', handler: HoleOpCheckHandler },
     lift: { name: '起重吊掛作業', handler: LiftOpCheckHandler },
     pipeDistruct: { name: '管線拆離作業', handler: PipeDistructOpCheckHandler },
-    scafold: { name: '高架作業', handler: FireOpCheckHandler },
+    scafold: { name: '高架作業', handler: ScafoldOpCheckHandler },
 };
