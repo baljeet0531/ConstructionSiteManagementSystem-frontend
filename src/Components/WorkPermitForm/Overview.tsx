@@ -12,6 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
     Text,
+    useDisclosure,
     useToast,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
@@ -189,6 +190,7 @@ export default function WorkPermitFormOverview(props: {
         return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
     const toast = useToast();
+    const { onToggle } = useDisclosure();
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem(
@@ -278,10 +280,7 @@ export default function WorkPermitFormOverview(props: {
             {systemInfo.name}
         </Checkbox>
     ));
-    useQuery(AREAS_AND_SYSTEMS, {
-        variables: {
-            siteId: siteId,
-        },
+    const [getAreas] = useLazyQuery(AREAS_AND_SYSTEMS, {
         onCompleted: ({
             areaAndSystem,
         }: {
@@ -418,6 +417,14 @@ export default function WorkPermitFormOverview(props: {
                             <Button
                                 rightIcon={<ArrowDropDownIcon />}
                                 variant={'buttonGraySolid'}
+                                onClick={() => {
+                                    getAreas({
+                                        variables: {
+                                            siteId: siteId,
+                                        },
+                                    });
+                                    onToggle();
+                                }}
                             >
                                 搜尋條件
                             </Button>
