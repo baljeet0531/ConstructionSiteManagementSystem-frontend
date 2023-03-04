@@ -141,7 +141,7 @@ export const SignatureStatusElement = (props: {
             gap={'2px'}
             w={'170px'}
             align={'center'}
-            justify={'flex-start'}
+            justify={'center'}
             height={'20px'}
         >
             {signatureStatusMap}

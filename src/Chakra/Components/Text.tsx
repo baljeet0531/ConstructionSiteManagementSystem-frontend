@@ -56,6 +56,13 @@ const Text = {
             lineHeight: '1.25rem',
             color: '#667080',
         },
+        w500s14: {
+            fontStyle: 'normal',
+            fontWeight: 500,
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            color: '#667080',
+        },
         w400s12: {
             fontStyle: 'normal',
             fontWeight: '400',
