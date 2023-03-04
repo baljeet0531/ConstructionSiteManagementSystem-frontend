@@ -1,5 +1,6 @@
 import { Checkbox, GridItem, Input } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
+import { Fragment } from 'react';
 import {
     IOpCheck,
     IOpCheckFillItem,
@@ -11,7 +12,7 @@ import SharedFactory from '../Shared/Fatory';
 import GridInputItem from '../Shared/GridInputItem';
 import { placeholderStyle, tableStyle } from './Styles';
 
-export default class FormFactory extends SharedFactory{
+export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IOpCheck>;
     type: OpCheckName;
     handler: OpCheckHandler;
@@ -40,14 +41,13 @@ export default class FormFactory extends SharedFactory{
     }
     typeCheckBox(type: OpCheckName, label: string) {
         return (
-            <GridItem>
+            <GridItem key={type}>
                 <Checkbox
                     w="100%"
                     h="100%"
                     spacing="0.5rem"
                     size="sm"
                     isChecked={type === this.type}
-                    key={type}
                     disabled
                 >
                     {label}
@@ -95,8 +95,8 @@ export default class FormFactory extends SharedFactory{
     row(id: string, item: IOpCheckFillItem) {
         const value = this.formProps.values[id as keyof IOpCheck] as unknown;
         return (
-            <>
-                <GridItem {...tableStyle} justifyContent="center">
+            <Fragment key={id}>
+                <GridItem {...tableStyle} justifyContent="center" key={id}>
                     {id}
                 </GridItem>
                 <GridItem {...tableStyle} pl={2}>
@@ -117,7 +117,7 @@ export default class FormFactory extends SharedFactory{
                     inputComponent={this.textInput(value !== false)}
                     style={tableStyle}
                 />
-            </>
+            </Fragment>
         );
     }
 }
