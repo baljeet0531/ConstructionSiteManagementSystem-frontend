@@ -7,8 +7,8 @@ export interface IConfineSpaceOpCheck extends IOpCheck {
     BC03: boolean | undefined;
     BC04: boolean | undefined;
     BC05: boolean | undefined;
-    laborNum: number | undefined;
-    supervisorNum: number | undefined;
+    laborNum: number | string | undefined;
+    supervisorNum: number | string | undefined;
     BC06: boolean | undefined;
     enterTime: string | undefined;
     outTime: string | undefined;

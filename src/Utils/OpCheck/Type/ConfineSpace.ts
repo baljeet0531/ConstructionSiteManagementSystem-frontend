@@ -355,4 +355,10 @@ export class ConfineSpaceOpCheckHandler extends OpCheckHandler {
             AB06Ameliorate: '',
         };
     }
+
+    marshal(submitValues: IConfineSpaceOpCheck): void {
+        super.marshal(submitValues);
+        submitValues.laborNum = submitValues.laborNum?.toString();
+        submitValues.supervisorNum = submitValues.supervisorNum?.toString();
+    }
 }
