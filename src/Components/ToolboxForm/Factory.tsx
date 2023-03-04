@@ -14,7 +14,7 @@ import {
     IToolboxOptions,
 } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
-import SharedFactory from '../Shared/Fatory';
+import SharedFactory from '../Shared/Factory';
 
 export default class FormFactory extends SharedFactory{
     formProps: FormikProps<IToolbox>;
