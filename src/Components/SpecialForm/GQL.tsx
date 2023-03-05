@@ -13,7 +13,9 @@ export type OpCheckName =
     | 'pipeDistruct' // 管線拆離作業
     | 'scafold'; // 高架作業
 
-export type operationType =
+export type OpCheckQueryType = OpCheckName | 'all';
+
+export type OpCheckQueryTypeZh =
     | '全部'
     | '動火作業'
     | '高架作業'
@@ -25,8 +27,6 @@ export type operationType =
     | '管線拆離作業'
     | '開口作業'
     | '化學作業';
-
-export type OpCheckQueryType = OpCheckName | 'all';
 
 export const OpCheckGQL = (type: OpCheckQueryType) =>
     type === 'all'

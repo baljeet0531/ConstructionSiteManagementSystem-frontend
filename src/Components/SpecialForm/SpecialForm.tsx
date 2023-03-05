@@ -33,7 +33,7 @@ import {
     OpCheckGQL,
     OpCheckName,
     OpCheckQueryType,
-    operationType,
+    OpCheckQueryTypeZh,
 } from './GQL';
 import dayjs from 'dayjs';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
@@ -53,7 +53,7 @@ export interface IOperationOverview {
 
 export interface IOperationOverviewChecked extends IOperationOverview {
     index: number;
-    type: operationType;
+    type: OpCheckQueryTypeZh;
     opCheckName: OpCheckName;
     isChecked: boolean;
 }
@@ -61,7 +61,7 @@ export interface IOperationOverviewChecked extends IOperationOverview {
 const OpCheckMap: Map<
     OpCheckQueryType,
     {
-        name: operationType;
+        name: OpCheckQueryTypeZh;
         query?: LazyQueryResultTuple<any, { siteId: string }>;
     }
 > = new Map([
