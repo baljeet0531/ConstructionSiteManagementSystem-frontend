@@ -27,6 +27,7 @@ import {
     IToolbox,
     SignatureName,
     SignatureListName,
+    IGQLToolbox,
 } from '../../Interface/Toolbox';
 import { GQL_TOOLBOX_UPDATE } from './GQL';
 import ToolboxForm from './Form';
@@ -232,9 +233,13 @@ export default function WorkPermitFormik() {
                 validateOnChange={false}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
-                    const submitValues = { ...values };
+                    const submitValues = { ...values } as IGQLToolbox;
                     handleSignatures(submitValues);
                     handleSignaturesList(submitValues);
+                    submitValues['meetingDatetime'] = [
+                        submitValues.meetingDate,
+                        submitValues.meetingTime,
+                    ].join('T');
                     console.log(submitValues);
                     updateToolboxMeeting({ variables: submitValues }).catch(
                         () => actions.setSubmitting(false)

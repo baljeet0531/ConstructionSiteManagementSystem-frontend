@@ -7,26 +7,31 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
+import ChartLayout from './Charts/ChartLayout';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
     return (
         <Flex direction={'column'} w={'100%'} h={'100%'}>
-            <Text variant={'pageSiteName'}>{siteName}</Text>
             <Flex
                 minH={'97px'}
                 w={'100%'}
                 padding={'5px 42px'}
+                gap={'11px'}
+                direction={'column'}
                 align={'flex-end'}
-                justify={'space-between'}
+                justify={'flex-end'}
             >
-                <Text variant={'pageTitle'}>總覽</Text>
-                <Flex gap={'10px'}>
-                    {/* {weather} */}
-                    <Text variant={'pageTitle'}>
-                        {dayjs().format('YYYY/MM/DD')}
-                    </Text>
+                <Text variant={'w500s14'}>{siteName}</Text>
+                <Flex justify={'space-between'} w={'100%'}>
+                    <Text variant={'pageTitle'}>總覽</Text>
+                    <Flex gap={'10px'}>
+                        {/* {weather} */}
+                        <Text variant={'pageTitle'}>
+                            {dayjs().format('YYYY/MM/DD')}
+                        </Text>
+                    </Flex>
                 </Flex>
             </Flex>
             <Grid
@@ -47,7 +52,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <Text variant={'w700s16'}>專案進度</Text>
+                    <ChartLayout siteId={siteId} title={'專案進度'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <Text variant={'w700s16'}>申請作業類別與缺失數</Text>
@@ -56,7 +61,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <Text variant={'w700s16'}>危害告知訓練</Text>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>特殊作業</Text>
+                    <ChartLayout siteId={siteId} title={'特殊作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <Text variant={'w700s16'}>今日施工作業（缺氧）</Text>

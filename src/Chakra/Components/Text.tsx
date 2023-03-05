@@ -47,10 +47,18 @@ const Text = {
             position: 'absolute',
             top: '20px',
             right: '42px',
+            zIndex: 99,
         },
         w400s14: {
             fontStyle: 'normal',
             fontWeight: '400',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            color: '#667080',
+        },
+        w500s14: {
+            fontStyle: 'normal',
+            fontWeight: 500,
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
             color: '#667080',
