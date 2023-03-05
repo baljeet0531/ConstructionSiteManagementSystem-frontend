@@ -365,7 +365,6 @@ export default function SpecialForm(props: {
                                   }
                                 : []
                         );
-                        console.log(infos);
                         exportOpCheck({
                             variables: {
                                 infos: infos,
