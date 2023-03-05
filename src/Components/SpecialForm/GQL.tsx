@@ -103,3 +103,17 @@ const OPCHECK_FIELDS = `
         }
     }
 `;
+
+export const EXPORT_OPCHECK = gql`
+    mutation ExportOps(
+        $infos: [infoinput]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportOps(infos: $infos, siteId: $siteId, username: $username) {
+            ok
+            message
+            path
+        }
+    }
+`;

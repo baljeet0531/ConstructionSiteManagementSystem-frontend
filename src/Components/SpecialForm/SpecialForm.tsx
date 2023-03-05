@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Button, Flex, Select, Text } from '@chakra-ui/react';
+import { Button, Flex, Select, Text, useToast } from '@chakra-ui/react';
 import { Navigate } from 'react-router-dom';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
@@ -15,14 +15,22 @@ import ReactWindowTable, {
     ISizes,
     SignatureStatusElement,
 } from '../Shared/ReactWindowTable';
-import { LazyQueryResultTuple, useLazyQuery, useQuery } from '@apollo/client';
 import {
+    LazyQueryResultTuple,
+    useLazyQuery,
+    useMutation,
+} from '@apollo/client';
+import {
+    EXPORT_OPCHECK,
     OpCheckGQL,
     OpCheckName,
     OpCheckQueryType,
     operationType,
 } from './GQL';
 import dayjs from 'dayjs';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { exportFile } from '../../Utils/Resources';
+import { Cookies } from 'react-cookie';
 
 export interface IOperationOverview {
     day: string;
@@ -81,6 +89,7 @@ export default function SpecialForm(props: {
     if (!IsPermit('eng_special_form'))
         return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
+    const toast = useToast();
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [queryType, setQueryType] = React.useState<OpCheckQueryType>('all');
 
@@ -273,6 +282,20 @@ export default function SpecialForm(props: {
         });
     });
 
+    const [exportOpCheck] = useMutation(EXPORT_OPCHECK, {
+        onCompleted: ({ exportOps }) => {
+            const { ok, message, path } = exportOps;
+            if (ok) {
+                exportFile(path, message, toast);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
     React.useEffect(() => {
         const queryTuple = OpCheckMap.get(queryType)?.query;
         queryTuple && queryTuple[0]({ variables: { siteId: siteId } });
@@ -321,17 +344,23 @@ export default function SpecialForm(props: {
                     leftIcon={<LaunchIcon />}
                     variant={'buttonGrayOutline'}
                     onClick={() => {
-                        // const username = new Cookies().get('username');
-                        // const numbers = Object.values(tableData).flatMap(
-                        //     (info) => (info.isChecked ? info.number : [])
-                        // );
-                        // exportToolbox({
-                        //     variables: {
-                        //         number: numbers,
-                        //         siteId: siteId,
-                        //         username: username,
-                        //     },
-                        // });
+                        const username = new Cookies().get('username');
+                        const infos = Object.values(tableData).flatMap((info) =>
+                            info.isChecked
+                                ? {
+                                      number: info.number,
+                                      ftype: info.type,
+                                  }
+                                : []
+                        );
+                        console.log(infos);
+                        exportOpCheck({
+                            variables: {
+                                infos: infos,
+                                siteId: siteId,
+                                username: username,
+                            },
+                        });
                     }}
                 >
                     輸出
