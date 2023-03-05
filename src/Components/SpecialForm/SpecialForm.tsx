@@ -27,6 +27,7 @@ import {
     LazyQueryResultTuple,
     useLazyQuery,
     useMutation,
+    useQuery,
 } from '@apollo/client';
 import {
     EXPORT_OPCHECK,
@@ -39,6 +40,7 @@ import dayjs from 'dayjs';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { exportFile } from '../../Utils/Resources';
 import { Cookies } from 'react-cookie';
+import { PageLoading } from '../Shared/Loading';
 
 export interface IOperationOverview {
     day: string;
@@ -243,9 +245,6 @@ export default function SpecialForm(props: {
                               );
                     setFilteredPrimaryKey(primaryKeys);
                 },
-                onError: (err) => {
-                    console.log(err);
-                },
             });
     };
 
@@ -278,18 +277,36 @@ export default function SpecialForm(props: {
             query: useLazyQuery(OpCheckGQL(key), {
                 onError: (err) => {
                     console.log(err);
+                    defaultErrorToast(toast);
                 },
                 fetchPolicy: 'network-only',
             }),
         });
     });
 
-    const [exportOpCheck] = useMutation(EXPORT_OPCHECK, {
-        onCompleted: ({ exportOps }) => {
-            const { ok, message, path } = exportOps;
-            if (ok) {
-                exportFile(path, message, toast);
-            }
+    const [exportOpCheck, { loading: exportLoading }] = useMutation(
+        EXPORT_OPCHECK,
+        {
+            onCompleted: ({ exportOps }) => {
+                const { ok, message, path } = exportOps;
+                if (ok) {
+                    exportFile(path, message, toast);
+                }
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const { loading } = useQuery(OpCheckGQL('all'), {
+        variables: { siteId: siteId },
+        onCompleted: (data) => {
+            handleDataAll(data);
+            const dataObject = Object.assign({}, ...handleDataAll(data));
+            setTableData(dataObject);
         },
         onError: (err) => {
             console.log(err);
@@ -297,22 +314,6 @@ export default function SpecialForm(props: {
         },
         fetchPolicy: 'network-only',
     });
-
-    React.useEffect(() => {
-        const queryTuple = OpCheckMap.get('all')?.query;
-        queryTuple &&
-            queryTuple[0]({
-                variables: { siteId: siteId },
-                onCompleted: (data) => {
-                    handleDataAll(data);
-                    const dataObject = Object.assign(
-                        {},
-                        ...handleDataAll(data)
-                    );
-                    setTableData(dataObject);
-                },
-            });
-    }, []);
 
     return (
         <Flex
@@ -383,6 +384,7 @@ export default function SpecialForm(props: {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
             />
+            {(loading || exportLoading) && <PageLoading />}
         </Flex>
     );
 }
