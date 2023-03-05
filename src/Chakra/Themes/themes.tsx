@@ -7,7 +7,7 @@ import Input from '../Components/Input';
 import Button from '../Components/Button';
 import Tabs from '../Components/Tabs';
 import Textarea from '../Components/Textarea';
-import Checkbox from '../Components/Checkbox'
+import Checkbox from '../Components/Checkbox';
 
 const myTheme = extendTheme({
     styles,
@@ -19,7 +19,10 @@ const myTheme = extendTheme({
         Button,
         Tabs,
         Textarea,
-        Checkbox
+        Checkbox,
+    },
+    colors: {
+        red: { default: '#DB504A' },
     },
 });
 

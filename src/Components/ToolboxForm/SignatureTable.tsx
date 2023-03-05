@@ -14,6 +14,7 @@ import SignatureListPad from '../Shared/SignatureListPad';
 
 const itemStyle = {
     p: '0px',
+    h: '115px',
     border: '1px solid #919AA9',
 };
 
@@ -61,7 +62,8 @@ export default function SignatureTable(
                         signatureName={`prime-app-${idx + 1}.png`}
                         state={primeContractingCorpAppearance}
                         idx={idx}
-                        h="100px"
+                        h="90px"
+                        disable={!!primeContractingCorpAppearance[0][idx]?.no}
                     />
                 </Td>
                 <Td {...itemStyle}>
@@ -70,7 +72,8 @@ export default function SignatureTable(
                         signatureName={`vice-first-app-${idx + 1}.png`}
                         state={viceFirstContractingCorpAppearance}
                         idx={idx}
-                        h="100px"
+                        h="90px"
+                        disable={!!viceFirstContractingCorpAppearance[0][idx]?.no}
                     />
                 </Td>
                 <Td {...itemStyle}>
@@ -79,7 +82,8 @@ export default function SignatureTable(
                         signatureName={`vice-second-app-${idx + 1}.png`}
                         state={viceSecondContractingCorpAppearance}
                         idx={idx}
-                        h="100px"
+                        h="90px"
+                        disable={!!viceSecondContractingCorpAppearance[0][idx]?.no}
                     />
                 </Td>
                 <Td {...itemStyle}>
@@ -88,7 +92,8 @@ export default function SignatureTable(
                         signatureName={`vice-third-app-${idx + 1}.png`}
                         state={viceThirdContractingCorpAppearance}
                         idx={idx}
-                        h="100px"
+                        h="90px"
+                        disable={!!viceThirdContractingCorpAppearance[0][idx]?.no}
                     />
                 </Td>
             </Tr>

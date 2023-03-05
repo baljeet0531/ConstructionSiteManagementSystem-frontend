@@ -6,11 +6,11 @@ import {
     ChakraProps,
     Checkbox,
     Flex,
-    Tooltip,
     Text,
 } from '@chakra-ui/react';
 import { areEqual, VariableSizeGrid } from 'react-window';
 import { IGQLSignature } from '../../Interface/Signature';
+import Pin from './Pin';
 import dayjs from 'dayjs';
 
 const tableCellStyle: ChakraProps = {
@@ -84,7 +84,7 @@ export const CheckboxElement = (props: {
                 onChange={(e) => {
                     setTableData((prevState) => ({
                         ...prevState,
-                        [info[primaryKey]]: {
+                        [primaryKey]: {
                             ...info,
                             isChecked: e.target.checked,
                         },
@@ -96,10 +96,9 @@ export const CheckboxElement = (props: {
 };
 
 export const SignatureTooltip = (props: {
-    field: { signature: IGQLSignature; fieldLabel: string };
+    field: { signature: IGQLSignature | null; fieldLabel: string };
 }) => {
     const { signature, fieldLabel } = props.field;
-    const [isLabelOpen, setIsLabelOpen] = React.useState(false);
     const label = signature ? (
         <Text>
             {`${fieldLabel}：`}
@@ -112,22 +111,23 @@ export const SignatureTooltip = (props: {
         ''
     );
     return (
-        <Tooltip label={label} isOpen={isLabelOpen} closeOnClick={false}>
+        <Pin msg={label}>
             <Button
                 w={'40px'}
                 h={'10px'}
                 bg={signature ? '#9CE3DE' : 'rgba(102, 112, 128, 0.1)'}
                 borderRadius={'4px'}
-                onMouseLeave={() => setIsLabelOpen(false)}
-                onClick={() => setIsLabelOpen((prevState) => !prevState)}
             ></Button>
-        </Tooltip>
+        </Pin>
     );
 };
 
 export const SignatureStatusElement = (props: {
     getElementProps: getElementProps;
-    signatureFieldList: { signature: IGQLSignature; fieldLabel: string }[];
+    signatureFieldList: {
+        signature: IGQLSignature | null;
+        fieldLabel: string;
+    }[];
 }) => {
     const { getElementProps, signatureFieldList } = props;
     const signatureStatusMap = signatureFieldList.map((field, index) => (
@@ -141,7 +141,7 @@ export const SignatureStatusElement = (props: {
             gap={'2px'}
             w={'170px'}
             align={'center'}
-            justify={'flex-start'}
+            justify={'center'}
             height={'20px'}
         >
             {signatureStatusMap}

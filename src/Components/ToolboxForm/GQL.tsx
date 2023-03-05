@@ -515,11 +515,11 @@ export const GQL_TOOLBOX_UPDATE = gql`
     }
 `;
 
-export async function parseToolbox(
+export function parseToolbox(
     list: IGQLToolbox[],
     signatures: Record<SignatureName, SignatureStateItem>,
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>
-): Promise<IToolbox | undefined> {
+): IToolbox | undefined {
     if (!list[0]) return;
     const signatureColName: SignatureName[] = [
         'contractingCorpStaffSignatureFirst',
@@ -580,13 +580,18 @@ export async function parseToolbox(
         const GQLkey = signatureListGQLColName[i] as keyof IGQLToolbox;
         const GQLsignList = t[GQLkey] as IGQLSignature[] | undefined;
         const signList = [] as ISignature[];
-        if (GQLsignList) {
-            for (let GQLsign of GQLsignList) {
-                const sign = await getSignature(GQLsign);
-                signList.push(sign);
+        const getSignList = async () => {
+            if (GQLsignList) {
+                for (let GQLsign of GQLsignList) {
+                    const sign = await getSignature(GQLsign);
+                    signList.push(sign);
+                }
             }
-        }
-        setSignatureList(signList);
+        };
+
+        getSignList().then(() => {
+            setSignatureList(signList);
+        });
     }
     return t;
 }
