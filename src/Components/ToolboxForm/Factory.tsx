@@ -16,7 +16,7 @@ import {
 import { ThreeStateIcon } from '../../Icons/Icons';
 import SharedFactory from '../Shared/Factory';
 
-export default class FormFactory extends SharedFactory{
+export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IToolbox>;
     data: IToolboxData;
     setData: Dispatch<SetStateAction<IToolboxData>>;
@@ -94,10 +94,19 @@ export default class FormFactory extends SharedFactory{
         relation.map((n) => {
             update = { ...update, [n]: current };
         });
+        this.setOptions({
+            toolboxHint: {
+                ...this.options.toolboxHint,
+                ...update,
+            },
+        });
+    }
+    updateAllHint() {
+        let update = {};
         for (let r in this.hintRelation) {
             const relation = this.hintRelation[r];
-            const before = this.formProps.values[r as keyof IToolbox];
-            if (r != name && before) {
+            const value = this.formProps.values[r as keyof IToolbox];
+            if (value) {
                 relation.map((n) => {
                     update = { ...update, [n]: true };
                 });
@@ -249,7 +258,7 @@ export default class FormFactory extends SharedFactory{
                     textAlign="center"
                     value={this.formProps.values[fieldName] as string}
                     onChange={(e) => {
-                        const target = e.target.value
+                        const target = e.target.value;
                         this.formProps.setFieldValue(fieldName, target);
                     }}
                     _placeholder={placeholderStyle}
