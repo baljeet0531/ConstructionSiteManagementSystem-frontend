@@ -127,7 +127,7 @@ export default function Menu(props: {
                         <Feature fItem={featureMap.eng_toolbox_form} />
                         <Feature fItem={featureMap.eng_fault_form} />
                         <Feature fItem={featureMap.eng_env_security_form} />
-                        <Feature fItem={featureMap.eng_special_form} />
+                        <Feature fItem={featureMap.eng_op_check_form} />
                         <Feature fItem={featureMap.eng_photo} />
                     </AccordionPanel>
                 </AccordionItem>
@@ -156,7 +156,7 @@ export default function Menu(props: {
                         <Feature
                             fItem={featureMap.outsource_env_security_form}
                         />
-                        <Feature fItem={featureMap.outsource_special_form} />
+                        <Feature fItem={featureMap.outsource_op_check_form} />
                         <Feature
                             fItem={featureMap.outsource_machinery_establishment}
                         />
