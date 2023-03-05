@@ -14,10 +14,9 @@ import {
     IToolboxOptions,
 } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
-import { SignatureStateItem } from '../../Interface/Signature';
-import dayjs from 'dayjs';
+import SharedFactory from '../Shared/Fatory';
 
-export default class FormFactory {
+export default class FormFactory extends SharedFactory{
     formProps: FormikProps<IToolbox>;
     data: IToolboxData;
     setData: Dispatch<SetStateAction<IToolboxData>>;
@@ -32,6 +31,7 @@ export default class FormFactory {
         options: IToolboxOptions,
         setOptions: Dispatch<SetStateAction<IToolboxOptions>>
     ) {
+        super();
         this.formProps = formProps;
         this.data = data;
         this.setData = setData;
@@ -183,27 +183,6 @@ export default class FormFactory {
             <Checkbox
                 isChecked={this.formProps.values[name] as boolean}
                 onChange={this.formProps.handleChange}
-            />
-        );
-    }
-    checkTimeInput(state: SignatureStateItem) {
-        const [signature, setSignature] = state;
-        return (
-            <Input
-                size="sm"
-                type="time"
-                border="0px"
-                minW="100px"
-                textAlign="center"
-                p="0px"
-                value={signature?.time ? signature.time.format('HH:mm') : ''}
-                onChange={(e) => {
-                    const [hour, min] = e.target.value.split(':');
-                    const newDate = dayjs(signature.time)
-                        .hour(Number(hour))
-                        .minute(Number(min));
-                    setSignature({ ...signature, time: newDate });
-                }}
             />
         );
     }

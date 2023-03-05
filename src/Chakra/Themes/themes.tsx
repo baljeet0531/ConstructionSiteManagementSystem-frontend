@@ -22,7 +22,7 @@ const myTheme = extendTheme({
         Checkbox,
     },
     colors: {
-        red: '#DB504A',
+        red: { default: '#DB504A' },
     },
 });
 
