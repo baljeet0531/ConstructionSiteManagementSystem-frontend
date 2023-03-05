@@ -16,8 +16,8 @@ export interface IGQLSignature {
 }
 
 export type SignatureStateItem = [
-    ISignature,
-    Dispatch<SetStateAction<ISignature>>
+    ISignature | undefined,
+    Dispatch<SetStateAction<ISignature | undefined>>
 ];
 
 export type MultiSignatureStateItem = [
@@ -55,5 +55,4 @@ export const convertSignList = (signList: ISignature[]) => {
         no: Number(s?.no),
         time: s?.time?.format('YYYY-MM-DDTHH:mm:ss'),
     }));
-
-}
+};

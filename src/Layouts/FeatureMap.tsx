@@ -14,7 +14,7 @@ import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
 import ToolboxFormOverview from '../Components/ToolboxForm/Overview';
 import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
-import SpecialForm from '../Components/SpecialForm/SpecialForm';
+import OpCheckOverview from '../Components/OpCheckForm/Overview';
 import EHSForm from '../Components/EHSForm/EHSForm';
 import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
 import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
@@ -39,7 +39,7 @@ export type featureName =
     | 'eng_toolbox_form'
     | 'eng_fault_form'
     | 'eng_env_security_form'
-    | 'eng_special_form'
+    | 'eng_op_check_form'
     | 'eng_photo'
     | 'ehs_form'
     | 'ehs_fault_form'
@@ -48,7 +48,7 @@ export type featureName =
     | 'outsource_work_permit_form'
     | 'outsource_toolbox_form'
     | 'outsource_env_security_form'
-    | 'outsource_special_form'
+    | 'outsource_op_check_form'
     | 'outsource_machinery_establishment'
     | 'outsource_fault_form';
 
@@ -209,14 +209,14 @@ export function getFeatureMap(site: {
             // page: <EnvSecurityForm />,
             page: noContentPage,
         },
-        eng_special_form: {
+        eng_op_check_form: {
             name: '特殊作業自主檢點表',
-            path: '/eng/form/special',
+            path: '/eng/form/opcheck',
             page:
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <SpecialForm
+                    <OpCheckOverview
                         key={siteId}
                         siteId={siteId}
                         siteName={siteName}
@@ -271,7 +271,16 @@ export function getFeatureMap(site: {
             name: '工具箱會議',
             path: '/outsource/form/toolbox',
             // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <ToolboxFormOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
@@ -279,14 +288,14 @@ export function getFeatureMap(site: {
             // page: <MachineryEstablishment />,
             page: noContentPage,
         },
-        outsource_special_form: {
+        outsource_op_check_form: {
             name: '特殊作業自主檢點表',
-            path: '/outsource/form/special',
+            path: '/outsource/form/opcheck',
             page:
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <SpecialForm
+                    <OpCheckOverview
                         key={siteId}
                         siteId={siteId}
                         siteName={siteName}

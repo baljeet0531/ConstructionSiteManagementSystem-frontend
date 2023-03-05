@@ -92,11 +92,11 @@ const sizes: ISizes = {
     cellHeight: 44,
 };
 
-export default function SpecialForm(props: {
+export default function OpCheckOverview(props: {
     siteId: string;
     siteName: string;
 }) {
-    if (!IsPermit('eng_special_form'))
+    if (!IsPermit('eng_op_check_form'))
         return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
     const toast = useToast();

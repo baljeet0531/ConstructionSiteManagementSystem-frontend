@@ -170,33 +170,17 @@ export default function WorkPermitFormik() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        contractingCorpStaffSignatureFirst: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureFirst as ISignature
-        ),
-        contractingCorpStaffSignatureSecond: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureSecond as ISignature
-        ),
-        contractingCorpStaffSignatureThird: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureThird as ISignature
-        ),
-        systemEngineerSignature: useState<ISignature>(
-            initialValues.systemEngineerSignature as ISignature
-        ),
+        contractingCorpStaffSignatureFirst: useState<ISignature>(),
+        contractingCorpStaffSignatureSecond: useState<ISignature>(),
+        contractingCorpStaffSignatureThird: useState<ISignature>(),
+        systemEngineerSignature: useState<ISignature>(),
     };
 
     const signatureLists: Record<SignatureListName, MultiSignatureStateItem> = {
-        primeContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.primeContractingCorpAppearance as ISignature[]
-        ),
-        viceFirstContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceFirstContractingCorpAppearance as ISignature[]
-        ),
-        viceSecondContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceSecondContractingCorpAppearance as ISignature[]
-        ),
-        viceThirdContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceThirdContractingCorpAppearance as ISignature[]
-        ),
+        primeContractingCorpAppearance: useState<ISignature[]>([]),
+        viceFirstContractingCorpAppearance: useState<ISignature[]>([]),
+        viceSecondContractingCorpAppearance: useState<ISignature[]>([]),
+        viceThirdContractingCorpAppearance: useState<ISignature[]>([]),
     };
 
     const toast = useToast();
