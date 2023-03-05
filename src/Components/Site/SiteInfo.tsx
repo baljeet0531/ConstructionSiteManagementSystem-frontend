@@ -17,6 +17,13 @@ import {
     Link,
     Spinner,
 } from '@chakra-ui/react';
+import { useQuery, gql } from '@apollo/client';
+
+const GET_NOTIFY_LINK = gql`
+    query refactored284($siteId: String!) {
+        subsribeUrl(siteId: $siteId)
+    }
+`;
 
 export default function SiteInfo(props: {
     setPopupComponent: Function;
@@ -34,6 +41,20 @@ export default function SiteInfo(props: {
     const { siteId, name: siteName, avatar, start, end } = siteDetails;
     const [imgBlob, setImgBlob] = React.useState<Blob>();
     const [loading, setLoading] = React.useState<Boolean>(true);
+    const [notifyLink, setNotifyLink] = React.useState<string>();
+
+    useQuery(GET_NOTIFY_LINK, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({ subsribeUrl }) => {
+            setNotifyLink(subsribeUrl);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     async function getAvatar(avatar: string, signal: AbortSignal) {
         const cookieValue = new Cookies().get('jwt');
@@ -160,6 +181,9 @@ export default function SiteInfo(props: {
                             color={'#FFFFFF'}
                             display={'flex'}
                             gap={'4px'}
+                            onClick={() => {
+                                notifyLink && window.open(notifyLink, '_blank');
+                            }}
                         >
                             <LinkIcon />
                             LINE Notify
