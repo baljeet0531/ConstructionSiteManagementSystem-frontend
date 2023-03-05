@@ -27,4 +27,18 @@ export interface IPipeDistructOpCheck extends IOpCheck {
     AB06Ameliorate: string | undefined;
 }
 
-export interface IGQLPipeDistructOpCheck extends IPipeDistructOpCheck, IGQLOpCheck {}
+export interface IGQLPipeDistructOpCheck
+    extends IPipeDistructOpCheck,
+        IGQLOpCheck {}
+
+export type onKeys = 'BH01' | 'BH02' | 'BH03' | 'BH04';
+
+export type offKeys =
+    | 'AA16'
+    | 'AA19'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';

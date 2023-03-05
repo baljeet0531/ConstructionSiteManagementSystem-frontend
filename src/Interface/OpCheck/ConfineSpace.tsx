@@ -7,8 +7,8 @@ export interface IConfineSpaceOpCheck extends IOpCheck {
     BC03: boolean | undefined;
     BC04: boolean | undefined;
     BC05: boolean | undefined;
-    laborNum: number | undefined;
-    supervisorNum: number | undefined;
+    laborNum: number | string | undefined;
+    supervisorNum: number | string | undefined;
     BC06: boolean | undefined;
     enterTime: string | undefined;
     outTime: string | undefined;
@@ -49,3 +49,26 @@ export interface IConfineSpaceOpCheck extends IOpCheck {
 export interface IGQLConfineSpaceOpCheck
     extends IConfineSpaceOpCheck,
         IGQLOpCheck {}
+
+export type onKeys =
+    | 'BC01'
+    | 'BC02'
+    | 'BC03'
+    | 'BC04'
+    | 'BC05'
+    | 'BC06'
+    | 'BC07'
+    | 'BC08'
+    | 'BC09'
+    | 'BC10'
+    | 'BC11';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';

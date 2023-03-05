@@ -42,13 +42,13 @@ export abstract class OpCheckHandler {
             area: '',
             zone: '',
             department: '',
-            day: '',
+            day: undefined,
             supervisorBefore: undefined,
             staffBefore: undefined,
-            timeBefore: '',
+            timeBefore: undefined,
             supervisorAfter: undefined,
             staffAfter: undefined,
-            timeAfter: '',
+            timeAfter: undefined,
         };
     }
 
@@ -69,5 +69,19 @@ export abstract class OpCheckHandler {
         }
 
         return t;
+    }
+
+    marshal(submitValues: IOpCheck) {
+        console.log();
+        if (this.signatures.staffBefore[0]?.time) {
+            submitValues.timeBefore = this.signatures.staffBefore[0].time.format(
+                'YYYY-MM-DDTHH:mm:ss'
+            );
+        }
+        if (this.signatures.staffAfter[0]?.time) {
+            submitValues.timeAfter = this.signatures.staffAfter[0].time.format(
+                'YYYY-MM-DDTHH:mm:ss'
+            );
+        }
     }
 }

@@ -36,3 +36,23 @@ export interface IChemicalOpCheck extends IOpCheck {
 }
 
 export interface IGQLChemicalOpCheck extends IChemicalOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | 'BJ01'
+    | 'BJ02'
+    | 'BJ03'
+    | 'BJ04'
+    | 'BJ05'
+    | 'BJ06'
+    | 'BJ07'
+    | 'BJ08';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';
