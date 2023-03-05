@@ -232,7 +232,7 @@ export default function ToolboxFormOverview(props: {
                 <CheckboxElement
                     getElementProps={props}
                     setTableData={setTableData}
-                    primaryKey={'number'}
+                    primaryKey={props.info.number}
                 ></CheckboxElement>
             ),
         },

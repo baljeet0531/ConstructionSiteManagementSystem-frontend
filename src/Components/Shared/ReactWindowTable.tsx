@@ -84,7 +84,7 @@ export const CheckboxElement = (props: {
                 onChange={(e) => {
                     setTableData((prevState) => ({
                         ...prevState,
-                        [info[primaryKey]]: {
+                        [primaryKey]: {
                             ...info,
                             isChecked: e.target.checked,
                         },

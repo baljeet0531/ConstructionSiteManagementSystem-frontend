@@ -22,6 +22,7 @@ import {
     OpCheckQueryType,
     operationType,
 } from './GQL';
+import dayjs from 'dayjs';
 
 export interface IOperationOverview {
     day: string;
@@ -37,6 +38,7 @@ export interface IOperationOverview {
 export interface IOperationOverviewChecked extends IOperationOverview {
     index: number;
     type: operationType;
+    opCheckName: OpCheckName;
     isChecked: boolean;
 }
 
@@ -80,6 +82,7 @@ export default function SpecialForm(props: {
         return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
+    const [queryType, setQueryType] = React.useState<OpCheckQueryType>('all');
 
     const columnMap: IColumnMap[] = [
         {
@@ -154,13 +157,17 @@ export default function SpecialForm(props: {
             title: '全選',
             width: 50,
             variable: 'isChecked',
-            getElement: (props: getElementProps) => (
-                <CheckboxElement
-                    getElementProps={props}
-                    setTableData={setTableData}
-                    primaryKey={'number'}
-                ></CheckboxElement>
-            ),
+            getElement: (props: getElementProps) => {
+                const { number, opCheckName } =
+                    props.info as IOperationOverviewChecked;
+                return (
+                    <CheckboxElement
+                        getElementProps={props}
+                        setTableData={setTableData}
+                        primaryKey={`${number}|${opCheckName}`}
+                    ></CheckboxElement>
+                );
+            },
         },
     ];
 
@@ -170,37 +177,78 @@ export default function SpecialForm(props: {
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
 
-    const formatOpcheckObject = (
+    const handleFilter = (
+        value: DateRange | null,
+        queryType: OpCheckQueryType
+    ) => {
+        if (!value) {
+            setFilteredPrimaryKey(undefined);
+            return;
+        }
+        const queryTuple = OpCheckMap.get(queryType)?.query;
+        queryTuple &&
+            queryTuple[0]({
+                variables: {
+                    siteId: siteId,
+                    ...(value && {
+                        startDate: dayjs(value[0]).format('YYYY-MM-DD'),
+                        endDate: dayjs(value[1]).format('YYYY-MM-DD'),
+                    }),
+                },
+                onCompleted: (data) => {
+                    let primaryKeys = [];
+                    if (queryType === 'all') {
+                        primaryKeys = Object.entries(data).flatMap((item) => {
+                            const [key, value] = item as [
+                                string,
+                                IOperationOverview[]
+                            ];
+                            const opCheckName = key.slice(0, -7) as OpCheckName;
+                            return value.map(
+                                (info) => `${info.number}|${opCheckName}`
+                            );
+                        });
+                    } else {
+                        const value = data[
+                            `${queryType}OpCheck`
+                        ] as IOperationOverview[];
+                        primaryKeys = value.map(
+                            (info) => `${info.number}|${queryType}`
+                        );
+                    }
+                    setFilteredPrimaryKey(primaryKeys);
+                },
+                onError: (err) => {
+                    console.log(err);
+                },
+            });
+    };
+
+    const formatOpcheck = (
         info: IOperationOverview,
-        type: operationType | undefined,
+        opCheckName: OpCheckName,
         index: number
     ) => ({
-        [index]: {
+        [`${info.number}|${opCheckName}`]: {
             ...info,
-            type: type,
             index: index + 1,
+            type: OpCheckMap.get(opCheckName)?.name,
+            opCheckName: opCheckName,
             isChecked: false,
         },
     });
 
     const handleDataAll = (data: { [key: string]: IOperationOverview[] }) => {
         let i = 0;
-        const opCheckDataFormatted = Object.entries(data).flatMap((item) => {
+        return Object.entries(data).flatMap((item) => {
             const [key, value] = item as [string, IOperationOverview[]];
             const opCheckName = key.slice(0, -7) as OpCheckName;
-            return value.map((info) =>
-                formatOpcheckObject(
-                    info,
-                    OpCheckMap.get(opCheckName)?.name,
-                    ++i
-                )
-            );
+            return value.map((info) => formatOpcheck(info, opCheckName, ++i));
         });
-        return opCheckDataFormatted;
     };
 
-    const handleData = (data: IOperationOverview[], type: operationType) =>
-        data.map((info, index) => formatOpcheckObject(info, type, index));
+    const handleData = (data: IOperationOverview[], opCheckName: OpCheckName) =>
+        data.map((info, index) => formatOpcheck(info, opCheckName, index));
 
     OpCheckMap.forEach((value, key) => {
         OpCheckMap.set(key, {
@@ -210,7 +258,7 @@ export default function SpecialForm(props: {
                     const opCheckDataFormatted =
                         key === 'all'
                             ? handleDataAll(data)
-                            : handleData(data[`${key}OpCheck`], value.name);
+                            : handleData(data[`${key}OpCheck`], key);
                     const dataObject = Object.assign(
                         {},
                         ...opCheckDataFormatted
@@ -225,20 +273,12 @@ export default function SpecialForm(props: {
         });
     });
 
-    useQuery(OpCheckGQL('all'), {
-        variables: {
-            siteId: siteId,
-        },
-        onCompleted: (data) => {
-            const opCheckDataFormatted = handleDataAll(data);
-            const dataObject = Object.assign({}, ...opCheckDataFormatted);
-            setTableData(dataObject);
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
-    });
+    React.useEffect(() => {
+        const queryTuple = OpCheckMap.get(queryType)?.query;
+        queryTuple && queryTuple[0]({ variables: { siteId: siteId } });
+        setDateRange(null);
+        setFilteredPrimaryKey(undefined);
+    }, [queryType]);
 
     return (
         <Flex
@@ -262,20 +302,16 @@ export default function SpecialForm(props: {
                             borderRadius: '6px',
                         }}
                         onChange={(value) => {
-                            // handleSearch(value);
+                            handleFilter(value, queryType);
                             setDateRange(value);
                         }}
                     />
                     <Select
-                        defaultValue={'all'}
+                        value={queryType}
                         variant={'formOutline'}
                         onChange={(e) => {
                             const val = e.target.value as OpCheckQueryType;
-                            const queryTuple = OpCheckMap.get(val)?.query;
-                            queryTuple &&
-                                queryTuple[0]({
-                                    variables: { siteId: siteId },
-                                });
+                            setQueryType(val);
                         }}
                     >
                         {operationOptionsElements}
