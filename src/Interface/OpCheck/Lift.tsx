@@ -42,3 +42,26 @@ export interface ILiftOpCheck extends IOpCheck {
 }
 
 export interface IGQLLiftOpCheck extends ILiftOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | 'BF01'
+    | 'BF02'
+    | 'BF03'
+    | 'BF04'
+    | 'BF05'
+    | 'BF06'
+    | 'BF07'
+    | 'BF08'
+    | 'BF09'
+    | 'BF10'
+    | 'BF11';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';

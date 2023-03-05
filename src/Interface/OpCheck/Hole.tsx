@@ -26,3 +26,15 @@ export interface IHoleOpCheck extends IOpCheck {
 }
 
 export interface IGQLHoleOpCheck extends IHoleOpCheck, IGQLOpCheck {}
+
+export type onKeys = 'BI01' | 'BI02' | 'BI03';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';

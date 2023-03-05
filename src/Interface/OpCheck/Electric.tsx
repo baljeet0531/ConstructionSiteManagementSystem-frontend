@@ -52,3 +52,31 @@ export interface IElectricOpCheck extends IOpCheck {
 }
 
 export interface IGQLElectricOpCheck extends IElectricOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | 'BD01'
+    | 'BD02'
+    | 'BD03'
+    | 'BD04'
+    | 'BD05'
+    | 'BD06'
+    | 'BD07'
+    | 'BD08'
+    | 'BD09'
+    | 'BD10'
+    | 'BD11'
+    | 'BD12'
+    | 'BD13'
+    | 'BD14'
+    | 'BD15'
+    | 'BD16';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';

@@ -92,6 +92,7 @@ export default function OpCheckFormik() {
                     actions.setSubmitting(true);
                     const submitValues = { ...values };
                     handleSignatures(submitValues);
+                    handler.marshal(submitValues);
                     console.log(submitValues);
                     updateOpCheck({ variables: submitValues }).catch(() =>
                         actions.setSubmitting(false)

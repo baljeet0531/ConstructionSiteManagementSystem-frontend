@@ -28,3 +28,19 @@ export interface ICageOpCheck extends IOpCheck {
 }
 
 export interface IGQLCageOpCheck extends ICageOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | "BE01"
+    | "BE02"
+    | "BE03"
+    | "BE04"
+
+export type offKeys =
+    | "AA19"
+    | "AA22"
+    | "AB01"
+    | "AB02"
+    | "AB03"
+    | "AB04"
+    | "AB05"
+    | "AB06"

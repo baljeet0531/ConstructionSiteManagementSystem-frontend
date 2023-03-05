@@ -42,13 +42,13 @@ export interface IOpCheck {
     area: string;
     zone: string;
     department: string;
-    day: string;
+    day: string | undefined;
     supervisorBefore: ISignature | undefined;
     staffBefore: ISignature | undefined;
-    timeBefore: string;
+    timeBefore: string | undefined;
     supervisorAfter: ISignature | undefined;
     staffAfter: ISignature | undefined;
-    timeAfter: string;
+    timeAfter: string | undefined;
 }
 
 export interface IGQLOpCheck extends IOpCheck {

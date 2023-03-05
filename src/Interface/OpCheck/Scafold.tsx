@@ -54,3 +54,32 @@ export interface IScafoldOpCheck extends IOpCheck {
 }
 
 export interface IGQLScafoldOpCheck extends IScafoldOpCheck, IGQLOpCheck {}
+
+export type onKeys =
+    | 'BB01'
+    | 'BB02'
+    | 'BB03'
+    | 'BB04'
+    | 'BB05'
+    | 'BB06'
+    | 'BB07'
+    | 'BB08'
+    | 'BB09'
+    | 'BB10'
+    | 'BB11'
+    | 'BB12'
+    | 'BB13'
+    | 'BB14'
+    | 'BB15'
+    | 'BB16'
+    | 'BB17';
+
+export type offKeys =
+    | 'AA19'
+    | 'AA22'
+    | 'AB01'
+    | 'AB02'
+    | 'AB03'
+    | 'AB04'
+    | 'AB05'
+    | 'AB06';
