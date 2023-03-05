@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -88,6 +88,10 @@ export default function ToolboxForm({
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        f.updateAllHint();
+    }, [loading]);
 
     return (
         <Form>
