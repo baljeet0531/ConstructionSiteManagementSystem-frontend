@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -48,6 +48,7 @@ export default function ToolboxForm({
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>;
 }) {
     const number = localStorage.getItem('toolboxNumber') as string;
+    const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IToolboxData>({
         contractingCorpName: [],
         toolboxHint: {},
@@ -57,12 +58,12 @@ export default function ToolboxForm({
     });
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工具箱會議及巡檢紀錄(${number})`;
-    const { loading } = useQuery(GQL_TOOLBOX_QUERY, {
+    useQuery(GQL_TOOLBOX_QUERY, {
         variables: {
             siteId: localStorage.getItem('siteId'),
             number: number,
         },
-        onCompleted: async (d) => {
+        onCompleted: (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
                 toolboxHint: d.toolboxHint,
@@ -72,7 +73,7 @@ export default function ToolboxForm({
                 toolboxHint: d.toolboxHint,
             });
 
-            const singleFormData = await parseToolbox(
+            const singleFormData = parseToolbox(
                 d.toolboxMeeting,
                 signatures,
                 signatureLists
@@ -80,12 +81,17 @@ export default function ToolboxForm({
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
             }
+            setLoading(false);
         },
         onError: (err) => {
             console.error(err);
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        f.updateAllHint();
+    }, [loading]);
 
     return (
         <Form>
@@ -881,6 +887,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureFirst[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -897,6 +908,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureSecond[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -914,6 +930,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureThird[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -929,6 +950,10 @@ export default function ToolboxForm({
                             state={signatures.systemEngineerSignature}
                             placeHolderText="系統工程師"
                             showTime={false}
+                            h="90%"
+                            disable={
+                                !!signatures.systemEngineerSignature[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem {...centerStyle} borderRight="1px">

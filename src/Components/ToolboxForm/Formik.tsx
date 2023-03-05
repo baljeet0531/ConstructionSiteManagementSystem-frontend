@@ -27,6 +27,7 @@ import {
     IToolbox,
     SignatureName,
     SignatureListName,
+    IGQLToolbox,
 } from '../../Interface/Toolbox';
 import { GQL_TOOLBOX_UPDATE } from './GQL';
 import ToolboxForm from './Form';
@@ -169,33 +170,17 @@ export default function WorkPermitFormik() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        contractingCorpStaffSignatureFirst: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureFirst as ISignature
-        ),
-        contractingCorpStaffSignatureSecond: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureSecond as ISignature
-        ),
-        contractingCorpStaffSignatureThird: useState<ISignature>(
-            initialValues.contractingCorpStaffSignatureThird as ISignature
-        ),
-        systemEngineerSignature: useState<ISignature>(
-            initialValues.systemEngineerSignature as ISignature
-        ),
+        contractingCorpStaffSignatureFirst: useState<ISignature>(),
+        contractingCorpStaffSignatureSecond: useState<ISignature>(),
+        contractingCorpStaffSignatureThird: useState<ISignature>(),
+        systemEngineerSignature: useState<ISignature>(),
     };
 
     const signatureLists: Record<SignatureListName, MultiSignatureStateItem> = {
-        primeContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.primeContractingCorpAppearance as ISignature[]
-        ),
-        viceFirstContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceFirstContractingCorpAppearance as ISignature[]
-        ),
-        viceSecondContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceSecondContractingCorpAppearance as ISignature[]
-        ),
-        viceThirdContractingCorpAppearance: useState<ISignature[]>(
-            initialValues.viceThirdContractingCorpAppearance as ISignature[]
-        ),
+        primeContractingCorpAppearance: useState<ISignature[]>([]),
+        viceFirstContractingCorpAppearance: useState<ISignature[]>([]),
+        viceSecondContractingCorpAppearance: useState<ISignature[]>([]),
+        viceThirdContractingCorpAppearance: useState<ISignature[]>([]),
     };
 
     const toast = useToast();
@@ -248,9 +233,13 @@ export default function WorkPermitFormik() {
                 validateOnChange={false}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
-                    const submitValues = { ...values };
+                    const submitValues = { ...values } as IGQLToolbox;
                     handleSignatures(submitValues);
                     handleSignaturesList(submitValues);
+                    submitValues['meetingDatetime'] = [
+                        submitValues.meetingDate,
+                        submitValues.meetingTime,
+                    ].join('T');
                     console.log(submitValues);
                     updateToolboxMeeting({ variables: submitValues }).catch(
                         () => actions.setSubmitting(false)

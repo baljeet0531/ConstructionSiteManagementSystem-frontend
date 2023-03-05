@@ -14,10 +14,9 @@ import {
     IToolboxOptions,
 } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
-import { SignatureStateItem } from '../../Interface/Signature';
-import dayjs from 'dayjs';
+import SharedFactory from '../Shared/Factory';
 
-export default class FormFactory {
+export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IToolbox>;
     data: IToolboxData;
     setData: Dispatch<SetStateAction<IToolboxData>>;
@@ -32,6 +31,7 @@ export default class FormFactory {
         options: IToolboxOptions,
         setOptions: Dispatch<SetStateAction<IToolboxOptions>>
     ) {
+        super();
         this.formProps = formProps;
         this.data = data;
         this.setData = setData;
@@ -94,10 +94,19 @@ export default class FormFactory {
         relation.map((n) => {
             update = { ...update, [n]: current };
         });
+        this.setOptions({
+            toolboxHint: {
+                ...this.options.toolboxHint,
+                ...update,
+            },
+        });
+    }
+    updateAllHint() {
+        let update = {};
         for (let r in this.hintRelation) {
             const relation = this.hintRelation[r];
-            const before = this.formProps.values[r as keyof IToolbox];
-            if (r != name && before) {
+            const value = this.formProps.values[r as keyof IToolbox];
+            if (value) {
                 relation.map((n) => {
                     update = { ...update, [n]: true };
                 });
@@ -186,27 +195,6 @@ export default class FormFactory {
             />
         );
     }
-    checkTimeInput(state: SignatureStateItem) {
-        const [signature, setSignature] = state;
-        return (
-            <Input
-                size="sm"
-                type="time"
-                border="0px"
-                minW="100px"
-                textAlign="center"
-                p="0px"
-                value={signature?.time ? signature.time.format('HH:mm') : ''}
-                onChange={(e) => {
-                    const [hour, min] = e.target.value.split(':');
-                    const newDate = dayjs(signature.time)
-                        .hour(Number(hour))
-                        .minute(Number(min));
-                    setSignature({ ...signature, time: newDate });
-                }}
-            />
-        );
-    }
     abnormalRecord() {
         return (
             <VStack w="100%" h="100%">
@@ -270,7 +258,7 @@ export default class FormFactory {
                     textAlign="center"
                     value={this.formProps.values[fieldName] as string}
                     onChange={(e) => {
-                        const target = e.target.value
+                        const target = e.target.value;
                         this.formProps.setFieldValue(fieldName, target);
                     }}
                     _placeholder={placeholderStyle}

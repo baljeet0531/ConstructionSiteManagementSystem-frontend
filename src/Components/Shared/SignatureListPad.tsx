@@ -11,13 +11,13 @@ import {
     Button,
     Box,
     Text,
-    VStack,
     useDisclosure,
 } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
 import { MultiSignatureStateItem } from '../../Interface/Signature';
 import dayjs from 'dayjs';
+import { RepeatIcon } from '@chakra-ui/icons';
 
 const buttonStyle = {
     border: '2px solid #919AA9',
@@ -26,7 +26,7 @@ const buttonStyle = {
     size: 'sm',
 };
 
-export default function SignaturePad({
+export default function SignatureListPad({
     title,
     signatureName,
     state,
@@ -34,7 +34,7 @@ export default function SignaturePad({
     h = '100%',
     showTime = true,
     placeHolderText = '請簽核',
-    Disable = false,
+    disable = false,
 }: {
     title: string;
     signatureName: string;
@@ -43,7 +43,7 @@ export default function SignaturePad({
     h?: string;
     showTime?: boolean;
     placeHolderText?: string;
-    Disable?: boolean;
+    disable?: boolean;
 }) {
     const [signatures, setSignatures] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
@@ -68,12 +68,15 @@ export default function SignaturePad({
         }
     };
     const clear = () => sigCanvas.current.clear();
+    const removeSignature = () => {
+        const arr = signatures.filter((_, index) => {
+            return index !== idx;
+        });
+        setSignatures(arr);
+    };
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
-            const arr = signatures.filter((_, index) => {
-                return index !== idx;
-            });
-            setSignatures(arr);
+            removeSignature();
             onClose();
             return;
         }
@@ -112,7 +115,18 @@ export default function SignaturePad({
     };
 
     return (
-        <VStack w="100%" h="100%">
+        <>
+            {signatures[idx]?.image && !signatures[idx]?.no ? (
+                <RepeatIcon
+                    boxSize={4}
+                    mt="4px"
+                    ml="4px"
+                    onClick={removeSignature}
+                    alignSelf="start"
+                />
+            ) : (
+                ''
+            )}
             <Box
                 w="100%"
                 h={h}
@@ -120,14 +134,13 @@ export default function SignaturePad({
                 alignItems="center"
                 justifyContent="center"
                 flexDirection="column"
-                onClick={Disable ? () => {} : onOpen}
+                onClick={disable ? () => {} : onOpen}
             >
                 {signatures[idx]?.image ? (
                     <Image
                         src={imageURL}
-                        minHeight="80%"
-                        maxWidth="100%"
-                        maxHeight="80%"
+                        flex="1 1 auto"
+                        h="75%"
                         fit="contain"
                     />
                 ) : (
@@ -182,6 +195,6 @@ export default function SignaturePad({
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </VStack>
+        </>
     );
 }

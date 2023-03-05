@@ -1,6 +1,6 @@
 import React from 'react';
-import './App.css';
 import 'rsuite/dist/rsuite.min.css';
+import './App.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import Layout from './Layouts/Layout';
 import Login from './Components/Login/Login';
 import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 import ToolboxFormik from './Components/ToolboxForm/Formik';
+import OpCheckFormik from './Components/OpCheckForm/Formik';
 
 function App() {
     return (
@@ -64,8 +65,8 @@ function App() {
                     element={<Layout page="eng_env_security_form" />}
                 />
                 <Route
-                    path="/eng/form/special"
-                    element={<Layout page="eng_special_form" />}
+                    path="/eng/form/opcheck"
+                    element={<Layout page="eng_op_check_form" />}
                 />
                 <Route
                     path="/eng/photo"
@@ -100,8 +101,8 @@ function App() {
                     element={<Layout page="outsource_env_security_form" />}
                 />
                 <Route
-                    path="/outsource/form/special"
-                    element={<Layout page="outsource_special_form" />}
+                    path="/outsource/form/opcheck"
+                    element={<Layout page="outsource_op_check_form" />}
                 />
                 <Route
                     path="/outsource/machinery/establishment"
@@ -120,6 +121,7 @@ function App() {
                     element={<WorkPermitFormik />}
                 />
                 <Route path="/form/toolbox" element={<ToolboxFormik />} />
+                <Route path="/form/opcheck" element={<OpCheckFormik />} />
             </Routes>
         </BrowserRouter>
     );

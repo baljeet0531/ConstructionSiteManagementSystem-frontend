@@ -4,11 +4,41 @@ import SiteRoles from './SiteRoles';
 import SiteInfo from './SiteInfo';
 import { CloseIcon } from '../../Icons/Icons';
 
-import { Box, Button, Center, Flex, IconButton } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Center,
+    Flex,
+    Text,
+    IconButton,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+} from '@chakra-ui/react';
 
-import DeleteSite from './SitePopup/DeleteSite';
-import { gql, useMutation } from '@apollo/client';
+import {
+    ApolloCache,
+    DefaultContext,
+    gql,
+    MutationHookOptions,
+    OperationVariables,
+    useMutation,
+} from '@apollo/client';
 import { QUERY_SITE } from './Site';
+import { Cookies } from 'react-cookie';
+import { QUERY_ACCOUNT_SITES } from '../../Layouts/Layout';
+
+const DELETE_SITE = gql`
+    mutation deleteSite($siteId: String!) {
+        deleteSite(siteId: $siteId) {
+            ok
+        }
+    }
+`;
 
 const ACTIVE_SITE = gql`
     mutation ActiveSite($siteId: String!) {
@@ -41,13 +71,33 @@ export default function Site(props: {
         rerender,
     } = props;
     const { siteId, name: siteName, archived } = siteDetails;
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [activeSite] = useMutation(ACTIVE_SITE, {
+    const mutationOptions: MutationHookOptions<
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>
+    > = {
+        variables: { siteId: siteId },
         onError: (error) => {
             console.log(error);
         },
-        refetchQueries: [{ query: QUERY_SITE }],
-    });
+        refetchQueries: [
+            { query: QUERY_SITE },
+            {
+                query: QUERY_ACCOUNT_SITES,
+                variables: {
+                    username: new Cookies().get('username'),
+                    archived: false,
+                },
+            },
+        ],
+    };
+
+    const [deleteSite] = useMutation(DELETE_SITE, mutationOptions);
+
+    const [activeSite] = useMutation(ACTIVE_SITE, mutationOptions);
 
     return (
         <Box
@@ -65,18 +115,10 @@ export default function Site(props: {
                 icon={<CloseIcon />}
                 bg={'none'}
                 position={'absolute'}
+                color={'#667080'}
                 top={0}
                 right={0}
-                onClick={() => {
-                    setPopupComponent(
-                        <DeleteSite
-                            setShowPopup={setShowPopup}
-                            siteName={siteName}
-                            siteId={siteId}
-                        ></DeleteSite>
-                    );
-                    setShowPopup(true);
-                }}
+                onClick={onOpen}
             ></IconButton>
             <Flex
                 w={'100%'}
@@ -115,19 +157,71 @@ export default function Site(props: {
                     top={0}
                     borderRadius={'10px'}
                 >
-                    <Button
-                        onClick={() =>
-                            activeSite({
-                                variables: {
-                                    siteId: siteId,
-                                },
-                            })
-                        }
-                    >
+                    <Button onClick={onOpen} color={'#667080'}>
                         解除凍結
                     </Button>
                 </Center>
             )}
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                <ModalOverlay />
+                <ModalContent
+                    maxWidth={'380px'}
+                    maxHeight={'266px'}
+                    minHeight={'266px'}
+                    padding={'30px 45px'}
+                >
+                    <ModalHeader padding={0}>
+                        <Flex direction={'column'} width={'100%'}>
+                            <Text
+                                fontStyle={'normal'}
+                                fontWeight={700}
+                                fontSize={'20px'}
+                                lineHeight={'20px'}
+                                color={'#667080'}
+                            >
+                                {archived
+                                    ? '確定解除凍結以下專案？'
+                                    : '確定凍結以下專案？'}
+                            </Text>
+                        </Flex>
+                    </ModalHeader>
+                    <ModalBody bg={'#E3ECFF'} borderRadius={'10px'} mt={'20px'}>
+                        <Center
+                            width={'100%'}
+                            height={'102px'}
+                            overflowX={'auto'}
+                        >
+                            <Text color={'#667080'}>{siteName}</Text>
+                        </Center>
+                    </ModalBody>
+
+                    <ModalFooter padding={0}>
+                        <Flex
+                            mt={'20px'}
+                            justify={'space-between'}
+                            width={'100%'}
+                        >
+                            <Button
+                                variant={'buttonGrayOutline'}
+                                size={'xs'}
+                                onClick={onClose}
+                            >
+                                取消
+                            </Button>
+                            <Button
+                                variant={'buttonGrayOutline'}
+                                size={'xs'}
+                                onClick={() => {
+                                    archived ? activeSite() : deleteSite();
+                                    onClose();
+                                }}
+                            >
+                                確定
+                            </Button>
+                        </Flex>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 }
