@@ -11,7 +11,7 @@ const Table = {
                 bg: '#919AA9',
             },
             tbody: {
-                color: '667080',
+                color: '#667080',
             },
             tr: {
                 borderBottom: '1px solid #919AA9',

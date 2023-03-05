@@ -97,7 +97,6 @@ export function getFeatureMap(site: {
             name: '總覽',
             path: '/dashboard',
             icon: DashboardIcon,
-            // page: <Dashboard />,
             page:
                 siteId == '' ? (
                     emptySiteIdPage
@@ -213,7 +212,16 @@ export function getFeatureMap(site: {
         eng_op_check_form: {
             name: '特殊作業自主檢點表',
             path: '/eng/form/opcheck',
-            page: siteId == '' ? emptySiteIdPage : <OpCheckOverview />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <OpCheckOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_photo: {
             name: '相片管理',
@@ -263,7 +271,16 @@ export function getFeatureMap(site: {
             name: '工具箱會議',
             path: '/outsource/form/toolbox',
             // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <ToolboxFormOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
@@ -274,8 +291,16 @@ export function getFeatureMap(site: {
         outsource_op_check_form: {
             name: '特殊作業自主檢點表',
             path: '/outsource/form/opcheck',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <OpCheckOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_machinery_establishment: {
             name: '機具清單建置',
