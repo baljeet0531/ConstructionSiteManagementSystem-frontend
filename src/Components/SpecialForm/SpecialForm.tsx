@@ -231,27 +231,20 @@ export default function SpecialForm(props: {
                         endDate: dayjs(value[1]).format('YYYY-MM-DD'),
                     }),
                 },
-                onCompleted: (data) => {
-                    let primaryKeys = [];
-                    if (queryType === 'all') {
-                        primaryKeys = Object.entries(data).flatMap((item) => {
-                            const [key, value] = item as [
-                                string,
-                                IOperationOverview[]
-                            ];
-                            const opCheckName = key.slice(0, -7) as OpCheckName;
-                            return value.map(
-                                (info) => `${info.number}|${opCheckName}`
-                            );
-                        });
-                    } else {
-                        const value = data[
-                            `${queryType}OpCheck`
-                        ] as IOperationOverview[];
-                        primaryKeys = value.map(
-                            (info) => `${info.number}|${queryType}`
-                        );
-                    }
+                onCompleted: (data: {
+                    [key: string]: IOperationOverview[];
+                }) => {
+                    const primaryKeys =
+                        queryType === 'all'
+                            ? Object.entries(data).flatMap(([key, value]) =>
+                                  value.map(
+                                      (info) =>
+                                          `${info.number}|${key.slice(0, -7)}`
+                                  )
+                              )
+                            : data[`${queryType}OpCheck`].map(
+                                  (info) => `${info.number}|${queryType}`
+                              );
                     setFilteredPrimaryKey(primaryKeys);
                 },
                 onError: (err) => {
