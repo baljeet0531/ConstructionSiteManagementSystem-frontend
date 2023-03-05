@@ -15,7 +15,7 @@ import ReactWindowTable, {
     ISizes,
     SignatureStatusElement,
 } from '../Shared/ReactWindowTable';
-import { LazyQueryResultTuple, useLazyQuery } from '@apollo/client';
+import { LazyQueryResultTuple, useLazyQuery, useQuery } from '@apollo/client';
 import {
     OpCheckGQL,
     OpCheckName,
@@ -169,53 +169,48 @@ export default function SpecialForm(props: {
     }>({});
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
+
+    const formatOpcheckObject = (
+        info: IOperationOverview,
+        type: operationType | undefined,
+        index: number
+    ) => ({
+        [index]: {
+            ...info,
+            type: type,
+            index: index + 1,
+            isChecked: false,
+        },
+    });
+
+    const handleDataAll = (data: { [key: string]: IOperationOverview[] }) => {
+        let i = 0;
+        const opCheckDataFormatted = Object.entries(data).flatMap((item) => {
+            const [key, value] = item as [string, IOperationOverview[]];
+            const opCheckName = key.slice(0, -7) as OpCheckName;
+            return value.map((info) =>
+                formatOpcheckObject(
+                    info,
+                    OpCheckMap.get(opCheckName)?.name,
+                    ++i
+                )
+            );
+        });
+        return opCheckDataFormatted;
+    };
+
+    const handleData = (data: IOperationOverview[], type: operationType) =>
+        data.map((info, index) => formatOpcheckObject(info, type, index));
+
     OpCheckMap.forEach((value, key) => {
         OpCheckMap.set(key, {
             ...value,
             query: useLazyQuery(OpCheckGQL(key), {
                 onCompleted: (data) => {
-                    let opCheckDataFormatted = [];
-                    if (key === 'all') {
-                        let i = 0;
-                        opCheckDataFormatted = Object.entries(data).flatMap(
-                            (item) => {
-                                const [key, value] = item as [
-                                    string,
-                                    IOperationOverview[]
-                                ];
-                                const opCheckName = key.slice(
-                                    0,
-                                    -7
-                                ) as OpCheckName;
-                                return value.map((info) => {
-                                    i += 1;
-                                    return {
-                                        [i]: {
-                                            ...info,
-                                            type: OpCheckMap.get(opCheckName)
-                                                ?.name,
-                                            index: i + 1,
-                                            isChecked: false,
-                                        },
-                                    };
-                                });
-                            }
-                        );
-                    } else {
-                        const opCheckData: IOperationOverview[] =
-                            data[`${key}OpCheck`];
-
-                        opCheckDataFormatted = opCheckData.map(
-                            (info, index) => ({
-                                [index]: {
-                                    ...info,
-                                    type: value.name,
-                                    index: index + 1,
-                                    isChecked: false,
-                                },
-                            })
-                        );
-                    }
+                    const opCheckDataFormatted =
+                        key === 'all'
+                            ? handleDataAll(data)
+                            : handleData(data[`${key}OpCheck`], value.name);
                     const dataObject = Object.assign(
                         {},
                         ...opCheckDataFormatted
@@ -228,6 +223,21 @@ export default function SpecialForm(props: {
                 fetchPolicy: 'network-only',
             }),
         });
+    });
+
+    useQuery(OpCheckGQL('all'), {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: (data) => {
+            const opCheckDataFormatted = handleDataAll(data);
+            const dataObject = Object.assign({}, ...opCheckDataFormatted);
+            setTableData(dataObject);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
     });
 
     return (
@@ -261,9 +271,9 @@ export default function SpecialForm(props: {
                         variant={'formOutline'}
                         onChange={(e) => {
                             const val = e.target.value as OpCheckQueryType;
-                            const query = OpCheckMap.get(val)?.query;
-                            query &&
-                                query[0]({
+                            const queryTuple = OpCheckMap.get(val)?.query;
+                            queryTuple &&
+                                queryTuple[0]({
                                     variables: { siteId: siteId },
                                 });
                         }}
