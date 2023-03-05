@@ -217,10 +217,6 @@ export default function SpecialForm(props: {
         value: DateRange | null,
         queryType: OpCheckQueryType
     ) => {
-        if (!value) {
-            setFilteredPrimaryKey(undefined);
-            return;
-        }
         const queryTuple = OpCheckMap.get(queryType)?.query;
         queryTuple &&
             queryTuple[0]({
@@ -276,24 +272,10 @@ export default function SpecialForm(props: {
         });
     };
 
-    const handleData = (data: IOperationOverview[], opCheckName: OpCheckName) =>
-        data.map((info, index) => formatOpcheck(info, opCheckName, index));
-
     OpCheckMap.forEach((value, key) => {
         OpCheckMap.set(key, {
             ...value,
             query: useLazyQuery(OpCheckGQL(key), {
-                onCompleted: (data) => {
-                    const opCheckDataFormatted =
-                        key === 'all'
-                            ? handleDataAll(data)
-                            : handleData(data[`${key}OpCheck`], key);
-                    const dataObject = Object.assign(
-                        {},
-                        ...opCheckDataFormatted
-                    );
-                    setTableData(dataObject);
-                },
                 onError: (err) => {
                     console.log(err);
                 },
@@ -317,11 +299,20 @@ export default function SpecialForm(props: {
     });
 
     React.useEffect(() => {
-        const queryTuple = OpCheckMap.get(queryType)?.query;
-        queryTuple && queryTuple[0]({ variables: { siteId: siteId } });
-        setDateRange(null);
-        setFilteredPrimaryKey(undefined);
-    }, [queryType]);
+        const queryTuple = OpCheckMap.get('all')?.query;
+        queryTuple &&
+            queryTuple[0]({
+                variables: { siteId: siteId },
+                onCompleted: (data) => {
+                    handleDataAll(data);
+                    const dataObject = Object.assign(
+                        {},
+                        ...handleDataAll(data)
+                    );
+                    setTableData(dataObject);
+                },
+            });
+    }, []);
 
     return (
         <Flex
@@ -353,7 +344,9 @@ export default function SpecialForm(props: {
                         value={queryType}
                         variant={'formOutline'}
                         onChange={(e) => {
-                            setQueryType(e.target.value as OpCheckQueryType);
+                            const val = e.target.value as OpCheckQueryType;
+                            handleFilter(dateRange, val);
+                            setQueryType(val);
                         }}
                     >
                         {operationOptionsElements}
