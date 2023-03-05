@@ -77,12 +77,10 @@ export default function WorkPermitFormik() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        approved: useState<ISignature>(initialValues.approved as ISignature),
-        review: useState<ISignature>(initialValues.review as ISignature),
-        supplier: useState<ISignature>(initialValues.supplier as ISignature),
-        supplierManager: useState<ISignature>(
-            initialValues.supplierManager as ISignature
-        ),
+        approved: useState<ISignature>(),
+        review: useState<ISignature>(),
+        supplier: useState<ISignature>(),
+        supplierManager: useState<ISignature>(),
     };
 
     const toast = useToast();

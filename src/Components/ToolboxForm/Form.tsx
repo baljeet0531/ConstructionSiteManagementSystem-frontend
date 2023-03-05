@@ -883,7 +883,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
-                            h='90%'
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureFirst[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -900,7 +904,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
-                            h='90%'
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureSecond[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -918,7 +926,11 @@ export default function ToolboxForm({
                             }
                             placeHolderText="承商人員"
                             showTime={false}
-                            h='90%'
+                            h="90%"
+                            disable={
+                                !!signatures
+                                    .contractingCorpStaffSignatureThird[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem
@@ -934,7 +946,10 @@ export default function ToolboxForm({
                             state={signatures.systemEngineerSignature}
                             placeHolderText="系統工程師"
                             showTime={false}
-                            h='90%'
+                            h="90%"
+                            disable={
+                                !!signatures.systemEngineerSignature[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem {...centerStyle} borderRight="1px">

@@ -127,7 +127,6 @@ export class FireOpCheckHandler extends OpCheckHandler {
             $supervisorBefore: signatureInput
             $timeAfter: DateTime
             $timeBefore: DateTime
-            $username: String!
             $zone: String
         ) {
             updateOpFire(
@@ -176,7 +175,6 @@ export class FireOpCheckHandler extends OpCheckHandler {
                 supervisorBefore: $supervisorBefore
                 timeAfter: $timeAfter
                 timeBefore: $timeBefore
-                username: $username
                 zone: $zone
             ) {
                 ok

@@ -7,7 +7,7 @@ export type OpCheckName =
     | 'confineSpace' // 侷限空間作業
     | 'electric' // 電力作業
     | 'fire' // 動火作業
-    | 'hole' // 管線拆離作業
+    | 'hole' // 開口作業
     | 'lift' // 起重吊掛作業
     | 'pipeDistruct' // 管線拆離作業
     | 'scafold'; // 高架作業
