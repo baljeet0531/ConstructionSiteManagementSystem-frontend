@@ -84,7 +84,7 @@ export const CheckboxElement = (props: {
                 onChange={(e) => {
                     setTableData((prevState) => ({
                         ...prevState,
-                        [info[primaryKey]]: {
+                        [primaryKey]: {
                             ...info,
                             isChecked: e.target.checked,
                         },
@@ -96,7 +96,7 @@ export const CheckboxElement = (props: {
 };
 
 export const SignatureTooltip = (props: {
-    field: { signature: IGQLSignature; fieldLabel: string };
+    field: { signature: IGQLSignature | null; fieldLabel: string };
 }) => {
     const { signature, fieldLabel } = props.field;
     const label = signature ? (
@@ -124,7 +124,10 @@ export const SignatureTooltip = (props: {
 
 export const SignatureStatusElement = (props: {
     getElementProps: getElementProps;
-    signatureFieldList: { signature: IGQLSignature; fieldLabel: string }[];
+    signatureFieldList: {
+        signature: IGQLSignature | null;
+        fieldLabel: string;
+    }[];
 }) => {
     const { getElementProps, signatureFieldList } = props;
     const signatureStatusMap = signatureFieldList.map((field, index) => (
