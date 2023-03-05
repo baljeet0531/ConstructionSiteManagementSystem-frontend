@@ -1,32 +1,6 @@
 import { gql } from '@apollo/client';
+import { OpCheckQueryType } from '../../Interface/OpCheck/Common';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
-
-export type OpCheckName =
-    | 'assemble' // 施工架組裝作業
-    | 'cage' // 吊籠作業
-    | 'chemical' // 化學作業
-    | 'confineSpace' // 侷限空間作業
-    | 'electric' // 電力作業
-    | 'fire' // 動火作業
-    | 'hole' // 開口作業
-    | 'lift' // 起重吊掛作業
-    | 'pipeDistruct' // 管線拆離作業
-    | 'scafold'; // 高架作業
-
-export type OpCheckQueryType = OpCheckName | 'all';
-
-export type OpCheckQueryTypeZh =
-    | '全部'
-    | '動火作業'
-    | '高架作業'
-    | '侷限空間作業'
-    | '電力作業'
-    | '吊籠作業'
-    | '起重吊掛作業'
-    | '施工架組裝作業'
-    | '管線拆離作業'
-    | '開口作業'
-    | '化學作業';
 
 export const OpCheckGQL = (type: OpCheckQueryType) =>
     type === 'all'

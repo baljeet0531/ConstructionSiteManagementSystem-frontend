@@ -29,18 +29,18 @@ import {
     useMutation,
     useQuery,
 } from '@apollo/client';
-import {
-    EXPORT_OPCHECK,
-    OpCheckGQL,
-    OpCheckName,
-    OpCheckQueryType,
-    OpCheckQueryTypeZh,
-} from './GQL';
+import { EXPORT_OPCHECK, OpCheckGQL } from './GQL';
 import dayjs from 'dayjs';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { exportFile } from '../../Utils/Resources';
 import { Cookies } from 'react-cookie';
 import { PageLoading } from '../Shared/Loading';
+import {
+    OpCheckName,
+    OpCheckQueryType,
+    OpCheckQueryTypeZh,
+} from '../../Interface/OpCheck/Common';
+import { opCheckMap } from '../../Utils/OpCheck/Mapper';
 
 export interface IOperationOverview {
     day: string;
@@ -60,31 +60,32 @@ export interface IOperationOverviewChecked extends IOperationOverview {
     isChecked: boolean;
 }
 
-const OpCheckMap: Map<
+const OpCheckQueryMap: Map<
     OpCheckQueryType,
     {
-        name: OpCheckQueryTypeZh;
         query?: LazyQueryResultTuple<any, { siteId: string }>;
     }
 > = new Map([
-    ['all', { name: '全部' }],
-    ['assemble', { name: '施工架組裝作業' }],
-    ['cage', { name: '吊籠作業' }],
-    ['chemical', { name: '化學作業' }],
-    ['confineSpace', { name: '侷限空間作業' }],
-    ['electric', { name: '電力作業' }],
-    ['fire', { name: '動火作業' }],
-    ['hole', { name: '開口作業' }],
-    ['lift', { name: '起重吊掛作業' }],
-    ['pipeDistruct', { name: '管線拆離作業' }],
-    ['scafold', { name: '高架作業' }],
+    ['all', {}],
+    ['assemble', {}],
+    ['cage', {}],
+    ['chemical', {}],
+    ['confineSpace', {}],
+    ['electric', {}],
+    ['fire', {}],
+    ['hole', {}],
+    ['lift', {}],
+    ['pipeDistruct', {}],
+    ['scafold', {}],
 ]);
 
-const operationOptionsElements = Array.from(OpCheckMap).map((item, index) => (
-    <option key={index} value={item[0]}>
-        {item[1].name}
-    </option>
-));
+const operationOptionsElements = ['all', ...Object.keys(opCheckMap)].map(
+    (key, index) => (
+        <option key={index} value={key}>
+            {key === 'all' ? '全部' : opCheckMap[key as OpCheckName].name}
+        </option>
+    )
+);
 
 const sizes: ISizes = {
     tableFigmaWidth: 877,
@@ -219,7 +220,7 @@ export default function OpCheckOverview(props: {
         value: DateRange | null,
         queryType: OpCheckQueryType
     ) => {
-        const queryTuple = OpCheckMap.get(queryType)?.query;
+        const queryTuple = OpCheckQueryMap.get(queryType)?.query;
         queryTuple &&
             queryTuple[0]({
                 variables: {
@@ -256,7 +257,7 @@ export default function OpCheckOverview(props: {
         [`${info.number}|${opCheckName}`]: {
             ...info,
             index: index + 1,
-            type: OpCheckMap.get(opCheckName)?.name,
+            type: opCheckMap[opCheckName].name,
             opCheckName: opCheckName,
             isChecked: false,
         },
@@ -271,8 +272,8 @@ export default function OpCheckOverview(props: {
         });
     };
 
-    OpCheckMap.forEach((value, key) => {
-        OpCheckMap.set(key, {
+    OpCheckQueryMap.forEach((value, key) => {
+        OpCheckQueryMap.set(key, {
             ...value,
             query: useLazyQuery(OpCheckGQL(key), {
                 onError: (err) => {
