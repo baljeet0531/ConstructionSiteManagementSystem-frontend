@@ -1,6 +1,13 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Button, Flex, Select, Text, useToast } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    Link,
+    Select,
+    Text,
+    useToast,
+} from '@chakra-ui/react';
 import { Navigate } from 'react-router-dom';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker/types';
@@ -9,6 +16,7 @@ import { IsPermit } from '../../Mockdata/Mockdata';
 import { IGQLSignature } from '../../Interface/Signature';
 import ReactWindowTable, {
     CheckboxElement,
+    dataCellStyle,
     defaultElement,
     getElementProps,
     IColumnMap,
@@ -93,6 +101,15 @@ export default function SpecialForm(props: {
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [queryType, setQueryType] = React.useState<OpCheckQueryType>('all');
 
+    const navSingleOpCheckForm = (number: string, opCheckName: OpCheckName) => {
+        const url = `${window.location.origin}/form/opcheck`;
+        localStorage.setItem(
+            'singleOpCheckObject',
+            JSON.stringify({ number: number, type: opCheckName })
+        );
+        window.open(url, '_blank');
+    };
+
     const columnMap: IColumnMap[] = [
         {
             title: '日期',
@@ -104,7 +121,17 @@ export default function SpecialForm(props: {
             title: '單號',
             width: 120,
             variable: 'number',
-            getElement: defaultElement,
+            getElement: ({ style, info, variable }) => (
+                <Box style={style} {...dataCellStyle}>
+                    <Link
+                        onClick={() => {
+                            navSingleOpCheckForm(info.number, info.opCheckName);
+                        }}
+                    >
+                        {info[variable]}
+                    </Link>
+                </Box>
+            ),
         },
         {
             title: '作業名稱',
@@ -333,8 +360,7 @@ export default function SpecialForm(props: {
                         value={queryType}
                         variant={'formOutline'}
                         onChange={(e) => {
-                            const val = e.target.value as OpCheckQueryType;
-                            setQueryType(val);
+                            setQueryType(e.target.value as OpCheckQueryType);
                         }}
                     >
                         {operationOptionsElements}
