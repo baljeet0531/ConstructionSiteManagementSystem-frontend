@@ -144,13 +144,13 @@ export default function SiteRoles(props: {
             <Table variant={'iemgray'}>
                 <Thead>
                     <Tr>
-                        <Th w={'200px'}>姓名</Th>
-                        <Th w={'200px'}>職稱</Th>
-                        <Th w={'200px'}>帳號</Th>
-                        <Th w={'105px'} textAlign={'center'}>
+                        <Th w={'24.7%'}>姓名</Th>
+                        <Th w={'24.7%'}>職稱</Th>
+                        <Th w={'24.7%'}>帳號</Th>
+                        <Th w={'12.95%'} textAlign={'center'}>
                             編輯
                         </Th>
-                        <Th w={'105px'} textAlign={'center'}>
+                        <Th w={'12.95%'} textAlign={'center'}>
                             刪除
                         </Th>
                     </Tr>
