@@ -20,7 +20,7 @@ import {
 import { useQuery, gql } from '@apollo/client';
 
 const GET_NOTIFY_LINK = gql`
-    query refactored284($siteId: String!) {
+    query subsribeUrl($siteId: String!) {
         subsribeUrl(siteId: $siteId)
     }
 `;
