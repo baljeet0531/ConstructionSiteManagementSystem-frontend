@@ -15,6 +15,27 @@ const Input = {
                     borderColor: '#919AA9',
                     height: '36px',
                     bg: '#FFFFFF',
+                    _placeholder: {
+                        color: '#66708080',
+                    },
+                },
+                rest,
+            };
+        },
+        grayOutline: (props: StyleFunctionProps) => {
+            const { field, ...rest } = theme.components.Input.variants?.outline(
+                props
+            ) as any;
+            return {
+                field: {
+                    ...field,
+                    border: '2px solid',
+                    borderColor: '#919AA9',
+                    height: '36px',
+                    bg: '#FFFFFF',
+                    _placeholder: {
+                        color: '#66708080',
+                    },
                 },
                 rest,
             };
