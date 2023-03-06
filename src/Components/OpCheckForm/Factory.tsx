@@ -212,17 +212,18 @@ export default class FormFactory extends SharedFactory {
                     m="2px 0"
                     maxW="130px"
                     h="25px"
-                    value={
-                        values.enterTime
-                            ? dayjs(values.enterTime).format('HH:mm')
-                            : dayjs().format('HH:mm')
-                    }
+                    color={values.enterTime ? '#667080' : '#FFFFFF'}
+                    value={dayjs(values.enterTime).format('HH:mm')}
+                    onClick={() => {
+                        !values.enterTime &&
+                            this.formProps.setFieldValue(
+                                'enterTime',
+                                dayjs().format(format)
+                            );
+                    }}
                     onChange={(e) => {
                         const [hour, min] = e.target.value.split(':');
-                        const day = values.outTime
-                            ? dayjs(values.outTime)
-                            : dayjs();
-                        const newTime = day
+                        const newTime = dayjs(values.enterTime)
                             .hour(Number(hour))
                             .minute(Number(min))
                             .format(format);
@@ -236,17 +237,18 @@ export default class FormFactory extends SharedFactory {
                     m="2px 0"
                     maxW="130px"
                     h="25px"
-                    value={
-                        values?.outTime
-                            ? dayjs(values.outTime).format('HH:mm')
-                            : dayjs().format('HH:mm')
-                    }
+                    color={values.outTime ? '#667080' : '#FFFFFF'}
+                    value={dayjs(values.outTime).format('HH:mm')}
+                    onClick={() => {
+                        !values.outTime &&
+                            this.formProps.setFieldValue(
+                                'outTime',
+                                dayjs().format(format)
+                            );
+                    }}
                     onChange={(e) => {
                         const [hour, min] = e.target.value.split(':');
-                        const day = values.outTime
-                            ? dayjs(values.outTime)
-                            : dayjs();
-                        const newTime = day
+                        const newTime = dayjs(values.outTime)
                             .hour(Number(hour))
                             .minute(Number(min))
                             .format(format);
