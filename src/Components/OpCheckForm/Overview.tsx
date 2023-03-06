@@ -302,12 +302,13 @@ export default function OpCheckOverview(props: {
         }
     );
 
-    const { loading } = useQuery(OpCheckGQL('all'), {
+    const { loading, startPolling } = useQuery(OpCheckGQL('all'), {
         variables: { siteId: siteId },
         onCompleted: (data) => {
             handleDataAll(data);
             const dataObject = Object.assign({}, ...handleDataAll(data));
             setTableData(dataObject);
+            startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
