@@ -85,10 +85,10 @@ export default function SiteAreas(props: {
                     <Table>
                         <Thead position={'sticky'} top={0} zIndex={1}>
                             <Tr>
-                                <Th w={'23%'} textAlign="center">
+                                <Th w={'60px'} textAlign="center">
                                     廠區
                                 </Th>
-                                <Th w={'77%'}>
+                                <Th w={'200px'}>
                                     <Flex columnGap={'16px'}>
                                         <Text
                                             flex={1}

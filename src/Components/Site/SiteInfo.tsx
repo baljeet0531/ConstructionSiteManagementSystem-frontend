@@ -181,9 +181,8 @@ export default function SiteInfo(props: {
                             color={'#FFFFFF'}
                             display={'flex'}
                             gap={'4px'}
-                            onClick={() => {
-                                notifyLink && window.open(notifyLink, '_blank');
-                            }}
+                            href={notifyLink}
+                            isExternal
                         >
                             <LinkIcon />
                             LINE Notify
