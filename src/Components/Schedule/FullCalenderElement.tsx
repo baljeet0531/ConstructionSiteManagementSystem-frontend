@@ -1,13 +1,16 @@
 import React from 'react';
 
-import { Flex, IconButton, Text, Input } from '@chakra-ui/react';
+import { Flex, IconButton } from '@chakra-ui/react';
 
 import FullCalendar, { EventSourceInput } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { NextIcon, PrevIcon } from '../../Icons/Icons';
+import { CustomProvider, DatePicker } from 'rsuite';
+import { zhTW } from 'rsuite/esm/locales';
+import dayjs from 'dayjs';
 import momentPlugin from '@fullcalendar/moment';
 import moment from 'moment';
 import 'moment/locale/zh-tw'; //must add
-import { NextIcon, PrevIcon } from '../../Icons/Icons';
 moment.locale('zh-tw');
 
 const EVENT_GENERAL_PROPS = {
@@ -31,7 +34,6 @@ export default function FullCalendarElement(props: {
 }) {
     const { event } = props;
     const calendarRef = React.useRef<FullCalendar>(null);
-    const monthPickerRef = React.useRef<HTMLInputElement>(null);
     const [date, setDate] = React.useState<Date>(new Date());
     const eventElements =
         event &&
@@ -71,58 +73,57 @@ export default function FullCalendarElement(props: {
                 background: background,
             };
         });
+
+    const handleMonthChange = (newMonth: Date) => {
+        setDate(newMonth);
+        calendarRef.current?.getApi().gotoDate(newMonth);
+    };
+
     return (
         <>
             <Flex justify={'center'} align={'center'}>
-                <IconButton
-                    size={'xs'}
-                    aria-label="prevMonth"
-                    icon={<PrevIcon />}
-                    bg={'none'}
-                    onClick={() => {
-                        const newDate = new Date(
-                            date.setMonth(date.getMonth() - 1)
-                        );
-                        setDate(newDate);
-                        calendarRef.current?.getApi().gotoDate(newDate);
-                    }}
-                ></IconButton>
-                <Text
-                    w={'30%'}
-                    textAlign={'center'}
-                    onClick={() => {
-                        monthPickerRef.current?.showPicker();
-                    }}
-                >
-                    {moment(date).format('MMM, YYYY')}
-                </Text>
-                <Input
-                    ref={monthPickerRef}
-                    type={'month'}
-                    w={0}
-                    p={0}
-                    opacity={0}
-                    onChange={(e) => {
-                        const newDate = e.target.value
-                            ? new Date(e.target.value)
-                            : new Date();
-                        setDate(newDate);
-                        calendarRef.current?.getApi().gotoDate(newDate);
-                    }}
-                ></Input>
-                <IconButton
-                    size={'xs'}
-                    aria-label="nextMonth"
-                    icon={<NextIcon />}
-                    bg={'none'}
-                    onClick={() => {
-                        const newDate = new Date(
-                            date.setMonth(date.getMonth() + 1)
-                        );
-                        setDate(newDate);
-                        calendarRef.current?.getApi().gotoDate(newDate);
-                    }}
-                ></IconButton>
+                <CustomProvider locale={zhTW}>
+                    <IconButton
+                        size={'xs'}
+                        aria-label="prevMonth"
+                        icon={<PrevIcon />}
+                        bg={'none'}
+                        onClick={() => {
+                            handleMonthChange(
+                                dayjs(date).subtract(1, 'month').toDate()
+                            );
+                        }}
+                    ></IconButton>
+                    <DatePicker
+                        value={date}
+                        appearance="subtle"
+                        format="MMM, yyyy"
+                        cleanable={false}
+                        editable={false}
+                        oneTap
+                        ranges={[
+                            {
+                                label: 'today',
+                                value: dayjs().toDate(),
+                                closeOverlay: true,
+                            },
+                        ]}
+                        onChange={(value) => {
+                            handleMonthChange(value || dayjs().toDate());
+                        }}
+                    />
+                    <IconButton
+                        size={'xs'}
+                        aria-label="nextMonth"
+                        icon={<NextIcon />}
+                        bg={'none'}
+                        onClick={() => {
+                            handleMonthChange(
+                                dayjs(date).add(1, 'month').toDate()
+                            );
+                        }}
+                    ></IconButton>
+                </CustomProvider>
             </Flex>
             <FullCalendar
                 ref={calendarRef}
