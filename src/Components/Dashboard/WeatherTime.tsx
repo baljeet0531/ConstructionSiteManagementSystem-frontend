@@ -26,8 +26,10 @@ interface IWeather {
 }
 
 const weatherFlexStyle: React.CSSProperties = {
+    width: '65px',
     height: '20px',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     padding: '0.25rem',
     gap: '0.25rem',
 };
@@ -59,32 +61,27 @@ export default function WeatherTime(props: { siteId: string }) {
     }, []);
 
     return (
-        <Flex gap={'10px'}>
-            <Flex align={'flex-end'} pb={'0.25rem'}>
-                <Flex style={weatherFlexStyle}>
-                    <ClockIcon />
-                    <Text variant={'w400s14'} width={'40px'}>
-                        {date.format('HH:mm')}
-                    </Text>
-                </Flex>
-                <Flex style={weatherFlexStyle}>
-                    <CloudyIcon />
-                    <Text variant={'w400s14'} width={'40px'}>
-                        {weather.temp.split('.')[0]} ℃
-                    </Text>
-                </Flex>
-                <Flex style={weatherFlexStyle}>
-                    <HumidityIcon />
-                    <Text variant={'w400s14'} width={'40px'}>
-                        {weather.humidity} %
-                    </Text>
-                </Flex>
-                <Flex style={weatherFlexStyle}>
-                    <PoPIcon />
-                    <Text variant={'w400s14'} width={'40px'}>
-                        {weather.PoP} %
-                    </Text>
-                </Flex>
+        <Flex
+            gap={'10px'}
+            align={'flex-end'}
+            justify={'flex-end'}
+            pb={'0.25rem'}
+        >
+            <Flex style={weatherFlexStyle}>
+                <ClockIcon />
+                <Text variant={'w400s14'}>{date.format('HH:mm')}</Text>
+            </Flex>
+            <Flex style={weatherFlexStyle}>
+                <CloudyIcon />
+                <Text variant={'w400s14'}>{weather.temp.split('.')[0]} ℃</Text>
+            </Flex>
+            <Flex style={weatherFlexStyle}>
+                <HumidityIcon />
+                <Text variant={'w400s14'}>{weather.humidity} %</Text>
+            </Flex>
+            <Flex style={weatherFlexStyle}>
+                <PoPIcon />
+                <Text variant={'w400s14'}>{weather.PoP} %</Text>
             </Flex>
             <Text variant={'pageTitle'}>{date.format('YYYY/MM/DD')}</Text>
         </Flex>
