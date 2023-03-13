@@ -1,6 +1,5 @@
 import React from 'react';
 import { Flex, Text, Grid, GridItem } from '@chakra-ui/react';
-import dayjs from 'dayjs';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { dashboardGridItemStyle } from './Style';
@@ -8,10 +7,12 @@ import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
 import ChartLayout from './Charts/ChartLayout';
+import WeatherTime from './WeatherTime';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
+
     return (
         <Flex direction={'column'} w={'100%'} h={'100%'}>
             <Flex
@@ -26,12 +27,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                 <Text variant={'w500s14'}>{siteName}</Text>
                 <Flex justify={'space-between'} w={'100%'}>
                     <Text variant={'pageTitle'}>總覽</Text>
-                    <Flex gap={'10px'}>
-                        {/* {weather} */}
-                        <Text variant={'pageTitle'}>
-                            {dayjs().format('YYYY/MM/DD')}
-                        </Text>
-                    </Flex>
+                    <WeatherTime siteId={siteId} />
                 </Flex>
             </Flex>
             <Grid
