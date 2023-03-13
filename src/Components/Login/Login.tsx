@@ -18,6 +18,7 @@ export default function Login() {
         <Center w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
             <Flex
                 w={'67%'}
+                maxW={'808px'}
                 minW={'480px'}
                 h={'480px'}
                 borderRadius="30px"
