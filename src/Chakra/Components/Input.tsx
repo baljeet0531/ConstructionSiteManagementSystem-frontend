@@ -40,6 +40,29 @@ const Input = {
                 rest,
             };
         },
+        search: (props: StyleFunctionProps) => {
+            const { field, ...rest } = theme.components.Input.variants?.outline(
+                props
+            ) as any;
+            return {
+                field: {
+                    ...field,
+                    w: 'fit-content',
+                    border: '2px solid',
+                    borderColor: '#919AA9',
+                    bg: '#FFFFFF',
+                    height: '36px',
+                    _placeholder: {
+                        fontStyle: 'normal',
+                        fontWeight: '500',
+                        fontSize: '0.875rem',
+                        lineHeight: '2.25rem',
+                        color: '#66708080',
+                    },
+                },
+                rest,
+            };
+        },
     },
 };
 

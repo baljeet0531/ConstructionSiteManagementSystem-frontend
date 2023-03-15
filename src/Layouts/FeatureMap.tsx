@@ -244,8 +244,16 @@ export function getFeatureMap(site: {
         ehs_machinery_management: {
             name: '機具檢點管理',
             path: '/ehs/machinery/management',
-            // page: <MachineryManagement />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <MachineryManagement
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         ehs_photo: {
             name: '相片管理',
