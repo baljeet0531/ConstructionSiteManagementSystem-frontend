@@ -5,7 +5,6 @@ import {
     Checkbox,
     Flex,
     Grid,
-    Input,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -22,6 +21,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
 import { PageLoading } from '../Shared/Loading';
+import DateRangePicker, { DateRange } from 'rsuite/esm/DateRangePicker';
+import dayjs from 'dayjs';
 
 export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(
@@ -206,8 +207,7 @@ export default function WorkPermitFormOverview(props: {
     const [searchResultNumber, setSearchResultNumber] =
         React.useState<string[]>();
 
-    const [startDate, setStartDate] = React.useState<string>();
-    const [endDate, setEndDate] = React.useState<string>();
+    const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
 
     const [areas, setAreas] = React.useState<
         { name: string; isChecked: boolean }[]
@@ -336,6 +336,26 @@ export default function WorkPermitFormOverview(props: {
         }
     );
 
+    const handleSearch = (value: DateRange | null) => {
+        searchWorkPermit({
+            variables: {
+                siteId: siteId,
+                area: areas.flatMap((area) =>
+                    area.isChecked ? area.name : []
+                ),
+                system: systems.flatMap((system) =>
+                    system.isChecked ? system.name : []
+                ),
+                ...(value && {
+                    startDate: `${dayjs(value[0]).format(
+                        'YYYY-MM-DD'
+                    )}T00:00:00`,
+                    endDate: `${dayjs(value[1]).format('YYYY-MM-DD')}T23:59:59`,
+                }),
+            },
+        });
+    };
+
     return (
         <Flex
             direction={'column'}
@@ -360,58 +380,17 @@ export default function WorkPermitFormOverview(props: {
             <Text variant={'pageTitle'}>工作許可單</Text>
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
-                    <Input
-                        type={'date'}
-                        width={'140px'}
-                        variant={'formOutline'}
-                        onChange={(e) => {
-                            setStartDate(e.target.value);
-                            searchWorkPermit({
-                                variables: {
-                                    siteId: siteId,
-                                    area: areas.flatMap((area) =>
-                                        area.isChecked ? area.name : []
-                                    ),
-                                    system: systems.flatMap((system) =>
-                                        system.isChecked ? system.name : []
-                                    ),
-                                    ...(e.target.value && {
-                                        startDate: `${e.target.value}T08:30:00`,
-                                    }),
-                                    ...(endDate && {
-                                        endDate: `${endDate}T08:30:00`,
-                                    }),
-                                },
-                            });
+                    <DateRangePicker
+                        value={dateRange}
+                        style={{
+                            border: '2px solid #919AA9',
+                            borderRadius: '6px',
                         }}
-                        max={endDate}
-                    ></Input>
-                    <Input
-                        type={'date'}
-                        width={'140px'}
-                        variant={'formOutline'}
-                        onChange={(e) => {
-                            setEndDate(e.target.value);
-                            searchWorkPermit({
-                                variables: {
-                                    siteId: siteId,
-                                    area: areas.flatMap((area) =>
-                                        area.isChecked ? area.name : []
-                                    ),
-                                    system: systems.flatMap((system) =>
-                                        system.isChecked ? system.name : []
-                                    ),
-                                    ...(startDate && {
-                                        startDate: `${startDate}T08:30:00`,
-                                    }),
-                                    ...(e.target.value && {
-                                        endDate: `${e.target.value}T08:30:00`,
-                                    }),
-                                },
-                            });
+                        onChange={(value) => {
+                            handleSearch(value);
+                            setDateRange(value);
                         }}
-                        min={startDate}
-                    ></Input>
+                    />
                     <Popover placement={'bottom-start'}>
                         <PopoverTrigger>
                             <Button
@@ -480,29 +459,7 @@ export default function WorkPermitFormOverview(props: {
                                     <Button
                                         variant={'buttonBlueSolid'}
                                         onClick={() => {
-                                            searchWorkPermit({
-                                                variables: {
-                                                    siteId: siteId,
-                                                    area: areas.flatMap(
-                                                        (area) =>
-                                                            area.isChecked
-                                                                ? area.name
-                                                                : []
-                                                    ),
-                                                    system: systems.flatMap(
-                                                        (system) =>
-                                                            system.isChecked
-                                                                ? system.name
-                                                                : []
-                                                    ),
-                                                    ...(startDate && {
-                                                        startDate: `${startDate}T08:30:00`,
-                                                    }),
-                                                    ...(endDate && {
-                                                        endDate: `${endDate}T08:30:00`,
-                                                    }),
-                                                },
-                                            });
+                                            handleSearch(dateRange);
                                         }}
                                     >
                                         確定搜尋
