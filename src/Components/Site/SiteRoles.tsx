@@ -9,12 +9,10 @@ import {
     Th,
     Td,
     TableContainer,
-    Icon,
     IconButton,
-    Flex,
     Center,
 } from '@chakra-ui/react';
-import { SortIcon, EditIcon, DeleteIcon } from '../../Icons/Icons';
+import { EditIcon, DeleteIcon } from '../../Icons/Icons';
 
 import EditRole from './SitePopup/EditRole';
 import DeleteRole from './SitePopup/DeleteRole';
@@ -146,24 +144,9 @@ export default function SiteRoles(props: {
             <Table variant={'iemgray'}>
                 <Thead>
                     <Tr>
-                        <Th w={'24.7%'}>
-                            <Flex>
-                                姓名
-                                <Icon as={SortIcon}></Icon>
-                            </Flex>
-                        </Th>
-                        <Th w={'24.7%'}>
-                            <Flex>
-                                職稱
-                                <Icon as={SortIcon}></Icon>
-                            </Flex>
-                        </Th>
-                        <Th w={'24.7%'}>
-                            <Flex>
-                                帳號
-                                <Icon as={SortIcon}></Icon>
-                            </Flex>
-                        </Th>
+                        <Th w={'24.7%'}>姓名</Th>
+                        <Th w={'24.7%'}>職稱</Th>
+                        <Th w={'24.7%'}>帳號</Th>
                         <Th w={'12.95%'} textAlign={'center'}>
                             編輯
                         </Th>

@@ -3,8 +3,8 @@ const Table = {
         iemgray: {
             table: {
                 fontWeight: 400,
-                fontSize: '14px',
-                lineHeight: '20px',
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
                 tableLayout: 'fixed',
             },
             thead: {
@@ -20,6 +20,8 @@ const Table = {
             },
             th: {
                 color: '#FFFFFF',
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
                 p: '8px',
                 textTransform: 'none',
             },
@@ -31,8 +33,8 @@ const Table = {
         iemGraySchedule: {
             table: {
                 fontWeight: 400,
-                fontSize: '14px',
-                lineHeight: '20px',
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
                 tableLayout: 'fixed',
             },
             thead: {
@@ -48,6 +50,8 @@ const Table = {
             },
             th: {
                 color: '#FFFFFF',
+                fontSize: '0.875rem',
+                lineHeight: '1.25rem',
                 p: '8px',
                 textTransform: 'none',
             },
@@ -77,6 +81,8 @@ const Table = {
             th: {
                 h: '36px',
                 p: '8px',
+                fontSize: '0.75rem',
+                lineHeight: '1.25rem',
                 textAlign: 'center',
                 borderBottom: '2px solid #919AA9',
                 textTransform: 'none',
