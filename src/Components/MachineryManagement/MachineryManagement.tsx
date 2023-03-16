@@ -28,102 +28,80 @@ import { tableViewContainerStyle } from '../../Interface/MainScreenLayout';
 import { AddIcon, DeleteIcon, ReplyIcon, SearchIcon } from '../../Icons/Icons';
 import CreateEquipmentModal from './CreateEquipmentModal';
 import DeleteEquipmentModal from './DeleteEquipmentModal';
+import InspectionSelect from './InspectionSelect';
+import InspectionDatePicker from './InspectionDatePicker';
 
 const mockData: IMachinery[] = [
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: false,
+        entryInspectionDate: '2023-01-11',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: null,
+        entryInspectionDate: '2023-11-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
         inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
-        remarks: 'CCC',
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
-        remarks: 'CCC',
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
-        remarks: 'CCC',
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: 'CCC',
-        entryInspectionDate: 'CCC',
+        entryInspection: true,
+        entryInspectionDate: '2023-01-01',
         remarks: 'CCC',
     },
 ];
@@ -132,7 +110,7 @@ interface IMachinery {
     vendor: string;
     mainEquipment: string;
     inspectionNo: string;
-    entryInspection: string;
+    entryInspection: boolean | null;
     entryInspectionDate: string;
     remarks: string;
 }
@@ -184,13 +162,17 @@ export default function MachineryManagement(props: {
             title: '入場檢點',
             width: 120,
             variable: 'entryInspection',
-            getElement: defaultElement,
+            getElement: (props: getElementProps) => (
+                <InspectionSelect {...props} />
+            ),
         },
         {
             title: '入場檢點日期',
             width: 125,
             variable: 'entryInspectionDate',
-            getElement: defaultElement,
+            getElement: (props: getElementProps) => (
+                <InspectionDatePicker {...props} />
+            ),
         },
         {
             title: '備註',
