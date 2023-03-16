@@ -15,8 +15,8 @@ import {
     TabPanels,
     Tabs,
     Text,
+    useDisclosure,
 } from '@chakra-ui/react';
-// eslint-disable-next-line no-unused-vars
 import ReactWindowTable, {
     IColumnMap,
     ISizes,
@@ -25,9 +25,67 @@ import ReactWindowTable, {
     dataCellStyle,
 } from '../Shared/ReactWindowTable';
 import { tableViewContainerStyle } from '../../Interface/MainScreenLayout';
-import { AddIcon, DeleteIcon, LaunchIcon, SearchIcon } from '../../Icons/Icons';
+import { AddIcon, DeleteIcon, ReplyIcon, SearchIcon } from '../../Icons/Icons';
+import CreateEquipmentModal from './CreateEquipmentModal';
+import DeleteEquipmentModal from './DeleteEquipmentModal';
 
 const mockData: IMachinery[] = [
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
+    {
+        vendor: 'AAA',
+        mainEquipment: 'BBB',
+        inspectionNo: 'CCC',
+        entryInspection: 'CCC',
+        entryInspectionDate: 'CCC',
+        remarks: 'CCC',
+    },
     {
         vendor: 'AAA',
         mainEquipment: 'BBB',
@@ -97,7 +155,6 @@ export default function MachineryManagement(props: {
     if (!IsPermit('ehs_machinery_management'))
         return <Navigate to="/" replace={true} />;
 
-    const { siteName } = props;
     const columnMap: IColumnMap[] = [
         {
             title: '項次',
@@ -173,9 +230,20 @@ export default function MachineryManagement(props: {
         },
     ];
 
+    const { siteName } = props;
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [modalName, setModalName] = React.useState<'新增機具' | '刪除機具'>(
+        '新增機具'
+    );
     const [tableData, setTableData] = React.useState<{
         [primaryKey: number]: IMachineryChecked;
     }>({});
+
+    const selectedData = Object.values(tableData).flatMap(
+        ({ isChecked, mainEquipment, inspectionNo }) =>
+            isChecked ? { equipment: mainEquipment, number: inspectionNo } : []
+    );
+
     React.useEffect(() => {
         const mockDataChecked: { [primaryKey: number]: IMachineryChecked }[] =
             mockData.map((info, index) => {
@@ -194,7 +262,7 @@ export default function MachineryManagement(props: {
         <Flex {...tableViewContainerStyle}>
             <Text variant={'pageSiteName'}>{siteName}</Text>
             <Text variant={'pageTitle'}>機具檢點管理</Text>
-            <Tabs variant={'blueLineTabs'}>
+            <Tabs variant={'blueLineTabs'} isLazy>
                 <Flex align={'center'} justify={'space-between'}>
                     <Flex gap={'10px'} align={'center'}>
                         <InputGroup w={'fit-content'}>
@@ -211,6 +279,10 @@ export default function MachineryManagement(props: {
                             variant={'buttonBlueSolid'}
                             h={'36px'}
                             leftIcon={<AddIcon />}
+                            onClick={() => {
+                                setModalName('新增機具');
+                                onOpen();
+                            }}
                         >
                             新增機具
                         </Button>
@@ -223,7 +295,7 @@ export default function MachineryManagement(props: {
                         <Button
                             variant={'buttonGrayOutline'}
                             h={'36px'}
-                            leftIcon={<LaunchIcon />}
+                            leftIcon={<ReplyIcon />}
                         >
                             匯入
                         </Button>
@@ -231,6 +303,10 @@ export default function MachineryManagement(props: {
                             variant={'buttonGrayOutline'}
                             h={'36px'}
                             leftIcon={<DeleteIcon />}
+                            onClick={() => {
+                                setModalName('刪除機具');
+                                onOpen();
+                            }}
                         >
                             刪除
                         </Button>
@@ -255,6 +331,15 @@ export default function MachineryManagement(props: {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
+            <CreateEquipmentModal
+                isOpen={modalName == '新增機具' && isOpen}
+                onClose={onClose}
+            />
+            <DeleteEquipmentModal
+                selectedData={selectedData}
+                isOpen={modalName == '刪除機具' && isOpen}
+                onClose={onClose}
+            />
         </Flex>
     );
 }
