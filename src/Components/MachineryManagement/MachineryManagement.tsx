@@ -354,7 +354,7 @@ export default function MachineryManagement(props: {
             <Text variant={'pageTitle'}>機具檢點管理</Text>
             <Tabs variant={'blueLineTabs'} isLazy>
                 <Flex align={'center'} justify={'space-between'}>
-                    <Flex gap={'10px'} align={'center'}>
+                    <Flex gap={'10px'} align={'center'} marginRight={'10px'}>
                         <InputGroup w={'fit-content'}>
                             <InputLeftElement
                                 pointerEvents="none"
