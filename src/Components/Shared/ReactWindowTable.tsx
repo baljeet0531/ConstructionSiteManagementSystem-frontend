@@ -80,9 +80,9 @@ export const CheckboxElement = (props: {
         <Box
             {...dataCellStyle}
             style={{
-                ...style,
                 paddingTop: '14px',
                 borderBottom: '1px solid #919AA9',
+                ...style,
             }}
         >
             <Checkbox

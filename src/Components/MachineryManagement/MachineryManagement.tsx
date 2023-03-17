@@ -2,9 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import {
-    Box,
     Button,
-    Checkbox,
     Flex,
     Input,
     InputGroup,
@@ -17,12 +15,12 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
+import { FileType } from 'rsuite/esm/Uploader';
 import ReactWindowTable, {
-    IColumnMap,
     ISizes,
     defaultElement,
     getElementProps,
-    dataCellStyle,
+    CheckboxElement,
 } from '../Shared/ReactWindowTable';
 import { tableViewContainerStyle } from '../../Interface/MainScreenLayout';
 import { AddIcon, DeleteIcon, ReplyIcon, SearchIcon } from '../../Icons/Icons';
@@ -30,6 +28,7 @@ import CreateEquipmentModal from './CreateEquipmentModal';
 import DeleteEquipmentModal from './DeleteEquipmentModal';
 import InspectionSelect from './InspectionSelect';
 import InspectionDatePicker from './InspectionDatePicker';
+import Remarks from './Remarks';
 
 const mockData: IMachinery[] = [
     {
@@ -38,7 +37,23 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'DDD',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -46,7 +61,18 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: false,
         entryInspectionDate: '2023-01-11',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'DDD',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -54,7 +80,18 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: null,
         entryInspectionDate: '2023-11-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'DDD',
+            photos: [
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -62,7 +99,23 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'DDD',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -70,7 +123,23 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: '',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -78,7 +147,12 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'DDD',
+            photos: [],
+        },
     },
     {
         vendor: 'AAA',
@@ -86,7 +160,23 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'EEE',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -94,7 +184,23 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'FFF',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+                {
+                    name: 'b.png',
+                    fileKey: 2,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+                },
+            ],
+        },
     },
     {
         vendor: 'AAA',
@@ -102,17 +208,30 @@ const mockData: IMachinery[] = [
         inspectionNo: 'CCC',
         entryInspection: true,
         entryInspectionDate: '2023-01-01',
-        remarks: 'CCC',
+        onSiteInspection: true,
+        onSiteInspectionDate: '2023-01-01',
+        remarks: {
+            text: 'GGG',
+            photos: [
+                {
+                    name: 'a.png',
+                    fileKey: 1,
+                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+                },
+            ],
+        },
     },
 ];
 
-interface IMachinery {
+export interface IMachinery {
     vendor: string;
     mainEquipment: string;
     inspectionNo: string;
     entryInspection: boolean | null;
     entryInspectionDate: string;
-    remarks: string;
+    onSiteInspection: boolean | null;
+    onSiteInspectionDate: string;
+    remarks: { text: string; photos: FileType[] };
 }
 
 interface IMachineryChecked extends IMachinery {
@@ -133,7 +252,7 @@ export default function MachineryManagement(props: {
     if (!IsPermit('ehs_machinery_management'))
         return <Navigate to="/" replace={true} />;
 
-    const columnMap: IColumnMap[] = [
+    const columnMap = (tabName: '入場' | '場內') => [
         {
             title: '項次',
             width: 50,
@@ -159,64 +278,53 @@ export default function MachineryManagement(props: {
             getElement: defaultElement,
         },
         {
-            title: '入場檢點',
+            title: tabName === '入場' ? '入場檢點' : '場內檢點',
             width: 120,
-            variable: 'entryInspection',
-            getElement: (props: getElementProps) => (
-                <InspectionSelect {...props} />
-            ),
+            variable:
+                tabName === '入場' ? 'entryInspection' : 'onSiteInspection',
+            getElement: InspectionSelect,
         },
         {
-            title: '入場檢點日期',
+            title: tabName === '入場' ? '入場檢點日期' : '場內檢點日期',
             width: 125,
-            variable: 'entryInspectionDate',
-            getElement: (props: getElementProps) => (
-                <InspectionDatePicker {...props} />
-            ),
+            variable:
+                tabName === '入場'
+                    ? 'entryInspectionDate'
+                    : 'onSiteInspectionDate',
+            getElement: InspectionDatePicker,
         },
         {
             title: '備註',
             width: 125,
             variable: 'remarks',
-            getElement: defaultElement,
+            getElement: Remarks,
         },
         {
             title: '全選',
             width: 62,
             variable: 'isChecked',
-            getElement: ({ style, info, variable }: getElementProps) => {
-                return (
-                    <Box
-                        {...dataCellStyle}
-                        style={{
-                            ...style,
-                            paddingTop: '5px',
-                            borderBottom: '1px solid #919AA9',
-                        }}
-                    >
-                        <Checkbox
-                            isChecked={info[variable]}
-                            onChange={(e) => {
-                                setTableData((prevState) => ({
-                                    ...prevState,
-                                    [info.index]: {
-                                        ...info,
-                                        isChecked: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        ></Checkbox>
-                    </Box>
-                );
-            },
+            getElement: (props: getElementProps) => (
+                <CheckboxElement
+                    getElementProps={{
+                        ...props,
+                        style: {
+                            ...props.style,
+                            paddingTop: '6px',
+                        },
+                    }}
+                    setTableData={setTableData}
+                    primaryKey={props.info['index']}
+                />
+            ),
         },
     ];
 
     const { siteName } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [modalName, setModalName] = React.useState<'新增機具' | '刪除機具'>(
-        '新增機具'
-    );
+    const [modalName, setModalName] = React.useState<
+        '新增機具' | '刪除機具' | '備註'
+    >('新增機具');
+
     const [tableData, setTableData] = React.useState<{
         [primaryKey: number]: IMachineryChecked;
     }>({});
@@ -298,7 +406,7 @@ export default function MachineryManagement(props: {
                     <TabPanel padding={'16px 0 0 0'}>
                         <ReactWindowTable
                             tableData={tableData}
-                            columnMap={columnMap}
+                            columnMap={columnMap('入場')}
                             sizes={sizes}
                             columnBordered
                         />
@@ -306,7 +414,7 @@ export default function MachineryManagement(props: {
                     <TabPanel padding={'16px 0 0 0'}>
                         <ReactWindowTable
                             tableData={tableData}
-                            columnMap={columnMap}
+                            columnMap={columnMap('場內')}
                             sizes={sizes}
                             columnBordered
                         />
@@ -314,12 +422,12 @@ export default function MachineryManagement(props: {
                 </TabPanels>
             </Tabs>
             <CreateEquipmentModal
-                isOpen={modalName == '新增機具' && isOpen}
+                isOpen={modalName === '新增機具' && isOpen}
                 onClose={onClose}
             />
             <DeleteEquipmentModal
                 selectedData={selectedData}
-                isOpen={modalName == '刪除機具' && isOpen}
+                isOpen={modalName === '刪除機具' && isOpen}
                 onClose={onClose}
             />
         </Flex>
