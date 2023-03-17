@@ -320,10 +320,8 @@ export default function MachineryManagement(props: {
     ];
 
     const { siteName } = props;
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const [modalName, setModalName] = React.useState<
-        '新增機具' | '刪除機具' | '備註'
-    >('新增機具');
+    const createModalDisclosure = useDisclosure();
+    const deleteModalDisclosure = useDisclosure();
 
     const [tableData, setTableData] = React.useState<{
         [primaryKey: number]: IMachineryChecked;
@@ -369,10 +367,7 @@ export default function MachineryManagement(props: {
                             variant={'buttonBlueSolid'}
                             h={'36px'}
                             leftIcon={<AddIcon />}
-                            onClick={() => {
-                                setModalName('新增機具');
-                                onOpen();
-                            }}
+                            onClick={createModalDisclosure.onOpen}
                         >
                             新增機具
                         </Button>
@@ -393,10 +388,7 @@ export default function MachineryManagement(props: {
                             variant={'buttonGrayOutline'}
                             h={'36px'}
                             leftIcon={<DeleteIcon />}
-                            onClick={() => {
-                                setModalName('刪除機具');
-                                onOpen();
-                            }}
+                            onClick={deleteModalDisclosure.onOpen}
                         >
                             刪除
                         </Button>
@@ -422,13 +414,13 @@ export default function MachineryManagement(props: {
                 </TabPanels>
             </Tabs>
             <CreateEquipmentModal
-                isOpen={modalName === '新增機具' && isOpen}
-                onClose={onClose}
+                isOpen={createModalDisclosure.isOpen}
+                onClose={createModalDisclosure.onClose}
             />
             <DeleteEquipmentModal
                 selectedData={selectedData}
-                isOpen={modalName === '刪除機具' && isOpen}
-                onClose={onClose}
+                isOpen={deleteModalDisclosure.isOpen}
+                onClose={deleteModalDisclosure.onClose}
             />
         </Flex>
     );
