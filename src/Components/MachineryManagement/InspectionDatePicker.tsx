@@ -25,6 +25,7 @@ export default function InspectionSelect(props: getElementProps) {
                     width: '100%',
                     padding: '0px',
                     border: '0px',
+                    textAlignLast: 'center',
                 }}
                 editable={false}
                 oneTap

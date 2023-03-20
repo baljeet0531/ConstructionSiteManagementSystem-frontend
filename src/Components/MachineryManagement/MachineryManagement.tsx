@@ -22,7 +22,7 @@ import ReactWindowTable, {
     getElementProps,
     CheckboxElement,
 } from '../Shared/ReactWindowTable';
-import { tableViewContainerStyle } from '../../Interface/MainScreenLayout';
+import { tableViewContainerStyle } from '../../Layouts/MainScreen/MainScreen';
 import { AddIcon, DeleteIcon, ReplyIcon, SearchIcon } from '../../Icons/Icons';
 import CreateEquipmentModal from './CreateEquipmentModal';
 import DeleteEquipmentModal from './DeleteEquipmentModal';

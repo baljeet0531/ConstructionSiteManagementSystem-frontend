@@ -1,14 +1,18 @@
-/* eslint-disable no-undef */
 import React from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, FlexProps } from '@chakra-ui/react';
 
-export default function MainScreen(props: {
-    children: JSX.Element;
-    // siteId: string;
-}) {
-    // const { children, siteId } = props;
-    // const Children = React.cloneElement(children, { siteId: siteId });
-    // const Children = props.children
+export const tableViewContainerStyle: FlexProps = {
+    direction: 'column',
+    h: '100vh',
+    w: '100%',
+    pl: '42px',
+    pr: '42px',
+    pt: '47px',
+    pb: '24px',
+    gap: '11px',
+};
+
+export default function MainScreen(props: { children: JSX.Element }) {
     return (
         <Box
             h={'100%'}

@@ -12,39 +12,6 @@ export default function DeleteEquipmentModal(props: {
 }) {
     const { selectedData, isOpen, onClose } = props;
 
-    const bodyElement = () => (
-        <Flex
-            direction={'column'}
-            gap={'16px'}
-            align={'center'}
-            justify={'center'}
-        >
-            {selectedData.map(({ equipment, number }, index) => (
-                <Flex
-                    key={index}
-                    gap={'15px'}
-                    align={'center'}
-                    justify={'space-around'}
-                >
-                    <Text
-                        variant={'w400s14'}
-                        style={{ textAlignLast: 'justify' }}
-                        flex={1}
-                    >
-                        {equipment}
-                    </Text>
-                    <Text
-                        variant={'w400s14'}
-                        style={{ textAlignLast: 'justify' }}
-                        flex={1}
-                    >
-                        {number}
-                    </Text>
-                </Flex>
-            ))}
-        </Flex>
-    );
-
     return (
         <BlueBodyModal
             title={'刪除機具'}
@@ -58,11 +25,41 @@ export default function DeleteEquipmentModal(props: {
             }}
             isOpen={isOpen}
             onClose={onClose}
-            bodyElement={bodyElement}
             modalSize={'xs'}
             bodyStyle={{
                 maxHeight: '200px',
             }}
-        />
+        >
+            <Flex
+                direction={'column'}
+                gap={'16px'}
+                align={'center'}
+                justify={'center'}
+            >
+                {selectedData.map(({ equipment, number }, index) => (
+                    <Flex
+                        key={index}
+                        gap={'15px'}
+                        align={'center'}
+                        justify={'space-around'}
+                    >
+                        <Text
+                            variant={'w400s14'}
+                            style={{ textAlignLast: 'justify' }}
+                            flex={1}
+                        >
+                            {equipment}
+                        </Text>
+                        <Text
+                            variant={'w400s14'}
+                            style={{ textAlignLast: 'justify' }}
+                            flex={1}
+                        >
+                            {number}
+                        </Text>
+                    </Flex>
+                ))}
+            </Flex>
+        </BlueBodyModal>
     );
 }

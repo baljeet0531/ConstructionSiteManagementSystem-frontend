@@ -8,41 +8,6 @@ export default function CreateEquipmentModal(props: {
 }) {
     const { isOpen, onClose } = props;
 
-    const bodyElement = () => (
-        <Flex direction={'column'} gap={'20px'}>
-            <Flex gap={'12px'} align={'center'} justify={'space-between'}>
-                <Text
-                    variant={'w400s14'}
-                    style={{ textAlignLast: 'justify' }}
-                    flex={1}
-                >
-                    廠商名稱
-                </Text>
-                <Input variant={'grayOutline'} width={'160px'} />
-            </Flex>
-            <Flex gap={'12px'} align={'center'} justify={'space-between'}>
-                <Text
-                    variant={'w400s14'}
-                    style={{ textAlignLast: 'justify' }}
-                    flex={1}
-                >
-                    主要機具
-                </Text>
-                <Input variant={'grayOutline'} width={'160px'} />
-            </Flex>
-            <Flex gap={'12px'} align={'center'} justify={'space-between'}>
-                <Text
-                    variant={'w400s14'}
-                    style={{ textAlignLast: 'justify' }}
-                    flex={1}
-                >
-                    數量
-                </Text>
-                <Input variant={'grayOutline'} width={'160px'} />
-            </Flex>
-        </Flex>
-    );
-
     return (
         <BlueBodyModal
             title={'新增機具'}
@@ -57,7 +22,39 @@ export default function CreateEquipmentModal(props: {
             isOpen={isOpen}
             onClose={onClose}
             modalSize={'sm'}
-            bodyElement={bodyElement}
-        />
+        >
+            <Flex direction={'column'} gap={'20px'}>
+                <Flex gap={'12px'} align={'center'} justify={'space-between'}>
+                    <Text
+                        variant={'w400s14'}
+                        style={{ textAlignLast: 'justify' }}
+                        flex={1}
+                    >
+                        廠商名稱
+                    </Text>
+                    <Input variant={'grayOutline'} width={'160px'} />
+                </Flex>
+                <Flex gap={'12px'} align={'center'} justify={'space-between'}>
+                    <Text
+                        variant={'w400s14'}
+                        style={{ textAlignLast: 'justify' }}
+                        flex={1}
+                    >
+                        主要機具
+                    </Text>
+                    <Input variant={'grayOutline'} width={'160px'} />
+                </Flex>
+                <Flex gap={'12px'} align={'center'} justify={'space-between'}>
+                    <Text
+                        variant={'w400s14'}
+                        style={{ textAlignLast: 'justify' }}
+                        flex={1}
+                    >
+                        數量
+                    </Text>
+                    <Input variant={'grayOutline'} width={'160px'} />
+                </Flex>
+            </Flex>
+        </BlueBodyModal>
     );
 }
