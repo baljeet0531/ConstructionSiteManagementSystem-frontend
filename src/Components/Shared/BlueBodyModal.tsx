@@ -17,13 +17,13 @@ interface IModalButton {
     handleClick: Function;
 }
 
-export default function PurpleBodyModal(props: {
+export default function BlueBodyModal(props: {
     title: string;
     cancelButton: IModalButton;
     confirmButton: IModalButton;
     isOpen: boolean;
     onClose: () => void;
-    bodyElement: () => JSX.Element;
+    children: JSX.Element;
     modalSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
     contentStyle?: ChakraProps;
     bodyStyle?: ChakraProps;
@@ -35,7 +35,7 @@ export default function PurpleBodyModal(props: {
         isOpen,
         onClose,
         modalSize,
-        bodyElement,
+        children,
         contentStyle,
         bodyStyle,
     } = props;
@@ -68,7 +68,7 @@ export default function PurpleBodyModal(props: {
                     minHeight={'118px'}
                     {...bodyStyle}
                 >
-                    {bodyElement()}
+                    {children}
                 </ModalBody>
 
                 <ModalFooter padding={0} mt={'20px'}>

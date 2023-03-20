@@ -23,6 +23,7 @@ export default function InspectionSelect(props: getElementProps) {
         >
             <Select
                 defaultValue={value}
+                style={{ textAlignLast: 'center' }}
                 height={'29px'}
                 borderRadius={'0px'}
                 fontFamily={'Inter'}
