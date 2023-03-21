@@ -53,6 +53,12 @@ export const dataCellStyle: ChakraProps = {
     pt: '12px',
 };
 
+export const borderedStyle: React.CSSProperties = {
+    paddingTop: '5px',
+    borderRight: '1px solid #919AA9',
+    borderBottom: '1px solid #919AA9',
+};
+
 export const defaultElement = ({ style, info, variable }: getElementProps) => (
     <Box {...dataCellStyle} style={style}>
         {info[variable]}
@@ -74,9 +80,9 @@ export const CheckboxElement = (props: {
         <Box
             {...dataCellStyle}
             style={{
-                ...style,
                 paddingTop: '14px',
                 borderBottom: '1px solid #919AA9',
+                ...style,
             }}
         >
             <Checkbox
@@ -179,6 +185,7 @@ export default function ReactWindowTable(props: {
     sizes: ISizes;
     filteredPrimaryKey?: string[];
     sortReversed?: boolean;
+    columnBordered?: boolean;
 }) {
     const {
         tableData,
@@ -186,6 +193,7 @@ export default function ReactWindowTable(props: {
         sizes,
         filteredPrimaryKey,
         sortReversed = false,
+        columnBordered = false,
     } = props;
     const {
         tableViewHeight,
@@ -285,7 +293,10 @@ export default function ReactWindowTable(props: {
             const info = data[primaryKeys[rowIndex]];
             const columnInfo = columnMap[columnIndex];
             const element = columnInfo.getElement({
-                style: style,
+                style:
+                    columnBordered && columnIndex !== columnMap.length - 1
+                        ? { ...style, ...borderedStyle }
+                        : style,
                 info: info,
                 variable: columnInfo.variable,
             });
