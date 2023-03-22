@@ -26,10 +26,10 @@ interface IWeather {
 }
 
 const weatherFlexStyle: React.CSSProperties = {
-    width: '65px',
+    width: 'fit-content',
     height: '20px',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     padding: '0.25rem',
     gap: '0.25rem',
 };
