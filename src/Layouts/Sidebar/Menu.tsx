@@ -69,7 +69,7 @@ export default function Menu(props: {
             borderRadius="30px"
             pt="14px"
             pb="14px"
-            w="80%"
+            w="100%"
             m="auto"
             pl="12px"
             pr="12px"
@@ -95,6 +95,7 @@ export default function Menu(props: {
                     </AccordionPanel>
                 </AccordionItem>
                 <Select
+                    color={'#667080'}
                     value={selectedSiteId}
                     onChange={(e) => {
                         const { siteId, siteName } =
