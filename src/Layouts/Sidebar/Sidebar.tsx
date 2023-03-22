@@ -1,7 +1,14 @@
 import React from 'react';
 
 import Menu from './Menu';
-import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
+import {
+    VStack,
+    Avatar,
+    Text,
+    AspectRatio,
+    Button,
+    Flex,
+} from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
 import Admin from '../../Images/Avatars/Admin.svg';
@@ -13,6 +20,8 @@ import SecurityStaff from '../../Images/Avatars/SecurityStaff.svg';
 import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
 import { ISiteObject } from '../Layout';
+import { LogoutIcon } from '../../Icons/Icons';
+import { useCookies } from 'react-cookie';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -42,32 +51,65 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
-    return (
-        <VStack pt="50px" pb="50px" w="20vw" h={'100%'} overflowY={'auto'}>
-            <AspectRatio w="50%" ratio={1}>
-                <Avatar
-                    name=""
-                    src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
-                    ignoreFallback
-                ></Avatar>
-            </AspectRatio>
-            <Text
-                fontWeight="600"
-                color="#4C7DE7"
-                fontSize="20px"
-                textAlign="center"
-            >
-                {username}
-                <br />
-                {role}
-            </Text>
+    const [, , removeCookie] = useCookies(['jwt', 'username']);
 
-            <Menu
-                sitesObject={sitesObject}
-                featureMap={featureMap}
-                selectedSiteId={selectedSiteId}
-                setSelectedSiteId={setSelectedSiteId}
-            ></Menu>
+    return (
+        <VStack
+            padding={'50px 26px 30px 26px'}
+            w="20vw"
+            h={'100%'}
+            overflowY={'auto'}
+            justify={'space-between'}
+        >
+            <Flex direction={'column'} align={'center'} justify={'flex-start'}>
+                <AspectRatio w="66%" ratio={1}>
+                    <Avatar
+                        name=""
+                        src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
+                        ignoreFallback
+                    ></Avatar>
+                </AspectRatio>
+                <Text
+                    mt={'15px'}
+                    mb={'5px'}
+                    fontWeight="600"
+                    color="#4C7DE7"
+                    fontSize="20px"
+                    textAlign="center"
+                >
+                    {username}
+                    <br />
+                    {role}
+                </Text>
+                <Menu
+                    sitesObject={sitesObject}
+                    featureMap={featureMap}
+                    selectedSiteId={selectedSiteId}
+                    setSelectedSiteId={setSelectedSiteId}
+                ></Menu>
+            </Flex>
+            <Button
+                leftIcon={<LogoutIcon />}
+                flexShrink={0}
+                height={'44px'}
+                width={'100%'}
+                color={'#667080'}
+                bg={'#6670801A'}
+                borderRadius={'30px'}
+                onClick={() => {
+                    removeCookie('jwt', {
+                        path: '/',
+                        secure: false,
+                    });
+                    removeCookie('username', {
+                        path: '/',
+                        secure: false,
+                    });
+                    window.location.href = '/login';
+                }}
+            >
+                登出
+            </Button>
         </VStack>
     );
 }
