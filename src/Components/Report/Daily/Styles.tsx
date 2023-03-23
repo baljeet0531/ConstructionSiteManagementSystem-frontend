@@ -5,6 +5,8 @@ export const titleStyle = {
 
 export const subTitleStyle = {
     fontSize: '24px',
+    display: 'flex',
+    alignItems: 'center',
 };
 
 export const placeholderStyle = {
@@ -21,4 +23,12 @@ export const disabledStyle = {
 export const contentStyle = {
     display: 'flex',
     alignItems: 'center',
+};
+
+export const tableTitleStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#919AA9',
+    color: '#FFFFFF',
 };

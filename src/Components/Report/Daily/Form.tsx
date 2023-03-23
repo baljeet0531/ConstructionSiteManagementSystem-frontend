@@ -1,14 +1,19 @@
 import { IDailyReport } from '../../../Interface/DailyReport';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
-import { Box, Button, Image, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Button, Image, Grid, GridItem, Text } from '@chakra-ui/react';
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
 import { GQL_DAILY_REPORT_QUERY } from './GQL';
 import { useState } from 'react';
 import { FormLoading } from '../../Shared/Loading';
 import { getImage } from '../../../Utils/Resources';
-import { contentStyle, subTitleStyle, titleStyle } from './Styles';
+import {
+    contentStyle,
+    subTitleStyle,
+    tableTitleStyle,
+    titleStyle,
+} from './Styles';
 import GridInputItem from '../../Shared/GridInputItem';
 
 export default function DailyReportForm({
@@ -85,7 +90,7 @@ export default function DailyReportForm({
                 </Grid>
                 <Grid
                     templateColumns="75fr 234fr 83fr 96fr 150fr 83fr 75fr 73fr"
-                    templateRows="repeat(1fr, 5)"
+                    templateRows="0.8fr repeat(1fr, 4)"
                     mt="16px"
                     h="40vh"
                 >
@@ -192,6 +197,20 @@ export default function DailyReportForm({
                         fieldName=""
                         inputComponent={f.input('text', true)}
                     />
+                </Grid>
+
+                <Text {...subTitleStyle}>出工狀況</Text>
+                <Grid
+                    templateColumns="repeat(1fr, 11)"
+                    templateRows="repeat(1fr, 5)"
+                    mt="16px"
+                    h="40vh"
+                >
+                    <GridItem {...tableTitleStyle}>出工項目</GridItem>
+                    <GridItem></GridItem>
+                    <GridItem></GridItem>
+                    <GridItem></GridItem>
+                    <GridItem></GridItem>
                 </Grid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}
