@@ -4,7 +4,6 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalHeader,
     ModalOverlay,
 } from '@chakra-ui/react';
 import { IDailyReport } from '../../../Interface/DailyReport';
@@ -50,8 +49,7 @@ export default function DailyReportModal({
     return (
         <Modal onClose={onClose} isOpen={isOpen} size="full">
             <ModalOverlay />
-            <ModalContent>
-                <ModalHeader>{`工程日報表(${serialNumber})`}</ModalHeader>
+            <ModalContent color="#667080">
                 <ModalCloseButton />
                 <ModalBody>
                     <Formik
