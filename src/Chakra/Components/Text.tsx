@@ -1,6 +1,8 @@
 const Text = {
     baseStyle: {
         fontFamily: 'Inter',
+        fontStyle: 'normal',
+        color: '#667080',
     },
     variants: {
         formlabel: {
