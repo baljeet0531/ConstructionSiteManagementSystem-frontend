@@ -28,19 +28,3 @@ code {
     border-radius: 3px;
     background: #00000033;
 }
-
-.remarks-uploader .rs-uploader-picture {
-    display: flex;
-}
-
-.remarks-uploader .rs-uploader-picture .rs-uploader-file-item {
-    height: 200px;
-    width: 200px;
-    margin: 0px;
-}
-
-.remarks-uploader .rs-uploader-picture .rs-uploader-file-items {
-    display: flex;
-    gap: 20px;
-    margin-right: 20px;
-}
