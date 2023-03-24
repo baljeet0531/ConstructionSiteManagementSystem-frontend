@@ -30,5 +30,16 @@ export const tableTitleStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     background: '#919AA9',
+    borderTop: '#919AA9 solid 1px',
+    borderLeft: '#919AA9 solid 1px',
+    borderBottom: '#919AA9 solid 1px',
     color: '#FFFFFF',
+};
+
+export const tableContentStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeft: '#919AA9 solid 1px',
+    borderBottom: '#919AA9 solid 1px',
 };

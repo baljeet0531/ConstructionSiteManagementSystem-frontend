@@ -11,6 +11,7 @@ import { getImage } from '../../../Utils/Resources';
 import {
     contentStyle,
     subTitleStyle,
+    tableContentStyle,
     tableTitleStyle,
     titleStyle,
 } from './Styles';
@@ -106,7 +107,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[2, 2, 2, 2]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
                     <GridItem rowStart={2} colStart={4} {...contentStyle}>
                         日期
@@ -114,7 +118,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[2, 2, 5, 5]}
                         fieldName=""
-                        inputComponent={f.input('date', true)}
+                        inputComponent={f.input({
+                            type: 'date',
+                            isDisabled: true,
+                        })}
                     />
                     <GridItem />
                     <GridItem rowStart={2} colStart={7} {...contentStyle}>
@@ -123,7 +130,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[2, 2, 8, 8]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
 
                     <GridItem rowStart={3} {...contentStyle}>
@@ -132,7 +142,7 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[3, 3, 2, 2]}
                         fieldName=""
-                        inputComponent={f.input('text')}
+                        inputComponent={f.input({ type: 'text' })}
                     />
                     <GridItem rowStart={3} colStart={4} {...contentStyle}>
                         進場日期
@@ -140,7 +150,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[3, 3, 5, 5]}
                         fieldName=""
-                        inputComponent={f.input('date', true)}
+                        inputComponent={f.input({
+                            type: 'date',
+                            isDisabled: true,
+                        })}
                     />
                     <GridItem />
                     <GridItem rowStart={3} colStart={7} {...contentStyle}>
@@ -149,7 +162,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[3, 3, 8, 8]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
 
                     <GridItem rowStart={4} {...contentStyle}>
@@ -158,7 +174,7 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[4, 4, 2, 2]}
                         fieldName=""
-                        inputComponent={f.input('text')}
+                        inputComponent={f.input({ type: 'text' })}
                     />
                     <GridItem rowStart={4} colStart={4} {...contentStyle}>
                         累計天數
@@ -166,7 +182,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[4, 4, 5, 5]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
                     <GridItem />
                     <GridItem rowStart={4} colStart={7} {...contentStyle}>
@@ -175,7 +194,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[4, 4, 8, 8]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
 
                     <GridItem />
@@ -186,7 +208,10 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[5, 5, 5, 5]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
                     <GridItem />
                     <GridItem rowStart={5} colStart={7} {...contentStyle}>
@@ -195,22 +220,45 @@ export default function DailyReportForm({
                     <GridInputItem
                         gridRange={[5, 5, 8, 8]}
                         fieldName=""
-                        inputComponent={f.input('text', true)}
+                        inputComponent={f.input({
+                            type: 'text',
+                            isDisabled: true,
+                        })}
                     />
                 </Grid>
 
                 <Text {...subTitleStyle}>出工狀況</Text>
                 <Grid
-                    templateColumns="repeat(1fr, 11)"
+                    templateColumns="90px repeat(1fr, 10)"
                     templateRows="repeat(1fr, 5)"
                     mt="16px"
                     h="40vh"
                 >
-                    <GridItem {...tableTitleStyle}>出工項目</GridItem>
-                    <GridItem></GridItem>
-                    <GridItem></GridItem>
-                    <GridItem></GridItem>
-                    <GridItem></GridItem>
+                    <GridItem {...tableTitleStyle} colStart={1} rowStart={1}>
+                        出工項目
+                    </GridItem>
+                    <GridItem {...tableContentStyle} colStart={1} rowStart={2}>
+                        監工
+                    </GridItem>
+                    <GridItem {...tableContentStyle} colStart={1} rowStart={3}>
+                        施工人員
+                    </GridItem>
+                    <GridItem {...tableContentStyle} colStart={1} rowStart={4}>
+                        夜間加班
+                    </GridItem>
+                    <GridItem {...tableContentStyle} colStart={1} rowStart={5}>
+                        小計
+                    </GridItem>
+                    {f.workNumberColumn('帆宣', 0)}
+                    {f.workNumberColumn('空調', 1)}
+                    {f.workNumberColumn('消防', 2)}
+                    {f.workNumberColumn('給排水', 3)}
+                    {f.workNumberColumn('天然氣及柴油', 4)}
+                    {f.workNumberColumn('電力', 5)}
+                    {f.workNumberColumn('儀控', 6)}
+                    {f.workNumberColumn('弱電', 7)}
+                    {f.workNumberColumn('其他', 8)}
+                    {f.workNumberColumn('合計', 9, true)}
                 </Grid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}

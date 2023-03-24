@@ -50,7 +50,11 @@ export default function DailyReportModal({
         <Modal onClose={onClose} isOpen={isOpen} size="full">
             <ModalOverlay />
             <ModalContent color="#667080">
-                <ModalCloseButton />
+                <ModalCloseButton
+                    position="fixed"
+                    top='12px'
+                    right='15px'
+                />
                 <ModalBody>
                     <Formik
                         initialValues={initialValues}
