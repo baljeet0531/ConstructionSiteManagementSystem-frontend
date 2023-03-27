@@ -1,13 +1,18 @@
-import { Flex, Text, Image, Textarea, Center } from '@chakra-ui/react';
-import dayjs from 'dayjs';
+import { gql, useQuery } from '@apollo/client';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
-import { DatePicker, InputPicker, Uploader } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
-import { FileType } from 'rsuite/esm/Uploader';
+import PhotoCard from './PhotoCard';
+
+const QUERY_IMAGE_OPTIONS = gql`
+    query IMOptionList($siteId: String!, $mode: String!) {
+        IMOptionList(siteId: $siteId, mode: $mode)
+    }
+`;
 
 export default function PhotoCreateList(props: {
-    photos: FileType[];
-    setPhotos: React.Dispatch<React.SetStateAction<FileType[]>>;
+    photos: File[];
+    setPhotos: React.Dispatch<React.SetStateAction<File[]>>;
     categories: ItemDataType[];
     setCategories: React.Dispatch<React.SetStateAction<ItemDataType[]>>;
     locations: ItemDataType[];
@@ -21,7 +26,38 @@ export default function PhotoCreateList(props: {
         locations,
         setLocations,
     } = props;
-    const uploader = React.useRef();
+
+    const categoriesOptions = React.useRef<string[]>([]);
+    const locationsOptions = React.useRef<string[]>([]);
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: 'M522C0008',
+            mode: 'category',
+        },
+        onCompleted: ({ IMOptionList }) => {
+            categoriesOptions.current = IMOptionList;
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: 'M522C0008',
+            mode: 'location',
+        },
+        onCompleted: ({ IMOptionList }) => {
+            locationsOptions.current = IMOptionList;
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
     return (
         <Flex
             direction={'column'}
@@ -39,79 +75,18 @@ export default function PhotoCreateList(props: {
                 gap={'30px'}
                 className={'photo-uploader'}
             >
-                <Uploader
-                    ref={uploader}
-                    action="#"
-                    listType="picture-text"
-                    fileList={photos}
-                    autoUpload={false}
-                    draggable
-                    multiple
-                    accept="image/*"
-                    onChange={setPhotos}
-                    renderThumbnail={(_, thumbnail: any) => (
-                        <Center width={'100%'} height={'100%'} bg={'#919AA91A'}>
-                            <Image
-                                {...thumbnail.props}
-                                objectFit="contain"
-                                maxH={'374px'}
-                            />
-                        </Center>
-                    )}
-                    renderFileInfo={(file) => (
-                        <Flex
-                            direction={'column'}
-                            gap={'5px'}
-                            justify={'flex-start'}
-                            height={'374px'}
-                        >
-                            <Text variant={'w400s17'} fontWeight={'700'}>
-                                相片分類
-                            </Text>
-                            <InputPicker
-                                style={{ color: '#667080' }}
-                                creatable
-                                data={categories}
-                                onCreate={(_, item) => {
-                                    setCategories([...categories, item]);
-                                }}
-                            />
-                            <Text variant={'w400s17'} fontWeight={'700'}>
-                                拍攝日期
-                            </Text>
-                            <DatePicker
-                                defaultValue={dayjs(
-                                    file.blobFile?.lastModified
-                                ).toDate()}
-                                format={'yyyy/MM/dd'}
-                                ranges={[
-                                    {
-                                        label: 'today',
-                                        value: new Date(),
-                                    },
-                                ]}
-                                oneTap
-                            ></DatePicker>
-                            <Text variant={'w400s17'} fontWeight={'700'}>
-                                位置
-                            </Text>
-                            <InputPicker
-                                style={{ color: '#667080' }}
-                                creatable
-                                data={locations}
-                                onCreate={(_, item) => {
-                                    setLocations([...locations, item]);
-                                }}
-                            />
-                            <Text variant={'w400s17'} fontWeight={'700'}>
-                                說明
-                            </Text>
-                            <Textarea flexGrow={1} resize={'none'}></Textarea>
-                        </Flex>
-                    )}
-                >
-                    <></>
-                </Uploader>
+                {photos.map((photo, index) => (
+                    <PhotoCard
+                        key={index}
+                        index={index}
+                        photo={photo}
+                        setPhotos={setPhotos}
+                        categories={categories}
+                        setCategories={setCategories}
+                        locations={locations}
+                        setLocations={setLocations}
+                    />
+                ))}
             </Flex>
         </Flex>
     );
