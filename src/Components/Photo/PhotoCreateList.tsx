@@ -1,8 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
 import { Flex } from '@chakra-ui/react';
+import { FieldArrayRenderProps, FormikProps } from 'formik';
 import React from 'react';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import PhotoCard from './PhotoCard';
+import { IPhotoFormValue } from './PhotoCreatePage';
 
 const QUERY_IMAGE_OPTIONS = gql`
     query IMOptionList($siteId: String!, $mode: String!) {
@@ -11,16 +13,16 @@ const QUERY_IMAGE_OPTIONS = gql`
 `;
 
 export default function PhotoCreateList(props: {
-    photos: File[];
-    setPhotos: React.Dispatch<React.SetStateAction<File[]>>;
+    formProps: FormikProps<IPhotoFormValue>;
+    arrayHelpers: FieldArrayRenderProps;
     categories: ItemDataType[];
     setCategories: React.Dispatch<React.SetStateAction<ItemDataType[]>>;
     locations: ItemDataType[];
     setLocations: React.Dispatch<React.SetStateAction<ItemDataType[]>>;
 }) {
     const {
-        photos,
-        setPhotos,
+        formProps,
+        arrayHelpers,
         categories,
         setCategories,
         locations,
@@ -75,12 +77,13 @@ export default function PhotoCreateList(props: {
                 gap={'30px'}
                 className={'photo-uploader'}
             >
-                {photos.map((photo, index) => (
+                {formProps.values.content.map(({ image }, index) => (
                     <PhotoCard
                         key={index}
+                        formProps={formProps}
+                        arrayHelpers={arrayHelpers}
                         index={index}
-                        photo={photo}
-                        setPhotos={setPhotos}
+                        photo={image}
                         categories={categories}
                         setCategories={setCategories}
                         locations={locations}

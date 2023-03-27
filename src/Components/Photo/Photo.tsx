@@ -8,7 +8,7 @@ import PhotoMainPage from './PhotoMainPage';
 export default function Photo(props: { siteId: string; siteName: string }) {
     if (!IsPermit('project_photo')) return <Navigate to="/" replace={true} />;
 
-    const { siteName } = props;
+    const { siteId, siteName } = props;
     const { isOpen, onToggle } = useDisclosure();
     return (
         <>
@@ -18,7 +18,11 @@ export default function Photo(props: { siteId: string; siteName: string }) {
                 onToggle={onToggle}
             />
             {isOpen && (
-                <PhotoCreatePage siteName={siteName} onToggle={onToggle} />
+                <PhotoCreatePage
+                    siteId={siteId}
+                    siteName={siteName}
+                    onToggle={onToggle}
+                />
             )}
         </>
     );
