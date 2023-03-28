@@ -56,6 +56,7 @@ export default function PhotoOverviewContainer(props: {
         onError: (err) => {
             console.log(err);
         },
+        fetchPolicy: 'network-only',
     });
 
     const dateGroup = photoData.current.map(({ time, element }, index) => {

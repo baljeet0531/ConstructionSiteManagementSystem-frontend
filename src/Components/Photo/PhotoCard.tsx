@@ -44,12 +44,7 @@ export default function PhotoCard(props: {
                     arrayHelpers.remove(index);
                 }}
             />
-            <Center
-                h={'100%'}
-                flexGrow={1}
-                border={'2px solid #919AA9'}
-                bg={'#EEF0F4'}
-            >
+            <Center flexGrow={1} border={'2px solid #919AA9'} bg={'#EEF0F4'}>
                 <Image
                     h={'100%'}
                     w={'100%'}

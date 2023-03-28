@@ -9,10 +9,10 @@ export default function PhotoOverviewElement(props: { element: IPhoto }) {
     const [imageSrc, setImageSrc] = React.useState<string>('');
 
     React.useEffect(() => {
-        getImage(imagePath).then((blob) =>
-            blob ? setImageSrc(URL.createObjectURL(blob)) : ''
-        );
-    }, []);
+        getImage(imagePath).then((blob) => {
+            blob ? setImageSrc(URL.createObjectURL(blob)) : '';
+        });
+    }, [imagePath]);
 
     return (
         <Flex direction={'column'}>
