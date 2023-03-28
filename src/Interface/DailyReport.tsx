@@ -42,3 +42,12 @@ export interface ITodayItem extends IWorkItem {
     completeness: number;
 }
 export interface ITomorrowItem extends IWorkItem {}
+
+export function isTodayItem(v: ITodayItem | ITomorrowItem): v is ITodayItem {
+    return 'completeness' in v;
+}
+export function isTodayList(
+    v: ITodayItem[] | ITomorrowItem[]
+): v is ITodayItem[] {
+    return isTodayItem(v[0]);
+}
