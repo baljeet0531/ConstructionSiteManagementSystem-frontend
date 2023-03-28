@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import React from 'react';
 import PhotoOverviewElement from './PhotoOverviewElement';
 
@@ -92,7 +93,7 @@ export default function PhotoOverviewContainer(props: {
         return (
             <Flex key={index} direction={'column'}>
                 <Text fontSize={'2xl'} mb={'13px'}>
-                    {time}
+                    {dayjs(time).format('YYYY/MM/DD')}
                 </Text>
                 <Flex direction={'column'}>{categoryGroup}</Flex>
             </Flex>
