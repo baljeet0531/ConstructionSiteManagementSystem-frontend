@@ -57,12 +57,7 @@ export default function PhotoCard(props: {
                 />
             </Center>
             <Flex flexGrow={1}>
-                <Flex
-                    direction={'column'}
-                    gap={'5px'}
-                    justify={'flex-start'}
-                    height={'374px'}
-                >
+                <Flex direction={'column'} gap={'5px'} justify={'flex-start'}>
                     <Text variant={'w400s17'} fontWeight={'700'}>
                         相片分類
                     </Text>
