@@ -1,7 +1,15 @@
-import { IDailyReport } from '../../../Interface/DailyReport';
+import { IDailyReport, TCategory } from '../../../Interface/DailyReport';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
-import { Box, Button, Image, Grid, GridItem, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Image,
+    Grid,
+    GridItem,
+    Text,
+    SimpleGrid,
+} from '@chakra-ui/react';
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
 import { GQL_DAILY_REPORT_QUERY } from './GQL';
@@ -55,6 +63,7 @@ export default function DailyReportForm({
         },
         fetchPolicy: 'network-only',
     });
+    console.log(formProps.values)
 
     return (
         <Form>
@@ -91,7 +100,7 @@ export default function DailyReportForm({
                 </Grid>
                 <Grid
                     templateColumns="75fr 234fr 83fr 96fr 150fr 83fr 75fr 73fr"
-                    templateRows="0.8fr repeat(1fr, 4)"
+                    templateRows="repeat(5, 1fr)"
                     mt="16px"
                     h="40vh"
                 >
@@ -229,12 +238,17 @@ export default function DailyReportForm({
 
                 <Text {...subTitleStyle}>出工狀況</Text>
                 <Grid
-                    templateColumns="90px repeat(1fr, 10)"
-                    templateRows="repeat(1fr, 5)"
+                    templateColumns="repeat(11, 1fr)"
+                    templateRows="repeat(5, 1fr)"
                     mt="16px"
                     h="40vh"
                 >
-                    <GridItem {...tableTitleStyle} colStart={1} rowStart={1}>
+                    <GridItem
+                        {...tableTitleStyle}
+                        colStart={1}
+                        rowStart={1}
+                        px={3}
+                    >
                         出工項目
                     </GridItem>
                     <GridItem {...tableContentStyle} colStart={1} rowStart={2}>
@@ -249,17 +263,19 @@ export default function DailyReportForm({
                     <GridItem {...tableContentStyle} colStart={1} rowStart={5}>
                         小計
                     </GridItem>
-                    {f.workNumberColumn('帆宣', 0)}
-                    {f.workNumberColumn('空調', 1)}
-                    {f.workNumberColumn('消防', 2)}
-                    {f.workNumberColumn('給排水', 3)}
-                    {f.workNumberColumn('天然氣及柴油', 4)}
-                    {f.workNumberColumn('電力', 5)}
-                    {f.workNumberColumn('儀控', 6)}
-                    {f.workNumberColumn('弱電', 7)}
-                    {f.workNumberColumn('其他', 8)}
-                    {f.workNumberColumn('合計', 9, true)}
+                    <>
+                        {Object.keys(f.category).map((v, i) =>
+                            f.workNumberColumn(v as TCategory, i)
+                        )}
+                    </>
                 </Grid>
+                <SimpleGrid columns={2} spacing={3} mt="32px">
+                    <Text {...subTitleStyle}>今日施工項目</Text>
+                    <Text {...subTitleStyle}>預定明日施工項目</Text>
+                    {formProps.values.workItem.map((v, i) =>
+                        f.workBundle(v, i)
+                    )}
+                </SimpleGrid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}
         </Form>
