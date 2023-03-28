@@ -51,6 +51,7 @@ export default function ToolboxForm({
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IToolboxData>({
         contractingCorpName: [],
+        dashboardPublicMatters: "",
         toolboxHint: {},
     });
     const [options, setOptions] = useState<IToolboxOptions>({
@@ -66,6 +67,7 @@ export default function ToolboxForm({
         onCompleted: (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
+                dashboardPublicMatters: d.dashboardPublicMatters,
                 toolboxHint: d.toolboxHint,
             });
 
@@ -75,6 +77,7 @@ export default function ToolboxForm({
 
             const singleFormData = parseToolbox(
                 d.toolboxMeeting,
+                d.dashboardPublicMatters,
                 signatures,
                 signatureLists
             );
