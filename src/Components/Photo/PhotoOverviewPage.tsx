@@ -2,13 +2,15 @@ import { Button, Flex, IconButton, Text } from '@chakra-ui/react';
 import React from 'react';
 import { DeleteIcon, LaunchIcon, PublishIcon } from '../../Icons/Icons';
 import { tableViewContainerStyle } from '../../Layouts/MainScreen/MainScreen';
+import PhotoOverviewContainer from './PhotoOverviewContainer';
 
-export default function PhotoMainPage(props: {
+export default function PhotoOverviewPage(props: {
+    siteId: string;
     siteName: string;
     isOpen: boolean;
     onToggle: () => void;
 }) {
-    const { isOpen, onToggle, siteName } = props;
+    const { isOpen, onToggle, siteId, siteName } = props;
     return (
         <Flex {...tableViewContainerStyle} display={isOpen ? 'none' : 'flex'}>
             <Text variant={'pageSiteName'}>{siteName}</Text>
@@ -34,6 +36,7 @@ export default function PhotoMainPage(props: {
                     </Button>
                 </Flex>
             </Flex>
+            <PhotoOverviewContainer siteId={siteId} />
         </Flex>
     );
 }

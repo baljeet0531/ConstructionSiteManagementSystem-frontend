@@ -1,4 +1,4 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -12,13 +12,17 @@ import { FieldArray, Form, Formik } from 'formik';
 import React from 'react';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { AddIcon, BackIcon, EditIcon } from '../../Icons/Icons';
-import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import PhotoCreateList from './PhotoCreateList';
+import { QUERY_PHOTOS } from './PhotoOverviewContainer';
 
 export interface IPhotoInput {
     image: File;
     category: string;
-    date: string;
+    date: Date;
     location: string;
     description: string;
 }
@@ -40,6 +44,12 @@ const CREATE_PHOTOS = gql`
     }
 `;
 
+const QUERY_IMAGE_OPTIONS = gql`
+    query IMOptionList($siteId: String!, $mode: String!) {
+        IMOptionList(siteId: $siteId, mode: $mode)
+    }
+`;
+
 export default function PhotoCreatePage(props: {
     siteId: string;
     siteName: string;
@@ -51,12 +61,42 @@ export default function PhotoCreatePage(props: {
     const [locations, setLocations] = React.useState<ItemDataType[]>([]);
     const inputFileRef = React.useRef<HTMLInputElement>(null);
 
-    // eslint-disable-next-line no-unused-vars
     const [createPhotos] = useMutation(CREATE_PHOTOS, {
-        onCompleted: ({ message, ok }) => {
-            if (ok) {
-                defaultSuccessToast(toast, message);
-            }
+        fetchPolicy: 'network-only',
+        refetchQueries: [QUERY_PHOTOS],
+    });
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: siteId,
+            mode: 'category',
+        },
+        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
+            setCategories(
+                IMOptionList.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: siteId,
+            mode: 'location',
+        },
+        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
+            setLocations(
+                IMOptionList.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
         },
         onError: (err) => {
             console.log(err);
@@ -73,9 +113,33 @@ export default function PhotoCreatePage(props: {
             initialValues={initialValues}
             validateOnChange={false}
             validateOnBlur={false}
-            onSubmit={(values) => {
-                console.log(values);
-                // onToggle();
+            onSubmit={(values, actions) => {
+                actions.setSubmitting(true);
+                const contentFormatted = values.content.map((photoInput) => ({
+                    ...photoInput,
+                    category: photoInput.category || '未分類',
+                    location: photoInput.location || '無資訊',
+                    date: dayjs(photoInput.date).format('YYYY-MM-DD'),
+                }));
+
+                createPhotos({
+                    variables: {
+                        ...values,
+                        content: contentFormatted,
+                    },
+                    onCompleted: ({ createImageManagement }) => {
+                        const { message, ok } = createImageManagement;
+                        if (ok) {
+                            defaultSuccessToast(toast, message);
+                            onToggle();
+                        }
+                    },
+                    onError: (err) => {
+                        console.log(err);
+                        defaultErrorToast(toast);
+                    },
+                });
+                actions.setSubmitting(false);
             }}
         >
             {(props) => (
