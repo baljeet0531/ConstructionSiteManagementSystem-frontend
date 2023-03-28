@@ -8,55 +8,6 @@
     margin: 0px;
 }
 
-.remarks-uploader .rs-uploader-picture .rs-uploader-file-items {
-    display: flex;
-    gap: 20px;
-    margin-right: 20px;
-}
-
-.photo-uploader-trigger .rs-uploader-trigger input[type='file'] {
-    width: 0;
-}
-
-.photo-uploader .rs-uploader-picture-text .rs-uploader-file-items {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
-
-.photo-uploader .rs-uploader-picture-text .rs-uploader-file-item {
-    margin: 0px;
-    background: #ffffff;
-    border: 1px solid #66708029;
-    border-radius: 4px;
-    height: 424px;
-    overflow: unset;
-    padding: 24px;
-    position: relative;
-    -webkit-transition: unset;
-    transition: unset;
-    --rs-uploader-item-hover-bg: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 28px;
-}
-.photo-uploader .rs-uploader-picture-text .rs-uploader-file-item-preview {
-    all: unset;
-    height: 374px;
-    width: 500px;
-    flex-grow: 1;
-}
-.photo-uploader .rs-uploader-picture-text .rs-uploader-file-item-panel {
-    flex-grow: 1;
-}
-
-.photo-uploader
-    .rs-uploader-picture-text
-    .rs-uploader-file-item-panel
-    .rs-uploader-file-item-size {
-    display: none;
-}
 .rs-picker-toggle-value {
     --rs-picker-value: #667080;
 }
