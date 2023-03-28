@@ -8,6 +8,7 @@ import {
     Flex,
     Text,
     VStack,
+    Center,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -51,7 +52,7 @@ export default function ToolboxForm({
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IToolboxData>({
         contractingCorpName: [],
-        dashboardPublicMatters: "",
+        dashboardPublicMatters: '',
         toolboxHint: {},
     });
     const [options, setOptions] = useState<IToolboxOptions>({
@@ -349,7 +350,9 @@ export default function ToolboxForm({
                         依作業性質自備防護具及措施
                     </GridItem>
                     <GridItem {...titleStyle} borderRight="0px">
-                        <Text pl={1}>01.</Text>
+                        <Text pl={1} w="30px">
+                            01.
+                        </Text>
                         {f.threeStateCheckbox('head', '頭部防護:')}
                     </GridItem>
                     <GridItem {...titleStyle} borderLeft="0px">
@@ -358,7 +361,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('headPlastic', '膠盔')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>02.</Text>
+                        <Text pl={1} w="30px">
+                            02.
+                        </Text>
                         {f.threeStateCheckbox('eye', '眼部防護:')}
                     </GridItem>
                     <GridItem
@@ -376,7 +381,9 @@ export default function ToolboxForm({
                         )}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>03.</Text>
+                        <Text pl={1} w="30px">
+                            03.
+                        </Text>
                         {f.threeStateCheckbox('ear', '耳部防護:')}
                     </GridItem>
                     <GridItem
@@ -388,7 +395,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('earEarmuffs', '耳罩')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>04.</Text>
+                        <Text pl={1} w="30px">
+                            04.
+                        </Text>
                         {f.threeStateCheckbox('breathe', '呼吸防護:')}
                     </GridItem>
                     <GridItem
@@ -403,7 +412,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('breathOxygen', '輸氣管面罩')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>05.</Text>
+                        <Text pl={1} w="30px">
+                            05.
+                        </Text>
                         {f.threeStateCheckbox('hand', '手部防護:')}
                     </GridItem>
                     <GridItem
@@ -418,7 +429,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('haneChemical', '防化學')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>06.</Text>
+                        <Text pl={1} w="30px">
+                            06.
+                        </Text>
                         {f.threeStateCheckbox('foot', '足部防護:')}
                     </GridItem>
                     <GridItem
@@ -430,7 +443,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('footChemical', '防化學安全鞋')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>07.</Text>
+                        <Text pl={1} w="30px">
+                            07.
+                        </Text>
                         {f.threeStateCheckbox('body', '身體防護:')}
                     </GridItem>
                     <GridItem
@@ -444,7 +459,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('bodyVest', '反光背心')}
                     </GridItem>
                     <GridItem rowStart={8} rowEnd={10} {...contentStyle}>
-                        <Text pl={1}>08.</Text>
+                        <Text pl={1} w="30px">
+                            08.
+                        </Text>
                         {f.threeStateCheckbox('fall', '墜落預防:')}
                     </GridItem>
                     <GridItem
@@ -471,7 +488,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('fallArrestor', '墜落防止器')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>09.</Text>
+                        <Text pl={1} w="30px">
+                            09.
+                        </Text>
                         {f.threeStateCheckbox('electric', '感電預防:')}
                     </GridItem>
                     <GridItem
@@ -487,7 +506,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('electricElectroscope', '檢電器')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>10.</Text>
+                        <Text pl={1} w="30px">
+                            10.
+                        </Text>
                         {f.threeStateCheckbox('fire', '火災預防:')}
                     </GridItem>
                     <GridItem
@@ -503,7 +524,9 @@ export default function ToolboxForm({
                         )}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>11.</Text>
+                        <Text pl={1} w="30px">
+                            11.
+                        </Text>
                         {f.threeStateCheckbox('oxygen', '缺氧預防:')}
                     </GridItem>
                     <GridItem
@@ -529,7 +552,9 @@ export default function ToolboxForm({
                         {...contentStyle}
                         borderRight="1px"
                     >
-                        <Text pl={1}>12.</Text>
+                        <Text pl={1} w="30px">
+                            12.
+                        </Text>
                         {f.othersField('ohterPrevention', '其他預防:', '500px')}
                     </GridItem>
                     <GridItem
@@ -893,7 +918,14 @@ export default function ToolboxForm({
                             h="90%"
                             disable={
                                 !!signatures
-                                    .contractingCorpStaffSignatureFirst[0]?.no
+                                    .contractingCorpStaffSignatureFirst[0]
+                                    ?.no ||
+                                !(
+                                    formProps.values.contentConformBeforeWork &&
+                                    formProps.values.safetyMeasureBeforeWork &&
+                                    formProps.values.staffStateBeforeWork &&
+                                    formProps.values.principleOnSiteBeforeWork
+                                )
                             }
                         />
                     </GridItem>
@@ -926,7 +958,7 @@ export default function ToolboxForm({
                         pb="2px"
                     >
                         <SignaturePad
-                            title="施工中 - 簽名"
+                            title="放工前 - 簽名"
                             signatureName="knock-off-signature.png"
                             state={
                                 signatures.contractingCorpStaffSignatureThird
@@ -947,6 +979,21 @@ export default function ToolboxForm({
                         borderRight="1px"
                         pb="2px"
                     >
+                        {!(
+                            formProps.values.contentConformBeforeWork &&
+                            formProps.values.safetyMeasureBeforeWork &&
+                            formProps.values.staffStateBeforeWork &&
+                            formProps.values.principleOnSiteBeforeWork
+                        ) && (
+                                <Center
+                                    w="100%"
+                                    h="100%"
+                                    backgroundColor="#919AA9"
+                                    zIndex={99}
+                                >
+                                    You Can't
+                                </Center>
+                        )}
                         <SignaturePad
                             title="監工單位 - 簽名"
                             signatureName="knock-off-signature.png"
