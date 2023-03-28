@@ -99,5 +99,9 @@ export default function PhotoOverviewContainer(props: {
         );
     });
 
-    return <Flex direction={'column'}>{dateGroup}</Flex>;
+    return (
+        <Flex direction={'column'} padding={'13px 42px'}>
+            {dateGroup}
+        </Flex>
+    );
 }
