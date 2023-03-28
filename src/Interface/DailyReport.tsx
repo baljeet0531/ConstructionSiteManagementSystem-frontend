@@ -1,6 +1,7 @@
 export interface IDailyReport {
     siteId: string;
     serialNumber: string;
+    workItem: IWorkContext[];
 }
 export type TCategory =
     | '帆宣'
@@ -15,12 +16,29 @@ export type TCategory =
     | '合計';
 
 export interface IWorkNumber {
-    supervisor?: IWorkNumberItem
-    worker?: IWorkNumberItem
-    overtime?: IWorkNumberItem
-    sum: IWorkNumberItem
+    supervisor?: IWorkNumberItem;
+    labor?: IWorkNumberItem;
+    night?: IWorkNumberItem;
+    total: IWorkNumberItem;
 }
 
 export interface IWorkNumberItem {
     fieldName: string;
 }
+
+export interface IWorkContext {
+    area: string;
+    today: ITodayItem[];
+    tomorrow: ITomorrowItem[];
+}
+
+export interface IWorkItem {
+    projectName: string;
+    location: string;
+    description: string | undefined;
+}
+
+export interface ITodayItem extends IWorkItem {
+    completeness: number;
+}
+export interface ITomorrowItem extends IWorkItem {}

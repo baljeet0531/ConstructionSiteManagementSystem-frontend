@@ -23,6 +23,117 @@ export default function DailyReportModal({
     const initialValues: IDailyReport = {
         siteId: siteId,
         serialNumber: serialNumber,
+        workItem: [
+            {
+                area: 'CUB棟',
+                today: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '1F',
+                        completeness: 40,
+                        description: '',
+                    },
+                    {
+                        projectName: '線路檢查',
+                        location: '2F',
+                        completeness: 60,
+                        description: '',
+                    },
+                ],
+                tomorrow: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                ],
+            },
+            {
+                area: 'OB棟',
+                today: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '1F',
+                        completeness: 40,
+                        description: '',
+                    },
+                    {
+                        projectName: '線路檢查',
+                        location: '2F',
+                        completeness: 60,
+                        description: '',
+                    },
+                ],
+                tomorrow: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                ],
+            },
+            {
+                area: 'AB棟',
+                today: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '1F',
+                        completeness: 40,
+                        description: '',
+                    },
+                ],
+                tomorrow: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                ],
+            },
+            {
+                area: 'AC棟',
+                today: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '1F',
+                        completeness: 40,
+                        description: '',
+                    },
+                ],
+                tomorrow: [],
+            },
+            {
+                area: 'AD棟',
+                today: [],
+                tomorrow: [
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                    {
+                        projectName: '主管路安裝',
+                        location: '2F',
+                        description: '',
+                    },
+                ],
+            },
+        ],
     };
     // const toast = useToast();
     // const [updateDailyReport] = useMutation(GQL_DAILY_REPORT_MUTATION, {
@@ -50,11 +161,7 @@ export default function DailyReportModal({
         <Modal onClose={onClose} isOpen={isOpen} size="full">
             <ModalOverlay />
             <ModalContent color="#667080">
-                <ModalCloseButton
-                    position="fixed"
-                    top='12px'
-                    right='15px'
-                />
+                <ModalCloseButton position="fixed" top="12px" right="15px" />
                 <ModalBody>
                     <Formik
                         initialValues={initialValues}
