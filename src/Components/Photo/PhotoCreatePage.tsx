@@ -8,7 +8,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import { FieldArray, Form, Formik } from 'formik';
+import { FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
 import React from 'react';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { AddIcon, BackIcon, EditIcon } from '../../Icons/Icons';
@@ -104,6 +104,24 @@ export default function PhotoCreatePage(props: {
         fetchPolicy: 'network-only',
     });
 
+    const handleUpload = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        arrayHelpers: FieldArrayRenderProps
+    ) => {
+        const files = inputFileRef.current?.files;
+        const filesArray = files ? Object.values(files) : [];
+        filesArray.forEach((file) => {
+            arrayHelpers.push({
+                image: file,
+                category: null,
+                date: dayjs(file.lastModified).toDate(),
+                location: null,
+                description: '',
+            });
+        });
+        event.target.value = '';
+    };
+
     const initialValues: IPhotoFormValue = {
         content: [],
         siteId: siteId,
@@ -188,27 +206,11 @@ export default function PhotoCreatePage(props: {
                                                 type={'file'}
                                                 accept={'image/*'}
                                                 multiple
-                                                onChange={(e) => {
-                                                    const files =
-                                                        inputFileRef.current
-                                                            ?.files;
-                                                    const filesArray = files
-                                                        ? Object.values(files)
-                                                        : [];
-                                                    filesArray.forEach(
-                                                        (file) => {
-                                                            arrayHelpers.push({
-                                                                image: file,
-                                                                category: null,
-                                                                date: dayjs(
-                                                                    file.lastModified
-                                                                ).toDate(),
-                                                                location: null,
-                                                                description: '',
-                                                            });
-                                                        }
+                                                onChange={(event) => {
+                                                    handleUpload(
+                                                        event,
+                                                        arrayHelpers
                                                     );
-                                                    e.target.value = '';
                                                 }}
                                             />
                                             <Button
