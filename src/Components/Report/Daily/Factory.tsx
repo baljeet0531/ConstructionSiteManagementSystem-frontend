@@ -2,9 +2,10 @@ import {
     IDailyReport,
     ITodayItem,
     ITomorrowItem,
-    IWorkContext,
     IWorkNumber,
     TCategory,
+    isTodayItem,
+    isTodayList,
 } from '../../../Interface/DailyReport';
 import { FormikProps } from 'formik';
 import {
@@ -190,16 +191,6 @@ export default class FormFactory {
             </Fragment>
         );
     }
-    workBundle(ctx: IWorkContext, idx: number) {
-        return (
-            <Fragment key={`work-bundle-${idx}`}>
-                <>
-                    {this.todayWorkList(ctx.area, idx, ctx.today)}
-                    {this.tomorrowWorkList(ctx.area, idx, ctx.tomorrow)}
-                </>
-            </Fragment>
-        );
-    }
     todayWorkList(area: string, idx: number, items: ITodayItem[]) {
         if (!items) {
             return <></>;
@@ -207,8 +198,8 @@ export default class FormFactory {
         return (
             <Grid
                 templateColumns="3fr repeat(3, 1fr)"
-                templateRows={`repeat(${4 + items.length * 2}, 1fr)`}
-                h={`${(3 + items.length * 2) * 40}px`}
+                templateRows={`repeat(${1 + items.length * 2}, 1fr)`}
+                h={`${(1 + items.length * 2) * 40}px`}
             >
                 <GridItem {...tableTitleStyle} fontWeight="600" colStart={1}>
                     {area}
@@ -223,16 +214,6 @@ export default class FormFactory {
                     刪除
                 </GridItem>
                 {items.map((v, i) => this.workItem(idx, v, i))}
-                {this.workItem(
-                    idx,
-                    {
-                        projectName: '',
-                        location: '',
-                        description: '',
-                        completeness: 0,
-                    },
-                    items.length
-                )}
             </Grid>
         );
     }
@@ -261,21 +242,36 @@ export default class FormFactory {
     }
     workItem(row_idx: number, v: ITodayItem | ITomorrowItem, i: number) {
         const update = [...this.formProps.values.workItem];
-        const type = 'completeness' in v ? 'today' : 'tomorrow';
+        const type = isTodayItem(v) ? 'today' : 'tomorrow';
         const target = update[row_idx][type];
         const handleChange = (
             e: ChangeEvent<HTMLInputElement>,
-            field: keyof ITodayItem & keyof ITomorrowItem
+            field: keyof ITodayItem | keyof ITomorrowItem
         ) => {
-            v[field] = e.target.value;
+            field !== 'completeness'
+                ? (v[field] = e.target.value)
+                : isTodayItem(v) && (v[field] = Number(e.target.value));
             target[i] = v;
+            if (i === target.length - 1) {
+                isTodayList(target)
+                    ? target.push({
+                          projectName: '',
+                          location: '',
+                          description: '',
+                          completeness: 0,
+                      })
+                    : target.push({
+                          projectName: '',
+                          location: '',
+                          description: '',
+                      });
+            }
             this.formProps.setFieldValue('workItem', update);
         };
-        const handleCompleteness = (e: ChangeEvent<HTMLInputElement>) => {
-            const target = update[row_idx]['today'];
-            target[i].completeness = Number(e.target.value);
+        const handleDelete = () => {
+            target.splice(i, 1)
             this.formProps.setFieldValue('workItem', update);
-        };
+        }
         return (
             <Fragment key={`work-item-${i}`}>
                 <GridInputItem
@@ -307,7 +303,7 @@ export default class FormFactory {
                     })}
                     style={{ ...tableContentStyle, borderLeft: '0px' }}
                 />
-                {'completeness' in v ? (
+                {isTodayItem(v) ? (
                     <GridInputItem
                         gridRange={[2 * i + 2, 2 * i + 2, 3, 3]}
                         fieldName=""
@@ -317,27 +313,32 @@ export default class FormFactory {
                             h: '100%',
                             border: '0px',
                             textAlign: 'right',
-                            onChange: handleCompleteness,
+                            onChange: (e) => {
+                                handleChange(e, 'completeness');
+                            },
+                            pr: '15px',
                         })}
                         inputRightComponent={<Text fontSize="10px">%</Text>}
+                        inputRightStyle={{ w: '10px' }}
                         style={{ ...tableContentStyle, borderLeft: '0px' }}
                     />
                 ) : (
                     <></>
                 )}
                 <GridItem
-                    colStart={'completeness' in v ? 4 : 3}
+                    colStart={isTodayItem(v) ? 4 : 3}
                     {...tableContentStyle}
                     borderLeft="0px"
                     borderRight="#919AA9 solid 1px"
                 >
-                    {target.length > i && (
+                    {target.length !== i + 1 && (
                         <IconButton
                             size={'xs'}
                             aria-label="DeleteWorkItem"
                             icon={<CloseIcon />}
                             bg={'none'}
                             color={'#667080'}
+                            onClick={handleDelete}
                         />
                     )}
                 </GridItem>

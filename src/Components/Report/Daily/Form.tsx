@@ -13,7 +13,7 @@ import {
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
 import { GQL_DAILY_REPORT_QUERY } from './GQL';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { FormLoading } from '../../Shared/Loading';
 import { getImage } from '../../../Utils/Resources';
 import {
@@ -63,7 +63,7 @@ export default function DailyReportForm({
         },
         fetchPolicy: 'network-only',
     });
-    console.log(formProps.values)
+    console.log(formProps.values);
 
     return (
         <Form>
@@ -102,7 +102,7 @@ export default function DailyReportForm({
                     templateColumns="75fr 234fr 83fr 96fr 150fr 83fr 75fr 73fr"
                     templateRows="repeat(5, 1fr)"
                     mt="16px"
-                    h="40vh"
+                    h="270px"
                 >
                     <GridItem colStart={1} colEnd={5} {...subTitleStyle}>
                         基本資訊
@@ -241,7 +241,7 @@ export default function DailyReportForm({
                     templateColumns="repeat(11, 1fr)"
                     templateRows="repeat(5, 1fr)"
                     mt="16px"
-                    h="40vh"
+                    h="275px"
                 >
                     <GridItem
                         {...tableTitleStyle}
@@ -272,9 +272,12 @@ export default function DailyReportForm({
                 <SimpleGrid columns={2} spacing={3} mt="32px">
                     <Text {...subTitleStyle}>今日施工項目</Text>
                     <Text {...subTitleStyle}>預定明日施工項目</Text>
-                    {formProps.values.workItem.map((v, i) =>
-                        f.workBundle(v, i)
-                    )}
+                    {formProps.values.workItem.map((v, i) => (
+                        <Fragment key={`work-bundle-${i}`}>
+                            {f.todayWorkList(v.area, i, v.today)}
+                            {f.tomorrowWorkList(v.area, i, v.tomorrow)}
+                        </Fragment>
+                    ))}
                 </SimpleGrid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}
