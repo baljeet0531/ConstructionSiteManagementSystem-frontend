@@ -94,6 +94,7 @@ export default function SiteAreas(props: {
                                             flex={1}
                                             overflowX={'auto'}
                                             lineHeight={'20px'}
+                                            color={'#FFFFFF'}
                                         >
                                             {areaName}
                                         </Text>
