@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -16,6 +16,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import { QUERY_IMAGE_OPTIONS } from './Photo';
 import PhotoCreateList from './PhotoCreateList';
 import { QUERY_PHOTOS } from './PhotoOverviewContainer';
 
@@ -44,64 +45,26 @@ const CREATE_PHOTOS = gql`
     }
 `;
 
-const QUERY_IMAGE_OPTIONS = gql`
-    query IMOptionList($siteId: String!, $mode: String!) {
-        IMOptionList(siteId: $siteId, mode: $mode)
-    }
-`;
-
 export default function PhotoCreatePage(props: {
     siteId: string;
     siteName: string;
     onToggle: () => void;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { onToggle, siteId, siteName } = props;
+    const { onToggle, siteId, siteName, serverCategories, serverLocations } =
+        props;
     const toast = useToast();
-    const [categories, setCategories] = React.useState<ItemDataType[]>([]);
-    const [locations, setLocations] = React.useState<ItemDataType[]>([]);
+
     const inputFileRef = React.useRef<HTMLInputElement>(null);
+    const [clientCategories, setClientCategories] =
+        React.useState<ItemDataType[]>(serverCategories);
+    const [clientLocations, setClientLocations] =
+        React.useState<ItemDataType[]>(serverLocations);
 
     const [createPhotos] = useMutation(CREATE_PHOTOS, {
         fetchPolicy: 'network-only',
-        refetchQueries: [QUERY_PHOTOS],
-    });
-
-    useQuery(QUERY_IMAGE_OPTIONS, {
-        variables: {
-            siteId: siteId,
-            mode: 'category',
-        },
-        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
-            setCategories(
-                IMOptionList.map((option) => ({
-                    label: option,
-                    value: option,
-                }))
-            );
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    useQuery(QUERY_IMAGE_OPTIONS, {
-        variables: {
-            siteId: siteId,
-            mode: 'location',
-        },
-        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
-            setLocations(
-                IMOptionList.map((option) => ({
-                    label: option,
-                    value: option,
-                }))
-            );
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
+        refetchQueries: [QUERY_PHOTOS, QUERY_IMAGE_OPTIONS],
     });
 
     const handleUpload = (
@@ -161,7 +124,7 @@ export default function PhotoCreatePage(props: {
             }}
         >
             {(props) => (
-                <Form>
+                <Form style={{ width: '100%', height: '100%' }}>
                     <FieldArray name="content">
                         {(arrayHelpers) => (
                             <Flex direction={'column'} w={'100%'} h={'100%'}>
@@ -228,10 +191,10 @@ export default function PhotoCreatePage(props: {
                                 <PhotoCreateList
                                     formProps={props}
                                     arrayHelpers={arrayHelpers}
-                                    categories={categories}
-                                    setCategories={setCategories}
-                                    locations={locations}
-                                    setLocations={setLocations}
+                                    categories={clientCategories}
+                                    setCategories={setClientCategories}
+                                    locations={clientLocations}
+                                    setLocations={setClientLocations}
                                 />
                             </Flex>
                         )}
