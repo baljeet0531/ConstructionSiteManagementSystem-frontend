@@ -62,7 +62,7 @@ export default function Sidebar(props: {
             overflowY={'auto'}
             justify={'space-between'}
         >
-            <Flex direction={'column'} align={'center'} justify={'flex-start'}>
+            <Flex direction={'column'} align={'center'} justify={'flex-start'} w={'100%'}>
                 <AspectRatio w="66%" ratio={1}>
                     <Avatar
                         name=""
@@ -98,6 +98,7 @@ export default function Sidebar(props: {
                     color={'#667080'}
                     bg={'#6670801A'}
                     borderRadius={'30px'}
+                    fontSize={'15px'}
                     onClick={() => {
                         removeCookie('jwt', {
                             path: '/',
