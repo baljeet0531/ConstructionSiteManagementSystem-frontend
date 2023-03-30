@@ -22,6 +22,7 @@ import Owner from '../../Images/Avatars/Owner.svg';
 import { ISiteObject } from '../Layout';
 import { LogoutIcon } from '../../Icons/Icons';
 import { useCookies } from 'react-cookie';
+import { VERSION } from '../../Constants/EnvConstants';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -55,7 +56,7 @@ export default function Sidebar(props: {
 
     return (
         <VStack
-            padding={'50px 26px 30px 26px'}
+            padding={'50px 26px 10px 26px'}
             w="20vw"
             h={'100%'}
             overflowY={'auto'}
@@ -88,28 +89,31 @@ export default function Sidebar(props: {
                     setSelectedSiteId={setSelectedSiteId}
                 ></Menu>
             </Flex>
-            <Button
-                leftIcon={<LogoutIcon />}
-                flexShrink={0}
-                height={'44px'}
-                width={'100%'}
-                color={'#667080'}
-                bg={'#6670801A'}
-                borderRadius={'30px'}
-                onClick={() => {
-                    removeCookie('jwt', {
-                        path: '/',
-                        secure: false,
-                    });
-                    removeCookie('username', {
-                        path: '/',
-                        secure: false,
-                    });
-                    window.location.href = '/login';
-                }}
-            >
-                登出
-            </Button>
+            <VStack w="100%">
+                <Button
+                    leftIcon={<LogoutIcon />}
+                    flexShrink={0}
+                    height={'44px'}
+                    width={'100%'}
+                    color={'#667080'}
+                    bg={'#6670801A'}
+                    borderRadius={'30px'}
+                    onClick={() => {
+                        removeCookie('jwt', {
+                            path: '/',
+                            secure: false,
+                        });
+                        removeCookie('username', {
+                            path: '/',
+                            secure: false,
+                        });
+                        window.location.href = '/login';
+                    }}
+                >
+                    登出
+                </Button>
+                <Text variant="w400s12">版本：{VERSION}</Text>
+            </VStack>
         </VStack>
     );
 }
