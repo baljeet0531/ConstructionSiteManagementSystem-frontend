@@ -166,8 +166,12 @@ export function getFeatureMap(site: {
         project_photo: {
             name: '相片管理',
             path: '/project/photo',
-            // page: <Photo />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Photo key={siteId} siteId={siteId} siteName={siteName} />
+                ),
         },
         eng_work_permit_form: {
             name: '工作許可單',
@@ -226,8 +230,12 @@ export function getFeatureMap(site: {
         eng_photo: {
             name: '相片管理',
             path: '/eng/photo',
-            // page: <Photo />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Photo key={siteId} siteId={siteId} siteName={siteName} />
+                ),
         },
         ehs_form: {
             name: '工安自主檢查',
@@ -258,8 +266,12 @@ export function getFeatureMap(site: {
         ehs_photo: {
             name: '相片管理',
             path: '/ehs/photo',
-            // page: <Photo />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Photo key={siteId} siteId={siteId} siteName={siteName} />
+                ),
         },
         outsource_work_permit_form: {
             name: '工作許可單',
