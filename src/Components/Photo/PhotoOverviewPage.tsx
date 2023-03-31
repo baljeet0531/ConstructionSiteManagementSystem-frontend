@@ -1,4 +1,4 @@
-import { gql, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -15,13 +15,31 @@ import { DateRangePicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DeleteIcon, LaunchIcon, PublishIcon } from '../../Icons/Icons';
 import { handleDebounceSearch } from '../../Utils/handleDebounceSearch';
-import PhotoOverviewContainer, {
+import {
+    IFilteredPhotos,
     IPhotoQueryData,
-} from './PhotoOverviewContainer';
+    IPhotosDataChecked,
+} from './Interface';
+import PhotoOverviewContainer from './PhotoOverviewContainer';
 
-export interface IFilteredPhotos {
-    [time: string]: { [category: string]: number[] };
-}
+export const QUERY_PHOTOS = gql`
+    query ImageManagement($siteId: String!) {
+        imageManagement(siteId: $siteId) {
+            time
+            element {
+                categoryName
+                element {
+                    no
+                    imagePath
+                    category
+                    date
+                    location
+                    description
+                }
+            }
+        }
+    }
+`;
 
 const QUERY_FILTER_PHOTOS = gql`
     query FilterImageManagement(
@@ -70,6 +88,8 @@ export default function PhotoOverviewPage(props: {
 
     const timeout = React.useRef<any>();
     const keywordRef = React.useRef<HTMLInputElement>(null);
+    const checkedRef = React.useRef<IPhotosDataChecked>({});
+    const [, setRerender] = React.useState<boolean>(false);
 
     const [filterOptions, setFilterOptions] = React.useState<{
         category: string | undefined;
@@ -114,6 +134,49 @@ export default function PhotoOverviewPage(props: {
                 </option>
             )
         );
+
+    useQuery(QUERY_PHOTOS, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            imageManagement,
+        }: {
+            imageManagement: IPhotoQueryData[];
+        }) => {
+            const dateGroup = imageManagement.map(({ time, element }) => {
+                const categoryGroup = element.map(
+                    ({ categoryName, element }) => ({
+                        [categoryName]: {
+                            photos: Object.assign(
+                                {},
+                                ...element.map((element) => ({
+                                    [element.no]: {
+                                        ...element,
+                                        isChecked: false,
+                                    },
+                                }))
+                            ),
+                            isChecked: false,
+                        },
+                    })
+                );
+                return {
+                    [time]: {
+                        categories: Object.assign({}, ...categoryGroup),
+                        isChecked: false,
+                    },
+                };
+            });
+            const formattedData = Object.assign({}, ...dateGroup);
+            checkedRef.current = formattedData;
+            setRerender((prev) => !prev);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     const [searchPhotos] = useLazyQuery(QUERY_FILTER_PHOTOS, {
         onCompleted: ({
@@ -273,6 +336,7 @@ export default function PhotoOverviewPage(props: {
             <PhotoOverviewContainer
                 siteId={siteId}
                 filteredPhotos={filteredPhotos}
+                checkedRef={checkedRef}
             />
         </Flex>
     );
