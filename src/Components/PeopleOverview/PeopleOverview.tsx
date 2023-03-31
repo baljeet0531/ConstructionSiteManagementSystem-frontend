@@ -224,7 +224,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    主管證照資料: {
+    主管證照名稱: {
         編號: {
             width: 40,
             variable: 'index',
