@@ -92,11 +92,15 @@ export default function DeleteModal(props: {
                     </Text>
                 </ModalBody>
                 <ModalFooter padding={0}>
-                    <Button variant={'whiteOutline'} mr={3} onClick={onClose}>
+                    <Button
+                        variant={'whiteOutline'}
+                        mr={'16px'}
+                        onClick={onClose}
+                    >
                         取消
                     </Button>
                     <Button variant={'buttonBlueSolid'} onClick={handleDelete}>
-                        確認
+                        確定
                     </Button>
                 </ModalFooter>
             </ModalContent>
