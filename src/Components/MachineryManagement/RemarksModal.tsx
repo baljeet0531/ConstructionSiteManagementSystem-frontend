@@ -110,6 +110,7 @@ export default function RemarksTable(props: {
                                 draggable
                                 multiple
                                 action="#"
+                                accept="image/*"
                                 onChange={setRemarksPhotos}
                                 ref={uploader}
                                 renderThumbnail={(file, thumbnail: any) => (
