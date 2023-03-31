@@ -18,7 +18,7 @@ import {
 } from '../../Utils/DefaultToast';
 import { QUERY_IMAGE_OPTIONS } from './Photo';
 import PhotoCreateList from './PhotoCreateList';
-import { QUERY_PHOTOS } from './PhotoOverviewContainer';
+import { QUERY_PHOTOS } from './PhotoOverviewPage';
 
 export interface IPhotoInput {
     image: File;
