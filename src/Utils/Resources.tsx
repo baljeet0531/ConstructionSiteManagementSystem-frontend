@@ -33,16 +33,7 @@ export async function exportFile(
         },
         method: 'GET',
     })
-        .then((data) => {
-            toast({
-                title: message,
-                description: '成功匯出',
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
-            });
-            return data.blob();
-        })
+        .then((data) => data.blob())
         .then((blob) => {
             const url = window.URL.createObjectURL(blob);
             const filename = path.slice(path.lastIndexOf('/') + 1);
@@ -52,6 +43,13 @@ export async function exportFile(
             document.body.appendChild(fileLink);
             fileLink.click();
             fileLink.remove();
+            toast({
+                title: message,
+                description: '成功匯出',
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
         })
         .catch((err) => console.log(err));
 }

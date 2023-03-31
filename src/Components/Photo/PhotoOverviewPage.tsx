@@ -1,4 +1,4 @@
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -8,18 +8,26 @@ import {
     Input,
     Select,
     Text,
+    useToast,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { Cookies } from 'react-cookie';
 import { DateRangePicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DeleteIcon, LaunchIcon, PublishIcon } from '../../Icons/Icons';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import { handleDebounceSearch } from '../../Utils/handleDebounceSearch';
+import { exportFile } from '../../Utils/Resources';
 import {
     IFilteredPhotos,
     IPhotoQueryData,
     IPhotosDataChecked,
 } from './Interface';
+import { QUERY_IMAGE_OPTIONS } from './Photo';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 
 export const QUERY_PHOTOS = gql`
@@ -69,6 +77,28 @@ const QUERY_FILTER_PHOTOS = gql`
     }
 `;
 
+const DELETE_PHOTOS = gql`
+    mutation DeleteImageManagement($no: [Int]!) {
+        deleteImageManagement(no: $no) {
+            ok
+            message
+        }
+    }
+`;
+const EXPORT_PHOTOS = gql`
+    mutation ExportImageManagement(
+        $no: [Int]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportImageManagement(no: $no, siteId: $siteId, username: $username) {
+            ok
+            message
+            path
+        }
+    }
+`;
+
 export default function PhotoOverviewPage(props: {
     siteId: string;
     siteName: string;
@@ -85,6 +115,9 @@ export default function PhotoOverviewPage(props: {
         serverCategories,
         serverLocations,
     } = props;
+
+    const toast = useToast();
+    const username = new Cookies().get('username');
 
     const timeout = React.useRef<any>();
     const keywordRef = React.useRef<HTMLInputElement>(null);
@@ -202,6 +235,71 @@ export default function PhotoOverviewPage(props: {
         fetchPolicy: 'network-only',
     });
 
+    const [deletePhotos] = useMutation(DELETE_PHOTOS, {
+        onCompleted: ({ deleteImageManagement }) => {
+            const { ok, message } = deleteImageManagement;
+            if (ok) {
+                defaultSuccessToast(toast, message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+        refetchQueries: [
+            QUERY_PHOTOS,
+            QUERY_FILTER_PHOTOS,
+            QUERY_IMAGE_OPTIONS,
+        ],
+    });
+    const [exportPhotos] = useMutation(EXPORT_PHOTOS, {
+        onCompleted: ({ exportImageManagement }) => {
+            if (exportImageManagement.ok) {
+                const { path, message } = exportImageManagement;
+                exportFile(path, message, toast);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const handleDelete = () => {
+        const handleDelete = Object.values(checkedRef.current).flatMap((date) =>
+            Object.values(date.categories).flatMap((category) =>
+                Object.values(category.photos).flatMap(({ isChecked, no }) =>
+                    isChecked ? no : []
+                )
+            )
+        );
+
+        deletePhotos({
+            variables: {
+                no: handleDelete,
+            },
+        });
+    };
+    const handleExport = () => {
+        const handleDelete = Object.values(checkedRef.current).flatMap((date) =>
+            Object.values(date.categories).flatMap((category) =>
+                Object.values(category.photos).flatMap(({ isChecked, no }) =>
+                    isChecked ? no : []
+                )
+            )
+        );
+
+        exportPhotos({
+            variables: {
+                no: handleDelete,
+                siteId: siteId,
+                username: username,
+            },
+        });
+    };
+
     React.useEffect(() => {
         searchPhotos({ variables: { siteId: siteId, ...filterOptions } });
     }, []);
@@ -227,11 +325,13 @@ export default function PhotoOverviewPage(props: {
                             variant={'blueOutline'}
                             aria-label="export photos"
                             icon={<LaunchIcon />}
+                            onClick={handleExport}
                         />
                         <IconButton
                             variant={'blueOutline'}
                             aria-label="delete photos"
                             icon={<DeleteIcon />}
+                            onClick={handleDelete}
                         />
                         <Button
                             variant={'buttonBlueSolid'}
