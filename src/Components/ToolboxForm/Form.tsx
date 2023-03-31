@@ -8,7 +8,6 @@ import {
     Flex,
     Text,
     VStack,
-    Center,
 } from '@chakra-ui/react';
 import { FormikProps, Form } from 'formik';
 import { useQuery } from '@apollo/client';
@@ -728,7 +727,10 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="contentConformBeforeWork"
-                        inputComponent={f.checkBox('contentConformBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'contentConformBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
@@ -907,133 +909,140 @@ export default function ToolboxForm({
                         borderBottom="1px"
                         pb="2px"
                     >
-                        <SignaturePad
-                            title="施工前 - 簽名"
-                            signatureName="before-work-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureFirst
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureFirst[0]
-                                    ?.no ||
-                                !(
-                                    formProps.values.contentConformBeforeWork &&
-                                    formProps.values.safetyMeasureBeforeWork &&
-                                    formProps.values.staffStateBeforeWork &&
-                                    formProps.values.principleOnSiteBeforeWork
-                                )
-                            }
-                        />
-                    </GridItem>
-                    <GridItem
-                        rowStart={10}
-                        rowEnd={13}
-                        borderBottom="1px"
-                        pb="2px"
-                    >
-                        <SignaturePad
-                            title="施工中 - 簽名"
-                            signatureName="during-work-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureSecond
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureSecond[0]?.no
-                            }
-                        />
-                    </GridItem>
-                    <GridItem
-                        rowStart={10}
-                        rowEnd={13}
-                        borderBottom="1px"
-                        borderRight="1px"
-                        pb="2px"
-                    >
-                        <SignaturePad
-                            title="放工前 - 簽名"
-                            signatureName="knock-off-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureThird
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureThird[0]?.no
-                            }
-                        />
-                    </GridItem>
-                    <GridItem
-                        rowStart={10}
-                        rowEnd={13}
-                        borderBottom="1px"
-                        borderRight="1px"
-                        pb="2px"
-                    >
-                        {!(
-                            formProps.values.contentConformBeforeWork &&
-                            formProps.values.safetyMeasureBeforeWork &&
-                            formProps.values.staffStateBeforeWork &&
-                            formProps.values.principleOnSiteBeforeWork
-                        ) && (
-                                <Center
-                                    w="100%"
-                                    h="100%"
-                                    backgroundColor="#919AA9"
-                                    zIndex={99}
-                                >
-                                    You Can't
-                                </Center>
+                        {f.validSignBeforeWork() ? (
+                            <SignaturePad
+                                title="施工前 - 簽名"
+                                signatureName="before-work-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureFirst
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureFirst[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
                         )}
-                        <SignaturePad
-                            title="監工單位 - 簽名"
-                            signatureName="knock-off-signature.png"
-                            state={signatures.systemEngineerSignature}
-                            placeHolderText="系統工程師"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures.systemEngineerSignature[0]?.no
-                            }
-                        />
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        pb="2px"
+                    >
+                        {f.validSignDuringWork() ? (
+                            <SignaturePad
+                                title="施工中 - 簽名"
+                                signatureName="during-work-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureSecond
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureSecond[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        pb="2px"
+                    >
+                        {f.validSignKnockOff() ? (
+                            <SignaturePad
+                                title="放工前 - 簽名"
+                                signatureName="knock-off-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureThird
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureThird[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        pb="2px"
+                    >
+                        {f.validSignSupervisor() ? (
+                            <SignaturePad
+                                title="監工單位 - 簽名"
+                                signatureName="knock-off-signature.png"
+                                state={signatures.systemEngineerSignature}
+                                placeHolderText="系統工程師"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures.systemEngineerSignature[0]?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
                     </GridItem>
                     <GridItem {...centerStyle} borderRight="1px">
                         檢查時間(時/分)
                     </GridItem>
                     <GridItem {...centerStyle} borderLeft="0px">
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureFirst
-                        )}
+                        {f.validSignBeforeWork()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureFirst
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem {...centerStyle} borderLeft="0px">
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureSecond
-                        )}
+                        {f.validSignDuringWork()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureSecond
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
                     >
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureThird
-                        )}
+                        {f.validSignKnockOff()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureThird
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
                     >
-                        {f.checkTimeInput(signatures.systemEngineerSignature)}
+                        {f.validSignSupervisor()
+                            ? f.checkTimeInput(
+                                  signatures.systemEngineerSignature
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                 </Grid>
                 <Flex justifyContent="space-between">

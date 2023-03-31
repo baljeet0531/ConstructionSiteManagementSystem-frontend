@@ -1,4 +1,11 @@
-import { Checkbox, Input, Textarea, HStack, VStack } from '@chakra-ui/react';
+import {
+    Checkbox,
+    Input,
+    Textarea,
+    HStack,
+    VStack,
+    Center,
+} from '@chakra-ui/react';
 import {
     AutoComplete,
     AutoCompleteInput,
@@ -187,11 +194,12 @@ export default class FormFactory extends SharedFactory {
             </>
         );
     }
-    checkBox(name: keyof IToolbox) {
+    checkBox(name: keyof IToolbox, disable: boolean = false) {
         return (
             <Checkbox
                 isChecked={this.formProps.values[name] as boolean}
                 onChange={this.formProps.handleChange}
+                isDisabled={disable}
             />
         );
     }
@@ -277,6 +285,56 @@ export default class FormFactory extends SharedFactory {
                     )}
                 </AutoCompleteList>
             </AutoComplete>
+        );
+    }
+    forbidSignOverlay() {
+        return (
+            <Center
+                w="100%"
+                h="100%"
+                p={4}
+                textAlign="center"
+                color="#66708080"
+                backgroundColor="#919AA922"
+            >
+                勾選所有檢查項目後才能簽名
+            </Center>
+        );
+    }
+    forbidOverlay() {
+        return <Center w="100%" h="100%" backgroundColor="#919AA922" />;
+    }
+    validSignBeforeWork() {
+        return (
+            this.formProps.values.contentConformBeforeWork &&
+            this.formProps.values.safetyMeasureBeforeWork &&
+            this.formProps.values.staffStateBeforeWork &&
+            this.formProps.values.principleOnSiteBeforeWork
+        );
+    }
+    validSignDuringWork() {
+        return (
+            this.formProps.values.contentConformDuringWork &&
+            this.formProps.values.safetyMeasureDuringWork &&
+            this.formProps.values.staffStateDuringWork &&
+            this.formProps.values.principleOnSiteDuringWork
+        );
+    }
+    validSignKnockOff() {
+        return (
+            this.formProps.values.safetyMeasureKnockOff &&
+            this.formProps.values.staffStateKnockOff &&
+            this.formProps.values.principleOnSiteKnockOff &&
+            this.formProps.values.restorationKnockOff
+        );
+    }
+    validSignSupervisor() {
+        return (
+            this.formProps.values.contentConformSupervisor &&
+            this.formProps.values.principleOnSiteSupervisor &&
+            this.formProps.values.restorationSupervisor &&
+            this.formProps.values.safetyMeasureSupervisor &&
+            this.formProps.values.staffStateSupervisor
         );
     }
 }
