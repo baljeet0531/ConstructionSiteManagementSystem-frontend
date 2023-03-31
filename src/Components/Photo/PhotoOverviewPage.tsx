@@ -8,6 +8,7 @@ import {
     Input,
     Select,
     Text,
+    useDisclosure,
     useToast,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
@@ -16,18 +17,15 @@ import { Cookies } from 'react-cookie';
 import { DateRangePicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DeleteIcon, LaunchIcon, PublishIcon } from '../../Icons/Icons';
-import {
-    defaultErrorToast,
-    defaultSuccessToast,
-} from '../../Utils/DefaultToast';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { handleDebounceSearch } from '../../Utils/handleDebounceSearch';
 import { exportFile } from '../../Utils/Resources';
+import DeleteModal from './DeleteModal';
 import {
     IFilteredPhotos,
     IPhotoQueryData,
     IPhotosDataChecked,
 } from './Interface';
-import { QUERY_IMAGE_OPTIONS } from './Photo';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 
 export const QUERY_PHOTOS = gql`
@@ -49,7 +47,7 @@ export const QUERY_PHOTOS = gql`
     }
 `;
 
-const QUERY_FILTER_PHOTOS = gql`
+export const QUERY_FILTER_PHOTOS = gql`
     query FilterImageManagement(
         $siteId: String!
         $category: String
@@ -77,14 +75,6 @@ const QUERY_FILTER_PHOTOS = gql`
     }
 `;
 
-const DELETE_PHOTOS = gql`
-    mutation DeleteImageManagement($no: [Int]!) {
-        deleteImageManagement(no: $no) {
-            ok
-            message
-        }
-    }
-`;
 const EXPORT_PHOTOS = gql`
     mutation ExportImageManagement(
         $no: [Int]!
@@ -116,6 +106,7 @@ export default function PhotoOverviewPage(props: {
         serverLocations,
     } = props;
 
+    const deleteModalDisclosure = useDisclosure();
     const toast = useToast();
     const username = new Cookies().get('username');
 
@@ -235,24 +226,6 @@ export default function PhotoOverviewPage(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [deletePhotos] = useMutation(DELETE_PHOTOS, {
-        onCompleted: ({ deleteImageManagement }) => {
-            const { ok, message } = deleteImageManagement;
-            if (ok) {
-                defaultSuccessToast(toast, message);
-            }
-        },
-        onError: (err) => {
-            console.log(err);
-            defaultErrorToast(toast);
-        },
-        fetchPolicy: 'network-only',
-        refetchQueries: [
-            QUERY_PHOTOS,
-            QUERY_FILTER_PHOTOS,
-            QUERY_IMAGE_OPTIONS,
-        ],
-    });
     const [exportPhotos] = useMutation(EXPORT_PHOTOS, {
         onCompleted: ({ exportImageManagement }) => {
             if (exportImageManagement.ok) {
@@ -267,21 +240,6 @@ export default function PhotoOverviewPage(props: {
         fetchPolicy: 'network-only',
     });
 
-    const handleDelete = () => {
-        const handleDelete = Object.values(checkedRef.current).flatMap((date) =>
-            Object.values(date.categories).flatMap((category) =>
-                Object.values(category.photos).flatMap(({ isChecked, no }) =>
-                    isChecked ? no : []
-                )
-            )
-        );
-
-        deletePhotos({
-            variables: {
-                no: handleDelete,
-            },
-        });
-    };
     const handleExport = () => {
         const handleDelete = Object.values(checkedRef.current).flatMap((date) =>
             Object.values(date.categories).flatMap((category) =>
@@ -331,7 +289,7 @@ export default function PhotoOverviewPage(props: {
                             variant={'blueOutline'}
                             aria-label="delete photos"
                             icon={<DeleteIcon />}
-                            onClick={handleDelete}
+                            onClick={deleteModalDisclosure.onOpen}
                         />
                         <Button
                             variant={'buttonBlueSolid'}
@@ -437,6 +395,11 @@ export default function PhotoOverviewPage(props: {
                 siteId={siteId}
                 filteredPhotos={filteredPhotos}
                 checkedRef={checkedRef}
+            />
+            <DeleteModal
+                checkedRef={checkedRef}
+                isOpen={deleteModalDisclosure.isOpen}
+                onClose={deleteModalDisclosure.onClose}
             />
         </Flex>
     );
