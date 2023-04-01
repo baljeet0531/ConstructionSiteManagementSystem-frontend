@@ -735,13 +735,19 @@ export default function ToolboxForm({
                     />
                     <GridInputItem
                         fieldName="contentConformDuringWork"
-                        inputComponent={f.checkBox('contentConformDuringWork')}
+                        inputComponent={f.checkBox(
+                            'contentConformDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridItem borderBottom="1px" borderRight="1px" />
                     <GridInputItem
                         fieldName="contentConformSupervisor"
-                        inputComponent={f.checkBox('contentConformSupervisor')}
+                        inputComponent={f.checkBox(
+                            'contentConformSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>2</GridItem>
@@ -756,22 +762,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="safetyMeasureBeforeWork"
-                        inputComponent={f.checkBox('safetyMeasureBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureDuringWork"
-                        inputComponent={f.checkBox('safetyMeasureDuringWork')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureKnockOff"
-                        inputComponent={f.checkBox('safetyMeasureKnockOff')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureSupervisor"
-                        inputComponent={f.checkBox('safetyMeasureSupervisor')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>3</GridItem>
@@ -786,22 +804,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="staffStateBeforeWork"
-                        inputComponent={f.checkBox('staffStateBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'staffStateBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateDuringWork"
-                        inputComponent={f.checkBox('staffStateDuringWork')}
+                        inputComponent={f.checkBox(
+                            'staffStateDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateKnockOff"
-                        inputComponent={f.checkBox('staffStateKnockOff')}
+                        inputComponent={f.checkBox(
+                            'staffStateKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateSupervisor"
-                        inputComponent={f.checkBox('staffStateSupervisor')}
+                        inputComponent={f.checkBox(
+                            'staffStateSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>4</GridItem>
@@ -816,22 +846,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="principleOnSiteBeforeWork"
-                        inputComponent={f.checkBox('principleOnSiteBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteDuringWork"
-                        inputComponent={f.checkBox('principleOnSiteDuringWork')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteKnockOff"
-                        inputComponent={f.checkBox('principleOnSiteKnockOff')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteSupervisor"
-                        inputComponent={f.checkBox('principleOnSiteSupervisor')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>5</GridItem>
@@ -848,12 +890,18 @@ export default function ToolboxForm({
                     <GridItem borderBottom="1px" />
                     <GridInputItem
                         fieldName="restorationKnockOff"
-                        inputComponent={f.checkBox('restorationKnockOff')}
+                        inputComponent={f.checkBox(
+                            'restorationKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="restorationSupervisor"
-                        inputComponent={f.checkBox('restorationSupervisor')}
+                        inputComponent={f.checkBox(
+                            'restorationSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem borderLeft="1px" borderBottom="1px" />
