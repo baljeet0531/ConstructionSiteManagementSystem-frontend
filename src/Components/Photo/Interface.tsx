@@ -27,7 +27,7 @@ export interface IDate {
     };
 }
 
-export interface IPhotosDataChecked {
+export interface IPhotosFormattedData {
     [time: string]: IDate;
 }
 

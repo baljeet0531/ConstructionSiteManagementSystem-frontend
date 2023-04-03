@@ -2,7 +2,7 @@ import { Checkbox, Flex, Grid, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import PhotoOverviewElement from './PhotoOverviewElement';
-import { IDate, IFilteredPhotos, IPhotosDataChecked } from './Interface';
+import { IDate, IFilteredPhotos, IPhotosFormattedData } from './Interface';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 
 function CategoryElement(props: {
@@ -92,7 +92,7 @@ function DateElement(props: {
     element: {
         [category: string]: number[];
     };
-    checkedRef: React.MutableRefObject<IPhotosDataChecked>;
+    checkedRef: React.MutableRefObject<IPhotosFormattedData>;
     serverCategories: ItemDataType[];
     serverLocations: ItemDataType[];
 }) {
@@ -164,7 +164,7 @@ function DateElement(props: {
 export default function PhotoOverviewContainer(props: {
     siteId: string;
     filteredPhotos: IFilteredPhotos;
-    checkedRef: React.MutableRefObject<IPhotosDataChecked>;
+    checkedRef: React.MutableRefObject<IPhotosFormattedData>;
     serverCategories: ItemDataType[];
     serverLocations: ItemDataType[];
 }) {
