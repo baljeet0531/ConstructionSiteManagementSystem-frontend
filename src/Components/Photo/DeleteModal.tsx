@@ -16,7 +16,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import { IPhotosDataChecked } from './Interface';
+import { IPhotosFormattedData } from './Interface';
 import { QUERY_IMAGE_OPTIONS } from './Photo';
 import { QUERY_FILTER_PHOTOS, QUERY_PHOTOS } from './PhotoOverviewPage';
 
@@ -30,7 +30,7 @@ const DELETE_PHOTOS = gql`
 `;
 
 export default function DeleteModal(props: {
-    checkedRef: React.MutableRefObject<IPhotosDataChecked>;
+    checkedRef: React.MutableRefObject<IPhotosFormattedData>;
     isOpen: boolean;
     onClose: () => void;
 }) {

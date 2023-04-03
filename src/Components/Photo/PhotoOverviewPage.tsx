@@ -24,7 +24,7 @@ import DeleteModal from './DeleteModal';
 import {
     IFilteredPhotos,
     IPhotoQueryData,
-    IPhotosDataChecked,
+    IPhotosFormattedData,
 } from './Interface';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 
@@ -112,7 +112,7 @@ export default function PhotoOverviewPage(props: {
 
     const timeout = React.useRef<any>();
     const keywordRef = React.useRef<HTMLInputElement>(null);
-    const checkedRef = React.useRef<IPhotosDataChecked>({});
+    const checkedRef = React.useRef<IPhotosFormattedData>({});
     const [, setRerender] = React.useState<boolean>(false);
 
     const [filterOptions, setFilterOptions] = React.useState<{

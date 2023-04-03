@@ -106,13 +106,15 @@ export default function PhotoOverviewElement(props: {
                     </Text>
                 </Flex>
             </Flex>
-            <PhotoModal
-                photoValues={photoValues}
-                serverCategories={serverCategories}
-                serverLocations={serverLocations}
-                isOpen={isOpen}
-                onClose={onClose}
-            />
+            {isOpen && (
+                <PhotoModal
+                    photoValues={photoValues}
+                    serverCategories={serverCategories}
+                    serverLocations={serverLocations}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
+            )}
         </GridItem>
     );
 }

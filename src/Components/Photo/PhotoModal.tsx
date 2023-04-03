@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { gql, useMutation } from '@apollo/client';
 import {
     Modal,
@@ -18,8 +17,35 @@ import React from 'react';
 import { DatePicker, InputPicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { getImage } from '../../Utils/Resources';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import { IPhotoChecked } from './Interface';
 import dayjs from 'dayjs';
+import { QUERY_FILTER_PHOTOS, QUERY_PHOTOS } from './PhotoOverviewPage';
+import { QUERY_IMAGE_OPTIONS } from './Photo';
+
+const UPDATE_PHOTOS = gql`
+    mutation UpdateImageManagement(
+        $category: String
+        $date: Date
+        $description: String
+        $location: String
+        $no: Int!
+    ) {
+        updateImageManagement(
+            category: $category
+            date: $date
+            description: $description
+            location: $location
+            no: $no
+        ) {
+            ok
+            message
+        }
+    }
+`;
 
 export default function PhotoModal(props: {
     photoValues: IPhotoChecked;
@@ -30,15 +56,48 @@ export default function PhotoModal(props: {
 }) {
     const { photoValues, serverCategories, serverLocations, isOpen, onClose } =
         props;
-    const { imagePath, category, date, location, description } = photoValues;
+    const { no, imagePath, description } = photoValues;
     const toast = useToast();
     const [imageSrc, setImageSrc] = React.useState<string>('');
+    const [category, setCategory] = React.useState<string>(
+        photoValues.category
+    );
+    const [date, setDate] = React.useState<Date | null>(
+        dayjs(photoValues.date).toDate()
+    );
+    const [location, setLocation] = React.useState<string>(
+        photoValues.location
+    );
+    const [editable, setEditable] = React.useState<boolean>(false);
+    const descriptionRef = React.useRef<HTMLTextAreaElement>(null);
+
+    const [updatePhotos] = useMutation(UPDATE_PHOTOS, {
+        onCompleted: ({ updateImageManagement }) => {
+            const { ok, message } = updateImageManagement;
+            if (ok) {
+                defaultSuccessToast(toast, message);
+                setEditable((prev) => !prev);
+                onClose();
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+        refetchQueries: [
+            QUERY_PHOTOS,
+            QUERY_FILTER_PHOTOS,
+            QUERY_IMAGE_OPTIONS,
+        ],
+        awaitRefetchQueries: true,
+    });
+
     React.useEffect(() => {
         getImage(photoValues.imagePath).then((blob) => {
             blob ? setImageSrc(URL.createObjectURL(blob)) : '';
         });
     }, [imagePath, isOpen]);
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size={'2xl'}>
             <ModalOverlay />
@@ -86,8 +145,12 @@ export default function PhotoModal(props: {
                                         borderRadius: '4px',
                                     }}
                                     creatable
-                                    defaultValue={category}
+                                    value={category}
                                     data={serverCategories}
+                                    disabled={!editable}
+                                    onChange={(val) => {
+                                        setCategory(val);
+                                    }}
                                 />
                                 <Text variant={'w400s17'} fontWeight={'700'}>
                                     拍攝日期
@@ -106,7 +169,11 @@ export default function PhotoModal(props: {
                                     ]}
                                     oneTap
                                     cleanable={false}
-                                    defaultValue={dayjs(date).toDate()}
+                                    value={date}
+                                    disabled={!editable}
+                                    onChange={(val) => {
+                                        setDate(val);
+                                    }}
                                 ></DatePicker>
                                 <Text variant={'w400s17'} fontWeight={'700'}>
                                     位置
@@ -117,13 +184,18 @@ export default function PhotoModal(props: {
                                         borderRadius: '4px',
                                     }}
                                     creatable
-                                    defaultValue={location}
+                                    value={location}
                                     data={serverLocations}
+                                    disabled={!editable}
+                                    onChange={(val) => {
+                                        setLocation(val);
+                                    }}
                                 />
                                 <Text variant={'w400s17'} fontWeight={'700'}>
                                     說明
                                 </Text>
                                 <Textarea
+                                    ref={descriptionRef}
                                     color={'#667080'}
                                     border={'2px solid'}
                                     borderColor={'#919AA9'}
@@ -131,20 +203,69 @@ export default function PhotoModal(props: {
                                     flexGrow={1}
                                     resize={'none'}
                                     defaultValue={description}
+                                    disabled={!editable}
                                 ></Textarea>
                             </Flex>
                         </Flex>
                     </Flex>
                 </ModalBody>
                 <ModalFooter padding={0}>
-                    <Button
-                        variant={'whiteOutline'}
-                        mr={'16px'}
-                        onClick={onClose}
-                    >
-                        關閉
-                    </Button>
-                    <Button variant={'buttonBlueSolid'}>編輯</Button>
+                    {!editable ? (
+                        <Flex justify={'flex-end'}>
+                            <Button
+                                variant={'whiteOutline'}
+                                mr={'16px'}
+                                onClick={onClose}
+                            >
+                                關閉
+                            </Button>
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                onClick={() => {
+                                    setEditable((prev) => !prev);
+                                }}
+                            >
+                                編輯
+                            </Button>
+                        </Flex>
+                    ) : (
+                        <Flex justify={'flex-end'}>
+                            <Button
+                                variant={'whiteOutline'}
+                                mr={'16px'}
+                                onClick={() => {
+                                    setEditable((prev) => !prev);
+                                }}
+                            >
+                                取消
+                            </Button>
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                onClick={() => {
+                                    console.log(category);
+                                    console.log(
+                                        dayjs(date).format('YYYY-MM-DD')
+                                    );
+                                    console.log(location);
+                                    console.log(descriptionRef.current?.value);
+                                    updatePhotos({
+                                        variables: {
+                                            no: no,
+                                            category: category,
+                                            date: dayjs(date).format(
+                                                'YYYY-MM-DD'
+                                            ),
+                                            location: location,
+                                            description:
+                                                descriptionRef.current?.value,
+                                        },
+                                    });
+                                }}
+                            >
+                                確定
+                            </Button>
+                        </Flex>
+                    )}
                 </ModalFooter>
             </ModalContent>
         </Modal>
