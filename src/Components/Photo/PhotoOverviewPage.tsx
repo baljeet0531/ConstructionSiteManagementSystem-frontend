@@ -395,6 +395,8 @@ export default function PhotoOverviewPage(props: {
                 siteId={siteId}
                 filteredPhotos={filteredPhotos}
                 checkedRef={checkedRef}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
             />
             <DeleteModal
                 checkedRef={checkedRef}
