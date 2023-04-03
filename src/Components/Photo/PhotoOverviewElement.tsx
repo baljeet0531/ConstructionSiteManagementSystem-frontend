@@ -6,20 +6,34 @@ import {
     Text,
     GridItem,
     Checkbox,
+    useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
+import { ItemDataType } from 'rsuite/esm/@types/common';
+import { DescriptionIcon, LocationIcon } from '../../Icons/Icons';
 import { getImage } from '../../Utils/Resources';
 import { ICategory, IDate } from './Interface';
+import PhotoModal from './PhotoModal';
 
 export default function PhotoOverviewElement(props: {
     dateValues: IDate;
     categoryValues: ICategory;
     number: number;
     setRerender: React.Dispatch<React.SetStateAction<boolean>>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { dateValues, categoryValues, number, setRerender } = props;
+    const {
+        dateValues,
+        categoryValues,
+        number,
+        setRerender,
+        serverCategories,
+        serverLocations,
+    } = props;
     const photoValues = categoryValues.photos[number];
 
+    const { onOpen, isOpen, onClose } = useDisclosure();
     const [imageSrc, setImageSrc] = React.useState<string>('');
     React.useEffect(() => {
         getImage(photoValues.imagePath).then((blob) => {
@@ -30,7 +44,7 @@ export default function PhotoOverviewElement(props: {
     return (
         <GridItem>
             <Flex direction={'column'}>
-                <AspectRatio ratio={280 / 175}>
+                <AspectRatio ratio={280 / 175} mb={'5px'} onClick={onOpen}>
                     <Center
                         w={'100%'}
                         h={'100%'}
@@ -79,9 +93,26 @@ export default function PhotoOverviewElement(props: {
                         />
                     </Center>
                 </AspectRatio>
-                <Text>位置：{photoValues.location}</Text>
-                <Text>說明：{photoValues.description}</Text>
+                <Flex>
+                    <LocationIcon />
+                    <Text variant={'w400s12'} lineHeight={'15px'}>
+                        位置：{photoValues.location}
+                    </Text>
+                </Flex>
+                <Flex>
+                    <DescriptionIcon />
+                    <Text variant={'w400s12'} lineHeight={'15px'}>
+                        說明：{photoValues.description}
+                    </Text>
+                </Flex>
             </Flex>
+            <PhotoModal
+                photoValues={photoValues}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
+                isOpen={isOpen}
+                onClose={onClose}
+            />
         </GridItem>
     );
 }

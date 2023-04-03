@@ -3,14 +3,24 @@ import dayjs from 'dayjs';
 import React from 'react';
 import PhotoOverviewElement from './PhotoOverviewElement';
 import { IDate, IFilteredPhotos, IPhotosDataChecked } from './Interface';
+import { ItemDataType } from 'rsuite/esm/@types/common';
 
 function CategoryElement(props: {
     dateValues: IDate;
     categoryName: string;
     numbers: number[];
     setRerender: React.Dispatch<React.SetStateAction<boolean>>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { dateValues, categoryName, numbers, setRerender } = props;
+    const {
+        dateValues,
+        categoryName,
+        numbers,
+        setRerender,
+        serverCategories,
+        serverLocations,
+    } = props;
     const categoryValues = dateValues.categories[categoryName];
     const photoList = numbers.map((number, index) => (
         <PhotoOverviewElement
@@ -19,6 +29,8 @@ function CategoryElement(props: {
             categoryValues={categoryValues}
             number={number}
             setRerender={setRerender}
+            serverCategories={serverCategories}
+            serverLocations={serverLocations}
         />
     ));
 
@@ -81,8 +93,11 @@ function DateElement(props: {
         [category: string]: number[];
     };
     checkedRef: React.MutableRefObject<IPhotosDataChecked>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { time, element, checkedRef } = props;
+    const { time, element, checkedRef, serverCategories, serverLocations } =
+        props;
     const dateValues = checkedRef.current[time];
     const [, setRerender] = React.useState<boolean>(false);
     const categoryGroup = Object.entries(element).map(
@@ -93,6 +108,8 @@ function DateElement(props: {
                 categoryName={categoryName}
                 numbers={numbers}
                 setRerender={setRerender}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
             />
         )
     );
@@ -148,8 +165,11 @@ export default function PhotoOverviewContainer(props: {
     siteId: string;
     filteredPhotos: IFilteredPhotos;
     checkedRef: React.MutableRefObject<IPhotosDataChecked>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { filteredPhotos, checkedRef } = props;
+    const { filteredPhotos, checkedRef, serverCategories, serverLocations } =
+        props;
 
     const dateGroup = Object.entries(filteredPhotos).map(
         ([time, element], index) => (
@@ -158,6 +178,8 @@ export default function PhotoOverviewContainer(props: {
                 time={time}
                 element={element}
                 checkedRef={checkedRef}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
             />
         )
     );
