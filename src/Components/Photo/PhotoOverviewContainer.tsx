@@ -11,7 +11,6 @@ import {
 import { ItemDataType } from 'rsuite/esm/@types/common';
 
 export default function PhotoOverviewContainer(props: {
-    siteId: string;
     filteredPhotos: IFilteredPhotos | undefined;
     checkedRef: React.MutableRefObject<IFormattedPhotos>;
     serverCategories: ItemDataType[];

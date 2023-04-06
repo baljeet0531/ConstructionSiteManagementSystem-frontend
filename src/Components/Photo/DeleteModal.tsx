@@ -17,8 +17,8 @@ import {
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 import { IFormattedPhotos } from './Interface';
-import { QUERY_IMAGE_OPTIONS } from './Photo';
-import { QUERY_FILTER_PHOTOS, QUERY_PHOTOS } from './PhotoOverviewPage';
+import { QUERY_IMAGE_OPTIONS } from './PhotoCreatePage';
+import { QUERY_PHOTOS } from './PhotoOverviewPage';
 
 const DELETE_PHOTOS = gql`
     mutation DeleteImageManagement($no: [Int]!) {
@@ -49,11 +49,7 @@ export default function DeleteModal(props: {
             defaultErrorToast(toast);
         },
         fetchPolicy: 'network-only',
-        refetchQueries: [
-            QUERY_PHOTOS,
-            QUERY_FILTER_PHOTOS,
-            QUERY_IMAGE_OPTIONS,
-        ],
+        refetchQueries: [QUERY_PHOTOS, QUERY_IMAGE_OPTIONS],
     });
 
     const selectedNumbers = Object.values(checkedRef.current).flatMap((date) =>
