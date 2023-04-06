@@ -51,6 +51,7 @@ export default function ToolboxForm({
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IToolboxData>({
         contractingCorpName: [],
+        dashboardPublicMatters: '',
         toolboxHint: {},
     });
     const [options, setOptions] = useState<IToolboxOptions>({
@@ -66,6 +67,7 @@ export default function ToolboxForm({
         onCompleted: (d) => {
             setData({
                 contractingCorpName: d.contractingCorpName,
+                dashboardPublicMatters: d.dashboardPublicMatters,
                 toolboxHint: d.toolboxHint,
             });
 
@@ -75,6 +77,7 @@ export default function ToolboxForm({
 
             const singleFormData = parseToolbox(
                 d.toolboxMeeting,
+                d.dashboardPublicMatters,
                 signatures,
                 signatureLists
             );
@@ -346,7 +349,9 @@ export default function ToolboxForm({
                         依作業性質自備防護具及措施
                     </GridItem>
                     <GridItem {...titleStyle} borderRight="0px">
-                        <Text pl={1}>01.</Text>
+                        <Text pl={1} w="30px">
+                            01.
+                        </Text>
                         {f.threeStateCheckbox('head', '頭部防護:')}
                     </GridItem>
                     <GridItem {...titleStyle} borderLeft="0px">
@@ -355,7 +360,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('headPlastic', '膠盔')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>02.</Text>
+                        <Text pl={1} w="30px">
+                            02.
+                        </Text>
                         {f.threeStateCheckbox('eye', '眼部防護:')}
                     </GridItem>
                     <GridItem
@@ -373,7 +380,9 @@ export default function ToolboxForm({
                         )}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>03.</Text>
+                        <Text pl={1} w="30px">
+                            03.
+                        </Text>
                         {f.threeStateCheckbox('ear', '耳部防護:')}
                     </GridItem>
                     <GridItem
@@ -385,7 +394,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('earEarmuffs', '耳罩')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>04.</Text>
+                        <Text pl={1} w="30px">
+                            04.
+                        </Text>
                         {f.threeStateCheckbox('breathe', '呼吸防護:')}
                     </GridItem>
                     <GridItem
@@ -400,7 +411,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('breathOxygen', '輸氣管面罩')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>05.</Text>
+                        <Text pl={1} w="30px">
+                            05.
+                        </Text>
                         {f.threeStateCheckbox('hand', '手部防護:')}
                     </GridItem>
                     <GridItem
@@ -415,7 +428,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('haneChemical', '防化學')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>06.</Text>
+                        <Text pl={1} w="30px">
+                            06.
+                        </Text>
                         {f.threeStateCheckbox('foot', '足部防護:')}
                     </GridItem>
                     <GridItem
@@ -427,7 +442,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('footChemical', '防化學安全鞋')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>07.</Text>
+                        <Text pl={1} w="30px">
+                            07.
+                        </Text>
                         {f.threeStateCheckbox('body', '身體防護:')}
                     </GridItem>
                     <GridItem
@@ -441,7 +458,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('bodyVest', '反光背心')}
                     </GridItem>
                     <GridItem rowStart={8} rowEnd={10} {...contentStyle}>
-                        <Text pl={1}>08.</Text>
+                        <Text pl={1} w="30px">
+                            08.
+                        </Text>
                         {f.threeStateCheckbox('fall', '墜落預防:')}
                     </GridItem>
                     <GridItem
@@ -468,7 +487,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('fallArrestor', '墜落防止器')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>09.</Text>
+                        <Text pl={1} w="30px">
+                            09.
+                        </Text>
                         {f.threeStateCheckbox('electric', '感電預防:')}
                     </GridItem>
                     <GridItem
@@ -484,7 +505,9 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('electricElectroscope', '檢電器')}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>10.</Text>
+                        <Text pl={1} w="30px">
+                            10.
+                        </Text>
                         {f.threeStateCheckbox('fire', '火災預防:')}
                     </GridItem>
                     <GridItem
@@ -500,7 +523,9 @@ export default function ToolboxForm({
                         )}
                     </GridItem>
                     <GridItem {...contentStyle}>
-                        <Text pl={1}>11.</Text>
+                        <Text pl={1} w="30px">
+                            11.
+                        </Text>
                         {f.threeStateCheckbox('oxygen', '缺氧預防:')}
                     </GridItem>
                     <GridItem
@@ -526,7 +551,9 @@ export default function ToolboxForm({
                         {...contentStyle}
                         borderRight="1px"
                     >
-                        <Text pl={1}>12.</Text>
+                        <Text pl={1} w="30px">
+                            12.
+                        </Text>
                         {f.othersField('ohterPrevention', '其他預防:', '500px')}
                     </GridItem>
                     <GridItem
@@ -700,18 +727,27 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="contentConformBeforeWork"
-                        inputComponent={f.checkBox('contentConformBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'contentConformBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="contentConformDuringWork"
-                        inputComponent={f.checkBox('contentConformDuringWork')}
+                        inputComponent={f.checkBox(
+                            'contentConformDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridItem borderBottom="1px" borderRight="1px" />
                     <GridInputItem
                         fieldName="contentConformSupervisor"
-                        inputComponent={f.checkBox('contentConformSupervisor')}
+                        inputComponent={f.checkBox(
+                            'contentConformSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>2</GridItem>
@@ -726,22 +762,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="safetyMeasureBeforeWork"
-                        inputComponent={f.checkBox('safetyMeasureBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureDuringWork"
-                        inputComponent={f.checkBox('safetyMeasureDuringWork')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureKnockOff"
-                        inputComponent={f.checkBox('safetyMeasureKnockOff')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="safetyMeasureSupervisor"
-                        inputComponent={f.checkBox('safetyMeasureSupervisor')}
+                        inputComponent={f.checkBox(
+                            'safetyMeasureSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>3</GridItem>
@@ -756,22 +804,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="staffStateBeforeWork"
-                        inputComponent={f.checkBox('staffStateBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'staffStateBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateDuringWork"
-                        inputComponent={f.checkBox('staffStateDuringWork')}
+                        inputComponent={f.checkBox(
+                            'staffStateDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateKnockOff"
-                        inputComponent={f.checkBox('staffStateKnockOff')}
+                        inputComponent={f.checkBox(
+                            'staffStateKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="staffStateSupervisor"
-                        inputComponent={f.checkBox('staffStateSupervisor')}
+                        inputComponent={f.checkBox(
+                            'staffStateSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>4</GridItem>
@@ -786,22 +846,34 @@ export default function ToolboxForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="principleOnSiteBeforeWork"
-                        inputComponent={f.checkBox('principleOnSiteBeforeWork')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteBeforeWork',
+                            !!signatures.contractingCorpStaffSignatureFirst[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteDuringWork"
-                        inputComponent={f.checkBox('principleOnSiteDuringWork')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteDuringWork',
+                            !!signatures.contractingCorpStaffSignatureSecond[0]
+                        )}
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteKnockOff"
-                        inputComponent={f.checkBox('principleOnSiteKnockOff')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="principleOnSiteSupervisor"
-                        inputComponent={f.checkBox('principleOnSiteSupervisor')}
+                        inputComponent={f.checkBox(
+                            'principleOnSiteSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>5</GridItem>
@@ -818,12 +890,18 @@ export default function ToolboxForm({
                     <GridItem borderBottom="1px" />
                     <GridInputItem
                         fieldName="restorationKnockOff"
-                        inputComponent={f.checkBox('restorationKnockOff')}
+                        inputComponent={f.checkBox(
+                            'restorationKnockOff',
+                            !!signatures.contractingCorpStaffSignatureThird[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
                         fieldName="restorationSupervisor"
-                        inputComponent={f.checkBox('restorationSupervisor')}
+                        inputComponent={f.checkBox(
+                            'restorationSupervisor',
+                            !!signatures.systemEngineerSignature[0]
+                        )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridItem borderLeft="1px" borderBottom="1px" />
@@ -879,20 +957,25 @@ export default function ToolboxForm({
                         borderBottom="1px"
                         pb="2px"
                     >
-                        <SignaturePad
-                            title="施工前 - 簽名"
-                            signatureName="before-work-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureFirst
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureFirst[0]?.no
-                            }
-                        />
+                        {f.validSignBeforeWork() ? (
+                            <SignaturePad
+                                title="施工前 - 簽名"
+                                signatureName="before-work-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureFirst
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureFirst[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
                     </GridItem>
                     <GridItem
                         rowStart={10}
@@ -900,42 +983,25 @@ export default function ToolboxForm({
                         borderBottom="1px"
                         pb="2px"
                     >
-                        <SignaturePad
-                            title="施工中 - 簽名"
-                            signatureName="during-work-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureSecond
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureSecond[0]?.no
-                            }
-                        />
-                    </GridItem>
-                    <GridItem
-                        rowStart={10}
-                        rowEnd={13}
-                        borderBottom="1px"
-                        borderRight="1px"
-                        pb="2px"
-                    >
-                        <SignaturePad
-                            title="施工中 - 簽名"
-                            signatureName="knock-off-signature.png"
-                            state={
-                                signatures.contractingCorpStaffSignatureThird
-                            }
-                            placeHolderText="承商人員"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures
-                                    .contractingCorpStaffSignatureThird[0]?.no
-                            }
-                        />
+                        {f.validSignDuringWork() ? (
+                            <SignaturePad
+                                title="施工中 - 簽名"
+                                signatureName="during-work-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureSecond
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureSecond[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
                     </GridItem>
                     <GridItem
                         rowStart={10}
@@ -944,46 +1010,87 @@ export default function ToolboxForm({
                         borderRight="1px"
                         pb="2px"
                     >
-                        <SignaturePad
-                            title="監工單位 - 簽名"
-                            signatureName="knock-off-signature.png"
-                            state={signatures.systemEngineerSignature}
-                            placeHolderText="系統工程師"
-                            showTime={false}
-                            h="90%"
-                            disable={
-                                !!signatures.systemEngineerSignature[0]?.no
-                            }
-                        />
+                        {f.validSignKnockOff() ? (
+                            <SignaturePad
+                                title="放工前 - 簽名"
+                                signatureName="knock-off-signature.png"
+                                state={
+                                    signatures.contractingCorpStaffSignatureThird
+                                }
+                                placeHolderText="承商人員"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures
+                                        .contractingCorpStaffSignatureThird[0]
+                                        ?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
+                    </GridItem>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={13}
+                        borderBottom="1px"
+                        borderRight="1px"
+                        pb="2px"
+                    >
+                        {f.validSignSupervisor() ? (
+                            <SignaturePad
+                                title="監工單位 - 簽名"
+                                signatureName="knock-off-signature.png"
+                                state={signatures.systemEngineerSignature}
+                                placeHolderText="系統工程師"
+                                showTime={false}
+                                h="90%"
+                                disable={
+                                    !!signatures.systemEngineerSignature[0]?.no
+                                }
+                            />
+                        ) : (
+                            f.forbidSignOverlay()
+                        )}
                     </GridItem>
                     <GridItem {...centerStyle} borderRight="1px">
                         檢查時間(時/分)
                     </GridItem>
                     <GridItem {...centerStyle} borderLeft="0px">
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureFirst
-                        )}
+                        {f.validSignBeforeWork()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureFirst
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem {...centerStyle} borderLeft="0px">
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureSecond
-                        )}
+                        {f.validSignDuringWork()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureSecond
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
                     >
-                        {f.checkTimeInput(
-                            signatures.contractingCorpStaffSignatureThird
-                        )}
+                        {f.validSignKnockOff()
+                            ? f.checkTimeInput(
+                                  signatures.contractingCorpStaffSignatureThird
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
                     >
-                        {f.checkTimeInput(signatures.systemEngineerSignature)}
+                        {f.validSignSupervisor()
+                            ? f.checkTimeInput(
+                                  signatures.systemEngineerSignature
+                              )
+                            : f.forbidOverlay()}
                     </GridItem>
                 </Grid>
                 <Flex justifyContent="space-between">
