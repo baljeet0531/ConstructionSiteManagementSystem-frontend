@@ -12,22 +12,31 @@ export interface IPhotoChecked extends IPhoto {
 }
 
 export interface ICategory {
-    isChecked: boolean;
-    isIndeterminate: boolean;
     photos: {
         [no: number]: IPhotoChecked;
     };
 }
 
-export interface IDate {
+export interface ICategoryChecked extends ICategory {
     isChecked: boolean;
     isIndeterminate: boolean;
-    categories: {
-        [categoryName: string]: ICategory;
-    };
 }
 
-export interface IPhotosFormattedData {
+export interface IDate {
+    categories: {
+        [categoryName: string]: ICategoryChecked;
+    };
+}
+export interface IDateChecked extends IDate {
+    isChecked: boolean;
+    isIndeterminate: boolean;
+}
+
+export interface IFormattedPhotos {
+    [time: string]: IDateChecked;
+}
+
+export interface IFilteredPhotos {
     [time: string]: IDate;
 }
 
@@ -37,8 +46,4 @@ export interface IPhotoQueryData {
         categoryName: string;
         element: IPhoto[];
     }[];
-}
-
-export interface IFilteredPhotos {
-    [time: string]: { [categoryName: string]: number[] };
 }

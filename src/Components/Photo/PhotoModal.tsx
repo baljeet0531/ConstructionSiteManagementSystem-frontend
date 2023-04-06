@@ -23,8 +23,8 @@ import {
 } from '../../Utils/DefaultToast';
 import { IPhotoChecked } from './Interface';
 import dayjs from 'dayjs';
-import { QUERY_FILTER_PHOTOS, QUERY_PHOTOS } from './PhotoOverviewPage';
-import { QUERY_IMAGE_OPTIONS } from './Photo';
+import { CustomLoading } from '../Shared/Loading';
+import { QUERY_PHOTOS } from './PhotoOverviewPage';
 
 const UPDATE_PHOTOS = gql`
     mutation UpdateImageManagement(
@@ -71,13 +71,11 @@ export default function PhotoModal(props: {
     const [editable, setEditable] = React.useState<boolean>(false);
     const descriptionRef = React.useRef<HTMLTextAreaElement>(null);
 
-    const [updatePhotos] = useMutation(UPDATE_PHOTOS, {
+    const [updatePhotos, { loading }] = useMutation(UPDATE_PHOTOS, {
         onCompleted: ({ updateImageManagement }) => {
             const { ok, message } = updateImageManagement;
             if (ok) {
                 defaultSuccessToast(toast, message);
-                setEditable((prev) => !prev);
-                onClose();
             }
         },
         onError: (err) => {
@@ -85,11 +83,7 @@ export default function PhotoModal(props: {
             defaultErrorToast(toast);
         },
         fetchPolicy: 'network-only',
-        refetchQueries: [
-            QUERY_PHOTOS,
-            QUERY_FILTER_PHOTOS,
-            QUERY_IMAGE_OPTIONS,
-        ],
+        refetchQueries: [QUERY_PHOTOS],
         awaitRefetchQueries: true,
     });
 
@@ -98,14 +92,19 @@ export default function PhotoModal(props: {
             blob ? setImageSrc(URL.createObjectURL(blob)) : '';
         });
     }, [imagePath, isOpen]);
-    return (
+
+    return loading ? (
+        <CustomLoading
+            position="absolute"
+            top={0}
+            left={0}
+            bg={'#D9D9D980'}
+            zIndex={99}
+        />
+    ) : (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size={'2xl'}>
             <ModalOverlay />
-            <ModalContent
-                padding={'24px'}
-                className="photo-modal
-"
-            >
+            <ModalContent padding={'24px'} className="photo-modal">
                 <ModalBody padding={0} mb={'23px'}>
                     <Flex
                         width={'100%'}
@@ -130,7 +129,7 @@ export default function PhotoModal(props: {
                                 }}
                             />
                         </Center>
-                        <Flex flexGrow={1}>
+                        <Flex width={'185px'} flexShrink={0}>
                             <Flex
                                 direction={'column'}
                                 gap={'5px'}
@@ -242,22 +241,17 @@ export default function PhotoModal(props: {
                             <Button
                                 variant={'buttonBlueSolid'}
                                 onClick={() => {
-                                    console.log(category);
-                                    console.log(
-                                        dayjs(date).format('YYYY-MM-DD')
-                                    );
-                                    console.log(location);
-                                    console.log(descriptionRef.current?.value);
                                     updatePhotos({
                                         variables: {
                                             no: no,
-                                            category: category,
+                                            category: category || '未分類',
                                             date: dayjs(date).format(
                                                 'YYYY-MM-DD'
                                             ),
-                                            location: location,
+                                            location: location || '無資訊',
                                             description:
-                                                descriptionRef.current?.value,
+                                                descriptionRef.current?.value ||
+                                                '',
                                         },
                                     });
                                 }}

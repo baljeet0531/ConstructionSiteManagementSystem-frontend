@@ -12,12 +12,12 @@ import React from 'react';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DescriptionIcon, LocationIcon } from '../../Icons/Icons';
 import { getImage } from '../../Utils/Resources';
-import { ICategory, IDate } from './Interface';
+import { ICategoryChecked, IDateChecked } from './Interface';
 import PhotoModal from './PhotoModal';
 
 export default function PhotoOverviewElement(props: {
-    dateValues: IDate;
-    categoryValues: ICategory;
+    dateValues: IDateChecked;
+    categoryValues: ICategoryChecked;
     number: number;
     setRerender: React.Dispatch<React.SetStateAction<boolean>>;
     serverCategories: ItemDataType[];

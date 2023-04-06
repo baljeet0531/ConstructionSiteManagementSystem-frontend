@@ -24,7 +24,7 @@ import DeleteModal from './DeleteModal';
 import {
     IFilteredPhotos,
     IPhotoQueryData,
-    IPhotosFormattedData,
+    IFormattedPhotos,
 } from './Interface';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 
@@ -43,6 +43,10 @@ export const QUERY_PHOTOS = gql`
                     description
                 }
             }
+        }
+        IMOptionList(siteId: $siteId) {
+            category
+            location
         }
     }
 `;
@@ -97,14 +101,7 @@ export default function PhotoOverviewPage(props: {
     serverCategories: ItemDataType[];
     serverLocations: ItemDataType[];
 }) {
-    const {
-        isOpen,
-        onToggle,
-        siteId,
-        siteName,
-        serverCategories,
-        serverLocations,
-    } = props;
+    const { isOpen, onToggle, siteId, siteName } = props;
 
     const deleteModalDisclosure = useDisclosure();
     const toast = useToast();
@@ -112,9 +109,15 @@ export default function PhotoOverviewPage(props: {
 
     const timeout = React.useRef<any>();
     const keywordRef = React.useRef<HTMLInputElement>(null);
-    const checkedRef = React.useRef<IPhotosFormattedData>({});
-    const [, setRerender] = React.useState<boolean>(false);
-
+    const checkedRef = React.useRef<IFormattedPhotos>({});
+    const [serverCategories, setServerCategories] = React.useState<
+        ItemDataType[]
+    >([]);
+    const [serverLocations, setServerLocations] = React.useState<
+        ItemDataType[]
+    >([]);
+    const [filteredPhotos, setFilteredPhotos] =
+        React.useState<IFilteredPhotos>();
     const [filterOptions, setFilterOptions] = React.useState<{
         category: string | undefined;
         startDate: string | undefined;
@@ -128,10 +131,6 @@ export default function PhotoOverviewPage(props: {
         location: undefined,
         keyWord: undefined,
     });
-
-    const [filteredPhotos, setFilteredPhotos] = React.useState<IFilteredPhotos>(
-        {}
-    );
 
     const handleChange = (newValue: Object) => {
         const { category, startDate, endDate, location, keyWord } =
@@ -159,42 +158,74 @@ export default function PhotoOverviewPage(props: {
             )
         );
 
+    const formatData = (
+        imageManagement: IPhotoQueryData[],
+        checked: boolean = true
+    ) => {
+        const dateGroup = imageManagement.map(({ time, element }) => {
+            const categoryGroup = element.map(({ categoryName, element }) => ({
+                [categoryName]: {
+                    photos: Object.assign(
+                        {},
+                        ...element.map((element) => ({
+                            [element.no]: {
+                                ...element,
+                                ...(checked && { isChecked: false }),
+                            },
+                        }))
+                    ),
+                    ...(checked && {
+                        isChecked: false,
+                        isIndeterminate: false,
+                    }),
+                },
+            }));
+            return {
+                [time]: {
+                    categories: Object.assign({}, ...categoryGroup),
+                    ...(checked && {
+                        isChecked: false,
+                        isIndeterminate: false,
+                    }),
+                },
+            };
+        });
+        return Object.assign({}, ...dateGroup);
+    };
+
     useQuery(QUERY_PHOTOS, {
         variables: {
             siteId: siteId,
         },
         onCompleted: ({
             imageManagement,
+            IMOptionList,
         }: {
             imageManagement: IPhotoQueryData[];
+            IMOptionList: {
+                category: string[];
+                location: string[];
+            };
         }) => {
-            const dateGroup = imageManagement.map(({ time, element }) => {
-                const categoryGroup = element.map(
-                    ({ categoryName, element }) => ({
-                        [categoryName]: {
-                            photos: Object.assign(
-                                {},
-                                ...element.map((element) => ({
-                                    [element.no]: {
-                                        ...element,
-                                        isChecked: false,
-                                    },
-                                }))
-                            ),
-                            isChecked: false,
-                        },
-                    })
-                );
-                return {
-                    [time]: {
-                        categories: Object.assign({}, ...categoryGroup),
-                        isChecked: false,
-                    },
-                };
-            });
-            const formattedData = Object.assign({}, ...dateGroup);
+            const formattedData = formatData(imageManagement, true);
             checkedRef.current = formattedData;
-            setRerender((prev) => !prev);
+            setFilteredPhotos(undefined);
+            setServerCategories(
+                IMOptionList.category.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+            setServerLocations(
+                IMOptionList.location.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+
+            searchPhotos({
+                variables: { siteId: siteId, ...filterOptions },
+            });
         },
         onError: (err) => {
             console.log(err);
@@ -208,17 +239,7 @@ export default function PhotoOverviewPage(props: {
         }: {
             imageManagement: IPhotoQueryData[];
         }) => {
-            const dateGroup = imageManagement.map(({ time, element }) => {
-                const categoryGroup = element.map(
-                    ({ categoryName, element }) => ({
-                        [categoryName]: element.map(({ no }) => no),
-                    })
-                );
-                return {
-                    [time]: Object.assign({}, ...categoryGroup),
-                };
-            });
-            setFilteredPhotos(Object.assign({}, ...dateGroup));
+            setFilteredPhotos(formatData(imageManagement, false));
         },
         onError: (err) => {
             console.log(err);
@@ -257,10 +278,6 @@ export default function PhotoOverviewPage(props: {
             },
         });
     };
-
-    React.useEffect(() => {
-        searchPhotos({ variables: { siteId: siteId, ...filterOptions } });
-    }, []);
 
     return (
         <Flex
