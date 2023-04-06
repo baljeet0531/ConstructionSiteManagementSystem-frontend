@@ -6,6 +6,7 @@ export interface IToolboxHint {
 
 export interface IToolboxData {
     contractingCorpName: string[] | null;
+    dashboardPublicMatters: string;
     toolboxHint: IToolboxHint ;
 }
 
