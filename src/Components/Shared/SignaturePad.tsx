@@ -95,16 +95,16 @@ export default function SignaturePad({
     return (
         <>
             {signature?.image && !signature?.no ? (
-                    <RepeatIcon
-                        boxSize={4}
-                        mt="4px"
-                        ml="4px"
-                        onClick={removeSignature}
-                        alignSelf='start'
-                    />
-                ) : (
-                    ''
-                )}
+                <RepeatIcon
+                    boxSize={4}
+                    mt="4px"
+                    ml="4px"
+                    onClick={removeSignature}
+                    alignSelf="start"
+                />
+            ) : (
+                ''
+            )}
             <Box
                 w="100%"
                 h={signature?.image ? h : '100%'}
@@ -114,19 +114,22 @@ export default function SignaturePad({
                 flexDirection="column"
                 onClick={disable ? () => {} : onOpen}
             >
-                
                 {signature?.image ? (
                     <Image
                         src={imageURL}
-                        flex= "1 1 auto"
+                        flex="1 1 auto"
                         maxH="75%"
                         fit="contain"
+                        onLoad={(e) => {
+                            const image = e.target as HTMLImageElement;
+                            URL.revokeObjectURL(image.src);
+                        }}
                     />
                 ) : (
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
                 {showTime && (
-                    <Text pr="4px" fontSize="1rem" alignSelf='end'>
+                    <Text pr="4px" fontSize="1rem" alignSelf="end">
                         {signature?.time
                             ? signature.time.format('YYYY-MM-DD HH:mm')
                             : ''}
