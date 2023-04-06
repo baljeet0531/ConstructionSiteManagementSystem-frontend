@@ -16,9 +16,9 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import { QUERY_IMAGE_OPTIONS } from './Photo';
 import PhotoCreateList from './PhotoCreateList';
 import { QUERY_PHOTOS } from './PhotoOverviewPage';
+import { useQuery } from '@apollo/client';
 
 export interface IPhotoInput {
     image: File;
@@ -32,6 +32,15 @@ export interface IPhotoFormValue {
     content: IPhotoInput[];
     siteId: string;
 }
+
+export const QUERY_IMAGE_OPTIONS = gql`
+    query IMOptionList($siteId: String!) {
+        IMOptionList(siteId: $siteId) {
+            category
+            location
+        }
+    }
+`;
 
 const CREATE_PHOTOS = gql`
     mutation CreateImageManagement(
@@ -49,18 +58,13 @@ export default function PhotoCreatePage(props: {
     siteId: string;
     siteName: string;
     onToggle: () => void;
-    serverCategories: ItemDataType[];
-    serverLocations: ItemDataType[];
 }) {
-    const { onToggle, siteId, siteName, serverCategories, serverLocations } =
-        props;
+    const { onToggle, siteId, siteName } = props;
     const toast = useToast();
 
     const inputFileRef = React.useRef<HTMLInputElement>(null);
-    const [clientCategories, setClientCategories] =
-        React.useState<ItemDataType[]>(serverCategories);
-    const [clientLocations, setClientLocations] =
-        React.useState<ItemDataType[]>(serverLocations);
+    const [categories, setCategories] = React.useState<ItemDataType[]>([]);
+    const [locations, setLocations] = React.useState<ItemDataType[]>([]);
 
     const [createPhotos] = useMutation(CREATE_PHOTOS, {
         fetchPolicy: 'network-only',
@@ -84,6 +88,37 @@ export default function PhotoCreatePage(props: {
         });
         event.target.value = '';
     };
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            IMOptionList,
+        }: {
+            IMOptionList: {
+                category: string[];
+                location: string[];
+            };
+        }) => {
+            setCategories(
+                IMOptionList.category.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+            setLocations(
+                IMOptionList.location.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     const initialValues: IPhotoFormValue = {
         content: [],
@@ -191,10 +226,10 @@ export default function PhotoCreatePage(props: {
                                 <PhotoCreateList
                                     formProps={props}
                                     arrayHelpers={arrayHelpers}
-                                    categories={clientCategories}
-                                    setCategories={setClientCategories}
-                                    locations={clientLocations}
-                                    setLocations={setClientLocations}
+                                    categories={categories}
+                                    setCategories={setCategories}
+                                    locations={locations}
+                                    setLocations={setLocations}
                                 />
                             </Flex>
                         )}

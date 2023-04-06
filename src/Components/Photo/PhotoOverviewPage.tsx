@@ -98,8 +98,6 @@ export default function PhotoOverviewPage(props: {
     siteName: string;
     isOpen: boolean;
     onToggle: () => void;
-    serverCategories: ItemDataType[];
-    serverLocations: ItemDataType[];
 }) {
     const { isOpen, onToggle, siteId, siteName } = props;
 
@@ -409,7 +407,6 @@ export default function PhotoOverviewPage(props: {
                 </Grid>
             </Flex>
             <PhotoOverviewContainer
-                siteId={siteId}
                 filteredPhotos={filteredPhotos}
                 checkedRef={checkedRef}
                 serverCategories={serverCategories}
