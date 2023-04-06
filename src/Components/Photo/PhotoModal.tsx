@@ -76,6 +76,7 @@ export default function PhotoModal(props: {
             const { ok, message } = updateImageManagement;
             if (ok) {
                 defaultSuccessToast(toast, message);
+                onClose();
             }
         },
         onError: (err) => {
