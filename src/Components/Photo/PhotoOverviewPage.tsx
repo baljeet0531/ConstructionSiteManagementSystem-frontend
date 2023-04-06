@@ -27,6 +27,7 @@ import {
     IFormattedPhotos,
 } from './Interface';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
+import { PageLoading } from '../Shared/Loading';
 
 export const QUERY_PHOTOS = gql`
     query ImageManagement($siteId: String!) {
@@ -130,9 +131,8 @@ export default function PhotoOverviewPage(props: {
         keyWord: undefined,
     });
 
+    const { category, startDate, endDate, location, keyWord } = filterOptions;
     const handleChange = (newValue: Object) => {
-        const { category, startDate, endDate, location, keyWord } =
-            filterOptions;
         searchPhotos({
             variables: {
                 siteId: siteId,
@@ -245,7 +245,7 @@ export default function PhotoOverviewPage(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [exportPhotos] = useMutation(EXPORT_PHOTOS, {
+    const [exportPhotos, { loading }] = useMutation(EXPORT_PHOTOS, {
         onCompleted: ({ exportImageManagement }) => {
             if (exportImageManagement.ok) {
                 const { path, message } = exportImageManagement;
@@ -260,17 +260,18 @@ export default function PhotoOverviewPage(props: {
     });
 
     const handleExport = () => {
-        const handleDelete = Object.values(checkedRef.current).flatMap((date) =>
-            Object.values(date.categories).flatMap((category) =>
-                Object.values(category.photos).flatMap(({ isChecked, no }) =>
-                    isChecked ? no : []
+        const checkedNumbers = Object.values(checkedRef.current).flatMap(
+            (date) =>
+                Object.values(date.categories).flatMap((category) =>
+                    Object.values(category.photos).flatMap(
+                        ({ isChecked, no }) => (isChecked ? no : [])
+                    )
                 )
-            )
         );
 
         exportPhotos({
             variables: {
-                no: handleDelete,
+                no: checkedNumbers,
                 siteId: siteId,
                 username: username,
             },
@@ -322,6 +323,7 @@ export default function PhotoOverviewPage(props: {
                                 相片分類
                             </Text>
                             <Select
+                                value={category}
                                 variant={'grayOutline'}
                                 height={'40px'}
                                 onChange={(e) => {
@@ -371,6 +373,7 @@ export default function PhotoOverviewPage(props: {
                             <Select
                                 variant={'grayOutline'}
                                 height={'40px'}
+                                value={location}
                                 onChange={(e) => {
                                     handleChange({
                                         location:
@@ -417,6 +420,7 @@ export default function PhotoOverviewPage(props: {
                 isOpen={deleteModalDisclosure.isOpen}
                 onClose={deleteModalDisclosure.onClose}
             />
+            {loading && <PageLoading />}
         </Flex>
     );
 }

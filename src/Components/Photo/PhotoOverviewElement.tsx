@@ -44,7 +44,7 @@ export default function PhotoOverviewElement(props: {
     return (
         <GridItem>
             <Flex direction={'column'}>
-                <AspectRatio ratio={280 / 175} mb={'5px'} onClick={onOpen}>
+                <AspectRatio ratio={280 / 175} mb={'5px'}>
                     <Center
                         w={'100%'}
                         h={'100%'}
@@ -82,6 +82,7 @@ export default function PhotoOverviewElement(props: {
                             }}
                         ></Checkbox>
                         <Image
+                            onClick={onOpen}
                             w={'100%'}
                             h={'100%'}
                             objectFit={'contain'}

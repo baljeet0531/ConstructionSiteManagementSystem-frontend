@@ -19,6 +19,7 @@ import {
 import { IFormattedPhotos } from './Interface';
 import { QUERY_IMAGE_OPTIONS } from './PhotoCreatePage';
 import { QUERY_PHOTOS } from './PhotoOverviewPage';
+import { PageLoading } from '../Shared/Loading';
 
 const DELETE_PHOTOS = gql`
     mutation DeleteImageManagement($no: [Int]!) {
@@ -37,11 +38,12 @@ export default function DeleteModal(props: {
     const { checkedRef, isOpen, onClose } = props;
     const toast = useToast();
 
-    const [deletePhotos] = useMutation(DELETE_PHOTOS, {
+    const [deletePhotos, { loading }] = useMutation(DELETE_PHOTOS, {
         onCompleted: ({ deleteImageManagement }) => {
             const { ok, message } = deleteImageManagement;
             if (ok) {
                 defaultSuccessToast(toast, message);
+                onClose();
             }
         },
         onError: (err) => {
@@ -50,6 +52,7 @@ export default function DeleteModal(props: {
         },
         fetchPolicy: 'network-only',
         refetchQueries: [QUERY_PHOTOS, QUERY_IMAGE_OPTIONS],
+        awaitRefetchQueries: true,
     });
 
     const selectedNumbers = Object.values(checkedRef.current).flatMap((date) =>
@@ -60,15 +63,9 @@ export default function DeleteModal(props: {
         )
     );
 
-    const handleDelete = () => {
-        deletePhotos({
-            variables: {
-                no: selectedNumbers,
-            },
-        });
-        onClose();
-    };
-    return (
+    return loading ? (
+        <PageLoading />
+    ) : (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent padding={'24px'}>
@@ -95,7 +92,16 @@ export default function DeleteModal(props: {
                     >
                         取消
                     </Button>
-                    <Button variant={'buttonBlueSolid'} onClick={handleDelete}>
+                    <Button
+                        variant={'buttonBlueSolid'}
+                        onClick={() => {
+                            deletePhotos({
+                                variables: {
+                                    no: selectedNumbers,
+                                },
+                            });
+                        }}
+                    >
                         確定
                     </Button>
                 </ModalFooter>
