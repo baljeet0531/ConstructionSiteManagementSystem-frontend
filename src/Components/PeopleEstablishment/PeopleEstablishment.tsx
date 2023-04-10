@@ -70,7 +70,60 @@ export interface formFiles {
     LImg: File | undefined;
     PImg: File | undefined;
     R6Img: File | undefined;
+
+    aCertificationFImg: File | undefined;
+    aCertificationRImg: File | undefined;
+    wahCertificationFImg: File | undefined;
+    wahCertificationRImg: File | undefined;
+    lCertificationFImg: File | undefined;
+    lCertificationRImg: File | undefined;
+    cCertificationFImg: File | undefined;
+    cCertificationRImg: File | undefined;
+    hCertificationFImg: File | undefined;
+    hCertificationRImg: File | undefined;
+    exCertificationFImg: File | undefined;
+    exCertificationRImg: File | undefined;
+    sCertificationFImg: File | undefined;
+    sCertificationRImg: File | undefined;
+    saCertificationFImg: File | undefined;
+    saCertificationRImg: File | undefined;
+    osCertificationFImg: File | undefined;
+    osCertificationRImg: File | undefined;
+    o2CertificationFImg: File | undefined;
+    o2CertificationRImg: File | undefined;
 }
+
+const filesInitialValues: formFiles = {
+    F6Img: undefined,
+    GImg: undefined,
+    HImgs: [undefined],
+    IDFImg: undefined,
+    IDRImg: undefined,
+    LImg: undefined,
+    PImg: undefined,
+    R6Img: undefined,
+    aCertificationFImg: undefined,
+    aCertificationRImg: undefined,
+    wahCertificationFImg: undefined,
+    wahCertificationRImg: undefined,
+    lCertificationFImg: undefined,
+    lCertificationRImg: undefined,
+    cCertificationFImg: undefined,
+    cCertificationRImg: undefined,
+    hCertificationFImg: undefined,
+    hCertificationRImg: undefined,
+    exCertificationFImg: undefined,
+    exCertificationRImg: undefined,
+    sCertificationFImg: undefined,
+    sCertificationRImg: undefined,
+    saCertificationFImg: undefined,
+    saCertificationRImg: undefined,
+    osCertificationFImg: undefined,
+    osCertificationRImg: undefined,
+    o2CertificationFImg: undefined,
+    o2CertificationRImg: undefined,
+};
+
 const CREATE_HUMAN_RESOURCE = gql`
     mutation createHumanResource(
         $F6Img: Upload
@@ -330,16 +383,8 @@ export default function PeopleEstablishment() {
         o2Status: '',
     };
 
-    const [fileStates, setFileStates] = React.useState<formFiles>({
-        F6Img: undefined,
-        GImg: undefined,
-        HImgs: [undefined],
-        IDFImg: undefined,
-        IDRImg: undefined,
-        LImg: undefined,
-        PImg: undefined,
-        R6Img: undefined,
-    });
+    const [fileStates, setFileStates] =
+        React.useState<formFiles>(filesInitialValues);
 
     const toast = useToast();
     const [createHumanResource, { loading: createLoading }] = useMutation(
@@ -370,16 +415,7 @@ export default function PeopleEstablishment() {
 
                 const handleCompeleted = (message: string) => {
                     defaultSuccessToast(toast, message);
-                    setFileStates({
-                        F6Img: undefined,
-                        GImg: undefined,
-                        HImgs: [undefined],
-                        IDFImg: undefined,
-                        IDRImg: undefined,
-                        LImg: undefined,
-                        PImg: undefined,
-                        R6Img: undefined,
-                    });
+                    setFileStates(filesInitialValues);
                     setHumanToBeUpdated(undefined);
                     actions.resetForm();
                 };
