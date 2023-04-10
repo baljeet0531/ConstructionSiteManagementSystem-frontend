@@ -318,6 +318,26 @@ export default function FromPage(props: {
             LImg: undefined,
             PImg: undefined,
             R6Img: undefined,
+            aCertificationFImg: undefined,
+            aCertificationRImg: undefined,
+            wahCertificationFImg: undefined,
+            wahCertificationRImg: undefined,
+            lCertificationFImg: undefined,
+            lCertificationRImg: undefined,
+            cCertificationFImg: undefined,
+            cCertificationRImg: undefined,
+            hCertificationFImg: undefined,
+            hCertificationRImg: undefined,
+            exCertificationFImg: undefined,
+            exCertificationRImg: undefined,
+            sCertificationFImg: undefined,
+            sCertificationRImg: undefined,
+            saCertificationFImg: undefined,
+            saCertificationRImg: undefined,
+            osCertificationFImg: undefined,
+            osCertificationRImg: undefined,
+            o2CertificationFImg: undefined,
+            o2CertificationRImg: undefined,
         };
         const fetchImg = async (imageType: imageType, imgPath: string) => {
             if (imgPath !== '') {
@@ -1094,7 +1114,7 @@ export default function FromPage(props: {
                             <GridFileItem
                                 gridRange={[30, 31, 1, 4]}
                                 fieldName="IDFImg"
-                                formlabel="身分證影本(正面)"
+                                formlabel="身分證影本（正面）"
                                 height={'210px'}
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1103,7 +1123,7 @@ export default function FromPage(props: {
                             <GridFileItem
                                 gridRange={[30, 31, 4, 7]}
                                 fieldName="IDRImg"
-                                formlabel="身分證影本(反面)"
+                                formlabel="身分證影本（反面）"
                                 height={'210px'}
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1113,7 +1133,7 @@ export default function FromPage(props: {
                             <GridFileItem
                                 gridRange={[31, 32, 1, 4]}
                                 fieldName="F6Img"
-                                formlabel="一般安全衛生教育訓練證明(正面)"
+                                formlabel="一般安全衛生教育訓練證明（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
@@ -1122,7 +1142,7 @@ export default function FromPage(props: {
                             <GridFileItem
                                 gridRange={[31, 32, 4, 7]}
                                 fieldName="R6Img"
-                                formlabel="一般安全衛生教育訓練證明(反面)"
+                                formlabel="一般安全衛生教育訓練證明（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
@@ -1153,6 +1173,167 @@ export default function FromPage(props: {
                                     ></GridFileItem>
                                 );
                             })}
+
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="aCertificationFImg"
+                                formlabel="高空工作車證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="aCertificationRImg"
+                                formlabel="高空工作車證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="wahCertificationFImg"
+                                formlabel="高處施工架證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="wahCertificationRImg"
+                                formlabel="高處施工架證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="lCertificationFImg"
+                                formlabel="吊掛作業證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="lCertificationRImg"
+                                formlabel="吊掛作業證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="cCertificationFImg"
+                                formlabel="侷限空間證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="cCertificationRImg"
+                                formlabel="侷限空間證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="hCertificationFImg"
+                                formlabel="有機溶劑證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="hCertificationRImg"
+                                formlabel="有機溶劑證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="exCertificationFImg"
+                                formlabel="防爆區證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="exCertificationRImg"
+                                formlabel="防爆區證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="sCertificationFImg"
+                                formlabel="營造業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="sCertificationRImg"
+                                formlabel="營造業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="saCertificationFImg"
+                                formlabel="施工架作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="saCertificationRImg"
+                                formlabel="施工架作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="osCertificationFImg"
+                                formlabel="有機溶劑作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="osCertificationRImg"
+                                formlabel="有機溶劑作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="o2CertificationFImg"
+                                formlabel="缺氧作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="o2CertificationRImg"
+                                formlabel="缺氧作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
                         </Grid>
                     </Flex>
                 </Form>
