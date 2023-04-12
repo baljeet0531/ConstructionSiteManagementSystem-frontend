@@ -62,67 +62,38 @@ export interface formValues extends humanInfoValues {
 }
 
 export interface formFiles {
-    F6Img: File | undefined;
-    GImg: File | undefined;
+    F6Img?: File;
+    GImg?: File;
     HImgs: (File | undefined)[];
-    IDFImg: File | undefined;
-    IDRImg: File | undefined;
-    LImg: File | undefined;
-    PImg: File | undefined;
-    R6Img: File | undefined;
-
-    aCertificationFImg: File | undefined;
-    aCertificationRImg: File | undefined;
-    wahCertificationFImg: File | undefined;
-    wahCertificationRImg: File | undefined;
-    lCertificationFImg: File | undefined;
-    lCertificationRImg: File | undefined;
-    cCertificationFImg: File | undefined;
-    cCertificationRImg: File | undefined;
-    hCertificationFImg: File | undefined;
-    hCertificationRImg: File | undefined;
-    exCertificationFImg: File | undefined;
-    exCertificationRImg: File | undefined;
-    sCertificationFImg: File | undefined;
-    sCertificationRImg: File | undefined;
-    saCertificationFImg: File | undefined;
-    saCertificationRImg: File | undefined;
-    osCertificationFImg: File | undefined;
-    osCertificationRImg: File | undefined;
-    o2CertificationFImg: File | undefined;
-    o2CertificationRImg: File | undefined;
+    IDFImg?: File;
+    IDRImg?: File;
+    LImg?: File;
+    PImg?: File;
+    R6Img?: File;
+    MAFImg?: File;
+    MARImg?: File;
+    AFImg?: File;
+    ARImg?: File;
+    WAHFImg?: File;
+    WAHRImg?: File;
+    LFImg?: File;
+    LRImg?: File;
+    CFImg?: File;
+    CRImg?: File;
+    HFImg?: File;
+    HRImg?: File;
+    EXFImg?: File;
+    EXRImg?: File;
+    SFImg?: File;
+    SRImg?: File;
+    SAFImg?: File;
+    SARImg?: File;
+    OSFImg?: File;
+    OSRImg?: File;
+    O2FImg?: File;
+    O2RImg?: File;
 }
-
-const filesInitialValues: formFiles = {
-    F6Img: undefined,
-    GImg: undefined,
-    HImgs: [undefined],
-    IDFImg: undefined,
-    IDRImg: undefined,
-    LImg: undefined,
-    PImg: undefined,
-    R6Img: undefined,
-    aCertificationFImg: undefined,
-    aCertificationRImg: undefined,
-    wahCertificationFImg: undefined,
-    wahCertificationRImg: undefined,
-    lCertificationFImg: undefined,
-    lCertificationRImg: undefined,
-    cCertificationFImg: undefined,
-    cCertificationRImg: undefined,
-    hCertificationFImg: undefined,
-    hCertificationRImg: undefined,
-    exCertificationFImg: undefined,
-    exCertificationRImg: undefined,
-    sCertificationFImg: undefined,
-    sCertificationRImg: undefined,
-    saCertificationFImg: undefined,
-    saCertificationRImg: undefined,
-    osCertificationFImg: undefined,
-    osCertificationRImg: undefined,
-    o2CertificationFImg: undefined,
-    o2CertificationRImg: undefined,
-};
+const filesInitialValues: formFiles = { HImgs: [undefined] };
 
 const CREATE_HUMAN_RESOURCE = gql`
     mutation createHumanResource(

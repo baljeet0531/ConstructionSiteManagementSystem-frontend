@@ -309,36 +309,7 @@ export default function FromPage(props: {
         const controller = new AbortController();
         const signal = controller.signal;
         let setFiles = true;
-        let newFileStates: formFiles = {
-            F6Img: undefined,
-            GImg: undefined,
-            HImgs: [],
-            IDFImg: undefined,
-            IDRImg: undefined,
-            LImg: undefined,
-            PImg: undefined,
-            R6Img: undefined,
-            aCertificationFImg: undefined,
-            aCertificationRImg: undefined,
-            wahCertificationFImg: undefined,
-            wahCertificationRImg: undefined,
-            lCertificationFImg: undefined,
-            lCertificationRImg: undefined,
-            cCertificationFImg: undefined,
-            cCertificationRImg: undefined,
-            hCertificationFImg: undefined,
-            hCertificationRImg: undefined,
-            exCertificationFImg: undefined,
-            exCertificationRImg: undefined,
-            sCertificationFImg: undefined,
-            sCertificationRImg: undefined,
-            saCertificationFImg: undefined,
-            saCertificationRImg: undefined,
-            osCertificationFImg: undefined,
-            osCertificationRImg: undefined,
-            o2CertificationFImg: undefined,
-            o2CertificationRImg: undefined,
-        };
+        let newFileStates: formFiles = { HImgs: [] };
         const fetchImg = async (imageType: imageType, imgPath: string) => {
             if (imgPath !== '') {
                 const cookieValue = new Cookies().get('jwt');
@@ -1158,7 +1129,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
 
                             <GridItem colSpan={4} rowSpan={3}></GridItem>
-                            {fileStates.HImgs.map((file, index) => {
+                            {fileStates.HImgs.map((_, index) => {
                                 return (
                                     <GridFileItem
                                         key={index}
@@ -1174,9 +1145,29 @@ export default function FromPage(props: {
                                 );
                             })}
 
+                            <GridTitle
+                                colSpan={6}
+                                title="證照照片佐證資料"
+                            ></GridTitle>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="aCertificationFImg"
+                                fieldName="MAFImg"
+                                formlabel="主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="MAFImg"
+                                formlabel="主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="AFImg"
                                 formlabel="高空工作車證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1184,7 +1175,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="aCertificationRImg"
+                                fieldName="ARImg"
                                 formlabel="高空工作車證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1192,7 +1183,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="wahCertificationFImg"
+                                fieldName="WAHFImg"
                                 formlabel="高處施工架證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1200,7 +1191,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="wahCertificationRImg"
+                                fieldName="WAHRImg"
                                 formlabel="高處施工架證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1208,7 +1199,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="lCertificationFImg"
+                                fieldName="LFImg"
                                 formlabel="吊掛作業證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1216,7 +1207,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="lCertificationRImg"
+                                fieldName="LRImg"
                                 formlabel="吊掛作業證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1224,7 +1215,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="cCertificationFImg"
+                                fieldName="CFImg"
                                 formlabel="侷限空間證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1232,7 +1223,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="cCertificationRImg"
+                                fieldName="CRImg"
                                 formlabel="侷限空間證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1240,7 +1231,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="hCertificationFImg"
+                                fieldName="HFImg"
                                 formlabel="有機溶劑證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1248,7 +1239,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="hCertificationRImg"
+                                fieldName="HRImg"
                                 formlabel="有機溶劑證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1256,7 +1247,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="exCertificationFImg"
+                                fieldName="EXFImg"
                                 formlabel="防爆區證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1264,7 +1255,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="exCertificationRImg"
+                                fieldName="EXRImg"
                                 formlabel="防爆區證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1272,7 +1263,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="sCertificationFImg"
+                                fieldName="SFImg"
                                 formlabel="營造業主管證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1280,7 +1271,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="sCertificationRImg"
+                                fieldName="SRImg"
                                 formlabel="營造業主管證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1288,7 +1279,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="saCertificationFImg"
+                                fieldName="SAFImg"
                                 formlabel="施工架作業主管證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1296,7 +1287,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="saCertificationRImg"
+                                fieldName="SARImg"
                                 formlabel="施工架作業主管證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1304,7 +1295,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="osCertificationFImg"
+                                fieldName="OSFImg"
                                 formlabel="有機溶劑作業主管證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1312,7 +1303,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="osCertificationRImg"
+                                fieldName="OSRImg"
                                 formlabel="有機溶劑作業主管證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1320,7 +1311,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="o2CertificationFImg"
+                                fieldName="O2FImg"
                                 formlabel="缺氧作業主管證照（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1328,7 +1319,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="o2CertificationRImg"
+                                fieldName="O2RImg"
                                 formlabel="缺氧作業主管證照（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
