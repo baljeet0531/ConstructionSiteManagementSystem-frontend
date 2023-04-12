@@ -84,7 +84,6 @@ function DateElement(props: {
                 <Checkbox
                     colorScheme={'gray'}
                     borderColor={'#667080'}
-                    style={{ backgroundColor: '#FFFFFF' }}
                     isIndeterminate={
                         dateValues.isIndeterminate && !dateValues.isChecked
                     }
