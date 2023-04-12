@@ -1,108 +1,201 @@
-import { gql, useQuery } from '@apollo/client';
-import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Checkbox, Flex, Grid, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import PhotoOverviewElement from './PhotoOverviewElement';
-
-export interface IPhoto {
-    no: number;
-    imagePath: string;
-    category: string;
-    date: string;
-    location: string;
-    description: string;
-}
-
-interface IPhotoOverview {
-    time: string;
-    element: {
-        categoryName: string;
-        element: IPhoto[];
-    }[];
-}
-
-export const QUERY_PHOTOS = gql`
-    query ImageManagement($siteId: String!) {
-        imageManagement(siteId: $siteId) {
-            time
-            element {
-                categoryName
-                element {
-                    no
-                    imagePath
-                    category
-                    date
-                    location
-                    description
-                }
-            }
-        }
-    }
-`;
+import {
+    ICategoryChecked,
+    IDateChecked,
+    IFilteredPhotos,
+    IFormattedPhotos,
+} from '../../Interface/Photo';
+import { ItemDataType } from 'rsuite/esm/@types/common';
 
 export default function PhotoOverviewContainer(props: {
-    siteId: string;
-    filterKey?: string[];
+    filteredPhotos: IFilteredPhotos | undefined;
+    checkedRef: React.MutableRefObject<IFormattedPhotos>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
 }) {
-    const { siteId } = props;
-    const photoData = React.useRef<IPhotoOverview[]>([]);
+    const { filteredPhotos, checkedRef, serverCategories, serverLocations } =
+        props;
 
-    useQuery(QUERY_PHOTOS, {
-        variables: {
-            siteId: siteId,
-        },
-        onCompleted: ({ imageManagement }) => {
-            photoData.current = imageManagement;
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    const dateGroup = photoData.current.map(({ time, element }, index) => {
-        const categoryGroup = element.map(
-            ({ categoryName, element }, index) => {
-                const photoList = element.map((photo, index) => (
-                    <GridItem key={index}>
-                        <PhotoOverviewElement element={photo} />
-                    </GridItem>
-                ));
-
-                return (
-                    <Flex key={index} direction={'column'} mb={'18px'}>
-                        <Text
-                            fontSize={'lg'}
-                            w={'fit-content'}
-                            padding={'5.5px 12px'}
-                            mb={'13px'}
-                            color={'#FFFFFF'}
-                            background={'#4C7DE7'}
-                            borderRadius={'20px'}
-                        >
-                            {categoryName}
-                        </Text>
-                        <Grid templateColumns="repeat(3, 1fr)" gap={'20px'}>
-                            {photoList}
-                        </Grid>
-                    </Flex>
-                );
-            }
-        );
-
-        return (
-            <Flex key={index} direction={'column'}>
-                <Text fontSize={'2xl'} mb={'13px'}>
-                    {dayjs(time).format('YYYY/MM/DD')}
-                </Text>
-                <Flex direction={'column'}>{categoryGroup}</Flex>
-            </Flex>
-        );
-    });
+    const dateGroup = Object.entries(filteredPhotos || checkedRef.current)
+        .sort()
+        .map(([time, { categories }]) => (
+            <DateElement
+                key={time}
+                time={time}
+                element={categories}
+                checkedRef={checkedRef}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
+            />
+        ));
 
     return (
-        <Flex direction={'column'} padding={'13px 42px'}>
+        <Flex
+            direction={'column'}
+            padding={'13px 42px'}
+            overflowY={'auto'}
+            className={'photo-container'}
+        >
             {dateGroup}
+        </Flex>
+    );
+}
+
+function DateElement(props: {
+    time: string;
+    element: {
+        [categoryName: string]: ICategoryChecked;
+    };
+    checkedRef: React.MutableRefObject<IFormattedPhotos>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
+}) {
+    const { time, element, checkedRef, serverCategories, serverLocations } =
+        props;
+    const dateValues = checkedRef.current[time];
+    const [, setRerender] = React.useState<boolean>(false);
+
+    const categoryGroup = Object.entries(element).map(
+        ([categoryName, { photos }]) => (
+            <CategoryElement
+                key={categoryName}
+                dateValues={dateValues}
+                categoryName={categoryName}
+                numbers={Object.keys(photos).map((no) => Number(no))}
+                setRerender={setRerender}
+                serverCategories={serverCategories}
+                serverLocations={serverLocations}
+            />
+        )
+    );
+
+    return (
+        <Flex direction={'column'}>
+            <Flex
+                align={'center'}
+                justify={'flex-start'}
+                mb={'13px'}
+                gap={'7.5px'}
+            >
+                <Text fontSize={'2xl'}>{dayjs(time).format('YYYY/MM/DD')}</Text>
+                <Checkbox
+                    colorScheme={'gray'}
+                    borderColor={'#667080'}
+                    isIndeterminate={
+                        dateValues.isIndeterminate && !dateValues.isChecked
+                    }
+                    isChecked={dateValues.isChecked}
+                    onChange={(e) => {
+                        dateValues.isChecked = e.target.checked;
+                        dateValues.isIndeterminate = false;
+
+                        Object.keys(dateValues.categories).forEach(
+                            (categoryName) => {
+                                const categoryValues =
+                                    dateValues.categories[categoryName];
+                                categoryValues.isChecked = e.target.checked;
+                                categoryValues.isIndeterminate = false;
+                                Object.keys(categoryValues.photos).forEach(
+                                    (no) => {
+                                        const photoValues =
+                                            categoryValues.photos[Number(no)];
+                                        photoValues.isChecked =
+                                            e.target.checked;
+                                    }
+                                );
+                            }
+                        );
+
+                        setRerender((prev) => !prev);
+                    }}
+                ></Checkbox>
+            </Flex>
+            <Flex direction={'column'}>{categoryGroup}</Flex>
+        </Flex>
+    );
+}
+
+function CategoryElement(props: {
+    dateValues: IDateChecked;
+    categoryName: string;
+    numbers: number[];
+    setRerender: React.Dispatch<React.SetStateAction<boolean>>;
+    serverCategories: ItemDataType[];
+    serverLocations: ItemDataType[];
+}) {
+    const {
+        dateValues,
+        categoryName,
+        numbers,
+        setRerender,
+        serverCategories,
+        serverLocations,
+    } = props;
+    const categoryValues = dateValues.categories[categoryName];
+    const photoList = numbers.map((number) => (
+        <PhotoOverviewElement
+            key={number}
+            dateValues={dateValues}
+            categoryValues={categoryValues}
+            number={number}
+            setRerender={setRerender}
+            serverCategories={serverCategories}
+            serverLocations={serverLocations}
+        />
+    ));
+
+    return (
+        <Flex direction={'column'} mb={'18px'}>
+            <Flex
+                align={'center'}
+                justify={'flex-start'}
+                mb={'13px'}
+                gap={'7.5px'}
+            >
+                <Text
+                    fontSize={'lg'}
+                    w={'fit-content'}
+                    padding={'5.5px 12px'}
+                    color={'#FFFFFF'}
+                    background={'#4C7DE7'}
+                    borderRadius={'20px'}
+                >
+                    {categoryName}
+                </Text>
+                <Checkbox
+                    colorScheme={'gray'}
+                    borderColor={'#667080'}
+                    isIndeterminate={
+                        categoryValues.isIndeterminate &&
+                        !categoryValues.isChecked
+                    }
+                    isChecked={categoryValues.isChecked}
+                    onChange={(e) => {
+                        categoryValues.isChecked = e.target.checked;
+                        categoryValues.isIndeterminate = false;
+
+                        Object.keys(categoryValues.photos).forEach((number) => {
+                            const photoValues =
+                                categoryValues.photos[Number(number)];
+                            photoValues.isChecked = e.target.checked;
+                        });
+                        const categoriesChecked = Object.values(
+                            dateValues.categories
+                        ).map((value) => value.isChecked);
+                        dateValues.isIndeterminate =
+                            categoriesChecked.some(Boolean);
+                        dateValues.isChecked = categoriesChecked.every(Boolean);
+
+                        setRerender((prev) => !prev);
+                    }}
+                ></Checkbox>
+            </Flex>
+            <Grid templateColumns="repeat(3, 1fr)" gap={'20px'}>
+                {photoList}
+            </Grid>
         </Flex>
     );
 }
