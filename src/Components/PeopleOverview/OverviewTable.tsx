@@ -67,9 +67,13 @@ export default function OverViewTable(props: {
         whiteSpace: 'nowrap',
     };
 
-    const errorDataCellStyle: ChakraProps = {
+    const warningDataCellStyle: ChakraProps = {
         ...dataCellStyle,
         bg: '#FDFFE3',
+    };
+    const errorDataCellStyle: ChakraProps = {
+        ...dataCellStyle,
+        bg: '#DB504A1A',
     };
 
     const tableViewData: {
@@ -111,6 +115,7 @@ export default function OverViewTable(props: {
         }) => {
             const header = columnInfo[columnIndex]['variable'] as string;
             const info: humanTableValues = data[primarykeys[rowIndex]];
+            const cellValue = info[header as keyof humanTableValues];
 
             if (header == 'isCheck') {
                 return (
@@ -136,22 +141,33 @@ export default function OverViewTable(props: {
                         ></Checkbox>
                     </Box>
                 );
-            } else if (
-                info[header as keyof humanTableValues] == '日期錯誤' ||
-                (header.slice(-6) == 'Status' &&
-                    info[header as keyof humanTableValues] != 'OK')
-            ) {
+            } else if (header.slice(-6) == 'Status') {
+                const statusValue = cellValue as string;
+                const cellStyle = statusValue.startsWith('已過期')
+                    ? errorDataCellStyle
+                    : statusValue.endsWith('天後過期')
+                    ? warningDataCellStyle
+                    : dataCellStyle;
+
                 return (
-                    <Box style={style} {...errorDataCellStyle}>
-                        {info[header as keyof humanTableValues]}
+                    <Box style={style} {...cellStyle}>
+                        {statusValue.startsWith('無法判斷')
+                            ? '無法判斷'
+                            : cellValue}
+                    </Box>
+                );
+            } else {
+                return (
+                    <Box
+                        style={style}
+                        {...(cellValue == '日期錯誤'
+                            ? errorDataCellStyle
+                            : dataCellStyle)}
+                    >
+                        {cellValue}
                     </Box>
                 );
             }
-            return (
-                <Box style={style} {...dataCellStyle}>
-                    {info[header as keyof humanTableValues]}
-                </Box>
-            );
         },
         areEqual
     );
@@ -162,9 +178,8 @@ export default function OverViewTable(props: {
     const pagePadding = 42;
     const pageRatio = 0.8;
     const tableFigmaWidth = 877;
-
     const headerHeight = 65;
-    const tablePaddingTop = 152 + headerHeight;
+    const tablePaddingTop = 207 + headerHeight;
     const tablePaddingBottom = 52;
 
     const [tableViewWidth, setTableViewWidth] = React.useState(

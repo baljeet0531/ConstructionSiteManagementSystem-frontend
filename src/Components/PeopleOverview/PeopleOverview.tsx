@@ -2,7 +2,6 @@ import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     Button,
     Flex,
-    IconButton,
     Input,
     InputGroup,
     InputLeftElement,
@@ -13,6 +12,7 @@ import {
     Text,
     useToast,
     useDisclosure,
+    Select,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Cookies } from 'react-cookie';
@@ -581,6 +581,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
 
     const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
     const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const selectModeRef = React.useRef<HTMLSelectElement>(null);
     const timeout = React.useRef<any>();
     const handleDebounceSearch = () => {
         clearTimeout(timeout.current);
@@ -660,46 +661,46 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             pr={'42px'}
             pt={'47px'}
             pb={'52px'}
+            gap={'11px'}
         >
-            <Flex direction={'row'} align={'center'} mb={'11px'}>
-                <Text variant={'pageTitle'} mr={'0.625rem'}>
-                    {errorOnly ? '人員資料審查' : '人員資料總覽'}
-                </Text>
-                <InputGroup>
-                    <InputLeftElement>
-                        <IconButton
-                            aria-label="Search"
-                            icon={<SearchIcon />}
-                            onClick={() => {
-                                console.log('click');
+            <Text variant={'pageTitle'} mr={'0.625rem'}>
+                {errorOnly ? '人員資料審查' : '人員資料總覽'}
+            </Text>
+            <Flex align={'center'} justify={'space-between'} gap={'10px'}>
+                <Flex gap={'10px'} align={'center'}>
+                    <InputGroup w={'230px'}>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            children={<SearchIcon />}
+                        />
+                        <Input
+                            ref={searchInputRef}
+                            w={'fit-content'}
+                            type="text"
+                            border={'2px solid'}
+                            borderColor={'#919AA9'}
+                            height={'36px'}
+                            placeholder="搜尋身分證字號或承攬公司"
+                            _placeholder={{
+                                fontStyle: 'normal',
+                                fontWeight: '500',
+                                fontSize: '0.875rem',
+                                lineHeight: '2.25rem',
+                                color: 'rgba(102, 112, 128, 0.5)',
                             }}
-                            background="transparent"
-                            _active={{ background: 'transparent' }}
-                            _focus={{ background: 'transparent' }}
-                            _hover={{ background: 'transparent' }}
-                        ></IconButton>
-                    </InputLeftElement>
-                    <Input
-                        ref={searchInputRef}
-                        w={'fit-content'}
-                        type="text"
-                        border={'2px solid'}
-                        borderColor={'#919AA9'}
-                        height={'36px'}
-                        pl={'36px'}
-                        pr={'12px'}
-                        placeholder="搜尋身分證字號或承攬公司"
-                        _placeholder={{
-                            fontStyle: 'normal',
-                            fontWeight: '500',
-                            fontSize: '0.875rem',
-                            lineHeight: '2.25rem',
-                            color: 'rgba(102, 112, 128, 0.5)',
-                        }}
-                        onChange={handleDebounceSearch}
-                    />
-                </InputGroup>
-                <Flex gap={'10px'}>
+                            onChange={handleDebounceSearch}
+                        />
+                    </InputGroup>
+                    {!errorOnly && (
+                        <Select variant={'formOutline'} ref={selectModeRef}>
+                            <option value={undefined}>全部</option>
+                            <option value="即將到期">即將到期</option>
+                            <option value="已過期">已過期</option>
+                        </Select>
+                    )}
+                </Flex>
+
+                <Flex gap={'10px'} align={'center'}>
                     {selectedHuman.length == 1 && (
                         <Button
                             leftIcon={<EditIcon />}
