@@ -21,7 +21,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import { IPhotoChecked } from './Interface';
+import { IPhotoChecked } from '../../Interface/Photo';
 import dayjs from 'dayjs';
 import { CustomLoading } from '../Shared/Loading';
 import { QUERY_PHOTOS } from './PhotoOverviewPage';
