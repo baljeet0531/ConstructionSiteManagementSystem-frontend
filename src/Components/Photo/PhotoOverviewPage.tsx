@@ -18,14 +18,15 @@ import { DateRangePicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DeleteIcon, LaunchIcon, PublishIcon } from '../../Icons/Icons';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-import { handleDebounceSearch } from '../../Utils/handleDebounceSearch';
+import { handleDebounceSearch } from '../../Utils/Web';
 import { exportFile } from '../../Utils/Resources';
 import DeleteModal from './DeleteModal';
 import {
     IFilteredPhotos,
     IPhotoQueryData,
     IFormattedPhotos,
-} from './Interface';
+    IPhotoFilterOptions,
+} from '../../Interface/Photo';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 import { PageLoading } from '../Shared/Loading';
 
@@ -117,30 +118,21 @@ export default function PhotoOverviewPage(props: {
     >([]);
     const [filteredPhotos, setFilteredPhotos] =
         React.useState<IFilteredPhotos>();
-    const [filterOptions, setFilterOptions] = React.useState<{
-        category: string | undefined;
-        startDate: string | undefined;
-        endDate: string | undefined;
-        location: string | undefined;
-        keyWord: string | undefined;
-    }>({
-        category: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        location: undefined,
-        keyWord: undefined,
-    });
+    const [filterOptions, setFilterOptions] =
+        React.useState<IPhotoFilterOptions>({
+            category: undefined,
+            startDate: undefined,
+            endDate: undefined,
+            location: undefined,
+            keyWord: undefined,
+        });
 
-    const { category, startDate, endDate, location, keyWord } = filterOptions;
+    const { category, location } = filterOptions;
     const handleChange = (newValue: Object) => {
         searchPhotos({
             variables: {
                 siteId: siteId,
-                ...(category && { category: category }),
-                ...(startDate && { startDate: startDate }),
-                ...(endDate && { endDate: endDate }),
-                ...(location && { location: location }),
-                ...(keyWord && { keyWord: keyWord }),
+                ...filterOptions,
                 ...newValue,
             },
         });

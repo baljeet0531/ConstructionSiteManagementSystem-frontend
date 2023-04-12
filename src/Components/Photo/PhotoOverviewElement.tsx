@@ -12,7 +12,7 @@ import React from 'react';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { DescriptionIcon, LocationIcon } from '../../Icons/Icons';
 import { getImage } from '../../Utils/Resources';
-import { ICategoryChecked, IDateChecked } from './Interface';
+import { ICategoryChecked, IDateChecked } from '../../Interface/Photo';
 import PhotoModal from './PhotoModal';
 
 export default function PhotoOverviewElement(props: {

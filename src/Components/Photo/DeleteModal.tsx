@@ -16,7 +16,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import { IFormattedPhotos } from './Interface';
+import { IFormattedPhotos } from '../../Interface/Photo';
 import { QUERY_IMAGE_OPTIONS } from './PhotoCreatePage';
 import { QUERY_PHOTOS } from './PhotoOverviewPage';
 import { PageLoading } from '../Shared/Loading';

@@ -47,3 +47,11 @@ export interface IPhotoQueryData {
         element: IPhoto[];
     }[];
 }
+
+export interface IPhotoFilterOptions {
+    category: string | undefined;
+    startDate: string | undefined;
+    endDate: string | undefined;
+    location: string | undefined;
+    keyWord: string | undefined;
+}

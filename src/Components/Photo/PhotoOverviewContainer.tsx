@@ -7,7 +7,7 @@ import {
     IDateChecked,
     IFilteredPhotos,
     IFormattedPhotos,
-} from './Interface';
+} from '../../Interface/Photo';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 
 export default function PhotoOverviewContainer(props: {
@@ -84,7 +84,7 @@ function DateElement(props: {
                 <Checkbox
                     colorScheme={'gray'}
                     borderColor={'#667080'}
-                    background={'#FFFFFF'}
+                    style={{ backgroundColor: '#FFFFFF' }}
                     isIndeterminate={
                         dateValues.isIndeterminate && !dateValues.isChecked
                     }
