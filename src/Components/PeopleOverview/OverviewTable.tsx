@@ -179,7 +179,7 @@ export default function OverViewTable(props: {
     const pageRatio = 0.8;
     const tableFigmaWidth = 877;
     const headerHeight = 65;
-    const tablePaddingTop = 207 + headerHeight;
+    const tablePaddingTop = 47 + 44 + 11 + 40 + 11 + 66 + 11 + headerHeight;
     const tablePaddingBottom = 52;
 
     const [tableViewWidth, setTableViewWidth] = React.useState(
