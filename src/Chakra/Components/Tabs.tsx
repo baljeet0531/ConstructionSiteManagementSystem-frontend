@@ -26,6 +26,8 @@ const Tabs = {
                         ..._selected,
                         color: '#4C7DE7',
                         fontWeight: 700,
+                        borderRadius: '4px',
+                        bg: '#E3ECFF',
                     },
                 },
             };
