@@ -224,7 +224,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    主管證照: {
+    主管證照名稱: {
         編號: {
             width: 40,
             variable: 'index',
@@ -296,7 +296,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    證照期限1: {
+    '施工作業證照\n高空車/施工架': {
         編號: {
             width: 40,
             variable: 'index',
@@ -330,7 +330,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    證照期限2: {
+    '施工作業證照\n吊掛/局限空間': {
         編號: {
             width: 40,
             variable: 'index',
@@ -364,7 +364,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    證照期限3: {
+    '施工作業證照\n有機溶劑/防爆區': {
         編號: {
             width: 40,
             variable: 'index',
@@ -398,7 +398,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    證照期限4: {
+    '作業主管證照\n營造/施工架': {
         編號: {
             width: 40,
             variable: 'index',
@@ -432,7 +432,7 @@ export const tabMap = {
             variable: 'isCheck',
         },
     },
-    證照期限5: {
+    '作業主管證照\n有機/缺氧': {
         編號: {
             width: 40,
             variable: 'index',
@@ -745,26 +745,26 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 </Flex>
             </Flex>
             <Tabs variant={'blueLineTabs'} isFitted isLazy>
-                <TabList>
-                    {Object.keys(tabMap).map((tab, index) => {
-                        return <Tab key={index}>{tab}</Tab>;
-                    })}
+                <TabList overflowX={'auto'}>
+                    {Object.keys(tabMap).map((tab, index) => (
+                        <Tab key={index} whiteSpace={'pre'} margin={0}>
+                            {tab}
+                        </Tab>
+                    ))}
                 </TabList>
                 <TabPanels>
-                    {Object.values(tabMap).map((tabItem, index) => {
-                        return (
-                            <OverViewTable
-                                key={index}
-                                tabItem={tabItem}
-                                tableValue={tableValue}
-                                setTableValue={setTableValue}
-                                searchPrimaryKey={searchPrimaryKey}
-                                selectAll={selectAll}
-                                setSelectAll={setSelectAll}
-                                errorOnly={errorOnly}
-                            />
-                        );
-                    })}
+                    {Object.values(tabMap).map((tabItem, index) => (
+                        <OverViewTable
+                            key={index}
+                            tabItem={tabItem}
+                            tableValue={tableValue}
+                            setTableValue={setTableValue}
+                            searchPrimaryKey={searchPrimaryKey}
+                            selectAll={selectAll}
+                            setSelectAll={setSelectAll}
+                            errorOnly={errorOnly}
+                        />
+                    ))}
                 </TabPanels>
             </Tabs>
             <DeleteModal
