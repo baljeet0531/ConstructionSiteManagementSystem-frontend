@@ -187,6 +187,11 @@ export default function ReactWindowTable(props: {
     tableData: {
         [primaryKey: string]: any;
     };
+    setTableData: React.Dispatch<
+        React.SetStateAction<{
+            [primaryKey: string]: any;
+        }>
+    >;
     columnMap: IColumnMap[];
     sizes: ISizes;
     filteredPrimaryKey?: string[];
@@ -195,6 +200,7 @@ export default function ReactWindowTable(props: {
 }) {
     const {
         tableData,
+        setTableData,
         columnMap,
         sizes,
         filteredPrimaryKey,
@@ -240,8 +246,6 @@ export default function ReactWindowTable(props: {
         return sortReversed ? -diff : diff;
     };
     const primaryKeys = Object.keys(displayTableData).sort(sortingFunction);
-
-    const [allChecked, setAllChecked] = React.useState<boolean>(false);
 
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
@@ -328,12 +332,20 @@ export default function ReactWindowTable(props: {
                 {({ columnIndex, style }) => {
                     const title = columnMap[columnIndex]['title'];
                     if (title == '全選') {
+                        const checkedItems = Object.values(tableData);
+
+                        const allChecked = checkedItems.every(
+                            (info) => info['isChecked']
+                        );
+                        const isIndeterminate =
+                            checkedItems.some((info) => info['isChecked']) &&
+                            !allChecked;
                         return (
                             <Center style={style} {...headerCellStyle}>
                                 <Checkbox
                                     isChecked={allChecked}
+                                    isIndeterminate={isIndeterminate}
                                     onChange={(e) => {
-                                        setAllChecked(e.target.checked);
                                         primaryKeys.forEach((primaryKey) => {
                                             const info = tableData[primaryKey];
                                             tableData[primaryKey] = {
@@ -341,6 +353,7 @@ export default function ReactWindowTable(props: {
                                                 isChecked: e.target.checked,
                                             };
                                         });
+                                        setTableData({ ...tableData });
                                     }}
                                 ></Checkbox>
                             </Center>
