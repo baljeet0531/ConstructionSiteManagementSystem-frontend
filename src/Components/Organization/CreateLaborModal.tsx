@@ -84,11 +84,11 @@ export type tableData = {
 };
 
 const sizes: ISizes = {
-    tableViewHeight: 220,
     tableFigmaWidth: 450,
-    tableViewWidth: 450,
     headerHeight: 36,
     cellHeight: 44,
+    fixedHeight: 220,
+    fixedWidth: 450,
 };
 
 export default function AddPeopleModal(props: {
