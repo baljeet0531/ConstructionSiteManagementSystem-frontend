@@ -170,11 +170,17 @@ export interface IColumnMap {
 }
 
 export interface ISizes {
-    tableViewHeight?: number;
-    tableFigmaWidth: number;
-    tableViewWidth?: number;
-    headerHeight: number;
-    cellHeight: number;
+    tableFigmaWidth?: number;
+    headerHeight?: number;
+    cellHeight?: number;
+    fixedWidth?: number;
+    fixedHeight?: number;
+    padding?: {
+        topPadding?: number;
+        bottomPadding?: number;
+        pagePadding?: number;
+    };
+    pageRatio?: number;
 }
 
 export default function ReactWindowTable(props: {
@@ -195,13 +201,22 @@ export default function ReactWindowTable(props: {
         sortReversed = false,
         columnBordered = false,
     } = props;
+
     const {
-        tableViewHeight,
-        tableFigmaWidth,
-        tableViewWidth,
-        headerHeight,
-        cellHeight,
+        tableFigmaWidth = 877,
+        headerHeight = 65,
+        cellHeight = 30,
+        pageRatio = 0.8,
+        padding,
+        fixedWidth,
+        fixedHeight,
     } = sizes;
+
+    const {
+        topPadding = 152,
+        bottomPadding = 52,
+        pagePadding = 42,
+    } = padding || {};
 
     const displayTableData: {
         [primaryKey: string]: any;
@@ -231,21 +246,12 @@ export default function ReactWindowTable(props: {
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
 
-    const pagePadding = 42;
-    const pageRatio = 0.8;
-
-    const tablePaddingTop = 152 + headerHeight;
-    const tablePaddingBottom = 52;
-
-    const [tableWidth, setTableViewWidth] = React.useState(
-        tableViewWidth
-            ? tableViewWidth
-            : window.innerWidth * pageRatio - 2 * pagePadding
+    const [tableWidth, setTableWidth] = React.useState(
+        fixedWidth || window.innerWidth * pageRatio - 2 * pagePadding
     );
-    const [tableHeight, setTableViewHeight] = React.useState(
-        tableViewHeight
-            ? tableViewHeight
-            : window.innerHeight - tablePaddingTop - tablePaddingBottom
+    const [tableHeight, setTableHeight] = React.useState(
+        fixedHeight ||
+            window.innerHeight - topPadding - headerHeight - bottomPadding
     );
 
     const getColumnWidth = (index: number) => {
@@ -257,16 +263,15 @@ export default function ReactWindowTable(props: {
 
     React.useEffect(() => {
         const watchResize = () => {
-            setTableViewWidth(
-                tableViewWidth
-                    ? tableViewWidth
-                    : window.innerWidth * pageRatio - 2 * pagePadding
-            );
-            setTableViewHeight(
-                tableViewHeight
-                    ? tableViewHeight
-                    : window.innerHeight - tablePaddingTop - tablePaddingBottom
-            );
+            !fixedWidth &&
+                setTableWidth(window.innerWidth * pageRatio - 2 * pagePadding);
+            !fixedHeight &&
+                setTableHeight(
+                    window.innerHeight -
+                        topPadding -
+                        headerHeight -
+                        bottomPadding
+                );
             variableSizeHeaderRef.current &&
                 variableSizeHeaderRef.current.resetAfterColumnIndex(0);
             variableSizeDataRef.current &&
