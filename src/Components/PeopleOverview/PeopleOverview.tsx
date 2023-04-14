@@ -14,6 +14,7 @@ import {
     useDisclosure,
     Select,
     TabPanel,
+    Box,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Cookies } from 'react-cookie';
@@ -33,7 +34,9 @@ import ReactWindowTable, {
     CheckboxElement,
     IColumnMap,
     ISizes,
+    dataCellStyle,
     defaultElement,
+    getElementProps,
 } from '../Shared/ReactWindowTable';
 
 export const ALL_HUMAN_RESOURCE = gql`
@@ -186,6 +189,21 @@ export interface humanTableValues {
 
 export default function PeopleOverview(props: { errorOnly?: boolean }) {
     if (!IsPermit('people_overview')) return <Navigate to="/" replace={true} />;
+
+    const CertStatusElement = ({ style, info, variable }: getElementProps) => {
+        let value = info[variable] as string,
+            bg = '#FFFFFF';
+        if (value.startsWith('無法判斷')) value = '無法判斷';
+        else if (value.startsWith('已過期')) bg = '#DB504A1A';
+        else if (value.endsWith('天後過期')) bg = '#FDFFE3';
+
+        return (
+            <Box {...dataCellStyle} style={style} bg={bg}>
+                {value}
+            </Box>
+        );
+    };
+
     const tabColumnMap: { [tab: string]: IColumnMap[] } = {
         個資: [
             {
@@ -314,7 +332,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '6小時期效狀況\n(期效3年)',
                 width: 104,
                 variable: 'sixStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -438,7 +456,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '主管證照期效狀況(期效2年)',
                 width: 155,
                 variable: 'certificationStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -556,7 +574,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '高空工作車\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'aStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '高處(施工架)\n發證/回訓日期 (WAH)',
@@ -568,7 +586,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '高處(施工架)\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'wahStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -618,7 +636,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '吊掛作業\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'lStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '侷限空間\n發證/回訓日期 (C)',
@@ -630,7 +648,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '侷限空間\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'cStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -680,7 +698,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '有機溶劑\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'hStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '防爆區\n(Ex)',
@@ -692,7 +710,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '防爆區\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'exStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -742,7 +760,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '營造業業主管\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'sStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '施工架作業主管\n(SA)',
@@ -754,7 +772,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '施工架作業主管\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'saStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -804,7 +822,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '有機溶劑作業主管\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'osStatus',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '缺氧作業主管\n(O2)',
@@ -816,7 +834,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '缺氧作業主管\n期效狀況 (期效3年)',
                 width: 153,
                 variable: 'o2Status',
-                getElement: defaultElement,
+                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -1061,6 +1079,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         <TabPanel key={index} padding={0}>
                             <ReactWindowTable
                                 tableData={tableValue}
+                                setTableData={setTableValue}
                                 columnMap={columnMap}
                                 sizes={sizes}
                                 filteredPrimaryKey={searchPrimaryKey}
