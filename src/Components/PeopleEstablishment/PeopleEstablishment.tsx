@@ -63,7 +63,9 @@ export interface formValues extends humanInfoValues {
 
 export interface formFiles {
     F6Img?: File;
-    GImg?: File;
+    GImg1?: File;
+    GImg2?: File;
+    GImg3?: File;
     HImgs: (File | undefined)[];
     IDFImg?: File;
     IDRImg?: File;
