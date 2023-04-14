@@ -3,6 +3,7 @@ import {
     FormControl,
     FormHelperText,
     GridItem,
+    GridItemProps,
     ResponsiveValue,
     Text,
 } from '@chakra-ui/react';
@@ -10,26 +11,26 @@ import React from 'react';
 import { formFiles } from './PeopleEstablishment';
 import FileInput from './FileInput';
 
-export default function GridFileItem(props: {
-    gridRange?: [
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined
-    ];
-    colSpan?: ResponsiveValue<number | 'auto'> | undefined;
-    height?: any;
-    fieldName: keyof formFiles;
-    formlabel: string;
-    helpText?: String;
-    fileStates: formFiles;
-    setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
-    imgLoading: boolean;
-    index?: number;
-}) {
+export default function GridFileItem(
+    props: GridItemProps & {
+        gridRange?: [
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined
+        ];
+        height?: any;
+        fieldName: keyof formFiles;
+        formlabel: string;
+        helpText?: String;
+        fileStates: formFiles;
+        setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
+        imgLoading: boolean;
+        index?: number;
+    }
+) {
     const {
         gridRange,
-        colSpan,
         height,
         fieldName,
         formlabel,
@@ -38,16 +39,18 @@ export default function GridFileItem(props: {
         fileStates,
         setFileStates,
         index = 0,
+        ...restProps
     } = props;
 
     return (
         <GridItem
-            colSpan={colSpan}
-            h={height}
-            rowStart={gridRange && gridRange[0]}
-            rowEnd={gridRange && gridRange[1]}
-            colStart={gridRange && gridRange[2]}
-            colEnd={gridRange && gridRange[3]}
+            {...restProps}
+            {...(gridRange && {
+                rowStart: gridRange[0],
+                rowEnd: gridRange[1],
+                colStart: gridRange[2],
+                colEnd: gridRange[3],
+            })}
         >
             {
                 <FormControl>
