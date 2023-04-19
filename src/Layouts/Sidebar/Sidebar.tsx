@@ -8,6 +8,7 @@ import {
     Button,
     Flex,
     AvatarBadge,
+    Box,
 } from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
@@ -90,29 +91,31 @@ export default function Sidebar(props: {
             justify={'space-between'}
         >
             <Flex direction={'column'} align={'center'} justify={'flex-start'}>
-                <Avatar
-                    w={'66%'}
-                    h={'unset'}
-                    src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
-                    ignoreFallback
-                >
-                    {todoListAmount !== 0 && (
-                        <AvatarBadge
-                            boxSize="1.5em"
-                            bg="red"
-                            right={'0.5rem'}
-                            bottom={'0.5rem'}
-                        >
-                            <Text
-                                fontSize={'0.75rem'}
-                                lineHeight={'1.5rem'}
-                                color={'#FFFFFF'}
+                <Box w={'66%'} style={{ aspectRatio: 1 }}>
+                    <Avatar
+                        w={'100%'}
+                        h={'100%'}
+                        src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
+                        ignoreFallback
+                    >
+                        {todoListAmount !== 0 && (
+                            <AvatarBadge
+                                boxSize="1.5em"
+                                bg="red"
+                                right={'0.5rem'}
+                                bottom={'0.5rem'}
                             >
-                                {todoListAmount}
-                            </Text>
-                        </AvatarBadge>
-                    )}
-                </Avatar>
+                                <Text
+                                    fontSize={'0.75rem'}
+                                    lineHeight={'1.5rem'}
+                                    color={'#FFFFFF'}
+                                >
+                                    {todoListAmount}
+                                </Text>
+                            </AvatarBadge>
+                        )}
+                    </Avatar>
+                </Box>
                 <Text
                     mt={'15px'}
                     mb={'5px'}
