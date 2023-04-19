@@ -219,7 +219,7 @@ export default function ReactWindowTable(props: {
     } = sizes;
 
     const {
-        topPadding = 152,
+        topPadding = 148,
         bottomPadding = 52,
         pagePadding = 42,
     } = padding || {};

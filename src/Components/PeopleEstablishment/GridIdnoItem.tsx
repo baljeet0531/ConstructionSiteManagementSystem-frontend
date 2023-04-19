@@ -17,7 +17,7 @@ import {
 
 import { Field, FormikProps } from 'formik';
 import React from 'react';
-import { formValues } from './PeopleEstablishment';
+import { formValues } from '../../Interface/PeopleManagement';
 
 export default function GridInputItem(
     props: GridItemProps & {
@@ -38,15 +38,6 @@ export default function GridInputItem(
                   name: string;
               }[]
             | undefined;
-        setSearchResult: React.Dispatch<
-            React.SetStateAction<
-                | {
-                      idno: string;
-                      name: string;
-                  }[]
-                | undefined
-            >
-        >;
         formProps: FormikProps<formValues>;
         handleDebounceSearch: Function;
         setHumanToBeUpdated: React.Dispatch<
@@ -67,7 +58,7 @@ export default function GridInputItem(
         labelAlign,
         helpText,
         handleValidate,
-        searchResult,
+        searchResult = [],
         formProps,
         handleDebounceSearch,
         setHumanToBeUpdated,
@@ -115,46 +106,33 @@ export default function GridInputItem(
                                         pt={'0.5rem'}
                                         pb={'0.5rem'}
                                     >
-                                        {searchResult &&
-                                            searchResult.map(
-                                                ({ idno, name }, index) => (
-                                                    <AutoCompleteItem
-                                                        key={index}
-                                                        value={idno}
-                                                        onClick={() => {
-                                                            setHumanToBeUpdated(
-                                                                {
-                                                                    no: '',
-                                                                    idno: idno,
-                                                                }
-                                                            );
-                                                        }}
-                                                        p={'0.5rem'}
-                                                    >
-                                                        <Flex
-                                                            direction={'column'}
+                                        {searchResult.map(
+                                            ({ idno, name }, index) => (
+                                                <AutoCompleteItem
+                                                    key={index}
+                                                    value={idno}
+                                                    onClick={() => {
+                                                        setHumanToBeUpdated({
+                                                            no: '',
+                                                            idno: idno,
+                                                        });
+                                                    }}
+                                                    p={'0.5rem'}
+                                                >
+                                                    <Flex direction={'column'}>
+                                                        <Text variant="searchResult">
+                                                            {idno}
+                                                        </Text>
+                                                        <Text
+                                                            variant="searchResult"
+                                                            color="rgba(102, 112, 128, 0.5)"
                                                         >
-                                                            <Text
-                                                                variant={
-                                                                    'searchResult'
-                                                                }
-                                                            >
-                                                                {idno}
-                                                            </Text>
-                                                            <Text
-                                                                variant={
-                                                                    'searchResult'
-                                                                }
-                                                                color={
-                                                                    'rgba(102, 112, 128, 0.5)'
-                                                                }
-                                                            >
-                                                                {name}
-                                                            </Text>
-                                                        </Flex>
-                                                    </AutoCompleteItem>
-                                                )
-                                            )}
+                                                            {name}
+                                                        </Text>
+                                                    </Flex>
+                                                </AutoCompleteItem>
+                                            )
+                                        )}
                                     </AutoCompleteList>
                                 </AutoComplete>
                             </Flex>

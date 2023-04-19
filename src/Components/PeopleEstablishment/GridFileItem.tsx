@@ -8,7 +8,7 @@ import {
     Text,
 } from '@chakra-ui/react';
 import React from 'react';
-import { formFiles } from './PeopleEstablishment';
+import { formFiles } from '../../Interface/PeopleManagement';
 import FileInput from './FileInput';
 
 export default function GridFileItem(
