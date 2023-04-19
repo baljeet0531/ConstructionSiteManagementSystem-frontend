@@ -19,7 +19,7 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
-import { formFiles, formValues } from './PeopleEstablishment';
+import { formFiles, formValues } from '../../Interface/PeopleManagement';
 import { EditIcon, ReplyIcon } from '../../Icons/Icons';
 import GridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
@@ -38,17 +38,45 @@ import {
 } from '../../Utils/DefaultToast';
 import { PageLoading } from '../Shared/Loading';
 
-type imageType =
-    | 'F6Img'
-    | 'GImg1'
-    | 'GImg2'
-    | 'GImg3'
-    | 'HImgs'
-    | 'IDFImg'
-    | 'IDRImg'
-    | 'LImg'
-    | 'PImg'
-    | 'R6Img';
+type imageType = keyof formFiles;
+type formFileUrls = {
+    [K in imageType]?: K extends 'HImgs' ? string[] : string;
+};
+
+const imageTypeArray: imageType[] = [
+    'F6Img',
+    'G1Img',
+    'G2Img',
+    'G3Img',
+    'HImgs',
+    'IDFImg',
+    'IDRImg',
+    'LImg',
+    'PImg',
+    'R6Img',
+    'MAFImg',
+    'MARImg',
+    'AFImg',
+    'ARImg',
+    'WAHFImg',
+    'WAHRImg',
+    'LFImg',
+    'LRImg',
+    'CFImg',
+    'CRImg',
+    'HFImg',
+    'HRImg',
+    'EXFImg',
+    'EXRImg',
+    'SFImg',
+    'SRImg',
+    'SAFImg',
+    'SARImg',
+    'OSFImg',
+    'OSRImg',
+    'O2FImg',
+    'O2RImg',
+];
 
 const UPLOAD_HR_ZIP = gql`
     mutation UploadHRZip($file: Upload!) {
@@ -82,11 +110,21 @@ export const GET_HUMAN_RESOURCE = gql`
             certificationName
             certificationIssue
             certificationWithdraw
-            accidentInsuranceStart
-            accidentInsuranceEnd
-            accidentInsuranceAmount
-            accidentInsuranceSignDate
-            accidentInsuranceCompanyName
+            accidentInsuranceStartOne
+            accidentInsuranceStartTwo
+            accidentInsuranceStartThree
+            accidentInsuranceEndOne
+            accidentInsuranceEndTwo
+            accidentInsuranceEndThree
+            accidentInsuranceAmountOne
+            accidentInsuranceAmountTwo
+            accidentInsuranceAmountThree
+            accidentInsuranceSignDateOne
+            accidentInsuranceSignDateTwo
+            accidentInsuranceSignDateThree
+            accidentInsuranceCompanyNameOne
+            accidentInsuranceCompanyNameTwo
+            accidentInsuranceCompanyNameThree
             contractingCompanyName
             viceContractingCompanyName
             aCertificationDate
@@ -112,14 +150,38 @@ export const GET_HUMAN_RESOURCE = gql`
             saStatus
             osStatus
             o2Status
-            F6Img
-            GImg
-            HImgs
+            PImg
+            LImg
             IDFImg
             IDRImg
-            LImg
-            PImg
+            G1Img
+            G2Img
+            G3Img
+            F6Img
             R6Img
+            MAFImg
+            MARImg
+            ARImg
+            AFImg
+            WAHFImg
+            WAHRImg
+            LFImg
+            LRImg
+            CFImg
+            CRImg
+            HFImg
+            HRImg
+            EXFImg
+            EXRImg
+            SFImg
+            SRImg
+            SAFImg
+            SARImg
+            OSFImg
+            OSRImg
+            O2FImg
+            O2RImg
+            HImgs
         }
     }
 `;
@@ -157,6 +219,15 @@ export default function FromPage(props: {
     const [zipFile, setZipFile] = React.useState<File>();
     const [imgLoading, setImgLoading] = React.useState<boolean>(true);
     const toast = useToast();
+
+    const handleSubmit = () => {
+        formProps.validateForm().then((errors) => {
+            Object.keys(errors).length == 0
+                ? formProps.submitForm()
+                : defaultErrorToast(toast, '欄位錯誤');
+        });
+    };
+
     function checkStatus(
         e: React.ChangeEvent<HTMLInputElement>,
         target: string,
@@ -246,59 +317,52 @@ export default function FromPage(props: {
         }, 300);
     };
 
-    const [filePath, setFilePath] = React.useState<{
-        F6Img: string;
-        GImg: string;
-        HImgs: string[];
-        IDFImg: string;
-        IDRImg: string;
-        LImg: string;
-        PImg: string;
-        R6Img: string;
-    }>({
-        F6Img: '',
-        GImg: '',
-        HImgs: [''],
-        IDFImg: '',
-        IDRImg: '',
-        LImg: '',
-        PImg: '',
-        R6Img: '',
-    });
+    const [filePath, setFilePath] = React.useState<formFileUrls>(
+        imageTypeArray.reduce((acc, imageType) => {
+            imageType == 'HImgs'
+                ? (acc[imageType] = [''])
+                : (acc[imageType] = '');
+            return acc;
+        }, {} as formFileUrls)
+    );
 
     const [getHumanresource] = useLazyQuery(GET_HUMAN_RESOURCE, {
-        onCompleted: ({ humanresource }) => {
-            const {
-                F6Img,
-                GImg,
-                HImgs,
-                IDFImg,
-                IDRImg,
-                LImg,
-                PImg,
-                R6Img,
-                ...rest
-            } = humanresource[0];
+        onCompleted: ({
+            humanresource,
+        }: {
+            humanresource: (formValues & formFileUrls)[];
+        }) => {
+            const { imgs, rest } = imageTypeArray.reduce(
+                (acc, imageType) => {
+                    if (imageType === 'HImgs') {
+                        const { [imageType]: val, ...rest } = acc.rest;
+                        acc.imgs[imageType] = val ? [...val, ''] : [''];
+                        acc.rest = rest;
+                    } else {
+                        const { [imageType]: val, ...rest } = acc.rest;
+                        acc.imgs[imageType] = val || '';
+                        acc.rest = rest;
+                    }
 
-            setFilePath({
-                F6Img: F6Img || '',
-                GImg: GImg || '',
-                HImgs: HImgs ? [...HImgs, ''] : [''],
-                IDFImg: IDFImg || '',
-                IDRImg: IDRImg || '',
-                LImg: LImg || '',
-                PImg: PImg || '',
-                R6Img: R6Img || '',
-            });
+                    return acc;
+                },
+                {
+                    imgs: {} as formFileUrls,
+                    rest: humanresource[0],
+                }
+            );
+
+            setFilePath(imgs);
             Object.keys(rest).forEach((key) => {
                 if (
-                    rest[key] == null ||
-                    rest[key] == '0001-01-01' ||
-                    rest[key] == '無法判斷：發證/回訓 月/日 輸入不合理'
+                    rest[key as keyof formValues] == null ||
+                    rest[key as keyof formValues] == '0001-01-01' ||
+                    rest[key as keyof formValues] ==
+                        '無法判斷：發證/回訓 月/日 輸入不合理'
                 )
-                    rest[key] = '';
+                    rest[key as keyof formValues] = '';
             });
-            formProps.setValues({ ...rest });
+            formProps.setValues(rest);
         },
         onError: (err) => {
             console.log(err);
@@ -363,7 +427,7 @@ export default function FromPage(props: {
             for await (const items of Object.entries(filePath)) {
                 const [type, path] = items as [imageType, any];
                 if (type == 'HImgs') {
-                    for await (const path of filePath.HImgs) {
+                    for await (const path of filePath.HImgs || '') {
                         await fetchImg(type, path);
                     }
                 } else {
@@ -410,12 +474,10 @@ export default function FromPage(props: {
                 position={'sticky'}
             >
                 <Text fontSize={'2.25rem'}>人員資料建置</Text>
-                <Flex gap={'10px'}>
+                <Flex gap={'10px'} align={'center'}>
                     <Button
                         leftIcon={<ReplyIcon />}
-                        bg={'rgba(102, 112, 128, 0.1)'}
-                        color={'#667080'}
-                        border={'2px solid #919AA9'}
+                        variant={'buttonGrayOutline'}
                         onClick={onOpen}
                     >
                         匯入
@@ -424,8 +486,7 @@ export default function FromPage(props: {
                         leftIcon={<EditIcon />}
                         variant={'buttonBlueSolid'}
                         isLoading={formProps.isSubmitting}
-                        onClick={formProps.submitForm}
-                        type="submit"
+                        onClick={handleSubmit}
                     >
                         確定編輯
                     </Button>
@@ -461,7 +522,6 @@ export default function FromPage(props: {
                                 searchResult={searchResult}
                                 setHumanToBeUpdated={setHumanToBeUpdated}
                                 handleDebounceSearch={handleDebounceSearch}
-                                setSearchResult={setSearchResult}
                                 formProps={formProps}
                             ></GridIdnoItem>
                             <GridInputItem
@@ -676,31 +736,31 @@ export default function FromPage(props: {
                             ></GridTitle>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceStart1"
+                                fieldName="accidentInsuranceStartOne"
                                 formlabel="起始日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceEnd1"
+                                fieldName="accidentInsuranceEndOne"
                                 formlabel="截止日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceAmount1"
+                                fieldName="accidentInsuranceAmountOne"
                                 formlabel={`保險金額\n（萬元）`}
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceSignDate1"
+                                fieldName="accidentInsuranceSignDateOne"
                                 formlabel="加保日期"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceCompanyName1"
+                                fieldName="accidentInsuranceCompanyNameOne"
                                 formlabel="保險公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
@@ -711,31 +771,31 @@ export default function FromPage(props: {
                             ></GridTitle>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceStart2"
+                                fieldName="accidentInsuranceStartTwo"
                                 formlabel="起始日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceEnd2"
+                                fieldName="accidentInsuranceEndTwo"
                                 formlabel="截止日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceAmount2"
+                                fieldName="accidentInsuranceAmountTwo"
                                 formlabel={`保險金額\n（萬元）`}
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceSignDate2"
+                                fieldName="accidentInsuranceSignDateTwo"
                                 formlabel="加保日期"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceCompanyName2"
+                                fieldName="accidentInsuranceCompanyNameTwo"
                                 formlabel="保險公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
@@ -746,31 +806,31 @@ export default function FromPage(props: {
                             ></GridTitle>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceStart3"
+                                fieldName="accidentInsuranceStartThree"
                                 formlabel="起始日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceEnd3"
+                                fieldName="accidentInsuranceEndThree"
                                 formlabel="截止日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceAmount3"
+                                fieldName="accidentInsuranceAmountThree"
                                 formlabel={`保險金額\n（萬元）`}
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceSignDate3"
+                                fieldName="accidentInsuranceSignDateThree"
                                 formlabel="加保日期"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
                                 colSpan={2}
-                                fieldName="accidentInsuranceCompanyName3"
+                                fieldName="accidentInsuranceCompanyNameThree"
                                 formlabel="保險公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
@@ -1029,7 +1089,7 @@ export default function FromPage(props: {
                                             checkStatus(
                                                 e,
                                                 'saCertificationDate',
-                                                'sStatus',
+                                                'saStatus',
                                                 3
                                             );
                                         }}
@@ -1068,7 +1128,7 @@ export default function FromPage(props: {
                             <GridInputItem
                                 colSpan={2}
                                 handleValidate={validateExpired}
-                                fieldName="sStatus"
+                                fieldName="saStatus"
                                 formlabel="期效狀況"
                                 inputComponent={
                                     <Input type={'text'} disabled />
@@ -1179,7 +1239,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="GImg1"
+                                fieldName="G1Img"
                                 formlabel="團保(1)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1187,7 +1247,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="GImg2"
+                                fieldName="G2Img"
                                 formlabel="團保(2)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1195,7 +1255,7 @@ export default function FromPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="GImg3"
+                                fieldName="G3Img"
                                 formlabel="團保(3)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}

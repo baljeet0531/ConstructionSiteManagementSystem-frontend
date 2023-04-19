@@ -40,8 +40,8 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 
 export const ALL_HUMAN_RESOURCE = gql`
-    query AllHumanresource($errlist: Boolean!) {
-        allHumanresource(errlist: $errlist) {
+    query AllHumanresource($errlist: Boolean, $mode: String) {
+        allHumanresource(errlist: $errlist, mode: $mode) {
             name
             gender
             birthday
@@ -59,11 +59,21 @@ export const ALL_HUMAN_RESOURCE = gql`
             certificationName
             certificationIssue
             certificationWithdraw
-            accidentInsuranceStart
-            accidentInsuranceEnd
-            accidentInsuranceAmount
-            accidentInsuranceSignDate
-            accidentInsuranceCompanyName
+            accidentInsuranceStartOne
+            accidentInsuranceStartTwo
+            accidentInsuranceStartThree
+            accidentInsuranceEndOne
+            accidentInsuranceEndTwo
+            accidentInsuranceEndThree
+            accidentInsuranceAmountOne
+            accidentInsuranceAmountTwo
+            accidentInsuranceAmountThree
+            accidentInsuranceSignDateOne
+            accidentInsuranceSignDateTwo
+            accidentInsuranceSignDateThree
+            accidentInsuranceCompanyNameOne
+            accidentInsuranceCompanyNameTwo
+            accidentInsuranceCompanyNameThree
             contractingCompanyName
             viceContractingCompanyName
             aCertificationDate
@@ -105,10 +115,10 @@ export const EXPORT_HUMAN_RESOURCE = gql`
 `;
 
 export const SEARCH_HUMAN = gql`
-    query SearchHuman($context: String!, $errlist: Boolean!) {
-        searchHuman(context: $context, errlist: $errlist) {
-            idno
+    query SearchHuman($context: String!, $mode: String, $errlist: Boolean) {
+        searchHuman(context: $context, mode: $mode, errlist: $errlist) {
             name
+            idno
             no
         }
     }
@@ -119,7 +129,7 @@ const sizes: ISizes = {
     headerHeight: 65,
     cellHeight: 30,
     padding: {
-        topPadding: 219,
+        topPadding: 215,
     },
 };
 
@@ -195,7 +205,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             bg = '#FFFFFF';
         if (value.startsWith('無法判斷')) value = '無法判斷';
         else if (value.startsWith('已過期')) bg = '#DB504A1A';
-        else if (value.endsWith('天後過期')) bg = '#FDFFE3';
+        else if (value.endsWith('過期')) bg = '#FDFFE3';
 
         return (
             <Box {...dataCellStyle} style={style} bg={bg}>
@@ -203,6 +213,20 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             </Box>
         );
     };
+
+    const customCheckboxElement = (props: getElementProps) => (
+        <CheckboxElement
+            getElementProps={{
+                ...props,
+                style: {
+                    ...props.style,
+                    paddingTop: '6px',
+                },
+            }}
+            setTableData={setTableValue}
+            primaryKey={errorOnly ? props.info.no : props.info.idno}
+        ></CheckboxElement>
+    );
 
     const tabColumnMap: { [tab: string]: IColumnMap[] } = {
         個資: [
@@ -270,19 +294,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         相關資料1: [
@@ -338,19 +350,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         相關資料2: [
@@ -400,19 +400,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         主管證照名稱: [
@@ -462,22 +450,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
-        保險: [
+        保險1: [
             {
                 title: '編號',
                 width: 40,
@@ -499,50 +475,150 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             {
                 title: '意外險有效期\n(起始日)',
                 width: 120,
-                variable: 'accidentInsuranceStart',
+                variable: 'accidentInsuranceStartOne',
                 getElement: defaultElement,
             },
             {
                 title: '意外險有效期\n(截止日)',
                 width: 120,
-                variable: 'accidentInsuranceEnd',
+                variable: 'accidentInsuranceEndOne',
                 getElement: defaultElement,
             },
             {
                 title: '保險金\n(萬元)',
                 width: 120,
-                variable: 'accidentInsuranceAmount',
+                variable: 'accidentInsuranceAmountOne',
                 getElement: defaultElement,
             },
             {
                 title: '加保日期',
                 width: 120,
-                variable: 'accidentInsuranceSignDate',
+                variable: 'accidentInsuranceSignDateOne',
                 getElement: defaultElement,
             },
             {
                 title: '保險公司',
                 width: 134,
-                variable: 'accidentInsuranceCompanyName',
+                variable: 'accidentInsuranceCompanyNameOne',
                 getElement: defaultElement,
             },
             {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
+            },
+        ],
+        保險2: [
+            {
+                title: '編號',
+                width: 40,
+                variable: 'index',
+                getElement: defaultElement,
+            },
+            {
+                title: '姓名',
+                width: 70,
+                variable: 'name',
+                getElement: defaultElement,
+            },
+            {
+                title: '身分證字號',
+                width: 103,
+                variable: 'idno',
+                getElement: defaultElement,
+            },
+            {
+                title: '意外險有效期\n(起始日)',
+                width: 120,
+                variable: 'accidentInsuranceStartTwo',
+                getElement: defaultElement,
+            },
+            {
+                title: '意外險有效期\n(截止日)',
+                width: 120,
+                variable: 'accidentInsuranceEndTwo',
+                getElement: defaultElement,
+            },
+            {
+                title: '保險金\n(萬元)',
+                width: 120,
+                variable: 'accidentInsuranceAmountTwo',
+                getElement: defaultElement,
+            },
+            {
+                title: '加保日期',
+                width: 120,
+                variable: 'accidentInsuranceSignDateTwo',
+                getElement: defaultElement,
+            },
+            {
+                title: '保險公司',
+                width: 134,
+                variable: 'accidentInsuranceCompanyNameTwo',
+                getElement: defaultElement,
+            },
+            {
+                title: '全選',
+                width: 50,
+                variable: 'isChecked',
+                getElement: customCheckboxElement,
+            },
+        ],
+        保險3: [
+            {
+                title: '編號',
+                width: 40,
+                variable: 'index',
+                getElement: defaultElement,
+            },
+            {
+                title: '姓名',
+                width: 70,
+                variable: 'name',
+                getElement: defaultElement,
+            },
+            {
+                title: '身分證字號',
+                width: 103,
+                variable: 'idno',
+                getElement: defaultElement,
+            },
+            {
+                title: '意外險有效期\n(起始日)',
+                width: 120,
+                variable: 'accidentInsuranceStartThree',
+                getElement: defaultElement,
+            },
+            {
+                title: '意外險有效期\n(截止日)',
+                width: 120,
+                variable: 'accidentInsuranceEndThree',
+                getElement: defaultElement,
+            },
+            {
+                title: '保險金\n(萬元)',
+                width: 120,
+                variable: 'accidentInsuranceAmountThree',
+                getElement: defaultElement,
+            },
+            {
+                title: '加保日期',
+                width: 120,
+                variable: 'accidentInsuranceSignDateThree',
+                getElement: defaultElement,
+            },
+            {
+                title: '保險公司',
+                width: 134,
+                variable: 'accidentInsuranceCompanyNameThree',
+                getElement: defaultElement,
+            },
+            {
+                title: '全選',
+                width: 50,
+                variable: 'isChecked',
+                getElement: customCheckboxElement,
             },
         ],
         '施工作業證照\n高空車/施工架': [
@@ -592,19 +668,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         '施工作業證照\n吊掛/局限空間': [
@@ -654,19 +718,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         '施工作業證照\n有機溶劑/防爆區': [
@@ -716,19 +768,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         '作業主管證照\n營造/施工架': [
@@ -778,19 +818,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
         '作業主管證照\n有機/缺氧': [
@@ -840,19 +868,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '全選',
                 width: 50,
                 variable: 'isChecked',
-                getElement: (props) => (
-                    <CheckboxElement
-                        getElementProps={{
-                            ...props,
-                            style: {
-                                ...props.style,
-                                paddingTop: '6px',
-                            },
-                        }}
-                        setTableData={setTableValue}
-                        primaryKey={errorOnly ? props.info.no : props.info.idno}
-                    ></CheckboxElement>
-                ),
+                getElement: customCheckboxElement,
             },
         ],
     };
@@ -866,6 +882,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const [tableValue, setTableValue] = React.useState<{
         [primaryKey: string]: humanTableValues;
     }>({});
+
+    const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const selectModeRef = React.useRef<HTMLSelectElement>(null);
 
     const { loading } = useQuery(ALL_HUMAN_RESOURCE, {
         notifyOnNetworkStatusChange: true,
@@ -898,12 +918,28 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     });
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
+        onCompleted: ({ searchHuman }) => {
+            const searchResult = searchHuman.map((info: humanTableValues) => {
+                return errorOnly ? info['no'] : info['idno'];
+            });
+            setSearchPrimaryKey(searchResult);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
         fetchPolicy: 'network-only',
     });
 
-    const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
-    const searchInputRef = React.useRef<HTMLInputElement>(null);
-    const selectModeRef = React.useRef<HTMLSelectElement>(null);
+    const getSearchHumanVar = () => ({
+        variables: {
+            context: searchInputRef.current?.value,
+            mode:
+                selectModeRef.current?.value === '全部'
+                    ? undefined
+                    : selectModeRef.current?.value,
+            errlist: errorOnly,
+        },
+    });
     const timeout = React.useRef<any>();
     const handleDebounceSearch = () => {
         clearTimeout(timeout.current);
@@ -913,23 +949,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             return;
         }
         timeout.current = setTimeout(() => {
-            searchHuman({
-                variables: {
-                    context: searchInputRef.current?.value,
-                    errlist: errorOnly,
-                },
-                onCompleted: ({ searchHuman }) => {
-                    const searchResult = searchHuman.map(
-                        (info: humanTableValues) => {
-                            return errorOnly ? info['no'] : info['idno'];
-                        }
-                    );
-                    setSearchPrimaryKey(searchResult);
-                },
-                onError: (err) => {
-                    console.log(err);
-                },
-            });
+            searchHuman(getSearchHumanVar());
         }, 300);
     };
 
@@ -1014,7 +1034,13 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         />
                     </InputGroup>
                     {!errorOnly && (
-                        <Select variant={'formOutline'} ref={selectModeRef}>
+                        <Select
+                            variant={'formOutline'}
+                            ref={selectModeRef}
+                            onChange={() => {
+                                searchHuman(getSearchHumanVar());
+                            }}
+                        >
                             <option value={undefined}>全部</option>
                             <option value="即將到期">即將到期</option>
                             <option value="已過期">已過期</option>
@@ -1027,6 +1053,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         <Button
                             leftIcon={<EditIcon />}
                             variant={'buttonGrayOutline'}
+                            h={'36px'}
                             onClick={() => {
                                 navigate('/people/establishment', {
                                     state: { human: selectedHuman[0] },
@@ -1040,6 +1067,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                         <Button
                             leftIcon={<LaunchIcon />}
                             variant={'buttonGrayOutline'}
+                            h={'36px'}
                             onClick={() => {
                                 if (selectedHuman.length !== 0) {
                                     const idnos = selectedHuman.map(
@@ -1060,6 +1088,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                     <Button
                         leftIcon={<DeleteIcon />}
                         variant={'buttonGrayOutline'}
+                        h={'36px'}
                         onClick={onOpen}
                     >
                         刪除
