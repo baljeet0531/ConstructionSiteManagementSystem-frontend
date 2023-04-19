@@ -5,9 +5,9 @@ import {
     VStack,
     Avatar,
     Text,
-    AspectRatio,
     Button,
     Flex,
+    AvatarBadge,
 } from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
@@ -23,6 +23,8 @@ import { ISiteObject } from '../Layout';
 import { LogoutIcon } from '../../Icons/Icons';
 import { useCookies } from 'react-cookie';
 import { VERSION } from '../../Constants/EnvConstants';
+import { TODO_LIST } from '../../Components/Dashboard/TodoList';
+import { useLazyQuery } from '@apollo/client';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -54,6 +56,31 @@ export default function Sidebar(props: {
 
     const [, , removeCookie] = useCookies(['jwt', 'username']);
 
+    const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
+    const [getTodoListAmount] = useLazyQuery(TODO_LIST, {
+        onCompleted: ({
+            dashboardTodolist,
+        }: {
+            dashboardTodolist: string[];
+        }) => {
+            setTodoListAmount(dashboardTodolist.length);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    React.useEffect(() => {
+        selectedSiteId &&
+            getTodoListAmount({
+                variables: {
+                    siteId: selectedSiteId,
+                    username: username,
+                },
+            });
+    }, [selectedSiteId]);
+
     return (
         <VStack
             padding={'50px 26px 10px 26px'}
@@ -63,13 +90,29 @@ export default function Sidebar(props: {
             justify={'space-between'}
         >
             <Flex direction={'column'} align={'center'} justify={'flex-start'}>
-                <AspectRatio w="66%" ratio={1}>
-                    <Avatar
-                        name=""
-                        src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
-                        ignoreFallback
-                    ></Avatar>
-                </AspectRatio>
+                <Avatar
+                    w={'66%'}
+                    h={'unset'}
+                    src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
+                    ignoreFallback
+                >
+                    {todoListAmount !== 0 && (
+                        <AvatarBadge
+                            boxSize="1.5em"
+                            bg="red"
+                            right={'0.5rem'}
+                            bottom={'0.5rem'}
+                        >
+                            <Text
+                                fontSize={'0.75rem'}
+                                lineHeight={'1.5rem'}
+                                color={'#FFFFFF'}
+                            >
+                                {todoListAmount}
+                            </Text>
+                        </AvatarBadge>
+                    )}
+                </Avatar>
                 <Text
                     mt={'15px'}
                     mb={'5px'}
