@@ -175,6 +175,7 @@ export default function PeopleEstablishment() {
                         console.log(err);
                         defaultErrorToast(toast);
                     },
+                    fetchPolicy: 'network-only',
                 });
                 actions.setSubmitting(false);
             }}
