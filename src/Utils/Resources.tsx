@@ -26,14 +26,15 @@ export async function exportFile(
     toast: Function
 ) {
     const cookieValue = new Cookies().get('jwt');
-    fetch(BACKEND + `/${path}`, {
+    return fetch(BACKEND + `/${path}`, {
         cache: 'no-cache',
         headers: {
             Authorization: `Bearer ${cookieValue}`,
         },
         method: 'GET',
     })
-        .then((data) => {
+        .then((data) => data.blob())
+        .then((blob) => {
             toast({
                 title: message,
                 description: '成功匯出',
@@ -41,9 +42,6 @@ export async function exportFile(
                 duration: 3000,
                 isClosable: true,
             });
-            return data.blob();
-        })
-        .then((blob) => {
             const url = window.URL.createObjectURL(blob);
             const filename = path.slice(path.lastIndexOf('/') + 1);
             let fileLink = document.createElement('a');

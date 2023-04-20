@@ -879,6 +879,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const username: string = new Cookies().get('username');
 
+    const [fileLoading, setFileLoading] = React.useState<boolean>(false);
+
     const [tableValue, setTableValue] = React.useState<{
         [primaryKey: string]: humanTableValues;
     }>({});
@@ -960,7 +962,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
         {
-            onCompleted: async ({
+            onCompleted: ({
                 exportHumanResource,
             }: {
                 exportHumanResource: {
@@ -970,8 +972,11 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 };
             }) => {
                 if (exportHumanResource.ok) {
+                    setFileLoading(true);
                     const { path, message } = exportHumanResource;
-                    await exportFile(path, message, toast);
+                    exportFile(path, message, toast).then(() => {
+                        setFileLoading(false);
+                    });
                 }
             },
             onError: (err) => {
@@ -1124,7 +1129,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 selected={tableValue && selectedHuman}
                 errorOnly={errorOnly}
             ></DeleteModal>
-            {(loading || exportLoading) && <PageLoading />}
+            {(loading || exportLoading || fileLoading) && <PageLoading />}
         </Flex>
     );
 }
