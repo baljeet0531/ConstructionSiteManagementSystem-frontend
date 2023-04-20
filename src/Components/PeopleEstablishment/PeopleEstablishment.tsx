@@ -3,10 +3,21 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { Formik } from 'formik';
 import FormPage from './FormPage';
-import { ApolloError, MutationHookOptions, useMutation } from '@apollo/client';
+import {
+    ApolloError,
+    MutationHookOptions,
+    useLazyQuery,
+    useMutation,
+} from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
-import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
-import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import {
+    ALL_HUMAN_RESOURCE,
+    SEARCH_HUMAN,
+} from '../PeopleOverview/PeopleOverview';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import { formFiles, formValues } from '../../Interface/PeopleManagement';
 import { CREATE_HUMAN_RESOURCE, UPDATE_HUMAN_RESOURCE } from './GQL';
 
@@ -102,6 +113,8 @@ export default function PeopleEstablishment() {
         UPDATE_HUMAN_RESOURCE
     );
 
+    const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
+
     return (
         <Formik
             validateOnChange={false}
@@ -129,13 +142,7 @@ export default function PeopleEstablishment() {
                 };
                 const handleErr = (err: ApolloError) => {
                     console.log(err);
-                    toast({
-                        title: '錯誤',
-                        description: `${err}`,
-                        status: 'error',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultErrorToast(toast);
                 };
 
                 const mutationOptions = (
@@ -153,15 +160,22 @@ export default function PeopleEstablishment() {
                     refetchQueries: [ALL_HUMAN_RESOURCE],
                 });
 
-                if (
-                    humanToBeUpdated &&
-                    humanToBeUpdated.no == '' &&
-                    humanToBeUpdated.idno === filteredValues.idno
-                ) {
-                    updateHumanResource(mutationOptions('updateHumanResource'));
-                } else {
-                    createHumanResource(mutationOptions('createHumanResource'));
-                }
+                searchHuman({
+                    variables: { context: filteredValues.idno },
+                    onCompleted: ({ searchHuman }) => {
+                        searchHuman.length == 0
+                            ? createHumanResource(
+                                  mutationOptions('createHumanResource')
+                              )
+                            : updateHumanResource(
+                                  mutationOptions('updateHumanResource')
+                              );
+                    },
+                    onError: (err) => {
+                        console.log(err);
+                        defaultErrorToast(toast);
+                    },
+                });
                 actions.setSubmitting(false);
             }}
         >
