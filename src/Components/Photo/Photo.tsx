@@ -10,6 +10,7 @@ export default function Photo(props: { siteId: string; siteName: string }) {
 
     const { siteId, siteName } = props;
     const { isOpen, onToggle } = useDisclosure();
+
     return (
         <>
             <PhotoOverviewPage
