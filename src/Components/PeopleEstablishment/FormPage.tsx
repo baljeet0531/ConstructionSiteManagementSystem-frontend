@@ -186,7 +186,7 @@ export const GET_HUMAN_RESOURCE = gql`
     }
 `;
 
-export default function FromPage(props: {
+export default function FormPage(props: {
     formProps: FormikProps<formValues>;
     fileStates: formFiles;
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
@@ -372,6 +372,7 @@ export default function FromPage(props: {
     });
 
     React.useEffect(() => {
+        setImgLoading(true);
         const controller = new AbortController();
         const signal = controller.signal;
         let setFiles = true;

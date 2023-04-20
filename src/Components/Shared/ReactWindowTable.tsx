@@ -345,12 +345,16 @@ export default function ReactWindowTable(props: {
                                 <Checkbox
                                     isChecked={allChecked}
                                     isIndeterminate={isIndeterminate}
-                                    onChange={(e) => {
+                                    onChange={() => {
+                                        const nextCheckedState =
+                                            primaryKeys.length !== 0 &&
+                                            !tableData[primaryKeys[0]]
+                                                .isChecked;
                                         primaryKeys.forEach((primaryKey) => {
                                             const info = tableData[primaryKey];
                                             tableData[primaryKey] = {
                                                 ...info,
-                                                isChecked: e.target.checked,
+                                                isChecked: nextCheckedState,
                                             };
                                         });
                                         setTableData({ ...tableData });
