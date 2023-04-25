@@ -6,7 +6,7 @@ import { WarningIcon } from '../../Icons/Icons';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { todoListFlexStyle } from './Style';
 
-const TODO_LIST = gql`
+export const TODO_LIST = gql`
     query DashboardTodolist($siteId: String!, $username: String!) {
         dashboardTodolist(siteId: $siteId, username: $username)
     }
