@@ -10,6 +10,7 @@ import {
 import { MICIcon, RemoteWorkingIcon } from '../../Icons/Icons';
 import Background from '../../Images/BlueLoginBackground.svg';
 import LoginForm from './LoginForm';
+import { VERSION } from '../../Constants/EnvConstants';
 
 export default function Login() {
     // const [version, setVersion] = React.useState('desktop');
@@ -49,11 +50,22 @@ export default function Login() {
                 </Flex>
                 <Center
                     w={'57%'}
+                    flexDirection="column"
                     borderRadius="0px 30px 30px 0px"
                     bg="#E5E5E533"
                 >
-                    <Box w={'87%'} maxW={'400px'}>
+                    <Center h={'90%'} w={'87%'} maxW={'400px'}>
                         <RemoteWorkingIcon />
+                    </Center>
+                    <Box position="relative" w="100%" h="10%">
+                        <Text
+                            variant="w400s12"
+                            position="absolute"
+                            right="15px"
+                            bottom="10px"
+                        >
+                            版本：{VERSION}
+                        </Text>
                     </Box>
                 </Center>
             </Flex>

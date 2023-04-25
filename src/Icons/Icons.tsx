@@ -1928,6 +1928,7 @@ export function LogoutIcon() {
         </svg>
     );
 }
+
 export function PublishIcon() {
     return (
         <svg
