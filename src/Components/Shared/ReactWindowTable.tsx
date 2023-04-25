@@ -346,7 +346,7 @@ export default function ReactWindowTable(props: {
                                     isChecked={allChecked}
                                     isIndeterminate={isIndeterminate}
                                     onChange={() => {
-                                        const firstFilteredRowIsChecked = //get the "isChecked" value of first row in filtered date
+                                        const firstFilteredRowIsChecked = //get the "isChecked" value of first row in filtered data
                                             primaryKeys.length !== 0 &&
                                             tableData[primaryKeys[0]].isChecked;
                                         primaryKeys.forEach((primaryKey) => {
