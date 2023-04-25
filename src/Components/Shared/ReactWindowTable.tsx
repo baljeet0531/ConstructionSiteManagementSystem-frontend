@@ -346,15 +346,15 @@ export default function ReactWindowTable(props: {
                                     isChecked={allChecked}
                                     isIndeterminate={isIndeterminate}
                                     onChange={() => {
-                                        const nextCheckedState =
+                                        const firstFilteredRowIsChecked = //get the "isChecked" value of first row in filtered date
                                             primaryKeys.length !== 0 &&
-                                            !tableData[primaryKeys[0]]
-                                                .isChecked;
+                                            tableData[primaryKeys[0]].isChecked;
                                         primaryKeys.forEach((primaryKey) => {
                                             const info = tableData[primaryKey];
                                             tableData[primaryKey] = {
                                                 ...info,
-                                                isChecked: nextCheckedState,
+                                                isChecked:
+                                                    !firstFilteredRowIsChecked, //use "firstFilteredRowIsChecked"(filtered data dependent) but not "isIndeterminate"(all data dependent)
                                             };
                                         });
                                         setTableData({ ...tableData });
