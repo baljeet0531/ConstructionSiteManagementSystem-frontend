@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { AddIcon, CloseIcon } from '../../Icons/Icons';
-import { formFiles } from './PeopleEstablishment';
+import { formFiles } from '../../Interface/PeopleManagement';
 
 export default function FileInput(props: {
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;

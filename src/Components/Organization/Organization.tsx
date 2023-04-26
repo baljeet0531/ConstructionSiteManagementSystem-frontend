@@ -438,6 +438,7 @@ export default function Organization(props: {
             </Flex>
             <ReactWindowTable
                 tableData={tableData}
+                setTableData={setTableData}
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}

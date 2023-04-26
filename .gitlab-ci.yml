@@ -33,6 +33,7 @@ dev_build:
     # node_modules already in /root/ of the image
     # If new package is added, the image should be rebuild
     - mv /root/* .
+    - export REACT_APP_VERSION=`cat version`-dev
     - yarn build
     - tar zcvf build.tar.gz build
   artifacts:
@@ -51,6 +52,7 @@ staging_build:
     # node_modules already in /root/ of the image
     # If new package is added, the image should be rebuild
     - mv /root/* .
+    - export REACT_APP_VERSION=`cat version`-staging
     - yarn build
     - tar zcvf build.tar.gz build
   artifacts:
@@ -68,6 +70,7 @@ prod_build:
     # node_modules already in /root/ of the image
     # If new package is added, the image should be rebuild
     - mv /root/* .
+    - export REACT_APP_VERSION=`cat version`
     - yarn build
     - tar zcvf build.tar.gz build
   artifacts:
@@ -75,7 +78,19 @@ prod_build:
     - build.tar.gz
     expire_in: 30 day
 
-tag_verification:
+staging_tag_verification:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
+  image: 
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - git tag -l | xargs git tag -d
+    - git fetch --all --tags -f
+    - if [ $(git tag -l "`cat version`-staging") ]; then echo "Tag Exists"; exit 1; else echo "Tag not found"; fi;
+
+prod_tag_verification:
   stage: delivery
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
@@ -87,7 +102,19 @@ tag_verification:
     - git fetch --all --tags -f
     - if [ $(git tag -l "`cat version`") ]; then echo "Tag Exists"; exit 1; else echo "Tag not found"; fi;
 
-tagging:
+staging_tagging:
+  stage: delivery
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
+  image: 
+    name: alpine/git
+    entrypoint: [""]
+  script:
+    - git remote set-url origin https://ci:${CI_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+    - git tag -f `cat version`-staging
+    - git push origin `cat version`-staging
+
+prod_tagging:
   stage: delivery
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"

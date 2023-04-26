@@ -1,23 +1,25 @@
-import { GridItem, ResponsiveValue } from '@chakra-ui/react';
+import { GridItem, GridItemProps, ResponsiveValue } from '@chakra-ui/react';
 import { FastField, Field } from 'formik';
 import React from 'react';
 import PEFormControl from './PEFormControl';
 
-export default function GridInputItem(props: {
-    gridRange: [
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined
-    ];
-    fieldName: string;
-    formlabel: string;
-    inputComponent: React.ReactElement;
-    labelAlign?: any;
-    helpText?: String;
-    handleValidate?: Function;
-    independent?: Boolean;
-}) {
+export default function GridInputItem(
+    props: GridItemProps & {
+        gridRange?: [
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined
+        ];
+        fieldName: string;
+        formlabel: string;
+        inputComponent: React.ReactElement;
+        labelAlign?: any;
+        helpText?: String;
+        handleValidate?: Function;
+        independent?: Boolean;
+    }
+) {
     const {
         gridRange,
         fieldName,
@@ -27,14 +29,18 @@ export default function GridInputItem(props: {
         helpText,
         handleValidate,
         independent = true,
+        ...restProps
     } = props;
 
     return (
         <GridItem
-            rowStart={gridRange[0]}
-            rowEnd={gridRange[1]}
-            colStart={gridRange[2]}
-            colEnd={gridRange[3]}
+            {...restProps}
+            {...(gridRange && {
+                rowStart: gridRange[0],
+                rowEnd: gridRange[1],
+                colStart: gridRange[2],
+                colEnd: gridRange[3],
+            })}
         >
             {independent ? (
                 <FastField name={fieldName} validate={handleValidate}>

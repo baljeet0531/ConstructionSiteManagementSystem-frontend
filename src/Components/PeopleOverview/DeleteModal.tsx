@@ -12,8 +12,8 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react';
-import { gql, useMutation } from '@apollo/client';
-import { ALL_HUMAN_RESOURCE } from './PeopleOverview';
+import { MutationHookOptions, gql, useMutation } from '@apollo/client';
+import { ALL_HUMAN_RESOURCE, SEARCH_HUMAN } from './PeopleOverview';
 import {
     defaultErrorToast,
     defaultSuccessToast,
@@ -50,49 +50,35 @@ export default function DeleteModal(props: {
 }) {
     const toast = useToast();
     const { isOpen, onClose, selected, errorOnly } = props;
+
+    const mutationOptions = (field: string): MutationHookOptions => ({
+        onCompleted: (data) => {
+            if (data[field].ok) {
+                defaultSuccessToast(toast, data[field].message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        refetchQueries: [
+            {
+                query: ALL_HUMAN_RESOURCE,
+                variables: { errlist: errorOnly },
+            },
+            SEARCH_HUMAN,
+        ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
+    });
+
     const [deleteHumanResource, { loading }] = useMutation(
         DELETE_HUMAN_RESOURCE,
-        {
-            onCompleted: ({ deleteHumanResource }) => {
-                if (deleteHumanResource.ok) {
-                    defaultSuccessToast(toast, deleteHumanResource.message);
-                }
-            },
-            onError: (err) => {
-                console.log(err);
-                defaultErrorToast(toast);
-            },
-            refetchQueries: [
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: errorOnly },
-                },
-            ],
-            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
-            fetchPolicy: 'network-only',
-        }
+        mutationOptions('deleteHumanResource')
     );
     const [deleteErrorHumanResource, { loading: errorLoading }] = useMutation(
         DELETE_ERROR_HUMAN_RESOURCE,
-        {
-            onCompleted: ({ deleteErrHR }) => {
-                if (deleteErrHR.ok) {
-                    defaultSuccessToast(toast, deleteErrHR.message);
-                }
-            },
-            onError: (err) => {
-                console.log(err);
-                defaultErrorToast(toast);
-            },
-            refetchQueries: [
-                {
-                    query: ALL_HUMAN_RESOURCE,
-                    variables: { errlist: errorOnly },
-                },
-            ],
-            onQueryUpdated: (observableQuery) => observableQuery.refetch(),
-            fetchPolicy: 'network-only',
-        }
+        mutationOptions('deleteErrHR')
     );
 
     const handleConfirm = () => {

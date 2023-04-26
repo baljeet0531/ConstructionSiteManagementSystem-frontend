@@ -26,7 +26,7 @@ export async function exportFile(
     toast: Function
 ) {
     const cookieValue = new Cookies().get('jwt');
-    fetch(BACKEND + `/${path}`, {
+    return fetch(BACKEND + `/${path}`, {
         cache: 'no-cache',
         headers: {
             Authorization: `Bearer ${cookieValue}`,
