@@ -34,61 +34,61 @@ export default class FormFactory {
         this.formProps = formProps;
         this.category = {
             帆宣: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorIem' },
+                labor: { fieldName: 'laborIem' },
+                night: { fieldName: 'nightIem' },
+                total: { fieldName: 'totalIem' },
             },
             空調: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorConditioner' },
+                labor: { fieldName: 'laborConditioner' },
+                night: { fieldName: 'nightConditioner' },
+                total: { fieldName: 'totalConditioner' },
             },
             消防: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorFire' },
+                labor: { fieldName: 'laborFire' },
+                night: { fieldName: 'nightFire' },
+                total: { fieldName: 'totalFire' },
             },
             給排水: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorDrain' },
+                labor: { fieldName: 'laborDrain' },
+                night: { fieldName: 'nightDrain' },
+                total: { fieldName: 'totalDrain' },
             },
             天然氣及柴油: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorGas' },
+                labor: { fieldName: 'laborGas' },
+                night: { fieldName: 'nightGas' },
+                total: { fieldName: 'totalGas' },
             },
             電力: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorElectric' },
+                labor: { fieldName: 'laborElectric' },
+                night: { fieldName: 'nightElectric' },
+                total: { fieldName: 'totalElectric' },
             },
             儀控: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorControl' },
+                labor: { fieldName: 'laborControl' },
+                night: { fieldName: 'nightControl' },
+                total: { fieldName: 'totalControl' },
             },
             弱電: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorWeakElectric' },
+                labor: { fieldName: 'laborWeakElectric' },
+                night: { fieldName: 'nightWeakElectric' },
+                total: { fieldName: 'totalWeakElectric' },
             },
             其他: {
-                supervisor: { fieldName: '' },
-                labor: { fieldName: '' },
-                night: { fieldName: '' },
-                total: { fieldName: '' },
+                supervisor: { fieldName: 'supervisorOther' },
+                labor: { fieldName: 'laborWeakElectric' },
+                night: { fieldName: 'nightOther' },
+                total: { fieldName: 'totalOther' },
             },
             合計: {
-                total: { fieldName: '' },
+                total: { fieldName: 'total' },
             },
         };
     }
@@ -243,15 +243,9 @@ export default class FormFactory {
     workItem(row_idx: number, v: ITodayItem | ITomorrowItem, i: number) {
         const update = [...this.formProps.values.workItem];
         const type = isTodayItem(v) ? 'today' : 'tomorrow';
+        const fieldName = `workItem.${row_idx}.${type}.${i}`;
         const target = update[row_idx][type];
-        const handleChange = (
-            e: ChangeEvent<HTMLInputElement>,
-            field: keyof ITodayItem | keyof ITomorrowItem
-        ) => {
-            field !== 'completeness'
-                ? (v[field] = e.target.value)
-                : isTodayItem(v) && (v[field] = Number(e.target.value));
-            target[i] = v;
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
             if (i === target.length - 1) {
                 isTodayList(target)
                     ? target.push({
@@ -265,58 +259,50 @@ export default class FormFactory {
                           location: '',
                           description: '',
                       });
+                this.formProps.setFieldValue('workItem', update);
             }
-            this.formProps.setFieldValue('workItem', update);
+            this.formProps.handleChange(e);
         };
         const handleDelete = () => {
-            target.splice(i, 1)
+            target.splice(i, 1);
             this.formProps.setFieldValue('workItem', update);
-        }
+        };
         return (
             <Fragment key={`work-item-${i}`}>
                 <GridInputItem
                     gridRange={[2 * i + 2, 2 * i + 2, 1, 1]}
-                    fieldName=""
+                    fieldName={`${fieldName}.projectName`}
                     inputComponent={this.input({
                         type: 'text',
-                        value: v.projectName,
                         h: '100%',
                         border: '0px',
-                        onChange: (e) => {
-                            handleChange(e, 'projectName');
-                        },
+                        onChange: handleChange,
                     })}
                     style={tableContentStyle}
                 />
                 <GridInputItem
                     gridRange={[2 * i + 2, 2 * i + 2, 2, 2]}
-                    fieldName=""
+                    fieldName={`${fieldName}.location`}
                     inputComponent={this.input({
                         type: 'text',
-                        value: v.location,
                         h: '100%',
                         border: '0px',
                         textAlign: 'center',
-                        onChange: (e) => {
-                            handleChange(e, 'location');
-                        },
+                        onChange: handleChange,
                     })}
                     style={{ ...tableContentStyle, borderLeft: '0px' }}
                 />
                 {isTodayItem(v) ? (
                     <GridInputItem
                         gridRange={[2 * i + 2, 2 * i + 2, 3, 3]}
-                        fieldName=""
+                        fieldName={`${fieldName}.completeness`}
                         inputComponent={this.input({
                             type: 'number',
-                            value: v.completeness,
                             h: '100%',
                             border: '0px',
                             textAlign: 'right',
-                            onChange: (e) => {
-                                handleChange(e, 'completeness');
-                            },
                             pr: '15px',
+                            onChange: handleChange,
                         })}
                         inputRightComponent={<Text fontSize="10px">%</Text>}
                         inputRightStyle={{ w: '10px' }}
@@ -344,16 +330,13 @@ export default class FormFactory {
                 </GridItem>
                 <GridInputItem
                     gridRange={[2 * i + 3, 2 * i + 3, 1, 5]}
-                    fieldName=""
+                    fieldName={`${fieldName}.description`}
                     inputComponent={this.input({
                         type: 'text',
-                        value: v.description,
                         placeholder: '說明',
                         h: '100%',
                         border: '0px',
-                        onChange: (e) => {
-                            handleChange(e, 'description');
-                        },
+                        onChange: handleChange,
                     })}
                     style={{
                         ...tableContentStyle,

@@ -1,7 +1,57 @@
 export interface IDailyReport {
     siteId: string;
-    serialNumber: string;
+    dailyId: number;
+    todayProgress: string;
+    totalProgress: string;
+    projectName: string;
+    owner: string;
+    department: string;
+    date: string;
+    enterDate: string;
+    cumulativeDays: number;
+    cumulativeLabor: number;
+    weatherMorning: string;
+    weatherAfternoon: string;
+    maxTemperature: number;
+    minTemperature: number;
     workItem: IWorkContext[];
+    supervisorIem: number;
+    supervisorConditioner: number;
+    supervisorFire: number;
+    supervisorDrain: number;
+    supervisorGas: number;
+    supervisorElectric: number;
+    supervisorControl: number;
+    supervisorWeakElectric: number;
+    supervisorOther: number;
+    laborIem: number;
+    laborConditioner: number;
+    laborFire: number;
+    laborDrain: number;
+    laborGas: number;
+    laborElectric: number;
+    laborControl: number;
+    laborWeakElectric: number;
+    laborOther: number;
+    nightIem: number;
+    nightConditioner: number;
+    nightFire: number;
+    nightDrain: number;
+    nightGas: number;
+    nightElectric: number;
+    nightControl: number;
+    nightWeakElectric: number;
+    nightOther: number;
+    totalIem: number;
+    totalConditioner: number;
+    totalFire: number;
+    totalDrain: number;
+    totalGas: number;
+    totalElectric: number;
+    totalControl: number;
+    totalWeakElectric: number;
+    totalOther: number;
+    total: number;
 }
 export type TCategory =
     | '帆宣'
