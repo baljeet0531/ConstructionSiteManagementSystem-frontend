@@ -28,3 +28,7 @@ code {
     border-radius: 3px;
     background: #00000033;
 }
+
+.photo-container .chakra-checkbox__control {
+    background-color: #ffffff;
+}

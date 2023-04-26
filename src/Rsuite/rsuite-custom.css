@@ -17,3 +17,7 @@
 .rs-picker-toggle-value {
     --rs-picker-value: #667080;
 }
+
+.rs-picker-menu {
+    z-index: 9999;
+}

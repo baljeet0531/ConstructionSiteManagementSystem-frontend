@@ -6,6 +6,7 @@ import {
     FormControl,
     FormErrorMessage,
     FormHelperText,
+    GridItemProps,
 } from '@chakra-ui/react';
 import {
     AutoComplete,
@@ -16,47 +17,40 @@ import {
 
 import { Field, FormikProps } from 'formik';
 import React from 'react';
-import { formValues } from './PeopleEstablishment';
+import { formValues } from '../../Interface/PeopleManagement';
 
-export default function GridInputItem(props: {
-    gridRange: [
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined,
-        ResponsiveValue<number | 'auto'> | undefined
-    ];
-    fieldName: string;
-    formlabel: string;
-    labelAlign?: any;
-    helpText?: String;
-    handleValidate?: Function;
-    searchResult:
-        | {
-              idno: string;
-              name: string;
-          }[]
-        | undefined;
-    setSearchResult: React.Dispatch<
-        React.SetStateAction<
+export default function GridInputItem(
+    props: GridItemProps & {
+        gridRange?: [
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined,
+            ResponsiveValue<number | 'auto'> | undefined
+        ];
+        fieldName: string;
+        formlabel: string;
+        labelAlign?: any;
+        helpText?: String;
+        handleValidate?: Function;
+        searchResult:
             | {
                   idno: string;
                   name: string;
               }[]
-            | undefined
-        >
-    >;
-    formProps: FormikProps<formValues>;
-    handleDebounceSearch: Function;
-    setHumanToBeUpdated: React.Dispatch<
-        React.SetStateAction<
-            | {
-                  no: string;
-                  idno: string;
-              }
-            | undefined
-        >
-    >;
-}) {
+            | undefined;
+        formProps: FormikProps<formValues>;
+        handleDebounceSearch: Function;
+        setHumanToBeUpdated: React.Dispatch<
+            React.SetStateAction<
+                | {
+                      no: string;
+                      idno: string;
+                  }
+                | undefined
+            >
+        >;
+    }
+) {
     const {
         gridRange,
         fieldName,
@@ -64,18 +58,22 @@ export default function GridInputItem(props: {
         labelAlign,
         helpText,
         handleValidate,
-        searchResult,
+        searchResult = [],
         formProps,
         handleDebounceSearch,
         setHumanToBeUpdated,
+        ...restProps
     } = props;
 
     return (
         <GridItem
-            rowStart={gridRange[0]}
-            rowEnd={gridRange[1]}
-            colStart={gridRange[2]}
-            colEnd={gridRange[3]}
+            {...restProps}
+            {...(gridRange && {
+                rowStart: gridRange[0],
+                rowEnd: gridRange[1],
+                colStart: gridRange[2],
+                colEnd: gridRange[3],
+            })}
         >
             <Field name={fieldName} validate={handleValidate}>
                 {({ field, form }: { field: any; form: any }) => {
@@ -108,46 +106,33 @@ export default function GridInputItem(props: {
                                         pt={'0.5rem'}
                                         pb={'0.5rem'}
                                     >
-                                        {searchResult &&
-                                            searchResult.map(
-                                                ({ idno, name }, index) => (
-                                                    <AutoCompleteItem
-                                                        key={index}
-                                                        value={idno}
-                                                        onClick={() => {
-                                                            setHumanToBeUpdated(
-                                                                {
-                                                                    no: '',
-                                                                    idno: idno,
-                                                                }
-                                                            );
-                                                        }}
-                                                        p={'0.5rem'}
-                                                    >
-                                                        <Flex
-                                                            direction={'column'}
+                                        {searchResult.map(
+                                            ({ idno, name }, index) => (
+                                                <AutoCompleteItem
+                                                    key={index}
+                                                    value={idno}
+                                                    onClick={() => {
+                                                        setHumanToBeUpdated({
+                                                            no: '',
+                                                            idno: idno,
+                                                        });
+                                                    }}
+                                                    p={'0.5rem'}
+                                                >
+                                                    <Flex direction={'column'}>
+                                                        <Text variant="searchResult">
+                                                            {idno}
+                                                        </Text>
+                                                        <Text
+                                                            variant="searchResult"
+                                                            color="rgba(102, 112, 128, 0.5)"
                                                         >
-                                                            <Text
-                                                                variant={
-                                                                    'searchResult'
-                                                                }
-                                                            >
-                                                                {idno}
-                                                            </Text>
-                                                            <Text
-                                                                variant={
-                                                                    'searchResult'
-                                                                }
-                                                                color={
-                                                                    'rgba(102, 112, 128, 0.5)'
-                                                                }
-                                                            >
-                                                                {name}
-                                                            </Text>
-                                                        </Flex>
-                                                    </AutoCompleteItem>
-                                                )
-                                            )}
+                                                            {name}
+                                                        </Text>
+                                                    </Flex>
+                                                </AutoCompleteItem>
+                                            )
+                                        )}
                                     </AutoCompleteList>
                                 </AutoComplete>
                             </Flex>

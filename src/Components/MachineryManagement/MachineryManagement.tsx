@@ -398,6 +398,7 @@ export default function MachineryManagement(props: {
                     <TabPanel padding={'16px 0 0 0'}>
                         <ReactWindowTable
                             tableData={tableData}
+                            setTableData={setTableData}
                             columnMap={columnMap('入場')}
                             sizes={sizes}
                             columnBordered
@@ -406,6 +407,7 @@ export default function MachineryManagement(props: {
                     <TabPanel padding={'16px 0 0 0'}>
                         <ReactWindowTable
                             tableData={tableData}
+                            setTableData={setTableData}
                             columnMap={columnMap('場內')}
                             sizes={sizes}
                             columnBordered
