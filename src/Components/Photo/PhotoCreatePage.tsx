@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import {
     Button,
     Flex,
@@ -17,7 +17,8 @@ import {
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 import PhotoCreateList from './PhotoCreateList';
-import { QUERY_PHOTOS } from './PhotoOverviewContainer';
+import { QUERY_PHOTOS } from './PhotoOverviewPage';
+import { useQuery } from '@apollo/client';
 
 export interface IPhotoInput {
     image: File;
@@ -32,6 +33,15 @@ export interface IPhotoFormValue {
     siteId: string;
 }
 
+export const QUERY_IMAGE_OPTIONS = gql`
+    query IMOptionList($siteId: String!) {
+        IMOptionList(siteId: $siteId) {
+            category
+            location
+        }
+    }
+`;
+
 const CREATE_PHOTOS = gql`
     mutation CreateImageManagement(
         $content: [imageManagementInput]!
@@ -44,12 +54,6 @@ const CREATE_PHOTOS = gql`
     }
 `;
 
-const QUERY_IMAGE_OPTIONS = gql`
-    query IMOptionList($siteId: String!, $mode: String!) {
-        IMOptionList(siteId: $siteId, mode: $mode)
-    }
-`;
-
 export default function PhotoCreatePage(props: {
     siteId: string;
     siteName: string;
@@ -57,51 +61,14 @@ export default function PhotoCreatePage(props: {
 }) {
     const { onToggle, siteId, siteName } = props;
     const toast = useToast();
+
+    const inputFileRef = React.useRef<HTMLInputElement>(null);
     const [categories, setCategories] = React.useState<ItemDataType[]>([]);
     const [locations, setLocations] = React.useState<ItemDataType[]>([]);
-    const inputFileRef = React.useRef<HTMLInputElement>(null);
 
     const [createPhotos] = useMutation(CREATE_PHOTOS, {
         fetchPolicy: 'network-only',
-        refetchQueries: [QUERY_PHOTOS],
-    });
-
-    useQuery(QUERY_IMAGE_OPTIONS, {
-        variables: {
-            siteId: siteId,
-            mode: 'category',
-        },
-        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
-            setCategories(
-                IMOptionList.map((option) => ({
-                    label: option,
-                    value: option,
-                }))
-            );
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    useQuery(QUERY_IMAGE_OPTIONS, {
-        variables: {
-            siteId: siteId,
-            mode: 'location',
-        },
-        onCompleted: ({ IMOptionList }: { IMOptionList: string[] }) => {
-            setLocations(
-                IMOptionList.map((option) => ({
-                    label: option,
-                    value: option,
-                }))
-            );
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
+        refetchQueries: [QUERY_PHOTOS, QUERY_IMAGE_OPTIONS],
     });
 
     const handleUpload = (
@@ -121,6 +88,37 @@ export default function PhotoCreatePage(props: {
         });
         event.target.value = '';
     };
+
+    useQuery(QUERY_IMAGE_OPTIONS, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            IMOptionList,
+        }: {
+            IMOptionList: {
+                category: string[];
+                location: string[];
+            };
+        }) => {
+            setCategories(
+                IMOptionList.category.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+            setLocations(
+                IMOptionList.location.map((option) => ({
+                    label: option,
+                    value: option,
+                }))
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     const initialValues: IPhotoFormValue = {
         content: [],
@@ -161,7 +159,7 @@ export default function PhotoCreatePage(props: {
             }}
         >
             {(props) => (
-                <Form>
+                <Form style={{ width: '100%', height: '100%' }}>
                     <FieldArray name="content">
                         {(arrayHelpers) => (
                             <Flex direction={'column'} w={'100%'} h={'100%'}>
