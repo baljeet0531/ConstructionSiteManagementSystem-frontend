@@ -20,7 +20,7 @@ export default function Report() {
             </Button>
             <DailyReportModal
                 siteId={'M522C0008'}
-                serialNumber={'123'}
+                dailyId={1}
                 isOpen={isOpen}
                 onClose={onClose}
             />

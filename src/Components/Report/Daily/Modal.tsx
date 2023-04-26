@@ -11,129 +11,69 @@ import DailyReportForm from './Form';
 
 export default function DailyReportModal({
     siteId,
-    serialNumber,
+    dailyId,
     onClose,
     isOpen,
 }: {
     siteId: string;
-    serialNumber: string;
+    dailyId: number;
     onClose: () => void;
     isOpen: boolean;
 }) {
     const initialValues: IDailyReport = {
         siteId: siteId,
-        serialNumber: serialNumber,
-        workItem: [
-            {
-                area: 'CUB棟',
-                today: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '1F',
-                        completeness: 40,
-                        description: '',
-                    },
-                    {
-                        projectName: '線路檢查',
-                        location: '2F',
-                        completeness: 60,
-                        description: '',
-                    },
-                ],
-                tomorrow: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                ],
-            },
-            {
-                area: 'OB棟',
-                today: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '1F',
-                        completeness: 40,
-                        description: '',
-                    },
-                    {
-                        projectName: '線路檢查',
-                        location: '2F',
-                        completeness: 60,
-                        description: '',
-                    },
-                ],
-                tomorrow: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                ],
-            },
-            {
-                area: 'AB棟',
-                today: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '1F',
-                        completeness: 40,
-                        description: '',
-                    },
-                ],
-                tomorrow: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                ],
-            },
-            {
-                area: 'AC棟',
-                today: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '1F',
-                        completeness: 40,
-                        description: '',
-                    },
-                ],
-                tomorrow: [],
-            },
-            {
-                area: 'AD棟',
-                today: [],
-                tomorrow: [
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                    {
-                        projectName: '主管路安裝',
-                        location: '2F',
-                        description: '',
-                    },
-                ],
-            },
-        ],
+        dailyId: dailyId,
+        todayProgress: '',
+        totalProgress: '',
+        projectName: '',
+        owner: '',
+        department: '',
+        date: '',
+        enterDate: '',
+        cumulativeDays: 0,
+        cumulativeLabor: 0,
+        weatherMorning: '',
+        weatherAfternoon: '',
+        maxTemperature: 0,
+        minTemperature: 0,
+        workItem: [],
+        supervisorIem: 0,
+        supervisorConditioner: 0,
+        supervisorFire: 0,
+        supervisorDrain: 0,
+        supervisorGas: 0,
+        supervisorElectric: 0,
+        supervisorControl: 0,
+        supervisorWeakElectric: 0,
+        supervisorOther: 0,
+        laborIem: 0,
+        laborConditioner: 0,
+        laborFire: 0,
+        laborDrain: 0,
+        laborGas: 0,
+        laborElectric: 0,
+        laborControl: 0,
+        laborWeakElectric: 0,
+        laborOther: 0,
+        nightIem: 0,
+        nightConditioner: 0,
+        nightFire: 0,
+        nightDrain: 0,
+        nightGas: 0,
+        nightElectric: 0,
+        nightControl: 0,
+        nightWeakElectric: 0,
+        nightOther: 0,
+        totalIem: 0,
+        totalConditioner: 0,
+        totalFire: 0,
+        totalDrain: 0,
+        totalGas: 0,
+        totalElectric: 0,
+        totalControl: 0,
+        totalWeakElectric: 0,
+        totalOther: 0,
+        total: 0,
     };
     // const toast = useToast();
     // const [updateDailyReport] = useMutation(GQL_DAILY_REPORT_MUTATION, {
@@ -180,7 +120,7 @@ export default function DailyReportModal({
                             <DailyReportForm
                                 formProps={props}
                                 siteId={siteId}
-                                serialNumber={serialNumber}
+                                dailyId={dailyId}
                             />
                         )}
                     </Formik>

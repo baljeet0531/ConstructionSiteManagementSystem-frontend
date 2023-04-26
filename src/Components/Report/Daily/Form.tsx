@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
-import { GQL_DAILY_REPORT_QUERY } from './GQL';
+import { GQL_DAILY_REPORT_QUERY, parseDailyReport } from './GQL';
 import { Fragment, useState } from 'react';
 import { FormLoading } from '../../Shared/Loading';
 import { getImage } from '../../../Utils/Resources';
@@ -28,11 +28,11 @@ import GridInputItem from '../../Shared/GridInputItem';
 export default function DailyReportForm({
     formProps,
     siteId,
-    serialNumber,
+    dailyId,
 }: {
     formProps: FormikProps<IDailyReport>;
     siteId: string;
-    serialNumber: string;
+    dailyId: number;
 }) {
     const [loading, setLoading] = useState<boolean>(true);
     const [ownerIconURL, setOwnerIconURL] = useState<string>('');
@@ -40,13 +40,13 @@ export default function DailyReportForm({
     useQuery(GQL_DAILY_REPORT_QUERY, {
         variables: {
             siteId: siteId,
-            serialNumber: serialNumber,
+            dailyId: dailyId,
         },
         onCompleted: (d) => {
-            // const singleFormData = parseDailyReport(d.dailyReport);
-            // if (singleFormData) {
-            //     formProps.setValues(singleFormData, false);
-            // }
+            const singleFormData = parseDailyReport(d.dailyReport);
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
             type Node = { node: { siteId: string; avatar: string } };
             const targetSites: Node = d.allSites.edges.find(
                 (i: Node) => i.node.siteId === siteId
@@ -95,7 +95,7 @@ export default function DailyReportForm({
                         工作日報表
                     </GridItem>
                     <GridItem {...titleStyle} justifyContent="flex-end">
-                        表單序號：{serialNumber}
+                        表單序號：{dailyId}
                     </GridItem>
                 </Grid>
                 <Grid
@@ -115,7 +115,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 2, 2, 2]}
-                        fieldName=""
+                        fieldName="projectName"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -126,7 +126,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 2, 5, 5]}
-                        fieldName=""
+                        fieldName="date"
                         inputComponent={f.input({
                             type: 'date',
                             isDisabled: true,
@@ -138,7 +138,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 2, 8, 8]}
-                        fieldName=""
+                        fieldName="weatherMorning"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -150,7 +150,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[3, 3, 2, 2]}
-                        fieldName=""
+                        fieldName="owner"
                         inputComponent={f.input({ type: 'text' })}
                     />
                     <GridItem rowStart={3} colStart={4} {...contentStyle}>
@@ -158,7 +158,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[3, 3, 5, 5]}
-                        fieldName=""
+                        fieldName="enterDate"
                         inputComponent={f.input({
                             type: 'date',
                             isDisabled: true,
@@ -170,7 +170,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[3, 3, 8, 8]}
-                        fieldName=""
+                        fieldName="weatherAfternoon"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -182,7 +182,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[4, 4, 2, 2]}
-                        fieldName=""
+                        fieldName="department"
                         inputComponent={f.input({ type: 'text' })}
                     />
                     <GridItem rowStart={4} colStart={4} {...contentStyle}>
@@ -190,7 +190,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[4, 4, 5, 5]}
-                        fieldName=""
+                        fieldName="cumulativeDays"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -202,7 +202,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[4, 4, 8, 8]}
-                        fieldName=""
+                        fieldName="maxTemperature"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -216,7 +216,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[5, 5, 5, 5]}
-                        fieldName=""
+                        fieldName="cumulativeLabor"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
@@ -228,7 +228,7 @@ export default function DailyReportForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[5, 5, 8, 8]}
-                        fieldName=""
+                        fieldName="minTemperature"
                         inputComponent={f.input({
                             type: 'text',
                             isDisabled: true,
