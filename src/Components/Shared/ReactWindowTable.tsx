@@ -106,7 +106,7 @@ export const SignatureTooltip = (props: {
 }) => {
     const { signature, fieldLabel } = props.field;
     const label = signature ? (
-        <Text>
+        <Text color={'#FFFFFF'}>
             {`${fieldLabel}：`}
             <br />
             {signature.owner}
@@ -167,6 +167,7 @@ export interface IColumnMap {
     variable: string;
     // eslint-disable-next-line no-unused-vars
     getElement: (props: getElementProps) => JSX.Element;
+    customHeaderStyle?: ChakraProps;
 }
 
 export interface ISizes {
@@ -331,6 +332,8 @@ export default function ReactWindowTable(props: {
             >
                 {({ columnIndex, style }) => {
                     const title = columnMap[columnIndex]['title'];
+                    const customHeaderStyle =
+                        columnMap[columnIndex]['customHeaderStyle'];
                     if (title == '全選') {
                         const checkedItems = Object.values(tableData);
 
@@ -341,7 +344,11 @@ export default function ReactWindowTable(props: {
                             checkedItems.some((info) => info['isChecked']) &&
                             !allChecked;
                         return (
-                            <Center style={style} {...headerCellStyle}>
+                            <Center
+                                style={style}
+                                {...headerCellStyle}
+                                {...customHeaderStyle}
+                            >
                                 <Checkbox
                                     isChecked={allChecked}
                                     isIndeterminate={isIndeterminate}
@@ -364,7 +371,11 @@ export default function ReactWindowTable(props: {
                         );
                     }
                     return (
-                        <Center style={style} {...headerCellStyle}>
+                        <Center
+                            style={style}
+                            {...headerCellStyle}
+                            {...customHeaderStyle}
+                        >
                             {title}
                         </Center>
                     );
