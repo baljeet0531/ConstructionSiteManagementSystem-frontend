@@ -90,7 +90,12 @@ export default function Sidebar(props: {
             overflowY={'auto'}
             justify={'space-between'}
         >
-            <Flex direction={'column'} align={'center'} justify={'flex-start'}>
+            <Flex
+                direction={'column'}
+                align={'center'}
+                justify={'flex-start'}
+                w={'100%'}
+            >
                 <Box w={'66%'} style={{ aspectRatio: 1 }}>
                     <Avatar
                         w={'100%'}
