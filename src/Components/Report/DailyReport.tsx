@@ -134,6 +134,7 @@ export default function DailyReport() {
     return (
         <ReactWindowTable
             tableData={tableData}
+            setTableData={setTableData}
             columnMap={columnMap}
             sizes={sizes}
         />
