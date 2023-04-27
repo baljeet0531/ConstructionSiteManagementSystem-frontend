@@ -45,6 +45,7 @@ export default function Report(props: { siteId: string; siteName: string }) {
                             <Button
                                 leftIcon={<LaunchIcon />}
                                 variant={'buttonGrayOutline'}
+                                h={'36px'}
                             >
                                 輸出
                             </Button>
