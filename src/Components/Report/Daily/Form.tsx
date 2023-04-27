@@ -13,7 +13,7 @@ import {
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
 import { GQL_DAILY_REPORT_QUERY, parseDailyReport } from './GQL';
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { FormLoading } from '../../Shared/Loading';
 import { getImage } from '../../../Utils/Resources';
 import {
@@ -63,6 +63,19 @@ export default function DailyReportForm({
         },
         fetchPolicy: 'network-only',
     });
+    useEffect(() => {
+        f.onSubTotalChange();
+    }, [
+        formProps.values.totalConditioner,
+        formProps.values.totalControl,
+        formProps.values.totalDrain,
+        formProps.values.totalElectric,
+        formProps.values.totalFire,
+        formProps.values.totalGas,
+        formProps.values.totalOther,
+        formProps.values.totalWeakElectric,
+        formProps.values.totalIem,
+    ]);
     console.log(formProps.values);
 
     return (

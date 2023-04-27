@@ -73,7 +73,7 @@ export interface IWorkNumber {
 }
 
 export interface IWorkNumberItem {
-    fieldName: string;
+    fieldName: keyof IDailyReport;
 }
 
 export interface IWorkContext {
