@@ -72,6 +72,22 @@ export default function Report(props: { siteId: string; siteName: string }) {
         }
     );
 
+    const handleDailyExport = () => {
+        const dailyIds = Object.values(dailyData).flatMap((value) =>
+            value.isChecked ? value.dailyId : []
+        );
+        dailyIds.length > 0 &&
+            exportDailyReport({
+                variables: {
+                    dailyIds: dailyIds,
+                    siteId: siteId,
+                    username: username,
+                },
+            });
+    };
+
+    const exportFunctionArray = [handleDailyExport];
+
     return (
         <Flex {...tableViewContainerStyle} gap={'10px'}>
             <Text variant={'pageSiteName'}>{siteName}</Text>
@@ -96,21 +112,7 @@ export default function Report(props: { siteId: string; siteName: string }) {
                                 leftIcon={<LaunchIcon />}
                                 variant={'buttonGrayOutline'}
                                 h={'36px'}
-                                onClick={() => {
-                                    const dailyIds = Object.values(
-                                        dailyData
-                                    ).flatMap((value) =>
-                                        value.isChecked ? value.dailyId : []
-                                    );
-                                    dailyIds.length > 0 &&
-                                        exportDailyReport({
-                                            variables: {
-                                                dailyIds: dailyIds,
-                                                siteId: siteId,
-                                                username: username,
-                                            },
-                                        });
-                                }}
+                                onClick={exportFunctionArray[tabIndex]}
                             >
                                 輸出
                             </Button>
