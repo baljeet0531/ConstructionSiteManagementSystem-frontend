@@ -83,7 +83,7 @@ export default class FormFactory {
             },
             其他: {
                 supervisor: { fieldName: 'supervisorOther' },
-                labor: { fieldName: 'laborWeakElectric' },
+                labor: { fieldName: 'laborOther' },
                 night: { fieldName: 'nightOther' },
                 total: { fieldName: 'totalOther' },
             },
@@ -129,6 +129,7 @@ export default class FormFactory {
                             h: '100%',
                             textAlign: 'center',
                             border: '0px',
+                            onBlur: (e) => this.onWorkNumberChange(e, name),
                         })}
                         style={contentStyle}
                     />
@@ -148,6 +149,7 @@ export default class FormFactory {
                             h: '100%',
                             textAlign: 'center',
                             border: '0px',
+                            onBlur: (e) => this.onWorkNumberChange(e, name),
                         })}
                         style={contentStyle}
                     />
@@ -167,6 +169,7 @@ export default class FormFactory {
                             h: '100%',
                             textAlign: 'center',
                             border: '0px',
+                            onBlur: (e) => this.onWorkNumberChange(e, name),
                         })}
                         style={contentStyle}
                     />
@@ -185,11 +188,32 @@ export default class FormFactory {
                         h: '100%',
                         textAlign: 'center',
                         border: '0px',
+                        isDisabled: true,
                     })}
                     style={contentStyle}
                 />
             </Fragment>
         );
+    }
+    onWorkNumberChange(e: ChangeEvent<HTMLInputElement>, category: TCategory) {
+        this.formProps.handleChange(e);
+        const { supervisor, labor, night, total } = this.category[category];
+        const sum = [
+            supervisor
+                ? (this.formProps.values[supervisor.fieldName] as number)
+                : 0,
+            labor ? (this.formProps.values[labor.fieldName] as number) : 0,
+            night ? (this.formProps.values[night.fieldName] as number) : 0,
+        ].reduce((s, value: number) => s + value, 0);
+        this.formProps.setFieldValue(total.fieldName, sum);
+    }
+    onSubTotalChange() {
+        const subcategory = Object.keys(this.category)
+            .filter((t) => t !== '合計')
+            .map((t) => this.category[t as TCategory].total.fieldName);
+        const list = subcategory.map((t) => this.formProps.values[t] as number);
+        const newSum = list.reduce((s, value) => s + value, 0);
+        this.formProps.setFieldValue('total', newSum);
     }
     todayWorkList(area: string, idx: number, items: ITodayItem[]) {
         if (!items) {
