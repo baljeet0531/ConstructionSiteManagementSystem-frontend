@@ -35,7 +35,6 @@ export const GQL_DAILY_REPORT_MUTATION = gql`
         $supervisorIem: Int
         $supervisorOther: Int
         $supervisorWeakElectric: Int
-        $todayProgress: Float
         $todayWorkItem: [gqlTodayWorkItemInput]
         $tomorrowWorkItem: [gqlTomorrowWorkItemInput]
         $total: Int
@@ -47,7 +46,6 @@ export const GQL_DAILY_REPORT_MUTATION = gql`
         $totalGas: Int
         $totalIem: Int
         $totalOther: Int
-        $totalProgress: Float
         $totalWeakElectric: Int
     ) {
         updateDailyReport(
@@ -82,7 +80,6 @@ export const GQL_DAILY_REPORT_MUTATION = gql`
             supervisorIem: $supervisorIem
             supervisorOther: $supervisorOther
             supervisorWeakElectric: $supervisorWeakElectric
-            todayProgress: $todayProgress
             todayWorkItem: $todayWorkItem
             tomorrowWorkItem: $tomorrowWorkItem
             total: $total
@@ -94,7 +91,6 @@ export const GQL_DAILY_REPORT_MUTATION = gql`
             totalGas: $totalGas
             totalIem: $totalIem
             totalOther: $totalOther
-            totalProgress: $totalProgress
             totalWeakElectric: $totalWeakElectric
         ) {
             ok
@@ -117,8 +113,6 @@ export const GQL_DAILY_REPORT_QUERY = gql`
         dailyReport(siteId: $siteId, dailyId: $dailyId) {
             dailyId
             siteId
-            todayProgress
-            totalProgress
             projectName
             owner
             department

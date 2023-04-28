@@ -9,6 +9,7 @@ import {
     GridItem,
     Text,
     SimpleGrid,
+    useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../../Icons/Icons';
 import { useQuery } from '@apollo/client';
@@ -24,18 +25,22 @@ import {
     titleStyle,
 } from './Styles';
 import GridInputItem from '../../Shared/GridInputItem';
+import { defaultErrorToast } from '../../../Utils/DefaultToast';
 
 export default function DailyReportForm({
     formProps,
     siteId,
     dailyId,
+    onClose,
 }: {
     formProps: FormikProps<IDailyReport>;
     siteId: string;
     dailyId: number;
+    onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(true);
     const [ownerIconURL, setOwnerIconURL] = useState<string>('');
+    const toast = useToast()
     const f = new FormFactory(formProps);
     useQuery(GQL_DAILY_REPORT_QUERY, {
         variables: {
@@ -60,6 +65,9 @@ export default function DailyReportForm({
         },
         onError: (err) => {
             console.error(err);
+            setLoading(false);
+            defaultErrorToast(toast)
+            onClose();
         },
         fetchPolicy: 'network-only',
     });
@@ -127,7 +135,7 @@ export default function DailyReportForm({
                         工程名稱
                     </GridItem>
                     <GridInputItem
-                        gridRange={[2, 2, 2, 2]}
+                        gridRange={[2, 3, 2, 3]}
                         fieldName="projectName"
                         inputComponent={f.input({
                             type: 'text',
@@ -138,7 +146,7 @@ export default function DailyReportForm({
                         日期
                     </GridItem>
                     <GridInputItem
-                        gridRange={[2, 2, 5, 5]}
+                        gridRange={[2, 3, 5, 6]}
                         fieldName="date"
                         inputComponent={f.input({
                             type: 'date',
@@ -150,7 +158,7 @@ export default function DailyReportForm({
                         上午
                     </GridItem>
                     <GridInputItem
-                        gridRange={[2, 2, 8, 8]}
+                        gridRange={[2, 3, 8, 9]}
                         fieldName="weatherMorning"
                         inputComponent={f.input({
                             type: 'text',
@@ -162,7 +170,7 @@ export default function DailyReportForm({
                         業主
                     </GridItem>
                     <GridInputItem
-                        gridRange={[3, 3, 2, 2]}
+                        gridRange={[3, 4, 2, 3]}
                         fieldName="owner"
                         inputComponent={f.input({ type: 'text' })}
                     />
@@ -170,7 +178,7 @@ export default function DailyReportForm({
                         進場日期
                     </GridItem>
                     <GridInputItem
-                        gridRange={[3, 3, 5, 5]}
+                        gridRange={[3, 4, 5, 6]}
                         fieldName="enterDate"
                         inputComponent={f.input({
                             type: 'date',
@@ -182,7 +190,7 @@ export default function DailyReportForm({
                         下午
                     </GridItem>
                     <GridInputItem
-                        gridRange={[3, 3, 8, 8]}
+                        gridRange={[3, 4, 8, 9]}
                         fieldName="weatherAfternoon"
                         inputComponent={f.input({
                             type: 'text',
@@ -194,7 +202,7 @@ export default function DailyReportForm({
                         施工單位
                     </GridItem>
                     <GridInputItem
-                        gridRange={[4, 4, 2, 2]}
+                        gridRange={[4, 5, 2, 3]}
                         fieldName="department"
                         inputComponent={f.input({ type: 'text' })}
                     />
@@ -202,7 +210,7 @@ export default function DailyReportForm({
                         累計天數
                     </GridItem>
                     <GridInputItem
-                        gridRange={[4, 4, 5, 5]}
+                        gridRange={[4, 5, 5, 6]}
                         fieldName="cumulativeDays"
                         inputComponent={f.input({
                             type: 'text',
@@ -214,7 +222,7 @@ export default function DailyReportForm({
                         最高氣溫
                     </GridItem>
                     <GridInputItem
-                        gridRange={[4, 4, 8, 8]}
+                        gridRange={[4, 5, 8, 9]}
                         fieldName="maxTemperature"
                         inputComponent={f.input({
                             type: 'text',
@@ -228,7 +236,7 @@ export default function DailyReportForm({
                         累計出工人數
                     </GridItem>
                     <GridInputItem
-                        gridRange={[5, 5, 5, 5]}
+                        gridRange={[5, 6, 5, 6]}
                         fieldName="cumulativeLabor"
                         inputComponent={f.input({
                             type: 'text',
@@ -240,7 +248,7 @@ export default function DailyReportForm({
                         最低氣溫
                     </GridItem>
                     <GridInputItem
-                        gridRange={[5, 5, 8, 8]}
+                        gridRange={[5, 6, 8, 9]}
                         fieldName="minTemperature"
                         inputComponent={f.input({
                             type: 'text',
