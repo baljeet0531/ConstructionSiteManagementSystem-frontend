@@ -153,8 +153,8 @@ export default function DailyReport(props: {
                 const { dailyId, todayProgress, totalProgress } = value;
                 acc[dailyId] = {
                     ...value,
-                    todayProgress: `${todayProgress}%` || '-',
-                    totalProgress: `${totalProgress}%` || '-',
+                    todayProgress: todayProgress ? `${todayProgress}%` : '-',
+                    totalProgress: totalProgress ? `${totalProgress}%` : '-',
                     index: index,
                     isChecked: false,
                 };
