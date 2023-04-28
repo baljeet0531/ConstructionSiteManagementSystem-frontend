@@ -76,7 +76,7 @@ export default function DailyReportForm({
         formProps.values.totalWeakElectric,
         formProps.values.totalIem,
     ]);
-    console.log(formProps.values);
+    // console.log(formProps.values);
 
     return (
         <Form>
