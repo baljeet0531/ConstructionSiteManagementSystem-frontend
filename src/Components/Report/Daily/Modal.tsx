@@ -5,9 +5,18 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalOverlay,
+    useToast,
 } from '@chakra-ui/react';
-import { IDailyReport } from '../../../Interface/DailyReport';
+import {
+    GQLDailyReport,
+    GQLTodayItem,
+    GQLTomorrowItem,
+    IDailyReport,
+} from '../../../Interface/DailyReport';
 import DailyReportForm from './Form';
+import { GQL_DAILY_REPORT_MUTATION } from './GQL';
+import { defaultErrorToast } from '../../../Utils/DefaultToast';
+import { useMutation } from '@apollo/client';
 
 export default function DailyReportModal({
     siteId,
@@ -75,28 +84,59 @@ export default function DailyReportModal({
         totalOther: 0,
         total: 0,
     };
-    // const toast = useToast();
-    // const [updateDailyReport] = useMutation(GQL_DAILY_REPORT_MUTATION, {
-    //     onCompleted: ({ updateDailyReport }) => {
-    //         if (updateDailyReport.ok) {
-    //             toast({
-    //                 title: updateDailyReport.message,
-    //                 description: '視窗將於 3 秒後關閉',
-    //                 status: 'success',
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //                 onCloseComplete: () => {
-    //                     window.close();
-    //                 },
-    //             });
-    //         }
-    //     },
-    //     onError: (err) => {
-    //         console.error(err);
-    //         defaultErrorToast(toast);
-    //         throw new Error();
-    //     },
-    // });
+    const toast = useToast();
+    const [updateDailyReport] = useMutation(GQL_DAILY_REPORT_MUTATION, {
+        onCompleted: ({ updateDailyReport }) => {
+            if (updateDailyReport.ok) {
+                toast({
+                    title: updateDailyReport.message,
+                    description: '視窗將於 3 秒後關閉',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                    onCloseComplete: () => {
+                        onClose();
+                    },
+                });
+            }
+        },
+        onError: (err) => {
+            console.error(err);
+            defaultErrorToast(toast);
+            throw new Error();
+        },
+    });
+    const handleWorkItems = (values: GQLDailyReport) => {
+        const todayList: GQLTodayItem[] = [];
+        const tomorrowList: GQLTomorrowItem[] = [];
+        values.workItem.forEach(({ area, today, tomorrow }) => {
+            const common = {
+                dailyId: dailyId,
+                siteId: siteId,
+                buildingName: area,
+            };
+            today.forEach((item) => {
+                if (item.projectName === '') {
+                    return;
+                }
+                todayList.push({
+                    ...item,
+                    ...common,
+                });
+            });
+            tomorrow.forEach((item) => {
+                if (item.projectName === '') {
+                    return;
+                }
+                tomorrowList.push({
+                    ...item,
+                    ...common,
+                });
+            });
+        });
+        values.todayWorkItem = todayList;
+        values.tomorrowWorkItem = tomorrowList;
+    };
     return (
         <Modal onClose={onClose} isOpen={isOpen} size="full">
             <ModalOverlay />
@@ -108,12 +148,14 @@ export default function DailyReportModal({
                         validateOnChange={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
-                            const submitValues = { ...values } as IDailyReport;
-
+                            const submitValues = {
+                                ...values,
+                            } as GQLDailyReport;
+                            handleWorkItems(submitValues);
                             console.log(submitValues);
-                            // updateDailyReport({
-                            //     variables: submitValues,
-                            // }).catch(() => actions.setSubmitting(false));
+                            updateDailyReport({
+                                variables: submitValues,
+                            }).catch(() => actions.setSubmitting(false));
                         }}
                     >
                         {(props) => (

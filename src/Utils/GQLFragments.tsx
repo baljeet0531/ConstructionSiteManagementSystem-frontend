@@ -32,7 +32,6 @@ export const WORKITEM_FIELDS = gql`
             location
             completeness
             description
-            __typename
         }
         tomorrow {
             dailyId
@@ -41,7 +40,6 @@ export const WORKITEM_FIELDS = gql`
             projectName
             location
             description
-            __typename
         }
         __typename
     }

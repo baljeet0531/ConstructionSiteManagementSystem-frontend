@@ -93,6 +93,21 @@ export interface ITodayItem extends IWorkItem {
 }
 export interface ITomorrowItem extends IWorkItem {}
 
+export interface GQLWorkItemCommon {
+    dailyId: number;
+    siteId: string;
+    buildingName: string;
+}
+
+export interface GQLTodayItem extends ITodayItem, GQLWorkItemCommon {}
+
+export interface GQLTomorrowItem extends ITomorrowItem, GQLWorkItemCommon {}
+
+export interface GQLDailyReport extends IDailyReport {
+    todayWorkItem?: GQLTodayItem[];
+    tomorrowWorkItem?: GQLTomorrowItem[];
+}
+
 export function isTodayItem(v: ITodayItem | ITomorrowItem): v is ITodayItem {
     return 'completeness' in v;
 }
