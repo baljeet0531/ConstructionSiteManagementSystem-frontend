@@ -32,7 +32,7 @@ export interface IDailyReportObject {
     [index: number]: IDailyReportOverviewIsChecked;
 }
 
-const QUERY_DAILY_REPORT = gql`
+export const QUERY_DAILY_REPORT = gql`
     query DailyReport(
         $siteId: String!
         $dailyId: Int

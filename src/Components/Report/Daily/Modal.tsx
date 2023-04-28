@@ -17,6 +17,7 @@ import DailyReportForm from './Form';
 import { GQL_DAILY_REPORT_MUTATION } from './GQL';
 import { defaultErrorToast } from '../../../Utils/DefaultToast';
 import { useMutation } from '@apollo/client';
+import { QUERY_DAILY_REPORT } from './Overview';
 
 export default function DailyReportModal({
     siteId,
@@ -105,6 +106,7 @@ export default function DailyReportModal({
             defaultErrorToast(toast);
             throw new Error();
         },
+        refetchQueries: [QUERY_DAILY_REPORT],
     });
     const handleWorkItems = (values: GQLDailyReport) => {
         const todayList: GQLTodayItem[] = [];
@@ -163,6 +165,7 @@ export default function DailyReportModal({
                                 formProps={props}
                                 siteId={siteId}
                                 dailyId={dailyId}
+                                onClose={onClose}
                             />
                         )}
                     </Formik>
