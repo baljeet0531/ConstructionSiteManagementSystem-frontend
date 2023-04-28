@@ -3,266 +3,25 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { Formik } from 'formik';
 import FormPage from './FormPage';
-import { ApolloError, gql, useMutation } from '@apollo/client';
+import {
+    ApolloError,
+    MutationHookOptions,
+    useLazyQuery,
+    useMutation,
+} from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
-import { ALL_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
-import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import {
+    ALL_HUMAN_RESOURCE,
+    SEARCH_HUMAN,
+} from '../PeopleOverview/PeopleOverview';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import { formFiles, formValues } from '../../Interface/PeopleManagement';
+import { CREATE_HUMAN_RESOURCE, UPDATE_HUMAN_RESOURCE } from './GQL';
 
-interface humanInfoValues {
-    aCertificationDate: Date | string | undefined;
-    accidentInsuranceAmount: Number | string | undefined;
-    accidentInsuranceCompanyName: String | undefined;
-    accidentInsuranceEnd: Date | string | undefined;
-    accidentInsuranceSignDate: Date | string | undefined;
-    accidentInsuranceStart: Date | string | undefined;
-    address: String | undefined;
-    birthday: Date | string | undefined;
-    bloodType: String | undefined;
-    cCertificationDate: Date | string | undefined;
-    certificationIssue: Date | string | undefined;
-    certificationName: String | undefined;
-    certificationWithdraw: Date | string | undefined;
-    contractingCompanyName: String | undefined;
-    emergencyTel: String | undefined;
-    exCertificationDate: Date | string | undefined;
-    gender: String | undefined;
-    hCertificationDate: Date | string | undefined;
-    hazardNotifyDate: Date | string | undefined;
-    idno: String | undefined;
-    lCertificationDate: Date | string | undefined;
-    laborAssociationDate: Date | string | undefined;
-    laborInsuranceApplyDate: Date | string | undefined;
-    liaison: String | undefined;
-    name: String | undefined;
-    o2CertificationDate: Date | string | undefined;
-    osCertificationDate: Date | string | undefined;
-    sCertificationDate: Date | string | undefined;
-    saCertificationDate: Date | string | undefined;
-    safetyHealthyEducationIssue: Date | string | undefined;
-    safetyHealthyEducationWithdraw: Date | string | undefined;
-    supplierIndustrialSafetyNumber: String | undefined;
-    tel: String | undefined;
-    viceContractingCompanyName: String | undefined;
-    wahCertificationDate: Date | string | undefined;
-}
-
-export interface formValues extends humanInfoValues {
-    sixStatus: string | undefined;
-    certificationStatus: string | undefined;
-    aStatus: string | undefined;
-    wahStatus: string | undefined;
-    lStatus: string | undefined;
-    cStatus: string | undefined;
-    hStatus: string | undefined;
-    exStatus: string | undefined;
-    sStatus: string | undefined;
-    saStatus: string | undefined;
-    osStatus: string | undefined;
-    o2Status: string | undefined;
-}
-
-export interface formFiles {
-    F6Img: File | undefined;
-    GImg: File | undefined;
-    HImgs: (File | undefined)[];
-    IDFImg: File | undefined;
-    IDRImg: File | undefined;
-    LImg: File | undefined;
-    PImg: File | undefined;
-    R6Img: File | undefined;
-}
-const CREATE_HUMAN_RESOURCE = gql`
-    mutation createHumanResource(
-        $F6Img: Upload
-        $GImg: Upload
-        $HImgs: [Upload]
-        $IDFImg: Upload
-        $IDRImg: Upload
-        $LImg: Upload
-        $PImg: Upload
-        $R6Img: Upload
-        $aCertificationDate: Date
-        $accidentInsuranceAmount: String
-        $accidentInsuranceCompanyName: String
-        $accidentInsuranceEnd: Date
-        $accidentInsuranceSignDate: Date
-        $accidentInsuranceStart: Date
-        $address: String
-        $birthday: Date
-        $bloodType: String
-        $cCertificationDate: Date
-        $certificationIssue: Date
-        $certificationName: String
-        $certificationWithdraw: Date
-        $contractingCompanyName: String
-        $emergencyTel: String
-        $exCertificationDate: Date
-        $gender: String
-        $hCertificationDate: Date
-        $hazardNotifyDate: Date
-        $idno: String!
-        $lCertificationDate: Date
-        $laborAssociationDate: Date
-        $laborInsuranceApplyDate: Date
-        $liaison: String
-        $name: String!
-        $o2CertificationDate: Date
-        $osCertificationDate: Date
-        $sCertificationDate: Date
-        $saCertificationDate: Date
-        $safetyHealthyEducationIssue: Date
-        $safetyHealthyEducationWithdraw: Date
-        $supplierIndustrialSafetyNumber: String
-        $tel: String
-        $viceContractingCompanyName: String
-        $wahCertificationDate: Date
-    ) {
-        createHumanResource(
-            F6Img: $F6Img
-            GImg: $GImg
-            HImgs: $HImgs
-            IDFImg: $IDFImg
-            IDRImg: $IDRImg
-            LImg: $LImg
-            PImg: $PImg
-            R6Img: $R6Img
-            aCertificationDate: $aCertificationDate
-            accidentInsuranceAmount: $accidentInsuranceAmount
-            accidentInsuranceCompanyName: $accidentInsuranceCompanyName
-            accidentInsuranceEnd: $accidentInsuranceEnd
-            accidentInsuranceSignDate: $accidentInsuranceSignDate
-            accidentInsuranceStart: $accidentInsuranceStart
-            address: $address
-            birthday: $birthday
-            bloodType: $bloodType
-            cCertificationDate: $cCertificationDate
-            certificationIssue: $certificationIssue
-            certificationName: $certificationName
-            certificationWithdraw: $certificationWithdraw
-            contractingCompanyName: $contractingCompanyName
-            emergencyTel: $emergencyTel
-            exCertificationDate: $exCertificationDate
-            gender: $gender
-            hCertificationDate: $hCertificationDate
-            hazardNotifyDate: $hazardNotifyDate
-            idno: $idno
-            lCertificationDate: $lCertificationDate
-            laborAssociationDate: $laborAssociationDate
-            laborInsuranceApplyDate: $laborInsuranceApplyDate
-            liaison: $liaison
-            name: $name
-            o2CertificationDate: $o2CertificationDate
-            osCertificationDate: $osCertificationDate
-            sCertificationDate: $sCertificationDate
-            saCertificationDate: $saCertificationDate
-            safetyHealthyEducationIssue: $safetyHealthyEducationIssue
-            safetyHealthyEducationWithdraw: $safetyHealthyEducationWithdraw
-            supplierIndustrialSafetyNumber: $supplierIndustrialSafetyNumber
-            tel: $tel
-            viceContractingCompanyName: $viceContractingCompanyName
-            wahCertificationDate: $wahCertificationDate
-        ) {
-            ok
-            message
-        }
-    }
-`;
-const UPDATE_HUMAN_RESOURCE = gql`
-    mutation UpdateHumanResource(
-        $F6Img: Upload
-        $GImg: Upload
-        $HImgs: [Upload]
-        $IDFImg: Upload
-        $IDRImg: Upload
-        $LImg: Upload
-        $PImg: Upload
-        $R6Img: Upload
-        $aCertificationDate: Date
-        $accidentInsuranceAmount: String
-        $accidentInsuranceCompanyName: String
-        $accidentInsuranceEnd: Date
-        $accidentInsuranceSignDate: Date
-        $accidentInsuranceStart: Date
-        $address: String
-        $birthday: Date
-        $bloodType: String
-        $cCertificationDate: Date
-        $certificationIssue: Date
-        $certificationName: String
-        $certificationWithdraw: Date
-        $contractingCompanyName: String
-        $emergencyTel: String
-        $exCertificationDate: Date
-        $gender: String
-        $hCertificationDate: Date
-        $hazardNotifyDate: Date
-        $idno: String!
-        $lCertificationDate: Date
-        $laborAssociationDate: Date
-        $laborInsuranceApplyDate: Date
-        $liaison: String
-        $name: String!
-        $o2CertificationDate: Date
-        $osCertificationDate: Date
-        $sCertificationDate: Date
-        $saCertificationDate: Date
-        $safetyHealthyEducationIssue: Date
-        $safetyHealthyEducationWithdraw: Date
-        $supplierIndustrialSafetyNumber: String
-        $tel: String
-        $viceContractingCompanyName: String
-        $wahCertificationDate: Date
-    ) {
-        updateHumanResource(
-            F6Img: $F6Img
-            GImg: $GImg
-            HImgs: $HImgs
-            IDFImg: $IDFImg
-            IDRImg: $IDRImg
-            LImg: $LImg
-            PImg: $PImg
-            R6Img: $R6Img
-            aCertificationDate: $aCertificationDate
-            accidentInsuranceAmount: $accidentInsuranceAmount
-            accidentInsuranceCompanyName: $accidentInsuranceCompanyName
-            accidentInsuranceEnd: $accidentInsuranceEnd
-            accidentInsuranceSignDate: $accidentInsuranceSignDate
-            accidentInsuranceStart: $accidentInsuranceStart
-            address: $address
-            birthday: $birthday
-            bloodType: $bloodType
-            cCertificationDate: $cCertificationDate
-            certificationIssue: $certificationIssue
-            certificationName: $certificationName
-            certificationWithdraw: $certificationWithdraw
-            contractingCompanyName: $contractingCompanyName
-            emergencyTel: $emergencyTel
-            exCertificationDate: $exCertificationDate
-            gender: $gender
-            hCertificationDate: $hCertificationDate
-            hazardNotifyDate: $hazardNotifyDate
-            idno: $idno
-            lCertificationDate: $lCertificationDate
-            laborAssociationDate: $laborAssociationDate
-            laborInsuranceApplyDate: $laborInsuranceApplyDate
-            liaison: $liaison
-            name: $name
-            o2CertificationDate: $o2CertificationDate
-            osCertificationDate: $osCertificationDate
-            sCertificationDate: $sCertificationDate
-            saCertificationDate: $saCertificationDate
-            safetyHealthyEducationIssue: $safetyHealthyEducationIssue
-            safetyHealthyEducationWithdraw: $safetyHealthyEducationWithdraw
-            supplierIndustrialSafetyNumber: $supplierIndustrialSafetyNumber
-            tel: $tel
-            viceContractingCompanyName: $viceContractingCompanyName
-            wahCertificationDate: $wahCertificationDate
-        ) {
-            ok
-            message
-        }
-    }
-`;
+const filesInitialValues: formFiles = { HImgs: [undefined] };
 
 export default function PeopleEstablishment() {
     if (!IsPermit('people_establishment'))
@@ -299,11 +58,23 @@ export default function PeopleEstablishment() {
         certificationWithdraw: '',
         certificationStatus: '',
 
-        accidentInsuranceStart: '',
-        accidentInsuranceEnd: '',
-        accidentInsuranceAmount: '',
-        accidentInsuranceSignDate: '',
-        accidentInsuranceCompanyName: '',
+        accidentInsuranceStartOne: '',
+        accidentInsuranceEndOne: '',
+        accidentInsuranceAmountOne: '',
+        accidentInsuranceSignDateOne: '',
+        accidentInsuranceCompanyNameOne: '',
+
+        accidentInsuranceStartTwo: '',
+        accidentInsuranceEndTwo: '',
+        accidentInsuranceAmountTwo: '',
+        accidentInsuranceSignDateTwo: '',
+        accidentInsuranceCompanyNameTwo: '',
+
+        accidentInsuranceStartThree: '',
+        accidentInsuranceEndThree: '',
+        accidentInsuranceAmountThree: '',
+        accidentInsuranceSignDateThree: '',
+        accidentInsuranceCompanyNameThree: '',
 
         contractingCompanyName: '',
         viceContractingCompanyName: '',
@@ -330,16 +101,8 @@ export default function PeopleEstablishment() {
         o2Status: '',
     };
 
-    const [fileStates, setFileStates] = React.useState<formFiles>({
-        F6Img: undefined,
-        GImg: undefined,
-        HImgs: [undefined],
-        IDFImg: undefined,
-        IDRImg: undefined,
-        LImg: undefined,
-        PImg: undefined,
-        R6Img: undefined,
-    });
+    const [fileStates, setFileStates] =
+        React.useState<formFiles>(filesInitialValues);
 
     const toast = useToast();
     const [createHumanResource, { loading: createLoading }] = useMutation(
@@ -350,12 +113,15 @@ export default function PeopleEstablishment() {
         UPDATE_HUMAN_RESOURCE
     );
 
+    const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
+
     return (
         <Formik
+            validateOnChange={false}
+            validateOnBlur={false}
             initialValues={initialValues}
             onSubmit={(values, actions) => {
                 actions.setSubmitting(true);
-
                 let filteredValues: any = {};
                 for (let props in values) {
                     if (
@@ -370,60 +136,47 @@ export default function PeopleEstablishment() {
 
                 const handleCompeleted = (message: string) => {
                     defaultSuccessToast(toast, message);
-                    setFileStates({
-                        F6Img: undefined,
-                        GImg: undefined,
-                        HImgs: [undefined],
-                        IDFImg: undefined,
-                        IDRImg: undefined,
-                        LImg: undefined,
-                        PImg: undefined,
-                        R6Img: undefined,
-                    });
+                    setFileStates(filesInitialValues);
                     setHumanToBeUpdated(undefined);
                     actions.resetForm();
                 };
                 const handleErr = (err: ApolloError) => {
                     console.log(err);
-                    toast({
-                        title: '錯誤',
-                        description: `${err}`,
-                        status: 'error',
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    defaultErrorToast(toast);
                 };
-                if (humanToBeUpdated && humanToBeUpdated.no == '') {
-                    updateHumanResource({
-                        variables: {
-                            ...filteredValues,
-                            ...rest,
-                            HImgs: HImgs.slice(0, -1),
-                        },
-                        onCompleted: ({ updateHumanResource }) => {
-                            if (updateHumanResource.ok) {
-                                handleCompeleted(updateHumanResource.message);
-                            }
-                        },
-                        onError: handleErr,
-                        refetchQueries: [ALL_HUMAN_RESOURCE],
-                    });
-                } else {
-                    createHumanResource({
-                        variables: {
-                            ...filteredValues,
-                            ...rest,
-                            HImgs: HImgs.slice(0, -1),
-                        },
-                        onCompleted: ({ createHumanResource }) => {
-                            if (createHumanResource.ok) {
-                                handleCompeleted(createHumanResource.message);
-                            }
-                        },
-                        onError: handleErr,
-                        refetchQueries: [ALL_HUMAN_RESOURCE],
-                    });
-                }
+
+                const mutationOptions = (
+                    field: string
+                ): MutationHookOptions => ({
+                    variables: {
+                        ...filteredValues,
+                        ...rest,
+                        HImgs: HImgs.slice(0, -1),
+                    },
+                    onCompleted: (data) => {
+                        data[field].ok && handleCompeleted(data[field].message);
+                    },
+                    onError: handleErr,
+                    refetchQueries: [ALL_HUMAN_RESOURCE],
+                });
+
+                searchHuman({
+                    variables: { context: filteredValues.idno },
+                    onCompleted: ({ searchHuman }) => {
+                        searchHuman.length == 0
+                            ? createHumanResource(
+                                  mutationOptions('createHumanResource')
+                              )
+                            : updateHumanResource(
+                                  mutationOptions('updateHumanResource')
+                              );
+                    },
+                    onError: (err) => {
+                        console.log(err);
+                        defaultErrorToast(toast);
+                    },
+                    fetchPolicy: 'network-only',
+                });
                 actions.setSubmitting(false);
             }}
         >

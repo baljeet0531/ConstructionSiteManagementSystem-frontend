@@ -106,7 +106,7 @@ export const SignatureTooltip = (props: {
 }) => {
     const { signature, fieldLabel } = props.field;
     const label = signature ? (
-        <Text>
+        <Text color={'#FFFFFF'}>
             {`${fieldLabel}：`}
             <br />
             {signature.owner}
@@ -167,20 +167,32 @@ export interface IColumnMap {
     variable: string;
     // eslint-disable-next-line no-unused-vars
     getElement: (props: getElementProps) => JSX.Element;
+    customHeaderStyle?: ChakraProps;
 }
 
 export interface ISizes {
-    tableViewHeight?: number;
-    tableFigmaWidth: number;
-    tableViewWidth?: number;
-    headerHeight: number;
-    cellHeight: number;
+    tableFigmaWidth?: number;
+    headerHeight?: number;
+    cellHeight?: number;
+    fixedWidth?: number;
+    fixedHeight?: number;
+    padding?: {
+        topPadding?: number;
+        bottomPadding?: number;
+        pagePadding?: number;
+    };
+    pageRatio?: number;
 }
 
 export default function ReactWindowTable(props: {
     tableData: {
         [primaryKey: string]: any;
     };
+    setTableData: React.Dispatch<
+        React.SetStateAction<{
+            [primaryKey: string]: any;
+        }>
+    >;
     columnMap: IColumnMap[];
     sizes: ISizes;
     filteredPrimaryKey?: string[];
@@ -189,19 +201,29 @@ export default function ReactWindowTable(props: {
 }) {
     const {
         tableData,
+        setTableData,
         columnMap,
         sizes,
         filteredPrimaryKey,
         sortReversed = false,
         columnBordered = false,
     } = props;
+
     const {
-        tableViewHeight,
-        tableFigmaWidth,
-        tableViewWidth,
-        headerHeight,
-        cellHeight,
+        tableFigmaWidth = 877,
+        headerHeight = 65,
+        cellHeight = 30,
+        pageRatio = 0.8,
+        padding,
+        fixedWidth,
+        fixedHeight,
     } = sizes;
+
+    const {
+        topPadding = 148,
+        bottomPadding = 52,
+        pagePadding = 42,
+    } = padding || {};
 
     const displayTableData: {
         [primaryKey: string]: any;
@@ -226,26 +248,15 @@ export default function ReactWindowTable(props: {
     };
     const primaryKeys = Object.keys(displayTableData).sort(sortingFunction);
 
-    const [allChecked, setAllChecked] = React.useState<boolean>(false);
-
     const variableSizeHeaderRef = React.useRef<VariableSizeGrid>(null);
     const variableSizeDataRef = React.useRef<VariableSizeGrid>(null);
 
-    const pagePadding = 42;
-    const pageRatio = 0.8;
-
-    const tablePaddingTop = 152 + headerHeight;
-    const tablePaddingBottom = 52;
-
-    const [tableWidth, setTableViewWidth] = React.useState(
-        tableViewWidth
-            ? tableViewWidth
-            : window.innerWidth * pageRatio - 2 * pagePadding
+    const [tableWidth, setTableWidth] = React.useState(
+        fixedWidth || window.innerWidth * pageRatio - 2 * pagePadding
     );
-    const [tableHeight, setTableViewHeight] = React.useState(
-        tableViewHeight
-            ? tableViewHeight
-            : window.innerHeight - tablePaddingTop - tablePaddingBottom
+    const [tableHeight, setTableHeight] = React.useState(
+        fixedHeight ||
+            window.innerHeight - topPadding - headerHeight - bottomPadding
     );
 
     const getColumnWidth = (index: number) => {
@@ -257,16 +268,15 @@ export default function ReactWindowTable(props: {
 
     React.useEffect(() => {
         const watchResize = () => {
-            setTableViewWidth(
-                tableViewWidth
-                    ? tableViewWidth
-                    : window.innerWidth * pageRatio - 2 * pagePadding
-            );
-            setTableViewHeight(
-                tableViewHeight
-                    ? tableViewHeight
-                    : window.innerHeight - tablePaddingTop - tablePaddingBottom
-            );
+            !fixedWidth &&
+                setTableWidth(window.innerWidth * pageRatio - 2 * pagePadding);
+            !fixedHeight &&
+                setTableHeight(
+                    window.innerHeight -
+                        topPadding -
+                        headerHeight -
+                        bottomPadding
+                );
             variableSizeHeaderRef.current &&
                 variableSizeHeaderRef.current.resetAfterColumnIndex(0);
             variableSizeDataRef.current &&
@@ -322,27 +332,50 @@ export default function ReactWindowTable(props: {
             >
                 {({ columnIndex, style }) => {
                     const title = columnMap[columnIndex]['title'];
+                    const customHeaderStyle =
+                        columnMap[columnIndex]['customHeaderStyle'];
                     if (title == '全選') {
+                        const checkedItems = Object.values(tableData);
+
+                        const allChecked = checkedItems.every(
+                            (info) => info['isChecked']
+                        );
+                        const isIndeterminate =
+                            checkedItems.some((info) => info['isChecked']) &&
+                            !allChecked;
                         return (
-                            <Center style={style} {...headerCellStyle}>
+                            <Center
+                                style={style}
+                                {...headerCellStyle}
+                                {...customHeaderStyle}
+                            >
                                 <Checkbox
                                     isChecked={allChecked}
-                                    onChange={(e) => {
-                                        setAllChecked(e.target.checked);
+                                    isIndeterminate={isIndeterminate}
+                                    onChange={() => {
+                                        const firstFilteredRowIsChecked = //get the "isChecked" value of first row in filtered data
+                                            primaryKeys.length !== 0 &&
+                                            tableData[primaryKeys[0]].isChecked;
                                         primaryKeys.forEach((primaryKey) => {
                                             const info = tableData[primaryKey];
                                             tableData[primaryKey] = {
                                                 ...info,
-                                                isChecked: e.target.checked,
+                                                isChecked:
+                                                    !firstFilteredRowIsChecked, //use "firstFilteredRowIsChecked"(filtered data dependent) but not "isIndeterminate"(all data dependent)
                                             };
                                         });
+                                        setTableData({ ...tableData });
                                     }}
                                 ></Checkbox>
                             </Center>
                         );
                     }
                     return (
-                        <Center style={style} {...headerCellStyle}>
+                        <Center
+                            style={style}
+                            {...headerCellStyle}
+                            {...customHeaderStyle}
+                        >
                             {title}
                         </Center>
                     );

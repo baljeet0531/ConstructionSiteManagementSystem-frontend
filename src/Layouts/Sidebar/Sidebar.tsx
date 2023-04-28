@@ -1,7 +1,15 @@
 import React from 'react';
 
 import Menu from './Menu';
-import { VStack, Avatar, Text, AspectRatio } from '@chakra-ui/react';
+import {
+    VStack,
+    Avatar,
+    Text,
+    Button,
+    Flex,
+    AvatarBadge,
+    Box,
+} from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
 import Admin from '../../Images/Avatars/Admin.svg';
@@ -13,6 +21,11 @@ import SecurityStaff from '../../Images/Avatars/SecurityStaff.svg';
 import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
 import { ISiteObject } from '../Layout';
+import { LogoutIcon } from '../../Icons/Icons';
+import { useCookies } from 'react-cookie';
+import { VERSION } from '../../Constants/EnvConstants';
+import { TODO_LIST } from '../../Components/Dashboard/TodoList';
+import { useLazyQuery } from '@apollo/client';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -42,32 +55,119 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
-    return (
-        <VStack pt="50px" pb="50px" w="20vw" h={'100%'} overflowY={'auto'}>
-            <AspectRatio w="50%" ratio={1}>
-                <Avatar
-                    name=""
-                    src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
-                    ignoreFallback
-                ></Avatar>
-            </AspectRatio>
-            <Text
-                fontWeight="600"
-                color="#4C7DE7"
-                fontSize="20px"
-                textAlign="center"
-            >
-                {username}
-                <br />
-                {role}
-            </Text>
+    const [, , removeCookie] = useCookies(['jwt', 'username']);
 
-            <Menu
-                sitesObject={sitesObject}
-                featureMap={featureMap}
-                selectedSiteId={selectedSiteId}
-                setSelectedSiteId={setSelectedSiteId}
-            ></Menu>
+    const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
+    const [getTodoListAmount] = useLazyQuery(TODO_LIST, {
+        onCompleted: ({
+            dashboardTodolist,
+        }: {
+            dashboardTodolist: string[];
+        }) => {
+            setTodoListAmount(dashboardTodolist.length);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    React.useEffect(() => {
+        selectedSiteId &&
+            getTodoListAmount({
+                variables: {
+                    siteId: selectedSiteId,
+                    username: username,
+                },
+            });
+    }, [selectedSiteId]);
+
+    return (
+        <VStack
+            padding={'50px 26px 10px 26px'}
+            w="20vw"
+            h={'100%'}
+            overflowY={'auto'}
+            justify={'space-between'}
+        >
+            <Flex
+                direction={'column'}
+                align={'center'}
+                justify={'flex-start'}
+                w={'100%'}
+            >
+                <Box w={'66%'} style={{ aspectRatio: 1 }}>
+                    <Avatar
+                        w={'100%'}
+                        h={'100%'}
+                        src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
+                        ignoreFallback
+                    >
+                        {todoListAmount !== 0 && (
+                            <AvatarBadge
+                                boxSize="20%"
+                                bg="red"
+                                right={'9.46%'}
+                                bottom={'9.46%'}
+                            >
+                                <Text
+                                    fontSize={'75%'}
+                                    lineHeight={'100%'}
+                                    color={'#FFFFFF'}
+                                >
+                                    {todoListAmount > 99
+                                        ? '99+'
+                                        : todoListAmount}
+                                </Text>
+                            </AvatarBadge>
+                        )}
+                    </Avatar>
+                </Box>
+                <Text
+                    mt={'15px'}
+                    mb={'5px'}
+                    fontWeight="600"
+                    color="#4C7DE7"
+                    fontSize="20px"
+                    textAlign="center"
+                >
+                    {username}
+                    <br />
+                    {role}
+                </Text>
+                <Menu
+                    sitesObject={sitesObject}
+                    featureMap={featureMap}
+                    selectedSiteId={selectedSiteId}
+                    setSelectedSiteId={setSelectedSiteId}
+                ></Menu>
+            </Flex>
+            <VStack w="100%">
+                <Button
+                    leftIcon={<LogoutIcon />}
+                    flexShrink={0}
+                    height={'44px'}
+                    width={'100%'}
+                    color={'#667080'}
+                    bg={'#6670801A'}
+                    borderRadius={'30px'}
+                    fontSize={'15px'}
+                    onClick={() => {
+                        removeCookie('jwt', {
+                            path: '/',
+                            secure: false,
+                        });
+                        removeCookie('username', {
+                            path: '/',
+                            secure: false,
+                        });
+                        window.location.href = '/login';
+                    }}
+                >
+                    登出
+                </Button>
+                <Text variant="w400s12">版本：{VERSION}</Text>
+            </VStack>
         </VStack>
     );
 }

@@ -23,6 +23,7 @@ export const GQL_TOOLBOX_QUERY = gql`
     ${APPEARANCE_SIGN_FIELD}
     query queryToolboxMeeting($siteId: String!, $number: String) {
         contractingCorpName(siteId: $siteId)
+        dashboardPublicMatters(siteId: $siteId)
         toolboxMeeting(siteId: $siteId, number: $number) {
             siteId
             number
@@ -517,6 +518,7 @@ export const GQL_TOOLBOX_UPDATE = gql`
 
 export function parseToolbox(
     list: IGQLToolbox[],
+    dashboardPublicMatters: string,
     signatures: Record<SignatureName, SignatureStateItem>,
     signatureLists: Record<SignatureListName, MultiSignatureStateItem>
 ): IToolbox | undefined {
@@ -559,6 +561,10 @@ export function parseToolbox(
         const cols = [t.area, t.zone];
         const values = cols.flatMap((c) => c || []);
         t.workPlace = values.join(' ');
+    }
+
+    if (!t.publicityMatters) {
+        t.publicityMatters = dashboardPublicMatters
     }
 
     // Handle single singnatures
