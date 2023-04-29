@@ -122,7 +122,7 @@ export default class FormFactory {
                 </GridItem>
                 {item.supervisor ? (
                     <GridInputItem
-                        gridRange={[2, 2, idx + 2, idx + 2]}
+                        gridRange={[2, 3, idx + 2, idx + 3]}
                         fieldName={item.supervisor.fieldName}
                         inputComponent={this.input({
                             type: 'number',
@@ -142,7 +142,7 @@ export default class FormFactory {
                 )}
                 {item.labor ? (
                     <GridInputItem
-                        gridRange={[3, 3, idx + 2, idx + 2]}
+                        gridRange={[3, 4, idx + 2, idx + 3]}
                         fieldName={item.labor.fieldName}
                         inputComponent={this.input({
                             type: 'number',
@@ -162,7 +162,7 @@ export default class FormFactory {
                 )}
                 {item.night ? (
                     <GridInputItem
-                        gridRange={[4, 4, idx + 2, idx + 2]}
+                        gridRange={[4, 5, idx + 2, idx + 3]}
                         fieldName={item.night.fieldName}
                         inputComponent={this.input({
                             type: 'number',
@@ -181,7 +181,7 @@ export default class FormFactory {
                     />
                 )}
                 <GridInputItem
-                    gridRange={[5, 5, idx + 2, idx + 2]}
+                    gridRange={[5, 6, idx + 2, idx + 3]}
                     fieldName={item.total.fieldName}
                     inputComponent={this.input({
                         type: 'number',
@@ -294,7 +294,7 @@ export default class FormFactory {
         return (
             <Fragment key={`work-item-${i}`}>
                 <GridInputItem
-                    gridRange={[2 * i + 2, 2 * i + 2, 1, 1]}
+                    gridRange={[2 * i + 2, 2 * i + 3, 1, 2]}
                     fieldName={`${fieldName}.projectName`}
                     inputComponent={this.input({
                         type: 'text',
@@ -305,7 +305,7 @@ export default class FormFactory {
                     style={tableContentStyle}
                 />
                 <GridInputItem
-                    gridRange={[2 * i + 2, 2 * i + 2, 2, 2]}
+                    gridRange={[2 * i + 2, 2 * i + 3, 2, 3]}
                     fieldName={`${fieldName}.location`}
                     inputComponent={this.input({
                         type: 'text',
@@ -318,7 +318,7 @@ export default class FormFactory {
                 />
                 {isTodayItem(v) ? (
                     <GridInputItem
-                        gridRange={[2 * i + 2, 2 * i + 2, 3, 3]}
+                        gridRange={[2 * i + 2, 2 * i + 3, 3, 4]}
                         fieldName={`${fieldName}.completeness`}
                         inputComponent={this.input({
                             type: 'number',
@@ -353,7 +353,7 @@ export default class FormFactory {
                     )}
                 </GridItem>
                 <GridInputItem
-                    gridRange={[2 * i + 3, 2 * i + 3, 1, 5]}
+                    gridRange={[2 * i + 3, 2 * i + 4, 1, 5]}
                     fieldName={`${fieldName}.description`}
                     inputComponent={this.input({
                         type: 'text',
