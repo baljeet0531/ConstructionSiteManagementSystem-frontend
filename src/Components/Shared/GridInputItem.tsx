@@ -23,6 +23,7 @@ export default function GridInputItem({
     style,
     invalidStyle,
     invalidMsg = 'Invalid',
+    ...rest
 }: GridItemProps & {
     fieldName: string;
     inputComponent: ReactElement;
@@ -49,6 +50,7 @@ export default function GridInputItem({
                 colStart: gridRange[2],
                 colEnd: gridRange[3],
             })}
+            {...rest}
             {...style}
         >
             <Field name={fieldName} validate={handleValidate}>
