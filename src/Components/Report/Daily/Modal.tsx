@@ -106,7 +106,14 @@ export default function DailyReportModal({
             defaultErrorToast(toast);
             throw new Error();
         },
-        refetchQueries: [QUERY_DAILY_REPORT],
+        refetchQueries:[{
+            query:QUERY_DAILY_REPORT,
+            variables:{
+                siteId:siteId,
+            },
+        }
+    ],
+
     });
     const handleWorkItems = (values: GQLDailyReport) => {
         const todayList: GQLTodayItem[] = [];
