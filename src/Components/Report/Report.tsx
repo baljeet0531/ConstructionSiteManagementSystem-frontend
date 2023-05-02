@@ -16,6 +16,7 @@ import { tableViewContainerStyle } from '../../Layouts/MainScreen/MainScreen';
 import { DateRangePicker } from 'rsuite';
 import { LaunchIcon } from '../../Icons/Icons';
 import DailyReport, { IDailyReportObject } from './Daily/Overview';
+import WeeklyReport, { IWeeklyReportObject } from './Weekly/Overview';
 import { gql, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
@@ -50,6 +51,7 @@ export default function Report(props: { siteId: string; siteName: string }) {
     const [tabIndex, setTabIndex] = React.useState<number>(0);
     const [fileLoading, setFileLoading] = React.useState<boolean>(false);
     const [dailyData, setDailyData] = React.useState<IDailyReportObject>({});
+    const [weeklyData, setWeeklyData] = React.useState<IWeeklyReportObject>({});
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
 
     const [exportDailyReport, { loading: exportDailyLoading }] = useMutation(
@@ -93,6 +95,7 @@ export default function Report(props: { siteId: string; siteName: string }) {
             <Text variant={'pageSiteName'}>{siteName}</Text>
             <Text variant={'pageTitle'}>進度報表</Text>
             <Tabs
+                isLazy
                 variant={'blueRounded'}
                 onChange={(index) => setTabIndex(index)}
             >
@@ -136,6 +139,14 @@ export default function Report(props: { siteId: string; siteName: string }) {
                             siteId={siteId}
                             dailyData={dailyData}
                             setDailyData={setDailyData}
+                            dateRange={dateRange}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <WeeklyReport
+                            siteId={siteId}
+                            weeklyData={weeklyData}
+                            setWeeklyData={setWeeklyData}
                             dateRange={dateRange}
                         />
                     </TabPanel>
