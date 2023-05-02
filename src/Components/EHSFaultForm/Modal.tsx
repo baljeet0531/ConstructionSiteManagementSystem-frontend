@@ -28,6 +28,7 @@ export default function FaultFormModal({
     const initialValues: IFaultForm = {
         siteId: siteId,
         faultId: faultId,
+        checked: false,
     };
     // const toast = useToast();
     // const [updateFaultForm] = useMutation(GQL_FAULT_FORM_MUTATION, {
