@@ -3,12 +3,6 @@ export const titleStyle = {
     alignItems: 'flex-end',
 };
 
-export const subTitleStyle = {
-    fontSize: '24px',
-    display: 'flex',
-    alignItems: 'center',
-};
-
 export const placeholderStyle = {
     color: '#667080',
     opacity: 0.5,
@@ -29,17 +23,16 @@ export const tableTitleStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#919AA9',
-    borderTop: '#919AA9 solid 1px',
     borderLeft: '#919AA9 solid 1px',
     borderBottom: '#919AA9 solid 1px',
-    color: '#FFFFFF',
+    letterSpacing: '1.4em',
+    pl: '20px'
 };
 
 export const tableContentStyle = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     borderLeft: '#919AA9 solid 1px',
     borderBottom: '#919AA9 solid 1px',
 };
