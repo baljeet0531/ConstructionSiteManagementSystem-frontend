@@ -148,7 +148,7 @@ export default function WeeklyReport(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [filterDailyReport, { loading: filterLoading }] = useLazyQuery(
+    const [filterWeeklyReport, { loading: filterLoading }] = useLazyQuery(
         QUERY_WEEKLY_REPORT,
         {
             onCompleted: ({
@@ -174,7 +174,7 @@ export default function WeeklyReport(props: {
 
     React.useEffect(() => {
         dateRange
-            ? filterDailyReport({
+            ? filterWeeklyReport({
                   variables: {
                       siteId: siteId,
                       startDate: dayjs(dateRange[0]).format('YYYY-MM-DD'),
