@@ -111,7 +111,8 @@ export default function RemarksTable(props: {
                                 multiple
                                 action="#"
                                 accept="image/*"
-                                onChange={setRemarksPhotos}
+                                // onChange={setRemarksPhotos}
+                                onChange={(e) => {console.log(e)}}
                                 ref={uploader}
                                 renderThumbnail={(file, thumbnail: any) => (
                                     <Box
