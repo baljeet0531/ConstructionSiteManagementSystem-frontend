@@ -41,6 +41,25 @@ const EXPORT_DAILY_REPORT = gql`
         }
     }
 `;
+const EXPORT_WEEKLY_REPORT = gql`
+    mutation refactored972(
+        $endDay: [Date]!
+        $siteId: String!
+        $startDay: [Date]!
+        $username: String!
+    ) {
+        exportWeeklyReport(
+            endDay: $endDay
+            siteId: $siteId
+            startDay: $startDay
+            username: $username
+        ) {
+            ok
+            message
+            path
+        }
+    }
+`;
 
 export default function Report(props: { siteId: string; siteName: string }) {
     if (!IsPermit('project_report')) return <Navigate to="/" replace={true} />;
@@ -73,6 +92,25 @@ export default function Report(props: { siteId: string; siteName: string }) {
             fetchPolicy: 'network-only',
         }
     );
+    const [exportWeeklyReport, { loading: exportWeeklyLoading }] = useMutation(
+        EXPORT_WEEKLY_REPORT,
+        {
+            onCompleted: ({ exportWeeklyReport }) => {
+                const { ok, message, path } = exportWeeklyReport;
+                if (ok) {
+                    setFileLoading(true);
+                    exportFile(path, message, toast).then(() => {
+                        setFileLoading(false);
+                    });
+                }
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
 
     const handleDailyExport = () => {
         const dailyIds = Object.values(dailyData).flatMap((value) =>
@@ -87,8 +125,31 @@ export default function Report(props: { siteId: string; siteName: string }) {
                 },
             });
     };
+    const handleWeeklyExport = () => {
+        const weeklyDays = Object.values(weeklyData).reduce(
+            (acc, { isChecked, start, end }) => {
+                if (isChecked) {
+                    acc.startDay.push(start);
+                    acc.endDay.push(end);
+                }
+                return acc;
+            },
+            { startDay: [], endDay: [] } as {
+                startDay: string[];
+                endDay: string[];
+            }
+        );
+        weeklyDays.startDay.length > 0 &&
+            exportWeeklyReport({
+                variables: {
+                    ...weeklyDays,
+                    siteId: siteId,
+                    username: username,
+                },
+            });
+    };
 
-    const exportFunctionArray = [handleDailyExport];
+    const exportFunctionArray = [handleDailyExport, handleWeeklyExport];
 
     return (
         <Flex {...tableViewContainerStyle} gap={'10px'}>
@@ -152,7 +213,9 @@ export default function Report(props: { siteId: string; siteName: string }) {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-            {(fileLoading || exportDailyLoading) && <PageLoading />}
+            {(fileLoading || exportDailyLoading || exportWeeklyLoading) && (
+                <PageLoading />
+            )}
         </Flex>
     );
 }
