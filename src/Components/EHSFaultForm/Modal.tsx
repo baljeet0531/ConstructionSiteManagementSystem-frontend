@@ -29,6 +29,8 @@ export default function FaultFormModal({
         siteId: siteId,
         faultId: faultId,
         checked: false,
+        validDate: '',
+        photos: [],
     };
     // const toast = useToast();
     // const [updateFaultForm] = useMutation(GQL_FAULT_FORM_MUTATION, {

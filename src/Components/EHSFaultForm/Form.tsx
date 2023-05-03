@@ -69,6 +69,7 @@ export default function FaultForm({
     console.log(`siteId: ${siteId} faultId: ${faultId}`);
     console.log(`${f}`);
     console.log(`${setLoading}`);
+    console.log(formProps.values);
 
     return (
         <Form>
@@ -278,11 +279,12 @@ export default function FaultForm({
                     <GridInputItem
                         gridRange={[7, 8, 1, 5]}
                         fieldName=""
-                        inputComponent={f.textArea()}
+                        inputComponent={f.imageUploader()}
                         style={{
                             ...tableContentStyle,
                             borderRight: '#919AA9 solid 1px',
                             borderBottom: '0px',
+                            pl: '20px',
                         }}
                     />
                     <GridItem
@@ -358,17 +360,120 @@ export default function FaultForm({
                         rowEnd={10}
                         colStart={1}
                         colEnd={5}
-                        {...tableTitleStyle}
+                        {...tableContentStyle}
                         borderRight="#919AA9 solid 1px"
-                    />
+                    >
+                        <Grid
+                            templateColumns="80px 1fr 50fr"
+                            templateRows="repeat(3, 1fr)"
+                            w={'100%'}
+                            h={'100%'}
+                            p={'10px'}
+                        >
+                            <GridItem
+                                colStart={1}
+                                colEnd={4}
+                                rowStart={1}
+                                {...contentStyle}
+                            >
+                                缺失評核（請參閱工安缺失扣點表之記點點數）
+                            </GridItem>
+                            <GridItem
+                                colStart={1}
+                                rowStart={2}
+                                {...contentStyle}
+                            >
+                                缺失代碼：
+                            </GridItem>
+                            <GridItem
+                                colStart={2}
+                                colEnd={4}
+                                rowStart={2}
+                                w="10%"
+                                {...contentStyle}
+                            >
+                                {f.input({
+                                    type: 'text',
+                                    value: '123',
+                                    isDisabled: true,
+                                })}
+                            </GridItem>
+                            <GridItem
+                                colStart={1}
+                                rowStart={3}
+                                {...contentStyle}
+                            >
+                                記點點數：
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[3, 4, 2, 4]}
+                                fieldName=""
+                                inputComponent={f.input({ type: 'number' })}
+                                style={contentStyle}
+                                w="10%"
+                            />
+                        </Grid>
+                    </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={11}
                         colStart={1}
                         colEnd={5}
-                        {...tableTitleStyle}
+                        {...tableContentStyle}
                         borderRight="#919AA9 solid 1px"
-                    />
+                    >
+                        <Grid
+                            templateColumns="100px 1fr 50fr"
+                            templateRows="repeat(3, 1fr)"
+                            w={'100%'}
+                            h={'100%'}
+                            p={'10px'}
+                        >
+                            <GridItem
+                                colStart={1}
+                                rowStart={1}
+                                {...contentStyle}
+                            >
+                                複查日期：
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[1, 2, 2, 4]}
+                                fieldName=""
+                                inputComponent={f.input({ type: 'date' })}
+                                style={contentStyle}
+                                w="20%"
+                            />
+                            <GridItem
+                                colStart={1}
+                                rowStart={2}
+                                {...contentStyle}
+                            >
+                                複查者：
+                            </GridItem>
+                            <GridInputItem
+                                gridRange={[2, 3, 2, 4]}
+                                fieldName=""
+                                inputComponent={f.input({ type: 'text' })}
+                                style={contentStyle}
+                                w="20%"
+                            />
+                            <GridItem
+                                colStart={1}
+                                rowStart={3}
+                                {...contentStyle}
+                            >
+                                追蹤複查結果：
+                            </GridItem>
+                            <GridItem
+                                colStart={2}
+                                colEnd={4}
+                                rowStart={3}
+                                {...contentStyle}
+                            >
+                                {f.reviewResultGroup()}
+                            </GridItem>
+                        </Grid>
+                    </GridItem>
                     <GridItem
                         rowStart={11}
                         rowEnd={12}
