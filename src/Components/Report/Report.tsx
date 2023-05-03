@@ -163,8 +163,8 @@ export default function Report(props: { siteId: string; siteName: string }) {
                 <Flex gap={'10px'} justify={'space-between'} height={'40px'}>
                     <TabList
                         bg={'#FFFFFF'}
-                        border={'1px solid #919AA9'}
-                        borderRadius={'5px'}
+                        border={'2px solid #919AA9'}
+                        borderRadius={'6px'}
                     >
                         <Tab>日報表</Tab>
                         <Tab>週報表</Tab>
@@ -175,7 +175,6 @@ export default function Report(props: { siteId: string; siteName: string }) {
                             <Button
                                 leftIcon={<LaunchIcon />}
                                 variant={'buttonGrayOutline'}
-                                h={'36px'}
                                 onClick={exportFunctionArray[tabIndex]}
                             >
                                 輸出
