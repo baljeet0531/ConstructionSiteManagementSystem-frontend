@@ -43,7 +43,7 @@ const EXPORT_DAILY_REPORT = gql`
     }
 `;
 const EXPORT_WEEKLY_REPORT = gql`
-    mutation refactored972(
+    mutation ExportWeeklyReport(
         $endDay: [Date]!
         $siteId: String!
         $startDay: [Date]!
