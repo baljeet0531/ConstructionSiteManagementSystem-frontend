@@ -17,6 +17,7 @@ import { DateRangePicker } from 'rsuite';
 import { LaunchIcon } from '../../Icons/Icons';
 import DailyReport, { IDailyReportObject } from './Daily/Overview';
 import WeeklyReport, { IWeeklyReportObject } from './Weekly/Overview';
+import MonthlyReport from './Monthly/Overview';
 import { gql, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
@@ -209,6 +210,9 @@ export default function Report(props: { siteId: string; siteName: string }) {
                             setWeeklyData={setWeeklyData}
                             dateRange={dateRange}
                         />
+                    </TabPanel>
+                    <TabPanel>
+                        <MonthlyReport />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
