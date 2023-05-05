@@ -209,6 +209,7 @@ export default function DailyReport(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 sortReversed
+                sortBy={'dailyId'}
             />
             {(loading || filterLoading) && <PageLoading />}
         </>
