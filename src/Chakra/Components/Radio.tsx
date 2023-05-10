@@ -12,10 +12,13 @@ const Radio = {
                     borderStyle: 'solid',
                     borderColor: '#667080',
                     background: '#FFFFFF',
-
+                    marginTop: '0.25rem',
                     _checked: {
                         background: '#667080',
                     },
+                },
+                container: {
+                    alignItems: 'flex-start',
                 },
             };
         },
