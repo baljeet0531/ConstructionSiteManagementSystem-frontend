@@ -115,13 +115,17 @@ export default function MonthlyReport(props: { siteId: string }) {
         >
             <Flex width={'100%'}>
                 <Flex width={'50%'}>
-                    <Text flexShrink={0}>原始計畫：</Text>
+                    <Text lineHeight={'1.5rem'} flexShrink={0}>
+                        原始計畫：
+                    </Text>
                     <RadioGroup defaultValue={version} onChange={setVersion}>
                         <Flex direction={'column'}>{versionRadios}</Flex>
                     </RadioGroup>
                 </Flex>
                 <Flex width={'50%'}>
-                    <Text flexShrink={0}>時間單位：</Text>
+                    <Text lineHeight={'1.5rem'} flexShrink={0}>
+                        時間單位：
+                    </Text>
                     <RadioGroup
                         defaultValue={granularity}
                         onChange={(val) =>
