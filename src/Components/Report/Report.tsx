@@ -212,7 +212,7 @@ export default function Report(props: { siteId: string; siteName: string }) {
                         />
                     </TabPanel>
                     <TabPanel>
-                        <MonthlyReport />
+                        <MonthlyReport siteId={siteId} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
