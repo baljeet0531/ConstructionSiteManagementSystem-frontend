@@ -15,8 +15,8 @@ import {
 import { AddFileIcon, EditIcon } from '../../Icons/Icons';
 import { Uploader } from 'rsuite';
 import { FileType } from 'rsuite/esm/Uploader';
-import { IMachinery } from './MachineryManagement';
-
+import { IMachinery } from '../../Interface/Machinery';
+import { getImage } from '../../Utils/Resources';
 export default function RemarksTable(props: {
     isOpen: boolean;
     onClose: () => void;
@@ -27,11 +27,25 @@ export default function RemarksTable(props: {
     const [remarksText, setRemarksText] = React.useState<string>(
         remarksInfo.text
     );
-    const [remarksPhotos, setRemarksPhotos] = React.useState<FileType[]>(
-        remarksInfo.photos
-    );
+    const [remarksPhotos, setRemarksPhotos] = React.useState<FileType[]>([]);
     const remarksInfoRef = React.useRef<HTMLTextAreaElement>(null);
     const uploader = React.useRef();
+
+    React.useEffect(() => {
+        let photoFiles: FileType[] = [];
+        remarksInfo.photos.map(({ path, no }) => {
+            getImage(path).then(
+                (blob) =>
+                    blob &&
+                    photoFiles.push({
+                        blobFile: new File([blob], `${no}`, {
+                            type: blob.type,
+                            lastModified: new Date().getTime(),
+                        }),
+                    })
+            );
+        });
+    }, [remarksInfo.photos]);
 
     return (
         <Modal
@@ -161,7 +175,7 @@ export default function RemarksTable(props: {
                                     onClick={() => {
                                         setEditable(false);
                                         setRemarksText(remarksInfo.text);
-                                        setRemarksPhotos(remarksInfo.photos);
+                                        // setRemarksPhotos(remarksInfo.photos);
                                     }}
                                 >
                                     取消編輯

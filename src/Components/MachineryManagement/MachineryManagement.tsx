@@ -15,7 +15,7 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
-import { FileType } from 'rsuite/esm/Uploader';
+// import { FileType } from 'rsuite/esm/Uploader';
 import ReactWindowTable, {
     ISizes,
     defaultElement,
@@ -29,218 +29,228 @@ import DeleteEquipmentModal from './DeleteEquipmentModal';
 import InspectionSelect from './InspectionSelect';
 import InspectionDatePicker from './InspectionDatePicker';
 import Remarks from './Remarks';
+import { gql, useQuery } from '@apollo/client';
+import {
+    IGQLMachineryManagement,
+    IMachineryChecked,
+} from '../../Interface/Machinery';
+import dayjs from 'dayjs';
 
-const mockData: IMachinery[] = [
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: false,
-        entryInspectionDate: '2023-01-11',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: null,
-        entryInspectionDate: '2023-11-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: '',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'EEE',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'FFF',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'GGG',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-            ],
-        },
-    },
-];
+// const mockData: IMachinery[] = [
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'DDD',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: false,
+//         entryInspectionDate: '2023-01-11',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'DDD',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: null,
+//         entryInspectionDate: '2023-11-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'DDD',
+//             photos: [
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'DDD',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: '',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'DDD',
+//             photos: [],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'EEE',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'FFF',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//                 {
+//                     name: 'b.png',
+//                     fileKey: 2,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
+//                 },
+//             ],
+//         },
+//     },
+//     {
+//         vendor: 'AAA',
+//         mainEquipment: 'BBB',
+//         inspectionNo: 'CCC',
+//         entryInspection: true,
+//         entryInspectionDate: '2023-01-01',
+//         onSiteInspection: true,
+//         onSiteInspectionDate: '2023-01-01',
+//         remarks: {
+//             text: 'GGG',
+//             photos: [
+//                 {
+//                     name: 'a.png',
+//                     fileKey: 1,
+//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
+//                 },
+//             ],
+//         },
+//     },
+// ];
 
-export interface IMachinery {
-    vendor: string;
-    mainEquipment: string;
-    inspectionNo: string;
-    entryInspection: boolean | null;
-    entryInspectionDate: string;
-    onSiteInspection: boolean | null;
-    onSiteInspectionDate: string;
-    remarks: { text: string; photos: FileType[] };
-}
-
-interface IMachineryChecked extends IMachinery {
-    index: number;
-    isChecked: boolean;
-}
+const QUERY_MACHINERY = gql`
+    query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
+        machinery(siteId: $siteId, checkId: $checkId, keyWord: $keyWord) {
+            checkId
+            corp
+            machinery
+            outerStatus
+            innerStatus
+            outerDate
+            innerDate
+            supplementary
+            images {
+                no
+                mId
+                mSite
+                path
+            }
+        }
+    }
+`;
 
 const sizes: ISizes = {
-    tableFigmaWidth: 877,
     headerHeight: 56,
     cellHeight: 30,
 };
@@ -319,7 +329,7 @@ export default function MachineryManagement(props: {
         },
     ];
 
-    const { siteName } = props;
+    const { siteId, siteName } = props;
     const createModalDisclosure = useDisclosure();
     const deleteModalDisclosure = useDisclosure();
 
@@ -332,19 +342,73 @@ export default function MachineryManagement(props: {
             isChecked ? { equipment: mainEquipment, number: inspectionNo } : []
     );
 
-    React.useEffect(() => {
-        const mockDataChecked: { [primaryKey: number]: IMachineryChecked }[] =
-            mockData.map((info, index) => {
-                return {
-                    [index + 1]: {
-                        ...info,
+    useQuery(QUERY_MACHINERY, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            machinery,
+        }: {
+            machinery: IGQLMachineryManagement[];
+        }) => {
+            setTableData(
+                machinery.reduce((acc, val, index) => {
+                    const {
+                        checkId,
+                        corp,
+                        machinery,
+                        outerStatus,
+                        innerStatus,
+                        outerDate,
+                        innerDate,
+                        supplementary,
+                        images,
+                    } = val;
+                    acc[index + 1] = {
+                        vendor: corp,
+                        mainEquipment: machinery,
+                        inspectionNo: checkId,
+                        entryInspection: innerStatus,
+                        entryInspectionDate: innerDate
+                            ? dayjs(innerDate).format('YYYY-MM-DD')
+                            : null,
+                        onSiteInspection: outerStatus,
+                        onSiteInspectionDate: outerDate
+                            ? dayjs(outerDate).format('YYYY-MM-DD')
+                            : null,
                         index: index + 1,
                         isChecked: false,
-                    },
-                };
-            });
-        setTableData(Object.assign({}, ...mockDataChecked));
-    }, []);
+                        remarks: {
+                            text: supplementary,
+                            photos: images.map(({ no, path }) => ({
+                                no: no,
+                                path: path,
+                            })),
+                        },
+                    };
+                    return acc;
+                }, {} as { [primaryKey: number]: IMachineryChecked })
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    // React.useEffect(() => {
+    //     const mockDataChecked: { [primaryKey: number]: IMachineryChecked }[] =
+    //         mockData.map((info, index) => {
+    //             return {
+    //                 [index + 1]: {
+    //                     ...info,
+    //                     index: index + 1,
+    //                     isChecked: false,
+    //                 },
+    //             };
+    //         });
+    //     setTableData(Object.assign({}, ...mockDataChecked));
+    // }, []);
 
     return (
         <Flex {...tableViewContainerStyle}>
@@ -416,6 +480,7 @@ export default function MachineryManagement(props: {
                 </TabPanels>
             </Tabs>
             <CreateEquipmentModal
+                siteId={siteId}
                 isOpen={createModalDisclosure.isOpen}
                 onClose={createModalDisclosure.onClose}
             />
