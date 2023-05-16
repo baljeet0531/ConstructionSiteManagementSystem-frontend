@@ -4,11 +4,11 @@ import React from 'react';
 import { DatePicker } from 'rsuite';
 import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
 
-export default function InspectionSelect(props: getElementProps) {
+export default function InspectionDatePicker(props: getElementProps) {
     const { style, info, variable } = props;
 
     const [date, setDate] = React.useState<Date | null>(
-        dayjs(info[variable]).toDate()
+        info[variable] ? dayjs(info[variable]).toDate() : null
     );
 
     return (
