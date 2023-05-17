@@ -30,6 +30,7 @@ export interface IMachinery {
     onSiteInspectionDate: string | null;
     // remarks: { text: string; photos: FileType[] };
     remarks: { text: string; photos: { no: number; path: string }[] };
+    siteId: string;
 }
 
 export interface IMachineryChecked extends IMachinery {
