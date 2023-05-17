@@ -27,8 +27,12 @@ export default function RemarksTable(props: {
     const { isOpen, onClose, info } = props;
     const { inspectionNo, siteId, remarks } = info;
     const [editable, setEditable] = React.useState<boolean>(false);
-    const [originText, setOriginText] = React.useState<string>(remarks.text);
-    const [remarksText, setRemarksText] = React.useState<string>(remarks.text);
+    const [originText, setOriginText] = React.useState<string>(
+        remarks.text || ''
+    );
+    const [remarksText, setRemarksText] = React.useState<string>(
+        remarks.text || ''
+    );
     const [originPhotos, setOriginPhotos] = React.useState<FileType[]>([]);
     const [remarksPhotos, setRemarksPhotos] = React.useState<FileType[]>(
         remarks.photos.map(() => ({ status: 'uploading' }))
