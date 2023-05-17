@@ -25,9 +25,9 @@ export interface IMachinery {
     mainEquipment: string;
     inspectionNo: string;
     entryInspection: boolean | null;
-    entryInspectionDate: string | null;
+    entryInspectionDate: Date | null;
     onSiteInspection: boolean | null;
-    onSiteInspectionDate: string | null;
+    onSiteInspectionDate: Date | null;
     // remarks: { text: string; photos: FileType[] };
     remarks: { text: string; photos: { no: number; path: string }[] };
     siteId: string;

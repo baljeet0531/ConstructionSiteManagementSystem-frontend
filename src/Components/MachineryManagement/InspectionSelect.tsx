@@ -1,11 +1,22 @@
 import { Box, Select } from '@chakra-ui/react';
 import React from 'react';
 import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
+import useUpdateMachinery from '../../Hooks/Mutation';
+import { TableLoading } from '../Shared/Loading';
+
+type statusType = '合格' | '不合格' | '未選';
+
+const statusMap = {
+    合格: true,
+    不合格: false,
+    未選: undefined,
+};
 
 export default function InspectionSelect(props: getElementProps) {
     const { style, info, variable } = props;
+    const [updateMachinery, { loading }] = useUpdateMachinery(info['siteId']);
 
-    const [value, setValue] = React.useState<'合格' | '不合格' | '未選'>(
+    const [status, setStatus] = React.useState<statusType>(
         info[variable] === true
             ? '合格'
             : info[variable] === false
@@ -22,7 +33,7 @@ export default function InspectionSelect(props: getElementProps) {
             }}
         >
             <Select
-                defaultValue={value}
+                value={status}
                 style={{ textAlignLast: 'center' }}
                 height={'29px'}
                 borderRadius={'0px'}
@@ -31,23 +42,31 @@ export default function InspectionSelect(props: getElementProps) {
                 fontWeight={400}
                 fontSize={'0.875rem'}
                 lineHeight={'1.25rem'}
-                {...(value === '未選' && { color: '#66708080' })}
-                {...(value === '不合格' && { bg: '#FDFFE3' })}
+                {...(status === '未選' && { color: '#66708080' })}
+                {...(status === '不合格' && { bg: '#FDFFE3' })}
                 onChange={(e) => {
-                    const changedValue = e.target.value;
-                    if (
-                        changedValue === '合格' ||
-                        changedValue === '不合格' ||
-                        changedValue === '未選'
-                    ) {
-                        setValue(changedValue);
-                    }
+                    const newStatus = e.target.value as statusType;
+                    setStatus(newStatus);
+                    updateMachinery({
+                        variables: {
+                            checkId: info['inspectionNo'],
+                            siteId: info['siteId'],
+                            innerStatus: statusMap[newStatus],
+                            ...(variable === 'entryInspection' && {
+                                outerStatus: statusMap[newStatus],
+                            }),
+                            ...(variable === 'onSiteInspection' && {
+                                innerStatus: statusMap[newStatus],
+                            }),
+                        },
+                    });
                 }}
             >
                 <option value={'未選'}>未選</option>
                 <option value={'合格'}>合格</option>
                 <option value={'不合格'}>不合格</option>
             </Select>
+            {loading && <TableLoading />}
         </Box>
     );
 }
