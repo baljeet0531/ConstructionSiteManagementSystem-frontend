@@ -37,3 +37,22 @@
 .rs-picker-menu {
     z-index: 9999;
 }
+
+.inspection-date-picker .rs-picker-default .rs-picker-toggle.rs-btn {
+    height: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 0px;
+}
+
+.inspection-date-picker
+    .rs-picker-date
+    .rs-picker-toggle.rs-btn
+    .rs-picker-toggle-caret,
+.inspection-date-picker
+    .rs-picker-date
+    .rs-picker-toggle.rs-btn
+    .rs-picker-toggle-clean {
+    right: 12px;
+    top: 5px;
+}

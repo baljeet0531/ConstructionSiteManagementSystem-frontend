@@ -34,7 +34,6 @@ import {
     IGQLMachineryManagement,
     IMachineryChecked,
 } from '../../Interface/Machinery';
-import dayjs from 'dayjs';
 
 export const QUERY_MACHINERY = gql`
     query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
@@ -138,6 +137,7 @@ export default function MachineryManagement(props: {
     ];
 
     const { siteId, siteName } = props;
+
     const createModalDisclosure = useDisclosure();
     const deleteModalDisclosure = useDisclosure();
 
@@ -147,7 +147,9 @@ export default function MachineryManagement(props: {
 
     const selectedData = Object.values(tableData).flatMap(
         ({ isChecked, mainEquipment, inspectionNo }) =>
-            isChecked ? { equipment: mainEquipment, number: inspectionNo } : []
+            isChecked
+                ? { mainEquipment: mainEquipment, inspectionNo: inspectionNo }
+                : []
     );
 
     useQuery(QUERY_MACHINERY, {
@@ -178,14 +180,10 @@ export default function MachineryManagement(props: {
                         vendor: corp,
                         mainEquipment: machinery,
                         inspectionNo: checkId,
-                        entryInspection: innerStatus,
-                        entryInspectionDate: innerDate
-                            ? dayjs(innerDate).format('YYYY-MM-DD')
-                            : null,
-                        onSiteInspection: outerStatus,
-                        onSiteInspectionDate: outerDate
-                            ? dayjs(outerDate).format('YYYY-MM-DD')
-                            : null,
+                        entryInspection: outerStatus,
+                        entryInspectionDate: outerDate || null,
+                        onSiteInspection: innerStatus,
+                        onSiteInspectionDate: innerDate || null,
                         index: index + 1,
                         isChecked: false,
                         remarks: {
@@ -281,6 +279,7 @@ export default function MachineryManagement(props: {
                 onClose={createModalDisclosure.onClose}
             />
             <DeleteEquipmentModal
+                siteId={siteId}
                 selectedData={selectedData}
                 isOpen={deleteModalDisclosure.isOpen}
                 onClose={deleteModalDisclosure.onClose}
