@@ -56,3 +56,18 @@ export function CustomLoading(
         </Center>
     );
 }
+
+export function TableLoading() {
+    return (
+        <CustomLoading
+            position={'fixed'}
+            width={'100%'}
+            height={'100%'}
+            top={0}
+            left={0}
+            opacity={0.5}
+            bg={'#D9D9D980'}
+            zIndex={9999}
+        />
+    );
+}
