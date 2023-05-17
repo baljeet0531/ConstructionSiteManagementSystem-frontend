@@ -3,6 +3,7 @@ import React from 'react';
 import BlueBodyModal from '../Shared/BlueBodyModal';
 import { gql, useMutation } from '@apollo/client';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import { QUERY_MACHINERY } from './MachineryManagement';
 
 const CREATE_MACHINERY = gql`
     mutation CreateMachineryManagement(
@@ -44,6 +45,14 @@ export default function CreateEquipmentModal(props: {
             console.log(err);
         },
         fetchPolicy: 'network-only',
+        refetchQueries: [
+            {
+                query: QUERY_MACHINERY,
+                variables: {
+                    siteId: siteId,
+                },
+            },
+        ],
     });
 
     const handleClick = () => {

@@ -36,202 +36,10 @@ import {
 } from '../../Interface/Machinery';
 import dayjs from 'dayjs';
 
-// const mockData: IMachinery[] = [
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'DDD',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: false,
-//         entryInspectionDate: '2023-01-11',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'DDD',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: null,
-//         entryInspectionDate: '2023-11-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'DDD',
-//             photos: [
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'DDD',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: '',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'DDD',
-//             photos: [],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'EEE',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'FFF',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//                 {
-//                     name: 'b.png',
-//                     fileKey: 2,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-//                 },
-//             ],
-//         },
-//     },
-//     {
-//         vendor: 'AAA',
-//         mainEquipment: 'BBB',
-//         inspectionNo: 'CCC',
-//         entryInspection: true,
-//         entryInspectionDate: '2023-01-01',
-//         onSiteInspection: true,
-//         onSiteInspectionDate: '2023-01-01',
-//         remarks: {
-//             text: 'GGG',
-//             photos: [
-//                 {
-//                     name: 'a.png',
-//                     fileKey: 1,
-//                     url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-//                 },
-//             ],
-//         },
-//     },
-// ];
-
-const QUERY_MACHINERY = gql`
+export const QUERY_MACHINERY = gql`
     query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
         machinery(siteId: $siteId, checkId: $checkId, keyWord: $keyWord) {
+            siteId
             checkId
             corp
             machinery
@@ -354,6 +162,7 @@ export default function MachineryManagement(props: {
             setTableData(
                 machinery.reduce((acc, val, index) => {
                     const {
+                        siteId,
                         checkId,
                         corp,
                         machinery,
@@ -365,6 +174,7 @@ export default function MachineryManagement(props: {
                         images,
                     } = val;
                     acc[index + 1] = {
+                        siteId: siteId,
                         vendor: corp,
                         mainEquipment: machinery,
                         inspectionNo: checkId,
@@ -395,20 +205,6 @@ export default function MachineryManagement(props: {
         },
         fetchPolicy: 'network-only',
     });
-
-    // React.useEffect(() => {
-    //     const mockDataChecked: { [primaryKey: number]: IMachineryChecked }[] =
-    //         mockData.map((info, index) => {
-    //             return {
-    //                 [index + 1]: {
-    //                     ...info,
-    //                     index: index + 1,
-    //                     isChecked: false,
-    //                 },
-    //             };
-    //         });
-    //     setTableData(Object.assign({}, ...mockDataChecked));
-    // }, []);
 
     return (
         <Flex {...tableViewContainerStyle}>
