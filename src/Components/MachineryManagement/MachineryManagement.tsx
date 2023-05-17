@@ -181,9 +181,9 @@ export default function MachineryManagement(props: {
                         mainEquipment: machinery,
                         inspectionNo: checkId,
                         entryInspection: outerStatus,
-                        entryInspectionDate: outerDate || null,
+                        entryInspectionDate: outerDate,
                         onSiteInspection: innerStatus,
-                        onSiteInspectionDate: innerDate || null,
+                        onSiteInspectionDate: innerDate,
                         index: index + 1,
                         isChecked: false,
                         remarks: {
