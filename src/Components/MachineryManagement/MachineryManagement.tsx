@@ -144,12 +144,12 @@ export default function MachineryManagement(props: {
         [primaryKey: number]: IMachineryChecked;
     }>({});
 
-    const selectedData = Object.values(tableData).flatMap(
-        ({ isChecked, mainEquipment, inspectionNo }) =>
-            isChecked
-                ? { mainEquipment: mainEquipment, inspectionNo: inspectionNo }
-                : []
-    );
+    const [selectedData, setSelectedData] = React.useState<
+        {
+            mainEquipment: string;
+            inspectionNo: string;
+        }[]
+    >([]);
 
     useQuery(QUERY_MACHINERY, {
         variables: {
@@ -245,7 +245,26 @@ export default function MachineryManagement(props: {
                             variant={'buttonGrayOutline'}
                             h={'36px'}
                             leftIcon={<DeleteIcon />}
-                            onClick={deleteModalDisclosure.onOpen}
+                            onClick={() => {
+                                setSelectedData(
+                                    Object.values(tableData).flatMap(
+                                        ({
+                                            isChecked,
+                                            mainEquipment,
+                                            inspectionNo,
+                                        }) =>
+                                            isChecked
+                                                ? {
+                                                      mainEquipment:
+                                                          mainEquipment,
+                                                      inspectionNo:
+                                                          inspectionNo,
+                                                  }
+                                                : []
+                                    )
+                                );
+                                deleteModalDisclosure.onOpen();
+                            }}
                         >
                             刪除
                         </Button>
@@ -259,6 +278,10 @@ export default function MachineryManagement(props: {
                             columnMap={columnMap('入場')}
                             sizes={sizes}
                             columnBordered
+                            sortBy="inspectionNo"
+                            sortFormatter={(inspectionNo: string) =>
+                                Number(inspectionNo.slice(3))
+                            }
                         />
                     </TabPanel>
                     <TabPanel padding={'16px 0 0 0'}>
@@ -268,6 +291,10 @@ export default function MachineryManagement(props: {
                             columnMap={columnMap('場內')}
                             sizes={sizes}
                             columnBordered
+                            sortBy="inspectionNo"
+                            sortFormatter={(inspectionNo: string) =>
+                                Number(inspectionNo.slice(3))
+                            }
                         />
                     </TabPanel>
                 </TabPanels>

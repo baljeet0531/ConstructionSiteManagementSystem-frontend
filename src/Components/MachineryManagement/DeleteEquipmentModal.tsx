@@ -82,18 +82,22 @@ export default function DeleteEquipmentModal(props: {
                         key={index}
                         gap={'15px'}
                         align={'center'}
-                        justify={'space-around'}
+                        justify={'center'}
+                        width={'100%'}
                     >
                         <Text
                             variant={'w400s14'}
-                            style={{ textAlignLast: 'justify' }}
+                            // style={{ textAlignLast: 'justify' }}
+                            wordBreak={'break-all'}
+                            textAlign={'center'}
                             flex={1}
                         >
                             {mainEquipment}
                         </Text>
                         <Text
                             variant={'w400s14'}
-                            style={{ textAlignLast: 'justify' }}
+                            wordBreak={'keep-all'}
+                            textAlign={'center'}
                             flex={1}
                         >
                             {inspectionNo}
