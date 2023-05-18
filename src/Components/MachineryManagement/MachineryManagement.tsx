@@ -15,7 +15,6 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
-// import { FileType } from 'rsuite/esm/Uploader';
 import ReactWindowTable, {
     ISizes,
     defaultElement,
@@ -84,7 +83,7 @@ export default function MachineryManagement(props: {
         },
         {
             title: '主要機具',
-            width: 175,
+            width: 130,
             variable: 'mainEquipment',
             getElement: defaultElement,
         },
@@ -103,7 +102,7 @@ export default function MachineryManagement(props: {
         },
         {
             title: tabName === '入場' ? '入場檢點日期' : '場內檢點日期',
-            width: 125,
+            width: 170,
             variable:
                 tabName === '入場'
                     ? 'entryInspectionDate'

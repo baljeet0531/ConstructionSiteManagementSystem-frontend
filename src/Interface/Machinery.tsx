@@ -1,5 +1,3 @@
-// import { FileType } from 'rsuite/esm/Uploader';
-
 interface IGQLMachineryImage {
     no: number;
     mId: string;
@@ -28,7 +26,6 @@ export interface IMachinery {
     entryInspectionDate: Date | null;
     onSiteInspection: boolean | null;
     onSiteInspectionDate: Date | null;
-    // remarks: { text: string; photos: FileType[] };
     remarks: { text: string; photos: { no: number; path: string }[] };
     siteId: string;
 }
