@@ -1,7 +1,7 @@
 import { Box, Select } from '@chakra-ui/react';
 import React from 'react';
 import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
-import useUpdateMachinery from '../../Hooks/Mutation';
+import { useUpdateMachinery } from '../../Hooks/Mutation';
 import { TableLoading } from '../Shared/Loading';
 
 type statusType = '合格' | '不合格' | '未選';

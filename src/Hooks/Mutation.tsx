@@ -34,7 +34,7 @@ const UPDATE_MACHINERY = gql`
     }
 `;
 
-export default function useUpdateMachinery(siteId: string) {
+export function useUpdateMachinery(siteId: string) {
     const toast = useToast();
     return useMutation(UPDATE_MACHINERY, {
         onCompleted: ({ updateMachineryManagement }) => {

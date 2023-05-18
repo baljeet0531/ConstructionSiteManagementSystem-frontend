@@ -17,7 +17,7 @@ import { Uploader } from 'rsuite';
 import { FileType } from 'rsuite/esm/Uploader';
 import { IMachinery } from '../../Interface/Machinery';
 import { getImage } from '../../Utils/Resources';
-import useUpdateMachinery from '../../Hooks/Mutation';
+import { useUpdateMachinery } from '../../Hooks/Mutation';
 import { PageLoading } from '../Shared/Loading';
 export default function RemarksTable(props: {
     isOpen: boolean;
