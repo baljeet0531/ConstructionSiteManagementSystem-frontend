@@ -9,7 +9,7 @@ type statusType = '合格' | '不合格' | '未選';
 const statusMap = {
     合格: true,
     不合格: false,
-    未選: undefined,
+    未選: null,
 };
 
 export default function InspectionSelect(props: getElementProps) {
@@ -51,7 +51,6 @@ export default function InspectionSelect(props: getElementProps) {
                         variables: {
                             checkId: info['inspectionNo'],
                             siteId: info['siteId'],
-                            innerStatus: statusMap[newStatus],
                             ...(variable === 'entryInspection' && {
                                 outerStatus: statusMap[newStatus],
                             }),
@@ -62,7 +61,7 @@ export default function InspectionSelect(props: getElementProps) {
                     });
                 }}
             >
-                <option value={'未選'}>未選</option>
+                {status === '未選' && <option value={'未選'}>未選</option>}
                 <option value={'合格'}>合格</option>
                 <option value={'不合格'}>不合格</option>
             </Select>
