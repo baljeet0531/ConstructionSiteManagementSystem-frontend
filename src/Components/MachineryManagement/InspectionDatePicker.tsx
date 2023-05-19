@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { DatePicker } from 'rsuite';
 import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
-import { useUpdateMachinery } from '../../Hooks/Mutation';
+import { useUpdateMachinery } from '../../Hooks/GQLMutation';
 import { TableLoading } from '../Shared/Loading';
 
 export default function InspectionDatePicker(props: getElementProps) {
