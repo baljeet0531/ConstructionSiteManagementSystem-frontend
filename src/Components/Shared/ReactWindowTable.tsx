@@ -198,6 +198,7 @@ export default function ReactWindowTable(props: {
     filteredPrimaryKey?: string[];
     sortReversed?: boolean;
     sortBy?: string;
+    sortFormatter?: Function;
     columnBordered?: boolean;
 }) {
     const {
@@ -208,6 +209,7 @@ export default function ReactWindowTable(props: {
         filteredPrimaryKey,
         sortReversed = false,
         sortBy = 'index',
+        sortFormatter = (a: string | number) => a,
         columnBordered = false,
     } = props;
 
@@ -245,7 +247,9 @@ export default function ReactWindowTable(props: {
               ));
 
     const sortingFunction = (a: string, b: string) => {
-        const diff = displayTableData[a][sortBy] - displayTableData[b][sortBy];
+        const diff =
+            sortFormatter(displayTableData[a][sortBy]) -
+            sortFormatter(displayTableData[b][sortBy]);
         return sortReversed ? -diff : diff;
     };
     const primaryKeys = Object.keys(displayTableData).sort(sortingFunction);
