@@ -160,8 +160,12 @@ export function getFeatureMap(site: {
         project_report: {
             name: '進度報表',
             path: '/project/report',
-            // page: <Report />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <Report key={siteId} siteId={siteId} siteName={siteName} />
+                ),
         },
         project_photo: {
             name: '相片管理',

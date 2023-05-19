@@ -8,6 +8,7 @@ import Button from '../Components/Button';
 import Tabs from '../Components/Tabs';
 import Textarea from '../Components/Textarea';
 import Checkbox from '../Components/Checkbox';
+import Radio from '../Components/Radio';
 
 const myTheme = extendTheme({
     styles,
@@ -20,6 +21,7 @@ const myTheme = extendTheme({
         Tabs,
         Textarea,
         Checkbox,
+        Radio,
     },
     colors: {
         red: { default: '#DB504A' },

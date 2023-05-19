@@ -20,3 +20,27 @@ export const APPEARANCE_SIGN_FIELD = gql`
         __typename
     }
 `;
+
+export const WORKITEM_FIELDS = gql`
+    fragment workItem on gqlWorkItem {
+        area
+        today {
+            dailyId
+            siteId
+            buildingName
+            projectName
+            location
+            completeness
+            description
+        }
+        tomorrow {
+            dailyId
+            siteId
+            buildingName
+            projectName
+            location
+            description
+        }
+        __typename
+    }
+`;

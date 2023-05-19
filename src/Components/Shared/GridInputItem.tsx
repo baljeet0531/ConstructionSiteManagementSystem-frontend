@@ -5,6 +5,7 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightElement,
+    GridItemProps,
 } from '@chakra-ui/react';
 import { Field, FieldInputProps, FormikProps } from 'formik';
 import { ReactElement } from 'react';
@@ -22,7 +23,8 @@ export default function GridInputItem({
     style,
     invalidStyle,
     invalidMsg = 'Invalid',
-}: {
+    ...rest
+}: GridItemProps & {
     fieldName: string;
     inputComponent: ReactElement;
     gridRange?: [
@@ -36,17 +38,19 @@ export default function GridInputItem({
     inputRightComponent?: ReactElement;
     inputRightStyle?: object;
     handleValidate?: Function;
-    style?: object;
+    style?: GridItemProps;
     invalidStyle?: object;
     invalidMsg?: string;
 }) {
-    const grid = gridRange || ['auto', 'auto', 'auto', 'auto'];
     return (
         <GridItem
-            rowStart={grid[0]}
-            rowEnd={grid[1]}
-            colStart={grid[2]}
-            colEnd={grid[3]}
+            {...(gridRange && {
+                rowStart: gridRange[0],
+                rowEnd: gridRange[1],
+                colStart: gridRange[2],
+                colEnd: gridRange[3],
+            })}
+            {...rest}
             {...style}
         >
             <Field name={fieldName} validate={handleValidate}>
