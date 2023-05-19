@@ -15,7 +15,6 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/react';
-import { FileType } from 'rsuite/esm/Uploader';
 import ReactWindowTable, {
     ISizes,
     defaultElement,
@@ -29,218 +28,35 @@ import DeleteEquipmentModal from './DeleteEquipmentModal';
 import InspectionSelect from './InspectionSelect';
 import InspectionDatePicker from './InspectionDatePicker';
 import Remarks from './Remarks';
+import { gql, useQuery } from '@apollo/client';
+import {
+    IGQLMachineryManagement,
+    IMachineryChecked,
+} from '../../Interface/Machinery';
 
-const mockData: IMachinery[] = [
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: false,
-        entryInspectionDate: '2023-01-11',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: null,
-        entryInspectionDate: '2023-11-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: '',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'DDD',
-            photos: [],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'EEE',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'FFF',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-                {
-                    name: 'b.png',
-                    fileKey: 2,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638807-9d947980-db9a-11e8-9ee5-e0cc9cd7e8ad.png',
-                },
-            ],
-        },
-    },
-    {
-        vendor: 'AAA',
-        mainEquipment: 'BBB',
-        inspectionNo: 'CCC',
-        entryInspection: true,
-        entryInspectionDate: '2023-01-01',
-        onSiteInspection: true,
-        onSiteInspectionDate: '2023-01-01',
-        remarks: {
-            text: 'GGG',
-            photos: [
-                {
-                    name: 'a.png',
-                    fileKey: 1,
-                    url: 'https://user-images.githubusercontent.com/1203827/47638792-92414e00-db9a-11e8-89c2-f8f430a23cd3.png',
-                },
-            ],
-        },
-    },
-];
-
-export interface IMachinery {
-    vendor: string;
-    mainEquipment: string;
-    inspectionNo: string;
-    entryInspection: boolean | null;
-    entryInspectionDate: string;
-    onSiteInspection: boolean | null;
-    onSiteInspectionDate: string;
-    remarks: { text: string; photos: FileType[] };
-}
-
-interface IMachineryChecked extends IMachinery {
-    index: number;
-    isChecked: boolean;
-}
+export const QUERY_MACHINERY = gql`
+    query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
+        machinery(siteId: $siteId, checkId: $checkId, keyWord: $keyWord) {
+            siteId
+            checkId
+            corp
+            machinery
+            outerStatus
+            innerStatus
+            outerDate
+            innerDate
+            supplementary
+            images {
+                no
+                mId
+                mSite
+                path
+            }
+        }
+    }
+`;
 
 const sizes: ISizes = {
-    tableFigmaWidth: 877,
     headerHeight: 56,
     cellHeight: 30,
 };
@@ -267,7 +83,7 @@ export default function MachineryManagement(props: {
         },
         {
             title: '主要機具',
-            width: 175,
+            width: 130,
             variable: 'mainEquipment',
             getElement: defaultElement,
         },
@@ -286,7 +102,7 @@ export default function MachineryManagement(props: {
         },
         {
             title: tabName === '入場' ? '入場檢點日期' : '場內檢點日期',
-            width: 125,
+            width: 170,
             variable:
                 tabName === '入場'
                     ? 'entryInspectionDate'
@@ -319,7 +135,8 @@ export default function MachineryManagement(props: {
         },
     ];
 
-    const { siteName } = props;
+    const { siteId, siteName } = props;
+
     const createModalDisclosure = useDisclosure();
     const deleteModalDisclosure = useDisclosure();
 
@@ -327,24 +144,79 @@ export default function MachineryManagement(props: {
         [primaryKey: number]: IMachineryChecked;
     }>({});
 
-    const selectedData = Object.values(tableData).flatMap(
-        ({ isChecked, mainEquipment, inspectionNo }) =>
-            isChecked ? { equipment: mainEquipment, number: inspectionNo } : []
-    );
+    const [selectedData, setSelectedData] = React.useState<
+        {
+            mainEquipment: string;
+            inspectionNo: string;
+        }[]
+    >([]);
 
-    React.useEffect(() => {
-        const mockDataChecked: { [primaryKey: number]: IMachineryChecked }[] =
-            mockData.map((info, index) => {
-                return {
-                    [index + 1]: {
-                        ...info,
+    const handleDeleteModalOpen = () => {
+        setSelectedData(
+            Object.values(tableData).flatMap(
+                ({ isChecked, mainEquipment, inspectionNo }) =>
+                    isChecked
+                        ? {
+                              mainEquipment: mainEquipment,
+                              inspectionNo: inspectionNo,
+                          }
+                        : []
+            )
+        );
+        deleteModalDisclosure.onOpen();
+    };
+
+    useQuery(QUERY_MACHINERY, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            machinery,
+        }: {
+            machinery: IGQLMachineryManagement[];
+        }) => {
+            setTableData(
+                machinery.reduce((acc, val, index) => {
+                    const {
+                        siteId,
+                        checkId,
+                        corp,
+                        machinery,
+                        outerStatus,
+                        innerStatus,
+                        outerDate,
+                        innerDate,
+                        supplementary,
+                        images,
+                    } = val;
+                    acc[index + 1] = {
+                        siteId: siteId,
+                        vendor: corp,
+                        mainEquipment: machinery,
+                        inspectionNo: checkId,
+                        entryInspection: outerStatus,
+                        entryInspectionDate: outerDate,
+                        onSiteInspection: innerStatus,
+                        onSiteInspectionDate: innerDate,
                         index: index + 1,
                         isChecked: false,
-                    },
-                };
-            });
-        setTableData(Object.assign({}, ...mockDataChecked));
-    }, []);
+                        remarks: {
+                            text: supplementary,
+                            photos: images.map(({ no, path }) => ({
+                                no: no,
+                                path: path,
+                            })),
+                        },
+                    };
+                    return acc;
+                }, {} as { [primaryKey: number]: IMachineryChecked })
+            );
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
 
     return (
         <Flex {...tableViewContainerStyle}>
@@ -388,7 +260,7 @@ export default function MachineryManagement(props: {
                             variant={'buttonGrayOutline'}
                             h={'36px'}
                             leftIcon={<DeleteIcon />}
-                            onClick={deleteModalDisclosure.onOpen}
+                            onClick={handleDeleteModalOpen}
                         >
                             刪除
                         </Button>
@@ -402,6 +274,10 @@ export default function MachineryManagement(props: {
                             columnMap={columnMap('入場')}
                             sizes={sizes}
                             columnBordered
+                            sortBy="inspectionNo"
+                            sortFormatter={(inspectionNo: string) =>
+                                Number(inspectionNo.slice(3))
+                            }
                         />
                     </TabPanel>
                     <TabPanel padding={'16px 0 0 0'}>
@@ -411,15 +287,21 @@ export default function MachineryManagement(props: {
                             columnMap={columnMap('場內')}
                             sizes={sizes}
                             columnBordered
+                            sortBy="inspectionNo"
+                            sortFormatter={(inspectionNo: string) =>
+                                Number(inspectionNo.slice(3))
+                            }
                         />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
             <CreateEquipmentModal
+                siteId={siteId}
                 isOpen={createModalDisclosure.isOpen}
                 onClose={createModalDisclosure.onClose}
             />
             <DeleteEquipmentModal
+                siteId={siteId}
                 selectedData={selectedData}
                 isOpen={deleteModalDisclosure.isOpen}
                 onClose={deleteModalDisclosure.onClose}

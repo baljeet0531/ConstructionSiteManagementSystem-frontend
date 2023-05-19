@@ -1,27 +1,68 @@
 import React from 'react';
 import BlueBodyModal from '../Shared/BlueBodyModal';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, useToast } from '@chakra-ui/react';
+import { gql, useMutation } from '@apollo/client';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import { QUERY_MACHINERY } from './MachineryManagement';
+
+const DELETE_MACHINERY = gql`
+    mutation DeleteMachineryManagement($checkId: [String]!, $siteId: String!) {
+        deleteMachineryManagement(checkId: $checkId, siteId: $siteId) {
+            ok
+            message
+        }
+    }
+`;
 
 export default function DeleteEquipmentModal(props: {
+    siteId: string;
     selectedData: {
-        equipment: string;
-        number: string;
+        mainEquipment: string;
+        inspectionNo: string;
     }[];
     isOpen: boolean;
     onClose: () => void;
 }) {
-    const { selectedData, isOpen, onClose } = props;
+    const { siteId, selectedData, isOpen, onClose } = props;
+    const toast = useToast();
+
+    const [deleteMachinery] = useMutation(DELETE_MACHINERY, {
+        onCompleted: ({ deleteMachineryManagement }) => {
+            const { ok, message } = deleteMachineryManagement;
+            if (ok) defaultSuccessToast(toast, message);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+        refetchQueries: [
+            { query: QUERY_MACHINERY, variables: { siteId: siteId } },
+        ],
+    });
 
     return (
         <BlueBodyModal
             title={'刪除機具'}
             cancelButton={{
                 name: '取消',
-                handleClick: () => {},
+                handleClick: onClose,
             }}
             confirmButton={{
                 name: '確定',
-                handleClick: () => {},
+                handleClick: () => {
+                    deleteMachinery({
+                        variables: {
+                            siteId: siteId,
+                            checkId: selectedData.map(
+                                ({ inspectionNo }) => inspectionNo
+                            ),
+                        },
+                    });
+                },
             }}
             isOpen={isOpen}
             onClose={onClose}
@@ -36,26 +77,24 @@ export default function DeleteEquipmentModal(props: {
                 align={'center'}
                 justify={'center'}
             >
-                {selectedData.map(({ equipment, number }, index) => (
+                {selectedData.map(({ mainEquipment, inspectionNo }, index) => (
                     <Flex
                         key={index}
                         gap={'15px'}
                         align={'center'}
-                        justify={'space-around'}
+                        justify={'center'}
+                        width={'100%'}
                     >
                         <Text
                             variant={'w400s14'}
-                            style={{ textAlignLast: 'justify' }}
+                            wordBreak={'break-all'}
+                            textAlign={'center'}
                             flex={1}
                         >
-                            {equipment}
+                            {mainEquipment}
                         </Text>
-                        <Text
-                            variant={'w400s14'}
-                            style={{ textAlignLast: 'justify' }}
-                            flex={1}
-                        >
-                            {number}
+                        <Text variant={'w400s14'} textAlign={'center'} flex={1}>
+                            {inspectionNo}
                         </Text>
                     </Flex>
                 ))}

@@ -15,23 +15,64 @@ import {
 import { AddFileIcon, EditIcon } from '../../Icons/Icons';
 import { Uploader } from 'rsuite';
 import { FileType } from 'rsuite/esm/Uploader';
-import { IMachinery } from './MachineryManagement';
-
+import { IMachinery } from '../../Interface/Machinery';
+import { getImage } from '../../Utils/Resources';
+import { useUpdateMachinery } from '../../Hooks/GQLMutation';
+import { PageLoading } from '../Shared/Loading';
 export default function RemarksTable(props: {
     isOpen: boolean;
     onClose: () => void;
-    remarksInfo: IMachinery['remarks'];
+    info: IMachinery;
 }) {
-    const { isOpen, onClose, remarksInfo } = props;
+    const { isOpen, onClose, info } = props;
+    const { inspectionNo, siteId, remarks } = info;
     const [editable, setEditable] = React.useState<boolean>(false);
+    const [originText, setOriginText] = React.useState<string>(
+        remarks.text || ''
+    );
     const [remarksText, setRemarksText] = React.useState<string>(
-        remarksInfo.text
+        remarks.text || ''
     );
+    const [originPhotos, setOriginPhotos] = React.useState<FileType[]>([]);
     const [remarksPhotos, setRemarksPhotos] = React.useState<FileType[]>(
-        remarksInfo.photos
+        remarks.photos.map(() => ({ status: 'uploading' }))
     );
-    const remarksInfoRef = React.useRef<HTMLTextAreaElement>(null);
+    const remarksRef = React.useRef<HTMLTextAreaElement>(null);
     const uploader = React.useRef();
+    const [updateMachinery, { loading }] = useUpdateMachinery(siteId);
+
+    const blobToFileType = (data: (Blob | undefined)[]) =>
+        data.flatMap((blob, index) =>
+            blob
+                ? {
+                      blobFile: new File(
+                          [blob],
+                          `${remarks.photos[index].path.split('/').pop()}`,
+                          {
+                              type: blob.type,
+                          }
+                      ),
+                  }
+                : []
+        );
+
+    React.useEffect(() => {
+        Promise.all(
+            remarks.photos.map(({ path }) => {
+                return getImage(path);
+            })
+        )
+            .then((data) => {
+                const photos = blobToFileType(data);
+                setOriginPhotos(photos);
+                setRemarksPhotos(photos);
+            })
+            .catch((err) => console.log(err));
+    }, [remarks.photos]);
+
+    React.useEffect(() => {
+        setOriginText(remarks.text);
+    }, [remarks.text]);
 
     return (
         <Modal
@@ -69,8 +110,11 @@ export default function RemarksTable(props: {
                             />
                         </Flex>
                         <Textarea
-                            ref={remarksInfoRef}
-                            defaultValue={remarksText}
+                            ref={remarksRef}
+                            value={remarksText}
+                            onChange={(e) => {
+                                setRemarksText(e.target.value);
+                            }}
                             h={'120px'}
                             w={'auto'}
                             resize={'none'}
@@ -160,8 +204,8 @@ export default function RemarksTable(props: {
                                     mr={3}
                                     onClick={() => {
                                         setEditable(false);
-                                        setRemarksText(remarksInfo.text);
-                                        setRemarksPhotos(remarksInfo.photos);
+                                        setRemarksText(originText);
+                                        setRemarksPhotos(originPhotos);
                                     }}
                                 >
                                     取消編輯
@@ -170,11 +214,23 @@ export default function RemarksTable(props: {
                                     variant={'buttonBlueSolid'}
                                     height={'36px'}
                                     onClick={() => {
-                                        setEditable(false);
-                                        setRemarksText(
-                                            remarksInfoRef.current?.value || ''
-                                        );
-                                        // editMutation
+                                        updateMachinery({
+                                            variables: {
+                                                checkId: inspectionNo,
+                                                siteId: siteId,
+                                                supplementary:
+                                                    remarksRef.current?.value ||
+                                                    '',
+                                                images: remarksPhotos.map(
+                                                    ({ blobFile }) => blobFile
+                                                ),
+                                            },
+                                        }).then(() => {
+                                            setEditable(false);
+                                            setRemarksText(
+                                                remarksRef.current?.value || ''
+                                            );
+                                        });
                                     }}
                                 >
                                     確定編輯
@@ -196,6 +252,7 @@ export default function RemarksTable(props: {
                     </Flex>
                 </ModalBody>
             </ModalContent>
+            {loading && <PageLoading zIndex={9999} />}
         </Modal>
     );
 }
