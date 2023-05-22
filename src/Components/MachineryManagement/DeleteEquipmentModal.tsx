@@ -40,6 +40,7 @@ export default function DeleteEquipmentModal(props: {
         },
         fetchPolicy: 'network-only',
         refetchQueries: [
+            QUERY_MACHINERY,
             { query: QUERY_MACHINERY, variables: { siteId: siteId } },
         ],
     });
