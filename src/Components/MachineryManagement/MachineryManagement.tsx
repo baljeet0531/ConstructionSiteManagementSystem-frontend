@@ -290,11 +290,11 @@ export default function MachineryManagement(props: {
                 ? defaultSuccessToast(toast, message)
                 : toast({
                       status: 'warning',
-                      title: message,
+                      title: `匯入成功，另有${message}`,
                       description: failList.map((fail) => (
                           <Text color={'#FFFFFF'}>{fail}</Text>
                       )),
-                      duration: 3000,
+                      duration: null,
                       isClosable: true,
                   });
             setFile(undefined);
