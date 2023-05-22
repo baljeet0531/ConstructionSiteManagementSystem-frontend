@@ -14,6 +14,7 @@ import {
     Tabs,
     Text,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react';
 import ReactWindowTable, {
     ISizes,
@@ -28,11 +29,17 @@ import DeleteEquipmentModal from './DeleteEquipmentModal';
 import InspectionSelect from './InspectionSelect';
 import InspectionDatePicker from './InspectionDatePicker';
 import Remarks from './Remarks';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
     IGQLMachineryManagement,
     IMachineryChecked,
 } from '../../Interface/Machinery';
+import { handleDebounceSearch } from '../../Utils/Web';
+import UploadModal from '../Shared/UploadModal';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 
 export const QUERY_MACHINERY = gql`
     query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
@@ -52,6 +59,16 @@ export const QUERY_MACHINERY = gql`
                 mSite
                 path
             }
+        }
+    }
+`;
+
+export const UPLOAD_MACHINERY = gql`
+    mutation IntroduceMachineryExcel($file: Upload!, $siteId: String!) {
+        introduceMachineryExcel(file: $file, siteId: $siteId) {
+            ok
+            message
+            failList
         }
     }
 `;
@@ -129,7 +146,7 @@ export default function MachineryManagement(props: {
                         },
                     }}
                     setTableData={setTableData}
-                    primaryKey={props.info['index']}
+                    primaryKey={props.info['inspectionNo']}
                 />
             ),
         },
@@ -141,7 +158,7 @@ export default function MachineryManagement(props: {
     const deleteModalDisclosure = useDisclosure();
 
     const [tableData, setTableData] = React.useState<{
-        [primaryKey: number]: IMachineryChecked;
+        [primaryKey: string]: IMachineryChecked;
     }>({});
 
     const [selectedData, setSelectedData] = React.useState<
@@ -189,7 +206,7 @@ export default function MachineryManagement(props: {
                         supplementary,
                         images,
                     } = val;
-                    acc[index + 1] = {
+                    acc[checkId] = {
                         siteId: siteId,
                         vendor: corp,
                         mainEquipment: machinery,
@@ -209,13 +226,88 @@ export default function MachineryManagement(props: {
                         },
                     };
                     return acc;
-                }, {} as { [primaryKey: number]: IMachineryChecked })
+                }, {} as { [primaryKey: string]: IMachineryChecked })
             );
         },
         onError: (err) => {
             console.log(err);
         },
         fetchPolicy: 'network-only',
+    });
+
+    const [searchMachinery] = useLazyQuery(QUERY_MACHINERY, {
+        onCompleted: ({
+            machinery,
+        }: {
+            machinery: IGQLMachineryManagement[];
+        }) => {
+            setFilteredPrimaryKey(machinery.map(({ checkId }) => checkId));
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const timeout = React.useRef();
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
+
+    const handleInput = () => {
+        handleDebounceSearch(
+            timeout,
+            () => {
+                searchMachinery({
+                    variables: {
+                        siteId: siteId,
+                        keyWord: searchInputRef.current?.value,
+                    },
+                });
+            },
+            300,
+            {
+                resetCondition: !searchInputRef.current?.value.trim(),
+                resetFunction: () => setFilteredPrimaryKey(undefined),
+            }
+        );
+    };
+    const toast = useToast();
+    const uploadModalDisclosure = useDisclosure();
+    const [file, setFile] = React.useState<File>();
+    const [uploadMachinery] = useMutation(UPLOAD_MACHINERY, {
+        onCompleted: ({
+            introduceMachineryExcel,
+        }: {
+            introduceMachineryExcel: {
+                ok: Boolean;
+                message: string;
+                failList: string[];
+            };
+        }) => {
+            const { ok, message, failList } = introduceMachineryExcel;
+            ok
+                ? defaultSuccessToast(toast, message)
+                : toast({
+                      status: 'warning',
+                      title: `匯入成功，另有${message}`,
+                      description: failList.map((fail) => (
+                          <Text color={'#FFFFFF'}>{fail}</Text>
+                      )),
+                      duration: null,
+                      isClosable: true,
+                  });
+            setFile(undefined);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+        refetchQueries: [
+            QUERY_MACHINERY,
+            { query: QUERY_MACHINERY, variables: { siteId: siteId } },
+        ],
     });
 
     return (
@@ -231,8 +323,10 @@ export default function MachineryManagement(props: {
                                 children={<SearchIcon />}
                             />
                             <Input
+                                ref={searchInputRef}
                                 variant={'search'}
                                 placeholder={'搜尋廠商或主要機具'}
+                                onChange={handleInput}
                             />
                         </InputGroup>
                         <Button
@@ -253,6 +347,7 @@ export default function MachineryManagement(props: {
                             variant={'buttonGrayOutline'}
                             h={'36px'}
                             leftIcon={<ReplyIcon />}
+                            onClick={uploadModalDisclosure.onOpen}
                         >
                             匯入
                         </Button>
@@ -267,34 +362,40 @@ export default function MachineryManagement(props: {
                     </Flex>
                 </Flex>
                 <TabPanels>
-                    <TabPanel padding={'16px 0 0 0'}>
-                        <ReactWindowTable
-                            tableData={tableData}
-                            setTableData={setTableData}
-                            columnMap={columnMap('入場')}
-                            sizes={sizes}
-                            columnBordered
-                            sortBy="inspectionNo"
-                            sortFormatter={(inspectionNo: string) =>
-                                Number(inspectionNo.slice(3))
-                            }
-                        />
-                    </TabPanel>
-                    <TabPanel padding={'16px 0 0 0'}>
-                        <ReactWindowTable
-                            tableData={tableData}
-                            setTableData={setTableData}
-                            columnMap={columnMap('場內')}
-                            sizes={sizes}
-                            columnBordered
-                            sortBy="inspectionNo"
-                            sortFormatter={(inspectionNo: string) =>
-                                Number(inspectionNo.slice(3))
-                            }
-                        />
-                    </TabPanel>
+                    {['入場', '場內'].map((tab, index) => (
+                        <TabPanel key={index} padding={'16px 0 0 0'}>
+                            <ReactWindowTable
+                                tableData={tableData}
+                                setTableData={setTableData}
+                                columnMap={columnMap(tab as '入場' | '場內')}
+                                sizes={sizes}
+                                columnBordered
+                                sortBy="inspectionNo"
+                                sortFormatter={(inspectionNo: string) =>
+                                    Number(inspectionNo.slice(3))
+                                }
+                                filteredPrimaryKey={filteredPrimaryKey}
+                            />
+                        </TabPanel>
+                    ))}
                 </TabPanels>
             </Tabs>
+            <UploadModal
+                isOpen={uploadModalDisclosure.isOpen}
+                onClose={uploadModalDisclosure.onClose}
+                file={file}
+                setFile={setFile}
+                handleUpload={() => {
+                    uploadMachinery({
+                        variables: {
+                            file: file,
+                            siteId: siteId,
+                        },
+                    });
+                    uploadModalDisclosure.onClose();
+                }}
+                accept={'.xlsx'}
+            />
             <CreateEquipmentModal
                 siteId={siteId}
                 isOpen={createModalDisclosure.isOpen}
