@@ -46,12 +46,8 @@ export default function CreateEquipmentModal(props: {
         },
         fetchPolicy: 'network-only',
         refetchQueries: [
-            {
-                query: QUERY_MACHINERY,
-                variables: {
-                    siteId: siteId,
-                },
-            },
+            QUERY_MACHINERY,
+            { query: QUERY_MACHINERY, variables: { siteId: siteId } },
         ],
     });
 
