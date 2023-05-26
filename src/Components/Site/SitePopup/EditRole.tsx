@@ -17,7 +17,6 @@ import { ShowPasswordIcon } from '../../../Icons/Icons';
 import { rolesList } from '../SiteRoles';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
-import { Cookies } from 'react-cookie';
 
 const UPDATE_SITE_ROLE = gql`
     mutation updateSiteRole(
@@ -73,14 +72,7 @@ export default function EditRole(props: {
         onError: (error) => {
             console.log(error);
         },
-        refetchQueries: [
-            {
-                query: QUERY_ACCOUNT_SITES,
-                variables: {
-                    username: new Cookies().get('username'),
-                },
-            },
-        ],
+        refetchQueries: [QUERY_ACCOUNT_SITES],
     });
 
     function showPassword() {
