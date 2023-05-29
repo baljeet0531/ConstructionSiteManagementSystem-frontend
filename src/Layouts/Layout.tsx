@@ -88,13 +88,18 @@ export default function Layout(props: { page: featureName }) {
                 storeSiteId && sitesObject[storeSiteId]
                     ? sitesObject[storeSiteId].siteId
                     : siteValues[0].siteId;
+            localStorage.setItem('siteId', defaultSiteId);
+            localStorage.setItem(
+                'siteName',
+                sitesObject[defaultSiteId].siteName
+            );
             setSelectedSiteId(defaultSiteId);
             setSitesObject(sitesObject);
         },
         onError: (error) => {
             console.log(error);
         },
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
     });
 
     return (
