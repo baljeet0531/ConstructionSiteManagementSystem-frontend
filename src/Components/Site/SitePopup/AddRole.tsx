@@ -1,6 +1,5 @@
 import React from 'react';
 import { useMutation, useLazyQuery, gql } from '@apollo/client';
-import { Cookies } from 'react-cookie';
 
 import {
     Center,
@@ -166,12 +165,7 @@ export default function AddRole(props: {
         },
         refetchQueries: [
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },
-            {
-                query: QUERY_ACCOUNT_SITES,
-                variables: {
-                    username: new Cookies().get('username'),
-                },
-            },
+            QUERY_ACCOUNT_SITES,
         ],
     });
 

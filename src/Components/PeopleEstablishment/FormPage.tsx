@@ -416,7 +416,9 @@ export default function FromPage(props: {
                 p={'2.938rem 2.625rem 1.563rem 2.125rem'}
                 position={'sticky'}
             >
-                <Text fontSize={'2.25rem'}>人員資料建置</Text>
+                <Text fontSize={'2.25rem'} color={'#667080'}>
+                    人員資料建置
+                </Text>
                 <Flex gap={'10px'}>
                     <Button
                         leftIcon={<ReplyIcon />}
@@ -451,7 +453,11 @@ export default function FromPage(props: {
                         align={'center'}
                         justify={'flex-start'}
                     >
-                        <Text pb={'25px'} fontSize={'2.25rem'}>
+                        <Text
+                            pb={'25px'}
+                            fontSize={'2.25rem'}
+                            color={'#667080'}
+                        >
                             個人資料
                         </Text>
                         <Grid
