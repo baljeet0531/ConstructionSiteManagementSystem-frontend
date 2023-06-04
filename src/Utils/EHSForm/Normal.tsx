@@ -27,8 +27,8 @@ export class EHSFormNormalHandler extends EHSFormHandler {
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
         ${EHSFORM_IN_ITEM_FIELDS}
-        query safetyCheckNormal($siteId: String!) {
-            safetyCheckNormal(siteId: $siteId) {
+        query safetyCheckNormal($siteId: String!, $day: Date) {
+            safetyCheckNormal(siteId: $siteId, day: $day) {
                 siteId
                 day
                 checkDept
