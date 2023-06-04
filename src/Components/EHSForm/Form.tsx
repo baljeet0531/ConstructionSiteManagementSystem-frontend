@@ -1,4 +1,4 @@
-import { IEHSForm } from '../../Interface/EHSForm';
+import { IEHSForm } from '../../Interface/EHSForm/Common';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
 import {

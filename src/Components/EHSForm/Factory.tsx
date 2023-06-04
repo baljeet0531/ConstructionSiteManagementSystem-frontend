@@ -3,7 +3,7 @@ import {
     InputProps,
     Textarea,
 } from '@chakra-ui/react';
-import { IEHSForm } from '../../Interface/EHSForm';
+import { IEHSForm } from '../../Interface/EHSForm/Common';
 import { FormikProps } from 'formik';
 import { disabledStyle, placeholderStyle } from './Styles';
 

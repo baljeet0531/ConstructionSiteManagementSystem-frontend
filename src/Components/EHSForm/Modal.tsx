@@ -7,7 +7,7 @@ import {
     ModalOverlay,
     // useToast,
 } from '@chakra-ui/react';
-import { IEHSForm } from '../../Interface/EHSForm';
+import { IEHSForm } from '../../Interface/EHSForm/Common';
 import EHSForm from './Form';
 // import { GQL_FAULT_FORM_MUTATION } from './GQL';
 // import { defaultErrorToast } from '../../Utils/DefaultToast';
