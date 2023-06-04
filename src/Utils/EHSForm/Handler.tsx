@@ -21,7 +21,10 @@ export abstract class EHSFormHandler {
     abstract mutationName: string;
     abstract mutation: DocumentNode;
     // eslint-disable-next-line no-unused-vars
-    abstract items: Record<string, IEHSFormFillItem>;
+    abstract itemGroups: Record<
+        string,
+        { name: string; items: IEHSFormFillItem[] }
+    >;
 
     constructor(
         siteId: string,
@@ -37,6 +40,11 @@ export abstract class EHSFormHandler {
         return {
             siteId: this.siteId,
             day: this.day,
+            checkDept: '',
+            checkTarget: [],
+            location: '',
+            responsibleUnitSignature: [],
+            supervisorUnitSignature: [],
         };
     }
 
