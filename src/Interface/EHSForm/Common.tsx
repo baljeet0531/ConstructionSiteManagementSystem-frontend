@@ -36,11 +36,11 @@ export interface IEHSCheckTarget {
 export interface IEHSForm {
     siteId: string;
     day: string;
-    checkDept?: string;
-    checkTarget?: IEHSCheckTarget[];
-    location?: string;
-    responsibleUnitSignature?: IEHSSignature[] | IGQLEHSSignature[];
-    supervisorUnitSignature?: IEHSSignature[] | IGQLEHSSignature[];
+    checkDept: string | null;
+    checkTarget: IEHSCheckTarget[];
+    location: string | null;
+    responsibleUnitSignature: IEHSSignature[] | IGQLEHSSignature[];
+    supervisorUnitSignature: IEHSSignature[] | IGQLEHSSignature[];
 }
 
 export interface IEHSFormTargetInItem {
