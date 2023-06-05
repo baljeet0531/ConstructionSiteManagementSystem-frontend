@@ -37,7 +37,7 @@ export default function EHSForm({
     formProps,
     type,
     handler,
-    onClose,
+    // onClose,
 }: {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
@@ -64,7 +64,7 @@ export default function EHSForm({
             console.error(err);
             setLoading(false);
             defaultErrorToast(toast);
-            onClose();
+            // onClose();
         },
         fetchPolicy: 'network-only',
     });
@@ -213,12 +213,15 @@ export default function EHSForm({
                     <GridItem
                         rowStart={1}
                         rowEnd={3}
-                        colStart={6}
-                        colEnd={7}
+                        colStart={7}
+                        colEnd={8}
                         {...filledStyle}
                     >
                         備註
                     </GridItem>
+                    <GridItem {...filledStyle}>正常</GridItem>
+                    <GridItem {...filledStyle}>異常</GridItem>
+                    <GridItem {...filledStyle}>不適用</GridItem>
 
                 </Grid>
 
