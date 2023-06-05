@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import CloseButton from '../Shared/CloseButton';
 import { ImageRotateIcon } from '../../Icons/Icons';
+import { FieldArrayRenderProps } from 'formik';
 
 const optionsStyle: SelectProps = {
     h: '20px',
@@ -30,9 +31,13 @@ const textStyle: TextProps = {
     lineHeight: '1.25rem',
 };
 
-export default function PhotoUploadForm(props: { imageSrc: string }) {
+export default function PhotoUploadForm(props: {
+    index: number;
+    imageSrc: string;
+    arrayHelper: FieldArrayRenderProps;
+}) {
     const siteId = React.useContext(SiteIdContext);
-    const { imageSrc } = props;
+    const { index, imageSrc, arrayHelper } = props;
     useQuery(QUERY_IMAGE_OPTIONS, {
         variables: {
             siteId: siteId,
@@ -129,7 +134,12 @@ export default function PhotoUploadForm(props: { imageSrc: string }) {
                     </Flex>
                 </GridItem>
             </Grid>
-            <CloseButton ariaLabel="delete-photo" handleClick={() => {}} />
+            <CloseButton
+                ariaLabel="delete-photo"
+                handleClick={() => {
+                    arrayHelper.remove(index);
+                }}
+            />
         </Flex>
     );
 }
