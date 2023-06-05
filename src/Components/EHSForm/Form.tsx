@@ -20,7 +20,8 @@ import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-import { filledStyle, unboxStyle } from './Styles';
+import { baseStyle, filledStyle, unboxStyle } from './Styles';
+import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
 
 export default function EHSForm({
@@ -237,6 +238,31 @@ export default function EHSForm({
                         2.工安巡檢稽核到缺失時，須告知責任單位缺失，開立「工安缺失紀錄表」要求改善並於巡檢表上簽名確認。
                     </GridItem>
                     <GridItem {...unboxStyle}>3.實施巡檢單位留存。</GridItem>
+                </Grid>
+                <Grid w="100%" templateColumns="repeat(4, 1fr)">
+                    <GridItem>
+                        <Text>缺失責任單位：</Text>
+                    </GridItem>
+                    <GridItem colStart={4} colEnd={5}>
+                        <Text>MIC監工單位：</Text>
+                    </GridItem>
+                    <GridItem
+                        {...baseStyle}
+                        h="150px"
+                        rowStart={2}
+                        rowEnd={3}
+                        colStart={4}
+                        colEnd={5}
+                    >
+                        <SignaturePad
+                            title="MIC監工單位"
+                            signatureName="supervisor-unit-signature.png"
+                            state={handler.supervisorSignature}
+                            placeHolderText="簽名"
+                            showTime={true}
+                            disable={!!handler.supervisorSignature[0]?.no}
+                        />
+                    </GridItem>
                 </Grid>
             </Box>
             {(loading || formProps.isSubmitting) && <FormLoading />}

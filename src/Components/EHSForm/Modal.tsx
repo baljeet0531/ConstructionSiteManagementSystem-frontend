@@ -17,15 +17,13 @@ import {
     EHSFormName,
     IEHSForm,
     IEHSSignature,
-    SignatureName,
-    SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
 import EHSForm from './Form';
 import { useEffect, useState } from 'react';
 import { EHSFormMap } from '../../Utils/EHSForm/Mapper';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { useMutation } from '@apollo/client';
-import { convertSignList } from '../../Interface/Signature';
+import { ISignature } from '../../Interface/Signature';
 
 export default function EHSFormModal({
     siteId,
@@ -51,11 +49,14 @@ export default function EHSFormModal({
     };
     const reminderDisClosure = useDisclosure();
     const toast = useToast();
-    const signatures: Record<SignatureName, SignaturesStateItem> = {
-        responsibleUnitSignature: useState<IEHSSignature[]>([]),
-        supervisorUnitSignature: useState<IEHSSignature[]>([]),
-    };
-    const handler = new EHSFormMap[type].handler(siteId, day, signatures);
+    const supervisorSignature = useState<ISignature>();
+    const responsibleSignatures = useState<IEHSSignature[]>([]);
+    const handler = new EHSFormMap[type].handler(
+        siteId,
+        day,
+        supervisorSignature,
+        responsibleSignatures
+    );
     const [updateEHSForm] = useMutation(handler.mutation, {
         onCompleted: ({ d }) => {
             const response = d[handler.mutationName];
@@ -87,14 +88,6 @@ export default function EHSFormModal({
         ],
     });
 
-    const handleSignatures = (submit: IEHSForm) => {
-        let key: keyof Record<SignatureName, SignaturesStateItem>;
-        for (key in signatures) {
-            const [signatureList] = signatures[key];
-            submit[key] = convertSignList(signatureList) as IEHSSignature[];
-        }
-    };
-
     useEffect(() => {
         reminderDisClosure.onOpen();
     }, []);
@@ -113,7 +106,6 @@ export default function EHSFormModal({
                             const submitValues = {
                                 ...values,
                             };
-                            handleSignatures(submitValues);
                             handler.marshal(submitValues);
                             console.log(submitValues);
                             updateEHSForm({

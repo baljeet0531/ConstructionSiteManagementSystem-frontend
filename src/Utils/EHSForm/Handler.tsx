@@ -1,19 +1,23 @@
 import { DocumentNode } from 'graphql';
-import { getSignature } from '../../Interface/Signature';
+import {
+    SignatureStateItem,
+    convertSignList,
+    convertSignature,
+    getSignature,
+} from '../../Interface/Signature';
 import {
     IEHSForm,
     IEHSFormFillItem,
     IEHSSignature,
     IGQLEHSSignature,
-    signatureColNames,
-    SignatureName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
 
 export abstract class EHSFormHandler {
     siteId: string;
     day: string;
-    signatures: Record<SignatureName, SignaturesStateItem>;
+    supervisorSignature: SignatureStateItem;
+    responsibleSignatures: SignaturesStateItem;
     abstract queryName: string;
     abstract query: DocumentNode;
     abstract mutationName: string;
@@ -27,11 +31,13 @@ export abstract class EHSFormHandler {
     constructor(
         siteId: string,
         day: string,
-        signatures: Record<SignatureName, SignaturesStateItem>
+        supervisorSignature: SignatureStateItem,
+        responsibleSignatures: SignaturesStateItem
     ) {
         this.siteId = siteId;
         this.day = day;
-        this.signatures = signatures;
+        this.supervisorSignature = supervisorSignature;
+        this.responsibleSignatures = responsibleSignatures;
     }
 
     getInitialValues(): IEHSForm {
@@ -50,21 +56,33 @@ export abstract class EHSFormHandler {
         if (!data[0]) return;
         const t = { ...data[0] };
 
-        for (let i = 0; i < signatureColNames.length; i++) {
-            this.setSigns(i, t);
-        }
+        this.setResponsibleSigns(t);
+        this.setSupervisorSign(t);
 
         return t;
     }
 
     marshal(submitValues: IEHSForm) {
-        console.log(submitValues);
+        const [signatureList] = this.responsibleSignatures;
+        submitValues.responsibleUnitSignature = convertSignList(
+            signatureList
+        ) as IEHSSignature[];
+
+        const [signature] = this.supervisorSignature;
+        const sign = {
+            ...convertSignature(signature),
+            corpName: '',
+            day: submitValues.day,
+            signatureType: 'supervisor',
+        };
+        submitValues.supervisorUnitSignature = [sign] as IEHSSignature[];
     }
 
-    setSigns(idx: number, form: IEHSForm) {
-        const key = signatureColNames[idx];
-        const [, setSignature] = this.signatures[key];
-        const GQLsigns = form[key] as IGQLEHSSignature[] | undefined;
+    setResponsibleSigns(form: IEHSForm) {
+        const [, setSignature] = this.responsibleSignatures;
+        const GQLsigns = form.responsibleUnitSignature as
+            | IGQLEHSSignature[]
+            | undefined;
         if (GQLsigns) {
             const signs: IEHSSignature[] = [];
             const getSignList = async () => {
@@ -80,6 +98,18 @@ export abstract class EHSFormHandler {
             };
             getSignList().then(() => {
                 setSignature(signs);
+            });
+        }
+    }
+
+    setSupervisorSign(form: IEHSForm) {
+        const [, setSignature] = this.supervisorSignature;
+        const GQLsign = form.supervisorUnitSignature as
+            | IGQLEHSSignature[]
+            | undefined;
+        if (GQLsign && GQLsign[0]) {
+            getSignature(GQLsign[0]).then((sign) => {
+                setSignature(sign);
             });
         }
     }

@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 import {
     IEHSFormFillItem,
-    SignatureName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
 import { IEHSFormNormal, NormalGroupKey } from '../../Interface/EHSForm/Normal';
@@ -10,6 +9,7 @@ import {
     EHSFORM_IN_ITEM_FIELDS,
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
+import { SignatureStateItem } from '../../Interface/Signature';
 
 interface IEHSFormNormalItem extends IEHSFormFillItem {
     normal: keyof IEHSFormNormal;
@@ -1027,9 +1027,10 @@ export class EHSFormNormalHandler extends EHSFormHandler {
     constructor(
         siteId: string,
         number: string,
-        signatures: Record<SignatureName, SignaturesStateItem>
+        supervisorSignature: SignatureStateItem,
+        responsibleSignatures: SignaturesStateItem
     ) {
-        super(siteId, number, signatures);
+        super(siteId, number, supervisorSignature, responsibleSignatures);
     }
 
     getInitialValues(): IEHSFormNormal {
