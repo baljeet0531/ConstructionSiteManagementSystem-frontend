@@ -9,8 +9,6 @@ import {
     SignatureName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
-import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
-import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 
 export abstract class EHSFormHandler {
     siteId: string;
@@ -59,7 +57,7 @@ export abstract class EHSFormHandler {
         return t;
     }
 
-    marshal(submitValues: IEHSFormNormal | IEHSFormSpecial) {
+    marshal(submitValues: IEHSForm) {
         console.log(submitValues);
     }
 
