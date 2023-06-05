@@ -4,7 +4,6 @@ import { Center, Flex, Text, Button } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_SITE } from '../Site';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
-import { Cookies } from 'react-cookie';
 
 const DELETE_SITE = gql`
     mutation deleteSite($siteId: String!) {
@@ -21,15 +20,7 @@ export default function DeleteSite(props: {
 }) {
     const { setShowPopup, siteName, siteId } = props;
     const [deleteSite, { error, data }] = useMutation(DELETE_SITE, {
-        refetchQueries: [
-            { query: QUERY_SITE },
-            {
-                query: QUERY_ACCOUNT_SITES,
-                variables: {
-                    username: new Cookies().get('username'),
-                },
-            },
-        ],
+        refetchQueries: [{ query: QUERY_SITE }, QUERY_ACCOUNT_SITES],
     });
     if (error) console.log(`${error.message}`);
     if (data) console.log(data);
