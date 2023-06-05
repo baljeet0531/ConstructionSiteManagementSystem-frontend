@@ -1,3 +1,23 @@
+export const baseStyle = {
+    border: '1px',
+    borderColor: '#919AA9',
+    display: 'flex',
+    alignItems: 'center',
+};
+
+export const unboxStyle = {
+    ...baseStyle,
+    border: '0px',
+    letterSpacing: '0.05em',
+};
+
+export const filledStyle = {
+    ...baseStyle,
+    background: '#919AA9',
+    color: '#FFFFFF',
+    justifyContent: 'center',
+};
+
 export const titleStyle = {
     display: 'flex',
     alignItems: 'flex-end',
@@ -26,7 +46,7 @@ export const tableTitleStyle = {
     borderLeft: '#919AA9 solid 1px',
     borderBottom: '#919AA9 solid 1px',
     letterSpacing: '1.4em',
-    pl: '20px'
+    pl: '20px',
 };
 
 export const tableContentStyle = {

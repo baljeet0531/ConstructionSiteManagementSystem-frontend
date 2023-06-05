@@ -22,7 +22,7 @@ export default class FormFactory {
         return (
             <Input
                 size="sm"
-                placeholder="填寫"
+                placeholder="請填寫"
                 _placeholder={placeholderStyle}
                 isDisabled={false}
                 _disabled={disabledStyle}

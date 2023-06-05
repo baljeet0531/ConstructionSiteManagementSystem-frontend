@@ -83,4 +83,12 @@ export abstract class EHSFormHandler {
             });
         }
     }
+
+    getRowCount(): number {
+        let count = 0;
+        for (let group in this.itemGroups) {
+            count += this.itemGroups[group].items.length;
+        }
+        return count;
+    }
 }
