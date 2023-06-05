@@ -9,17 +9,12 @@ import {
     Grid,
     GridItem,
     HStack,
-    // Flex,
-    // Grid,
-    // GridItem,
     Image,
     Text,
     VStack,
     useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../Icons/Icons';
-// import { useQuery } from '@apollo/client';
-// import { GQL_FAULT_FORM_QUERY } from './GQL';
 import { useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
@@ -27,18 +22,13 @@ import { useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { filledStyle, unboxStyle } from './Styles';
 import GridInputItem from '../Shared/GridInputItem';
-// import GridInputItem from '../Shared/GridInputItem';
-// import { contentStyle, tableContentStyle, tableTitleStyle } from './Styles';
-// import { getImage } from '../../Utils/Resources';
-
-// import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 export default function EHSForm({
     formProps,
     type,
     handler,
-    // onClose,
-}: {
+}: // onClose,
+{
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
     handler: EHSFormHandler;
@@ -189,7 +179,7 @@ export default function EHSForm({
                     w="100%"
                     mt="15px"
                     templateColumns="45fr 60fr 460fr 50fr 50fr 50fr 95fr"
-                    templateRows={`20px 20px repeat(${rowCount}, minmax(min-content, auto))`}
+                    templateRows={`25px 25px repeat(${rowCount}, minmax(min-content, auto))`}
                 >
                     <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
                         項目
@@ -222,7 +212,7 @@ export default function EHSForm({
                     <GridItem {...filledStyle}>正常</GridItem>
                     <GridItem {...filledStyle}>異常</GridItem>
                     <GridItem {...filledStyle}>不適用</GridItem>
-
+                    {f.getAllItems()}
                 </Grid>
 
                 <Flex flexDirection="column">
