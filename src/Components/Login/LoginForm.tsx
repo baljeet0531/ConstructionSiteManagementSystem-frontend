@@ -15,11 +15,13 @@ import {
 import { useCookies } from 'react-cookie';
 import { AccountIcon, LockIcon, ShowPasswordIcon } from '../../Icons/Icons';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
     const [show, setShow] = React.useState(false);
     const [, setCookie] = useCookies(['jwt', 'username']);
     const toast = useToast();
+    const navigate = useNavigate();
 
     const fetchLogin = async (username: string, password: string) => {
         let response = await fetch(BACKEND + '/login', {
@@ -47,7 +49,7 @@ export default function LoginForm() {
                 path: '/',
                 secure: false,
             });
-            window.location.href = '/';
+            navigate('/', { replace: true });
         }
     };
 
