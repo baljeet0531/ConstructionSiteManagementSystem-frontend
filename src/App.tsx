@@ -10,6 +10,7 @@ import Login from './Components/Login/Login';
 import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 import ToolboxFormik from './Components/ToolboxForm/Formik';
 import OpCheckFormik from './Components/OpCheckForm/Formik';
+import PhotoUploader from './Components/PhotoUploader/PhotoUploader';
 
 function App() {
     return (
@@ -116,6 +117,10 @@ function App() {
                     element={<Layout page="outsource_fault_form" />}
                 />
                 <Route path="/login" element={<Login />}></Route>
+                <Route
+                    path="/photo-uploader"
+                    element={<PhotoUploader />}
+                ></Route>
                 {/* Single Form Page is linked below */}
                 <Route
                     path="/form/work-permit"
