@@ -1,4 +1,8 @@
-import { EHSFormName, IEHSForm } from '../../Interface/EHSForm/Common';
+import {
+    EHSFormName,
+    IEHSForm,
+    IEHSFormData,
+} from '../../Interface/EHSForm/Common';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
 import {
@@ -14,7 +18,7 @@ import {
     VStack,
     useToast,
 } from '@chakra-ui/react';
-import { EditIcon } from '../../Icons/Icons';
+import { ChevronDownIcon, EditIcon } from '../../Icons/Icons';
 import { useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
@@ -28,23 +32,30 @@ export default function EHSForm({
     formProps,
     type,
     handler,
-}: // onClose,
-{
+    onClose,
+}: {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
     handler: EHSFormHandler;
     onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState<IEHSFormData>({
+        searchName: [],
+    });
     const rowCount = handler.getRowCount();
     const toast = useToast();
-    const f = new FormFactory(formProps, type, handler);
+    const f = new FormFactory(formProps, type, handler, data);
     useQuery(handler.query, {
         variables: {
             siteId: handler.siteId,
             day: handler.day,
+            role: '外包商',
         },
         onCompleted: (d) => {
+            setData({
+                searchName: d.searchName,
+            });
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
@@ -55,16 +66,10 @@ export default function EHSForm({
             console.error(err);
             setLoading(false);
             defaultErrorToast(toast);
-            // onClose();
+            onClose();
         },
         fetchPolicy: 'network-only',
     });
-
-    console.log(`siteId: ${handler.siteId} day: ${handler.day} type: ${type}`);
-    console.log(`${f}`);
-    console.log(`${setLoading}`);
-    console.log(`${rowCount}`);
-    console.log(formProps.values);
 
     return (
         <Form>
@@ -168,10 +173,9 @@ export default function EHSForm({
                     <GridItem {...unboxStyle}>巡檢對象</GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 6, 7]}
-                        fieldName="location"
-                        inputComponent={f.input({
-                            type: 'text',
-                        })}
+                        fieldName="checkTarget"
+                        inputComponent={f.corpNameSelect('checkTarget')}
+                        inputRightComponent={<ChevronDownIcon />}
                         pr={'15px'}
                     />
                 </Grid>

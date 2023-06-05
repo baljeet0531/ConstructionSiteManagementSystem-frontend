@@ -27,7 +27,8 @@ export class EHSFormNormalHandler extends EHSFormHandler {
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
         ${EHSFORM_IN_ITEM_FIELDS}
-        query EHSFormNormal($siteId: String!, $day: Date) {
+        query EHSFormNormal($siteId: String!, $day: Date, $role: String) {
+            searchName(siteId: $siteId, role: $role)
             EHSFormNormal(siteId: $siteId, day: $day) {
                 siteId
                 day

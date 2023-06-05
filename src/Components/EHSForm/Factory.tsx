@@ -1,15 +1,26 @@
 import {
     Checkbox,
+    Flex,
     GridItem,
     Input,
     InputProps,
     Text,
     Textarea,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    Button,
+    useDisclosure,
 } from '@chakra-ui/react';
 import {
     EHSFormName,
     IEHSForm,
+    IEHSFormData,
     IEHSFormFillItem,
+    IEHSFormTargetInItem,
+    IEHSCheckTarget,
 } from '../../Interface/EHSForm/Common';
 import { FormikProps } from 'formik';
 import {
@@ -18,8 +29,9 @@ import {
     placeholderStyle,
     tableStyle,
 } from './Styles';
+import { ChevronDownIcon } from '../../Icons/Icons';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
-import { Fragment } from 'react';
+import { Fragment, ChangeEvent } from 'react';
 import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
@@ -28,15 +40,18 @@ export default class FormFactory {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
     handler: EHSFormHandler;
+    data: IEHSFormData;
 
     constructor(
         formProps: FormikProps<IEHSForm>,
         type: EHSFormName,
-        handler: EHSFormHandler
+        handler: EHSFormHandler,
+        data: IEHSFormData
     ) {
         this.formProps = formProps;
         this.type = type;
         this.handler = handler;
+        this.data = data;
     }
     input(props: InputProps) {
         return (
@@ -120,7 +135,10 @@ export default class FormFactory {
                 />
                 <GridInputItem
                     fieldName={item.ameliorate}
-                    inputComponent={this.input({ type: 'text' })}
+                    inputComponent={this.corpNameSelect(
+                        item.ameliorate as keyof IEHSForm
+                    )}
+                    inputRightComponent={<ChevronDownIcon />}
                     style={tableStyle}
                 />
             </Fragment>
@@ -167,6 +185,110 @@ export default class FormFactory {
                     }
                 }}
             />
+        );
+    }
+    handleCheckTargetOnChange(e: ChangeEvent<HTMLInputElement>, name: string) {
+        const checked = e.target.checked;
+        if (checked) {
+            this.formProps.setFieldValue('checkTarget', [
+                ...this.formProps.values.checkTarget,
+                {
+                    corpName: name,
+                    siteId: this.formProps.values.siteId,
+                    day: this.formProps.values.day,
+                },
+            ]);
+        } else {
+            this.formProps.setFieldValue(
+                'checkTarget',
+                this.formProps.values.checkTarget.filter(
+                    (target) => target.corpName !== name
+                )
+            );
+        }
+    }
+    handleAmeliorateOnChange(
+        e: ChangeEvent<HTMLInputElement>,
+        name: string,
+        field: keyof IEHSForm
+    ) {
+        const checked = e.target.checked;
+        const target = this.formProps.values[field] as IEHSFormTargetInItem[];
+        if (checked) {
+            const selected = {
+                corpName: name,
+                siteId: this.formProps.values.siteId,
+                day: this.formProps.values.day,
+                code: field.replace('Ameliorate', ''),
+            };
+            this.formProps.setFieldValue(field, [...(target ?? []), selected]);
+        } else {
+            this.formProps.setFieldValue(
+                field,
+                target.filter((target) => target.corpName !== name)
+            );
+        }
+    }
+    corpNameSelect(field: keyof IEHSForm) {
+        const { onToggle } = useDisclosure();
+        const target = this.formProps.values[field] as
+            | IEHSFormTargetInItem[]
+            | IEHSCheckTarget[];
+        const options = this.data.searchName.map((name) => (
+            <Checkbox
+                size={'sm'}
+                isChecked={target?.some((i) => {
+                    i.corpName === name;
+                })}
+                onChange={(e) =>
+                    field === 'checkTarget'
+                        ? this.handleCheckTargetOnChange(e, name)
+                        : this.handleAmeliorateOnChange(e, name, field)
+                }
+            >
+                {name}
+            </Checkbox>
+        ));
+        return (
+            <Popover placement={'bottom-start'}>
+                <PopoverTrigger>
+                    <Button
+                        size={'sm'}
+                        w={'100%'}
+                        variant={'outline'}
+                        onClick={() => {
+                            onToggle();
+                        }}
+                    >
+                        已選擇 {target ? target.length : '?'} 個
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverBody
+                        display={'flex'}
+                        padding={'24px'}
+                        flexDirection={'column'}
+                        justifyContent={'space-between'}
+                    >
+                        <Flex
+                            direction={'column'}
+                            gap={'12px'}
+                            overflowX={'hidden'}
+                        >
+                            <Text as="b">巡檢對象</Text>
+                            <Flex
+                                direction={'column'}
+                                gap={'12px'}
+                                overflowY={'auto'}
+                                wordBreak={'break-word'}
+                            >
+                                {options}
+                            </Flex>
+                        </Flex>
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
         );
     }
 }

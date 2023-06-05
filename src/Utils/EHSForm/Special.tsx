@@ -30,7 +30,8 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
         ${EHSFORM_IN_ITEM_FIELDS}
-        query EHSFormSpecial($siteId: String!, $day: Date) {
+        query EHSFormSpecial($siteId: String!, $day: Date, $role: String) {
+            searchName(siteId: $siteId, role: $role)
             EHSFormSpecial(siteId: $siteId, day: $day) {
                 siteId
                 day
@@ -1594,7 +1595,7 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
                     content: '遇地震時立即停止作業，使人員退避至安全避難場所。',
                     normal: 'BG03Normal',
                     misfit: 'BG03Misfit',
-                    ameliorate: 'BG04Ameliorate',
+                    ameliorate: 'BG03Ameliorate',
                 },
                 {
                     code: 'BG04',

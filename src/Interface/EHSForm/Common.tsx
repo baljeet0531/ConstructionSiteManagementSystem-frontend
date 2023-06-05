@@ -48,3 +48,7 @@ export interface IEHSFormFillItem {
     misfit: string;
     ameliorate: string;
 }
+
+export interface IEHSFormData {
+    searchName: string[]
+}
