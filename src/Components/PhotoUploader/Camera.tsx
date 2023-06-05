@@ -1,4 +1,6 @@
 import { Button, Flex } from '@chakra-ui/react';
+import dayjs from 'dayjs';
+import { FieldArrayRenderProps } from 'formik';
 import React from 'react';
 import Webcam from 'react-webcam';
 
@@ -8,14 +10,34 @@ const videoConstraints = {
     facingMode: 'user',
 };
 
-export function Camera(props: {
-    setImageList: React.Dispatch<React.SetStateAction<string[]>>;
-}) {
-    const { setImageList } = props;
+export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
+    const { arrayHelper } = props;
+    const [capturing, setCapturing] = React.useState<boolean>(false);
     const webcamRef = React.useRef<Webcam>(null);
     const capture = React.useCallback(() => {
-        const image = webcamRef.current?.getScreenshot();
-        image && setImageList((prev) => [...prev, image]);
+        setCapturing(true);
+        const src = webcamRef.current?.getScreenshot();
+
+        src
+            ? fetch(src)
+                  .then((res) => res.blob())
+                  .then((blob) => {
+                      const date = new Date();
+                      const filename = dayjs(date).toISOString();
+                      const image = new File([blob], filename, {
+                          type: 'image/png',
+                      });
+                      arrayHelper.push({
+                          image: image,
+                          src: src,
+                          category: null,
+                          date: date,
+                          location: null,
+                          description: '',
+                      });
+                      setCapturing(false);
+                  })
+            : setCapturing(false);
     }, [webcamRef]);
 
     return (
@@ -37,11 +59,12 @@ export function Camera(props: {
                 videoConstraints={videoConstraints}
             />
             <Button
-                borderRadius={'50%'}
-                onClick={capture}
                 variant={'whiteOutline'}
+                isLoading={capturing}
                 w={'40px'}
                 h={'40px'}
+                borderRadius={'50%'}
+                onClick={capture}
             ></Button>
         </Flex>
     );
