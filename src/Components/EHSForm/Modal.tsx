@@ -13,10 +13,7 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import {
-    EHSFormName,
-    IEHSSignature,
-} from '../../Interface/EHSForm/Common';
+import { EHSFormName } from '../../Interface/EHSForm/Common';
 import EHSForm from './Form';
 import { useEffect, useState } from 'react';
 import { EHSFormMap } from '../../Utils/EHSForm/Mapper';
@@ -40,7 +37,7 @@ export default function EHSFormModal({
     const reminderDisClosure = useDisclosure();
     const toast = useToast();
     const supervisorSignature = useState<ISignature>();
-    const responsibleSignatures = useState<IEHSSignature[]>([]);
+    const responsibleSignatures = useState<ISignature[]>([]);
     const handler = new EHSFormMap[type].handler(
         siteId,
         day,

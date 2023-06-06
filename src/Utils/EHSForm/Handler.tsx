@@ -1,5 +1,6 @@
 import { DocumentNode } from 'graphql';
 import {
+    MultiSignatureStateItem,
     SignatureStateItem,
     convertSignList,
     convertSignature,
@@ -10,7 +11,6 @@ import {
     IEHSFormFillItem,
     IEHSSignature,
     IGQLEHSSignature,
-    SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
@@ -21,7 +21,7 @@ export abstract class EHSFormHandler<
     siteId: string;
     day: string;
     supervisorSignature: SignatureStateItem;
-    responsibleSignatures: SignaturesStateItem;
+    responsibleSignatures: MultiSignatureStateItem;
     abstract queryName: string;
     abstract query: DocumentNode;
     abstract mutationName: string;
@@ -38,7 +38,7 @@ export abstract class EHSFormHandler<
         siteId: string,
         day: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: SignaturesStateItem
+        responsibleSignatures: MultiSignatureStateItem
     ) {
         this.siteId = siteId;
         this.day = day;
