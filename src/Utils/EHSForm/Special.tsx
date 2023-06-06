@@ -25,7 +25,7 @@ interface IEHSFormNormalGroup {
     items: IEHSFormSpecialItem[];
 }
 
-export class EHSFormSpecialHandler extends EHSFormHandler {
+export class EHSFormSpecialHandler extends EHSFormHandler<IEHSFormSpecial> {
     queryName = 'EHSFormSpecial';
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
@@ -2010,5 +2010,13 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
             BJ04Ameliorate: [],
             BJ05Ameliorate: [],
         };
+    }
+
+    isAmeliorateDisabled(values: IEHSFormSpecial, code: string): boolean {
+        const normalKey = `${code}Normal` as keyof IEHSFormSpecial;
+        const misfitKey = `${code}Misfit` as keyof IEHSFormSpecial;
+        const normal = values[normalKey];
+        const misfit = values[misfitKey];
+        return normal !== false || misfit === true;
     }
 }

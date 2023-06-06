@@ -12,8 +12,12 @@ import {
     IGQLEHSSignature,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
+import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
+import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 
-export abstract class EHSFormHandler {
+export abstract class EHSFormHandler<
+    C extends IEHSFormNormal | IEHSFormSpecial
+> {
     siteId: string;
     day: string;
     supervisorSignature: SignatureStateItem;
@@ -27,6 +31,8 @@ export abstract class EHSFormHandler {
         string,
         { name: string; items: IEHSFormFillItem[] }
     >;
+    // eslint-disable-next-line no-unused-vars
+    abstract isAmeliorateDisabled(values: C, code: string): boolean;
 
     constructor(
         siteId: string,

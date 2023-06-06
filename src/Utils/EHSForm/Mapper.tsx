@@ -3,6 +3,8 @@ import {
     EHSFormName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
+import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
+import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { EHSFormHandler } from './Handler';
 import { EHSFormNormalHandler } from './Normal';
@@ -13,7 +15,7 @@ type EHSFormConstructor = new (
     day: string,
     supervisorSignature: SignatureStateItem,
     responsibleSignatures: SignaturesStateItem
-) => EHSFormHandler;
+) => EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>;
 
 type EHSFormMapItem = {
     name: string;

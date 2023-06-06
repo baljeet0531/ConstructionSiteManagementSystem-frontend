@@ -39,13 +39,13 @@ import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 export default class FormFactory {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
-    handler: EHSFormHandler;
+    handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>;
     data: IEHSFormData;
 
     constructor(
         formProps: FormikProps<IEHSForm>,
         type: EHSFormName,
-        handler: EHSFormHandler,
+        handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>,
         data: IEHSFormData
     ) {
         this.formProps = formProps;
@@ -83,7 +83,7 @@ export default class FormFactory {
             const group = this.handler.itemGroups[key];
             const subtitle = group.name.split(' ');
             const section = (
-                <Fragment>
+                <Fragment key={key}>
                     <GridItem
                         rowStart={acc + 3}
                         rowEnd={group.items.length + acc + 3}
@@ -118,21 +118,15 @@ export default class FormFactory {
                 <GridItem {...tableStyle} pl={2}>
                     <Text>{item.content}</Text>
                 </GridItem>
-                <GridInputItem
-                    fieldName={item.normal}
-                    inputComponent={this.normalCheckbox(item, true)}
-                    style={tableStyle}
-                />
-                <GridInputItem
-                    fieldName={item.normal}
-                    inputComponent={this.normalCheckbox(item, false)}
-                    style={tableStyle}
-                />
-                <GridInputItem
-                    fieldName={item.misfit}
-                    inputComponent={this.misfitCheckbox(item)}
-                    style={tableStyle}
-                />
+                <GridItem {...tableStyle} justifyContent="center">
+                    {this.normalCheckbox(item, true)}
+                </GridItem>
+                <GridItem {...tableStyle} justifyContent="center">
+                    {this.normalCheckbox(item, false)}
+                </GridItem>
+                <GridItem {...tableStyle} justifyContent="center">
+                    {this.misfitCheckbox(item)}
+                </GridItem>
                 <GridInputItem
                     fieldName={item.ameliorate}
                     inputComponent={this.corpNameSelect(
@@ -159,10 +153,10 @@ export default class FormFactory {
                         ? this.formProps.setFieldValue(item.normal, target)
                         : this.formProps.setFieldValue(item.normal, null);
                     target !== true || checked !== true
-                        ? this.formProps.setFieldValue(item.ameliorate, '')
+                        ? this.formProps.setFieldValue(item.ameliorate, [])
                         : '';
                     target === true && checked === true
-                        ? this.formProps.setFieldValue(item.ameliorate, '')
+                        ? this.formProps.setFieldValue(item.ameliorate, [])
                         : '';
                 }}
             />
@@ -175,13 +169,13 @@ export default class FormFactory {
             values[item.misfit as keyof IEHSFormNormal | keyof IEHSFormSpecial];
         return (
             <Checkbox
-                isChecked={value as boolean}
+                isChecked={!!value}
                 onChange={(e) => {
                     const checked = e.target.checked;
                     this.formProps.setFieldValue(item.misfit, checked);
                     if (checked === true) {
                         this.formProps.setFieldValue(item.normal, null);
-                        this.formProps.setFieldValue(item.ameliorate, '');
+                        this.formProps.setFieldValue(item.ameliorate, []);
                     }
                 }}
             />
@@ -234,13 +228,19 @@ export default class FormFactory {
         const target = this.formProps.values[field] as
             | IEHSFormTargetInItem[]
             | IEHSCheckTarget[];
+        const code = field.replace('Ameliorate', '');
+        const disabled =
+            field === 'checkTarget'
+                ? false
+                : this.handler.isAmeliorateDisabled(
+                      this.formProps.values as IEHSFormNormal | IEHSFormSpecial,
+                      code
+                  );
         const options = this.data.searchName.map((name, index) => (
             <Checkbox
                 key={`${field}-corpName-${index}`}
                 size={'sm'}
-                isChecked={target?.some((i) => {
-                    i.corpName === name;
-                })}
+                isChecked={target?.some((i) => i.corpName === name)}
                 onChange={(e) =>
                     field === 'checkTarget'
                         ? this.handleCheckTargetOnChange(e, name)
@@ -257,6 +257,7 @@ export default class FormFactory {
                         size={'sm'}
                         w={'100%'}
                         variant={'outline'}
+                        isDisabled={disabled}
                         onClick={() => {
                             onToggle();
                         }}
