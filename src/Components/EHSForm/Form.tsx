@@ -25,7 +25,7 @@ import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
-import SignaturePad from '../Shared/Signature/Pad';
+import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
