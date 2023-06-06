@@ -3,15 +3,23 @@ import { FieldArrayRenderProps } from 'formik';
 import React from 'react';
 import Webcam from 'react-webcam';
 
-const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: 'user',
+type TVideoConstraints = {
+    width: number;
+    height: number;
+    facingMode: string | {};
 };
 
 export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
     const { arrayHelper } = props;
     const [capturing, setCapturing] = React.useState<boolean>(false);
+
+    const [videoConstraints, setVideoConstraints] =
+        React.useState<TVideoConstraints>({
+            width: 1280,
+            height: 720,
+            facingMode: { exact: 'environment' },
+        });
+
     const webcamRef = React.useRef<Webcam>(null);
     const capture = React.useCallback(() => {
         setCapturing(true);
@@ -29,7 +37,6 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
             });
         setTimeout(() => setCapturing(false), 500);
     }, [webcamRef]);
-
     return (
         <Flex
             direction={'column'}
@@ -45,8 +52,14 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
                 audio={false}
                 height={720}
                 width={1280}
-                screenshotFormat="image/jpeg"
+                screenshotFormat="image/webp"
                 videoConstraints={videoConstraints}
+                onUserMediaError={() => {
+                    setVideoConstraints((prev) => ({
+                        ...prev,
+                        facingMode: 'user',
+                    }));
+                }}
             />
             <Button
                 variant={'whiteOutline'}

@@ -57,7 +57,11 @@ export default function UploaderList(props: {
             w={'100%'}
         >
             <Camera arrayHelper={arrayHelper} />
-            <Button variant={'buttonBlueSolid'} type="submit">
+            <Button
+                variant={'buttonBlueSolid'}
+                type="submit"
+                isLoading={formProps.isSubmitting}
+            >
                 確認上傳
             </Button>
             {formProps.values.content.map(({ src }, index) => (
