@@ -103,6 +103,7 @@ export default function UploaderForm(props: {
                         <Field name={`content.${index}.category`}>
                             {({ field }: any) => (
                                 <InputPicker
+                                    placement={'autoVerticalStart'}
                                     {...field}
                                     style={optionsStyle}
                                     creatable
@@ -148,6 +149,7 @@ export default function UploaderForm(props: {
                         <Field name={`content.${index}.date`}>
                             {({ field }: any) => (
                                 <DatePicker
+                                    placement={'autoVerticalStart'}
                                     {...field}
                                     style={optionsStyle}
                                     format={'yyyy/MM/dd'}
@@ -179,6 +181,7 @@ export default function UploaderForm(props: {
                         <Field name={`content.${index}.location`}>
                             {({ field }: any) => (
                                 <InputPicker
+                                    placement={'autoVerticalStart'}
                                     {...field}
                                     style={optionsStyle}
                                     creatable
