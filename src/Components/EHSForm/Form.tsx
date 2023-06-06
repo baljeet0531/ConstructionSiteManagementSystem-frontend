@@ -19,7 +19,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, EditIcon } from '../../Icons/Icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
@@ -44,10 +44,12 @@ export default function EHSForm({
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<IEHSFormData>({
         searchName: [],
+        selectedCorp: {},
     });
+    const [signList, setSignList] = useState<string[]>([]);
     const rowCount = handler.getRowCount();
     const toast = useToast();
-    const f = new FormFactory(formProps, type, handler, data);
+    const f = new FormFactory(formProps, type, handler, data, setData);
     useQuery(handler.query, {
         variables: {
             siteId: handler.siteId,
@@ -57,6 +59,10 @@ export default function EHSForm({
         onCompleted: (d) => {
             setData({
                 searchName: d.searchName,
+                selectedCorp: d.searchName.reduce(
+                    (acc: Object, cur: string) => ({ ...acc, [cur]: [] }),
+                    {}
+                ),
             });
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
@@ -72,6 +78,18 @@ export default function EHSForm({
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        const updateList = [];
+        for (const [key, value] of Object.entries(data.selectedCorp)) {
+            if (value.length > 0) {
+                updateList.push(key);
+            }
+        }
+        setSignList(updateList);
+    }, [data.selectedCorp]);
+
+    console.log(signList);
 
     return (
         <Form>

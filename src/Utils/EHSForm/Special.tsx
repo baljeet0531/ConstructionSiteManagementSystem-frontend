@@ -1,8 +1,5 @@
 import { gql } from '@apollo/client';
-import {
-    IEHSFormFillItem,
-    SignaturesStateItem,
-} from '../../Interface/EHSForm/Common';
+import { IEHSFormFillItem } from '../../Interface/EHSForm/Common';
 import {
     IEHSFormSpecial,
     SpecialGroupKey,
@@ -12,7 +9,10 @@ import {
     EHSFORM_IN_ITEM_FIELDS,
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
-import { SignatureStateItem } from '../../Interface/Signature';
+import {
+    MultiSignatureStateItem,
+    SignatureStateItem,
+} from '../../Interface/Signature';
 
 interface IEHSFormSpecialItem extends IEHSFormFillItem {
     normal: keyof IEHSFormSpecial;
@@ -1737,7 +1737,7 @@ export class EHSFormSpecialHandler extends EHSFormHandler<IEHSFormSpecial> {
         siteId: string,
         number: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: SignaturesStateItem
+        responsibleSignatures: MultiSignatureStateItem
     ) {
         super(siteId, number, supervisorSignature, responsibleSignatures);
     }

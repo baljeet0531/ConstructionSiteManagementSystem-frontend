@@ -31,7 +31,7 @@ import {
 } from './Styles';
 import { ChevronDownIcon } from '../../Icons/Icons';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
-import { Fragment, ChangeEvent } from 'react';
+import { Fragment, ChangeEvent, Dispatch, SetStateAction } from 'react';
 import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
@@ -41,17 +41,20 @@ export default class FormFactory {
     type: EHSFormName;
     handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>;
     data: IEHSFormData;
+    setData: Dispatch<SetStateAction<IEHSFormData>>;
 
     constructor(
         formProps: FormikProps<IEHSForm>,
         type: EHSFormName,
         handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>,
-        data: IEHSFormData
+        data: IEHSFormData,
+        setData: Dispatch<SetStateAction<IEHSFormData>>
     ) {
         this.formProps = formProps;
         this.type = type;
         this.handler = handler;
         this.data = data;
+        this.setData = setData;
     }
     input(props: InputProps) {
         return (
@@ -94,6 +97,7 @@ export default class FormFactory {
                         justifyContent="center"
                         letterSpacing="0.5em"
                         textAlign="center"
+                        pl={'10px'}
                     >
                         <Text w="60px">{subtitle[0]}</Text>
                         <Text w="40px">{subtitle[1]}</Text>
@@ -208,20 +212,31 @@ export default class FormFactory {
     ) {
         const checked = e.target.checked;
         const target = this.formProps.values[field] as IEHSFormTargetInItem[];
+        const code = field.replace('Ameliorate', '');
+        let selectedList = this.data.selectedCorp[name];
         if (checked) {
             const selected = {
                 corpName: name,
                 siteId: this.formProps.values.siteId,
                 day: this.formProps.values.day,
-                code: field.replace('Ameliorate', ''),
+                code: code,
             };
             this.formProps.setFieldValue(field, [...(target ?? []), selected]);
+            selectedList.push(code);
         } else {
             this.formProps.setFieldValue(
                 field,
                 target.filter((target) => target.corpName !== name)
             );
+            selectedList = selectedList.filter((i) => i !== code);
         }
+        this.setData({
+            ...this.data,
+            selectedCorp: {
+                ...this.data.selectedCorp,
+                [name]: selectedList,
+            },
+        });
     }
     corpNameSelect(field: keyof IEHSForm) {
         const { onToggle } = useDisclosure();

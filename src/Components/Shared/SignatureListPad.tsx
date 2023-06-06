@@ -12,6 +12,8 @@ import {
     Box,
     Text,
     useDisclosure,
+    Grid,
+    GridItem,
 } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
@@ -33,6 +35,7 @@ export default function SignatureListPad({
     idx,
     h = '100%',
     showTime = true,
+    leftBottomComponent = <></>,
     placeHolderText = '請簽核',
     disable = false,
 }: {
@@ -42,6 +45,7 @@ export default function SignatureListPad({
     idx: number;
     h?: string;
     showTime?: boolean;
+    leftBottomComponent?: React.ReactNode;
     placeHolderText?: string;
     disable?: boolean;
 }) {
@@ -146,11 +150,21 @@ export default function SignatureListPad({
                 ) : (
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
-                {showTime && (
-                    <Text pr="4px" w="100%" fontSize="0.75rem" align="right">
-                        {getDatetimeString()}
-                    </Text>
-                )}
+                <Grid templateColumns={'1fr 1fr'}>
+                    <GridItem>{leftBottomComponent}</GridItem>
+                    <GridItem>
+                        {showTime && (
+                            <Text
+                                pr="4px"
+                                w="100%"
+                                fontSize="0.75rem"
+                                align="right"
+                            >
+                                {getDatetimeString()}
+                            </Text>
+                        )}
+                    </GridItem>
+                </Grid>
             </Box>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
