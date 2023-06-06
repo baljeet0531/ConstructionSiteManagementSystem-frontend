@@ -30,6 +30,7 @@ import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 import { SingleSignatureHandler } from '../../Utils/Signature/Single';
+import { ObjectSignatureHandler } from '../../Utils/Signature/Object';
 
 export default function EHSForm({
     formProps,
@@ -79,6 +80,38 @@ export default function EHSForm({
         },
         fetchPolicy: 'network-only',
     });
+    const signListComponent = signList.map((corpName, index) => {
+        return (
+            <GridItem
+                key={`responsible-sign-${index}`}
+                {...baseStyle}
+                h="150px"
+                colStart={(index % 3) + 1}
+                colEnd={(index % 3) + 2}
+                rowStart={Math.floor(index / 3) + 2}
+                rowEnd={Math.floor(index / 3) + 3}
+            >
+                <SignaturePad
+                    title={`缺失責任單位 - ${corpName}`}
+                    signatureName={`responsible-sign-${index}.jpg`}
+                    handler={
+                        new ObjectSignatureHandler(
+                            handler.responsibleSignatures
+                        )
+                    }
+                    index={corpName}
+                    placeHolderText={corpName}
+                    showTime={true}
+                    leftBottomComponent={
+                        <Text w="100%" fontSize="0.75rem" align="left">
+                            {corpName}
+                        </Text>
+                    }
+                    disable={!!handler.responsibleSignatures[0][corpName]?.no}
+                />
+            </GridItem>
+        );
+    });
 
     useEffect(() => {
         const updateList = [];
@@ -89,8 +122,6 @@ export default function EHSForm({
         }
         setSignList(updateList);
     }, [data.selectedCorp]);
-
-    console.log(signList);
 
     return (
         <Form>
@@ -271,6 +302,7 @@ export default function EHSForm({
                     <GridItem colStart={4} colEnd={5}>
                         <Text>MIC監工單位：</Text>
                     </GridItem>
+                    {signListComponent}
                     <GridItem
                         {...baseStyle}
                         h="150px"
