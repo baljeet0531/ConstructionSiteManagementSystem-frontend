@@ -7,36 +7,48 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    Image,
     Button,
     Box,
     Text,
-    Image,
     useDisclosure,
+    Grid,
+    GridItem,
 } from '@chakra-ui/react';
-import { RepeatIcon } from '@chakra-ui/icons';
 import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
-import { SignatureStateItem } from '../../Interface/Signature';
 import dayjs from 'dayjs';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { SignatureHandler } from '../../../Utils/Signature/Abstract';
+
+const buttonStyle = {
+    border: '2px solid #919AA9',
+    backgroundColor: 'white',
+    color: '#667080',
+    size: 'sm',
+};
 
 export default function SignaturePad({
     title,
     signatureName,
-    state,
+    handler,
+    index = undefined,
     h = '100%',
     showTime = true,
+    leftBottomComponent = <></>,
     placeHolderText = '請簽核',
     disable = false,
 }: {
     title: string;
     signatureName: string;
-    state: SignatureStateItem;
+    handler: SignatureHandler<any>;
+    index?: number | string | undefined;
     h?: string;
     showTime?: boolean;
+    leftBottomComponent?: React.ReactNode;
     placeHolderText?: string;
     disable?: boolean;
 }) {
-    const [signature, setSignature] = state;
     const sigCanvas = useRef() as React.MutableRefObject<SignatureCanvas>;
     const [imageURL, setImageURL] = useState<string>('');
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,48 +70,59 @@ export default function SignaturePad({
             return srcCanvas;
         }
     };
-    const clearPad = () => sigCanvas.current.clear();
-    const removeSignature = () => {
-        setSignature(undefined);
-    };
+    const clear = () => sigCanvas.current.clear();
+
     const save = async () => {
         if (sigCanvas.current.isEmpty()) {
-            removeSignature();
+            handler.removeSignature(index);
             onClose();
             return;
         }
         const canvas = sigCanvas.current.getTrimmedCanvas();
         const base64string = fillBackground(canvas).toDataURL();
         const blob = await fetch(base64string).then((res) => res.blob());
-        setSignature({
+        const new_item = {
             no: undefined,
             image: new File([blob], signatureName),
             time: dayjs(),
             owner: new Cookies().get('username'),
-        });
+        };
+        // if (signatures[idx]) {
+        //     const arr = [...signatures];
+        //     arr[idx] = new_item;
+        //     setSignatures(arr);
+        // } else {
+        //     setSignatures([...signatures, new_item]);
+        // }
+        handler.setSignature(index, new_item);
         onClose();
-    };
-    const buttonStyle = {
-        border: '2px solid #919AA9',
-        backgroundColor: 'white',
-        color: '#667080',
-        size: 'sm',
     };
 
     useEffect(() => {
-        if (signature && signature.image) {
-            setImageURL(URL.createObjectURL(signature.image as File));
+        const sign = handler.getSignature(index);
+        if (sign && sign.image) {
+            setImageURL(URL.createObjectURL(sign.image as File));
         }
-    }, [signature]);
+    }, [handler.getSignature(index)]);
+
+    const getDatetimeString = () => {
+        if (handler.getSignature(index)) {
+            const dt = handler.getSignature(index)?.time as dayjs.Dayjs;
+            return dt.format('YYYY-MM-DD HH:mm');
+        } else {
+            return '';
+        }
+    };
 
     return (
         <>
-            {signature?.image && !signature?.no ? (
+            {/* {signatures[idx]?.image && !signatures[idx]?.no ? ( */}
+            {handler.canDelete(index) ? (
                 <RepeatIcon
                     boxSize={4}
                     mt="4px"
                     ml="4px"
-                    onClick={removeSignature}
+                    onClick={() => handler.removeSignature(index)}
                     alignSelf="start"
                 />
             ) : (
@@ -107,34 +130,39 @@ export default function SignaturePad({
             )}
             <Box
                 w="100%"
-                h={signature?.image ? h : '100%'}
+                h={h}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 flexDirection="column"
                 onClick={disable ? () => {} : onOpen}
             >
-                {signature?.image ? (
+                {/* {signatures[idx]?.image ? ( */}
+                {handler.hasImage(index) ? (
                     <Image
                         src={imageURL}
                         flex="1 1 auto"
-                        maxH="75%"
+                        h="75%"
                         fit="contain"
-                        onLoad={(e) => {
-                            const image = e.target as HTMLImageElement;
-                            URL.revokeObjectURL(image.src);
-                        }}
                     />
                 ) : (
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
-                {showTime && (
-                    <Text pr="4px" fontSize="1rem" alignSelf="end">
-                        {signature?.time
-                            ? signature.time.format('YYYY-MM-DD HH:mm')
-                            : ''}
-                    </Text>
-                )}
+                <Grid templateColumns={'1fr 1fr'}>
+                    <GridItem>{leftBottomComponent}</GridItem>
+                    <GridItem>
+                        {showTime && (
+                            <Text
+                                pr="4px"
+                                w="100%"
+                                fontSize="0.75rem"
+                                align="right"
+                            >
+                                {getDatetimeString()}
+                            </Text>
+                        )}
+                    </GridItem>
+                </Grid>
             </Box>
             <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
@@ -166,7 +194,7 @@ export default function SignaturePad({
                         <Button onClick={onClose} {...buttonStyle}>
                             取消新增
                         </Button>
-                        <Button onClick={clearPad} {...buttonStyle}>
+                        <Button onClick={clear} {...buttonStyle}>
                             清除
                         </Button>
                         <Button

@@ -25,10 +25,11 @@ import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
-import SignaturePad from '../Shared/SignaturePad';
+import SignaturePad from '../Shared/Signature/Pad';
 import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
+import { SingleSignatureHandler } from '../../Utils/Signature/Single';
 
 export default function EHSForm({
     formProps,
@@ -281,7 +282,11 @@ export default function EHSForm({
                         <SignaturePad
                             title="MIC監工單位"
                             signatureName="supervisor-unit-signature.png"
-                            state={handler.supervisorSignature}
+                            handler={
+                                new SingleSignatureHandler(
+                                    handler.supervisorSignature
+                                )
+                            }
                             placeHolderText="簽名"
                             showTime={true}
                             disable={!!handler.supervisorSignature[0]?.no}

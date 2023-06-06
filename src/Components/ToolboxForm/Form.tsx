@@ -16,7 +16,7 @@ import {
     MultiSignatureStateItem,
     SignatureStateItem,
 } from '../../Interface/Signature';
-import SignaturePad from '../Shared/SignaturePad';
+import SignaturePad from '../Shared/Signature/Pad';
 import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,
@@ -37,6 +37,7 @@ import {
 import SignatureTable from './SignatureTable';
 import { GQL_TOOLBOX_QUERY, parseToolbox } from './GQL';
 import { FormLoading } from '../Shared/Loading';
+import { SingleSignatureHandler } from '../../Utils/Signature/Single';
 
 export default function ToolboxForm({
     formProps,
@@ -961,8 +962,10 @@ export default function ToolboxForm({
                             <SignaturePad
                                 title="施工前 - 簽名"
                                 signatureName="before-work-signature.png"
-                                state={
-                                    signatures.contractingCorpStaffSignatureFirst
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.contractingCorpStaffSignatureFirst
+                                    )
                                 }
                                 placeHolderText="承商人員"
                                 showTime={false}
@@ -987,8 +990,10 @@ export default function ToolboxForm({
                             <SignaturePad
                                 title="施工中 - 簽名"
                                 signatureName="during-work-signature.png"
-                                state={
-                                    signatures.contractingCorpStaffSignatureSecond
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.contractingCorpStaffSignatureSecond
+                                    )
                                 }
                                 placeHolderText="承商人員"
                                 showTime={false}
@@ -1014,8 +1019,10 @@ export default function ToolboxForm({
                             <SignaturePad
                                 title="放工前 - 簽名"
                                 signatureName="knock-off-signature.png"
-                                state={
-                                    signatures.contractingCorpStaffSignatureThird
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.contractingCorpStaffSignatureThird
+                                    )
                                 }
                                 placeHolderText="承商人員"
                                 showTime={false}
@@ -1041,7 +1048,11 @@ export default function ToolboxForm({
                             <SignaturePad
                                 title="監工單位 - 簽名"
                                 signatureName="knock-off-signature.png"
-                                state={signatures.systemEngineerSignature}
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.systemEngineerSignature
+                                    )
+                                }
                                 placeHolderText="系統工程師"
                                 showTime={false}
                                 h="90%"
