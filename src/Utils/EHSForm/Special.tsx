@@ -10,7 +10,7 @@ import {
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
 import {
-    MultiSignatureStateItem,
+    ObjectSignatureStateItem,
     SignatureStateItem,
 } from '../../Interface/Signature';
 
@@ -1737,7 +1737,7 @@ export class EHSFormSpecialHandler extends EHSFormHandler<IEHSFormSpecial> {
         siteId: string,
         number: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: MultiSignatureStateItem
+        responsibleSignatures: ObjectSignatureStateItem
     ) {
         super(siteId, number, supervisorSignature, responsibleSignatures);
     }

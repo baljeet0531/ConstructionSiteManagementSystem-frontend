@@ -148,8 +148,10 @@ export default function SignaturePad({
                 ) : (
                     <Text color="#66708080">{placeHolderText}</Text>
                 )}
-                <Grid templateColumns={'1fr 1fr'}>
-                    <GridItem>{leftBottomComponent}</GridItem>
+                <Grid w="100%" templateColumns={'1fr 1fr'}>
+                    <GridItem>
+                        {handler.hasImage(index) && leftBottomComponent}
+                    </GridItem>
                     <GridItem>
                         {showTime && (
                             <Text
