@@ -1,13 +1,13 @@
-import { Button, Flex, useToast } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { FieldArrayRenderProps } from 'formik';
 import React from 'react';
 import Webcam from 'react-webcam';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
 
 type TVideoConstraints = {
-    width: number;
-    height: number;
-    facingMode: string | {};
+    facingMode:
+        | string
+        | string[]
+        | { exact?: string | string[]; ideal?: string | string[] };
 };
 
 export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
@@ -16,11 +16,9 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
 
     const [videoConstraints, setVideoConstraints] =
         React.useState<TVideoConstraints>({
-            width: 1280,
-            height: 720,
             facingMode: { exact: 'environment' },
         });
-    const toast = useToast();
+
     const webcamRef = React.useRef<Webcam>(null);
     const capture = React.useCallback(() => {
         setCapturing(true);
@@ -56,16 +54,9 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
                 screenshotFormat="image/webp"
                 videoConstraints={videoConstraints}
                 onUserMediaError={() => {
-                    if (videoConstraints.facingMode === 'user') {
-                        defaultErrorToast(
-                            toast,
-                            '無法取得相機資訊，請允許權限或稍後重試'
-                        );
-                    }
-                    setVideoConstraints((prev) => ({
-                        ...prev,
+                    setVideoConstraints({
                         facingMode: 'user',
-                    }));
+                    });
                 }}
             />
             <Button
