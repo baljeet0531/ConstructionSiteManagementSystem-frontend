@@ -27,6 +27,8 @@ import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
 import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
+import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
+import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 
 export default function EHSForm({
     formProps,
@@ -36,7 +38,7 @@ export default function EHSForm({
 }: {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
-    handler: EHSFormHandler;
+    handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>;
     onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
