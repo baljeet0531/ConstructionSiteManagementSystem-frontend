@@ -124,6 +124,10 @@ export default function PhotoUploaderFormik(props: {
                                     defaultSuccessToast(toast, message);
                                 }
                                 actions.setSubmitting(false);
+                                actions.setValues((values) => ({
+                                    ...values,
+                                    content: [],
+                                }));
                             },
                             onError: (err) => {
                                 console.log(err);
