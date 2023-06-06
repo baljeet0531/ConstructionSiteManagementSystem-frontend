@@ -1,7 +1,7 @@
 import { ISignature } from '../../Interface/Signature';
 import { SignatureHandler } from './Abstract';
 
-export class SingleSignatureHandler extends SignatureHandler<ISignature> {
+export class SingleSignatureHandler extends SignatureHandler<ISignature | undefined> {
     setSignature(
         index: string | number | undefined,
         new_item: ISignature

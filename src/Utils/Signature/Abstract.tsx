@@ -2,12 +2,18 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ISignature } from '../../Interface/Signature';
 
-export abstract class SignatureHandler<T extends ISignature | [] | {}> {
-    sign: T | undefined;
-    setSign: Dispatch<SetStateAction<T | undefined>>;
+export abstract class SignatureHandler<
+    T extends
+        | ISignature
+        | ISignature[]
+        | { [key: string]: ISignature }
+        | undefined
+> {
+    sign: T;
+    setSign: Dispatch<SetStateAction<T>>;
     constructor([sign, setSign]: [
-        sign: T | undefined,
-        setSign: Dispatch<SetStateAction<T | undefined>>
+        sign: T,
+        setSign: Dispatch<SetStateAction<T>>
     ]) {
         this.sign = sign;
         this.setSign = setSign;
