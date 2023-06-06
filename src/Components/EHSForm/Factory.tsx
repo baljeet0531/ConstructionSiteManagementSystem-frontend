@@ -234,8 +234,9 @@ export default class FormFactory {
         const target = this.formProps.values[field] as
             | IEHSFormTargetInItem[]
             | IEHSCheckTarget[];
-        const options = this.data.searchName.map((name) => (
+        const options = this.data.searchName.map((name, index) => (
             <Checkbox
+                key={`${field}-corpName-${index}`}
                 size={'sm'}
                 isChecked={target?.some((i) => {
                     i.corpName === name;

@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import {
     EHSFormName,
-    IEHSForm,
     IEHSSignature,
 } from '../../Interface/EHSForm/Common';
 import EHSForm from './Form';
@@ -38,15 +37,6 @@ export default function EHSFormModal({
     onClose: () => void;
     isOpen: boolean;
 }) {
-    const initialValues: IEHSForm = {
-        siteId: siteId,
-        day: day,
-        checkDept: null,
-        checkTarget: [],
-        location: null,
-        responsibleUnitSignature: [],
-        supervisorUnitSignature: [],
-    };
     const reminderDisClosure = useDisclosure();
     const toast = useToast();
     const supervisorSignature = useState<ISignature>();
@@ -99,7 +89,7 @@ export default function EHSFormModal({
                 <ModalCloseButton position="fixed" top="12px" right="15px" />
                 <ModalBody>
                     <Formik
-                        initialValues={initialValues}
+                        initialValues={handler.getInitialValues()}
                         validateOnChange={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
