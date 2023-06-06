@@ -49,8 +49,6 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
             <Webcam
                 ref={webcamRef}
                 audio={false}
-                height={720}
-                width={1280}
                 screenshotFormat="image/webp"
                 videoConstraints={videoConstraints}
                 onUserMediaError={() => {
