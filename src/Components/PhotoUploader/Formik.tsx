@@ -1,20 +1,19 @@
 import { Field, FieldArray, Form, Formik } from 'formik';
 import React from 'react';
-import { Flex, Text, Select, Button } from '@chakra-ui/react';
-import PhotoUploadForm from './PhotoUploadForm';
-import { Camera } from './Camera';
+import { Flex, Text, Select } from '@chakra-ui/react';
 import { IAccountSite, ISiteObject } from '../../Layouts/Layout';
+import UploaderList from './UploaderList';
 
 interface IPhoto {
     image: File;
-    src: string;
     category: string;
     date: Date;
     location: string;
     description: string;
+    src: string;
 }
 
-interface IPhotoFormik {
+export interface IPhotoFormik {
     content: IPhoto[];
     siteId: string | undefined;
 }
@@ -68,7 +67,7 @@ export default function PhotoUploaderFormik(props: {
                                     {...field}
                                     onChange={(e) => {
                                         const siteId = e.target.value;
-                                        props.setFieldValue('siteId', siteId);
+                                        props.setFieldValue(field.name, siteId);
                                         localStorage.setItem('siteId', siteId);
                                         localStorage.setItem(
                                             'siteName',
@@ -82,31 +81,10 @@ export default function PhotoUploaderFormik(props: {
                         </Field>
                         <FieldArray name="content">
                             {(arrayHelper) => (
-                                <Flex
-                                    direction={'column'}
-                                    align={'center'}
-                                    justify={'center'}
-                                    gap={'10px'}
-                                    w={'100%'}
-                                >
-                                    <Camera arrayHelper={arrayHelper} />
-                                    <Button
-                                        variant={'buttonBlueSolid'}
-                                        type="submit"
-                                    >
-                                        確認上傳
-                                    </Button>
-                                    {props.values.content.map(
-                                        ({ src }, index) => (
-                                            <PhotoUploadForm
-                                                key={index}
-                                                index={index}
-                                                imageSrc={src}
-                                                arrayHelper={arrayHelper}
-                                            />
-                                        )
-                                    )}
-                                </Flex>
+                                <UploaderList
+                                    formProps={props}
+                                    arrayHelper={arrayHelper}
+                                />
                             )}
                         </FieldArray>
                     </Flex>
