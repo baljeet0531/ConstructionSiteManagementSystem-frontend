@@ -10,8 +10,6 @@ import {
 import { Cookies } from 'react-cookie';
 import PhotoUploaderFormik from './Formik';
 
-export const SiteIdContext = React.createContext<string | undefined>(undefined);
-
 export default function PhotoUploader() {
     const username: string = new Cookies().get('username');
 
