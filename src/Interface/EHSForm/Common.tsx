@@ -28,6 +28,7 @@ export interface IEHSForm {
     siteId: string;
     day: string;
     checkDept: string | null;
+    checkStaff: string | null;
     checkTarget: IEHSCheckTarget[];
     location: string | null;
     responsibleUnitSignature: IEHSSignature[] | IGQLEHSSignature[];
@@ -50,5 +51,5 @@ export interface IEHSFormFillItem {
 }
 
 export interface IEHSFormData {
-    searchName: string[]
+    searchName: string[];
 }

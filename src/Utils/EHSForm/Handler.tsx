@@ -45,6 +45,7 @@ export abstract class EHSFormHandler {
             siteId: this.siteId,
             day: this.day,
             checkDept: '',
+            checkStaff: '',
             checkTarget: [],
             location: '',
             responsibleUnitSignature: [],
@@ -58,6 +59,10 @@ export abstract class EHSFormHandler {
 
         this.setResponsibleSigns(t);
         this.setSupervisorSign(t);
+
+        if (!t.location) t.location = '';
+        if (!t.checkDept) t.checkDept = '';
+        if (!t.checkStaff) t.checkStaff = '';
 
         return t;
     }
@@ -76,6 +81,9 @@ export abstract class EHSFormHandler {
             signatureType: 'supervisor',
         };
         submitValues.supervisorUnitSignature = [sign] as IEHSSignature[];
+        if (!submitValues.checkDept) submitValues.checkDept = null;
+        if (!submitValues.checkStaff) submitValues.checkStaff = null;
+        if (!submitValues.location) submitValues.location = null;
     }
 
     setResponsibleSigns(form: IEHSForm) {
