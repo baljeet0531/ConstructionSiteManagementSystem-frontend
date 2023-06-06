@@ -1,5 +1,4 @@
 import { Button, Flex } from '@chakra-ui/react';
-import dayjs from 'dayjs';
 import { FieldArrayRenderProps } from 'formik';
 import React from 'react';
 import Webcam from 'react-webcam';
@@ -18,26 +17,17 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
         setCapturing(true);
         const src = webcamRef.current?.getScreenshot();
 
-        src
-            ? fetch(src)
-                  .then((res) => res.blob())
-                  .then((blob) => {
-                      const date = new Date();
-                      const filename = dayjs(date).toISOString();
-                      const image = new File([blob], filename, {
-                          type: 'image/png',
-                      });
-                      arrayHelper.push({
-                          image: image,
-                          src: src,
-                          category: null,
-                          date: date,
-                          location: null,
-                          description: '',
-                      });
-                      setCapturing(false);
-                  })
-            : setCapturing(false);
+        src &&
+            arrayHelper.push({
+                image: null,
+                category: null,
+                date: new Date(),
+                location: null,
+                description: '',
+                src: src,
+                rotation: 0,
+            });
+        setTimeout(() => setCapturing(false), 500);
     }, [webcamRef]);
 
     return (
