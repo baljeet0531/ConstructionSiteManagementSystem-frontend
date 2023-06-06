@@ -47,7 +47,7 @@ export default function PhotoUploaderFormik(props: {
     });
 
     const handleContents = (content: IFormikPhoto): Promise<IGQLPhoto> => {
-        const { src, rotation, date, ...rest } = content;
+        const { src, rotation, date, location, category, ...rest } = content;
 
         return new Promise((resolve) => {
             const image = new Image();
@@ -55,8 +55,14 @@ export default function PhotoUploaderFormik(props: {
             image.src = src;
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = 320;
-            canvas.height = 320;
+
+            if (rotation === 0 || rotation === 180) {
+                canvas.width = image.width;
+                canvas.height = image.height;
+            } else {
+                canvas.width = image.height;
+                canvas.height = image.width;
+            }
 
             image.onload = () => {
                 if (context) {
@@ -68,7 +74,6 @@ export default function PhotoUploaderFormik(props: {
                         -image.height / 2
                     );
                 }
-
                 canvas.toBlob((blob) => {
                     const file =
                         blob &&
@@ -80,6 +85,8 @@ export default function PhotoUploaderFormik(props: {
                         ...rest,
                         date: dayjs(date).format('YYYY-MM-DD'),
                         image: file,
+                        location: location ?? '無資訊',
+                        category: category ?? '未分類',
                     });
                 }, 'image/png');
             };
@@ -116,15 +123,20 @@ export default function PhotoUploaderFormik(props: {
                                 if (ok) {
                                     defaultSuccessToast(toast, message);
                                 }
+                                actions.setSubmitting(false);
                             },
                             onError: (err) => {
                                 console.log(err);
                                 defaultErrorToast(toast);
+                                actions.setSubmitting(false);
                             },
                         });
                     })
-                    .catch((err) => console.log(err));
-                actions.setSubmitting(false);
+                    .catch((err) => {
+                        console.log(err);
+                        defaultErrorToast(toast);
+                        actions.setSubmitting(false);
+                    });
             }}
         >
             {(props) => (
