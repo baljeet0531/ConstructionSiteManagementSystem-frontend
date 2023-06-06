@@ -15,7 +15,7 @@ import { ImageRotateIcon } from '../../Icons/Icons';
 import { FastField, Field, FieldArrayRenderProps, FormikProps } from 'formik';
 import { DatePicker, InputPicker } from 'rsuite';
 import { ItemDataType } from 'rsuite/esm/@types/common';
-import { IPhotoFormik } from './Formik';
+import { IGQLCreatePhoto } from './Formik';
 
 const optionsStyle: React.CSSProperties = {
     border: '1px solid',
@@ -32,14 +32,12 @@ export default function UploaderForm(props: {
     index: number;
     imageSrc: string;
     arrayHelper: FieldArrayRenderProps;
-    formProps: FormikProps<IPhotoFormik>;
+    formProps: FormikProps<IGQLCreatePhoto>;
     categories: ItemDataType[];
     setCategories: React.Dispatch<React.SetStateAction<ItemDataType[]>>;
     locations: ItemDataType[];
     setLocations: React.Dispatch<React.SetStateAction<ItemDataType[]>>;
 }) {
-    const [rotation, setRotation] = React.useState<number>(0);
-
     const {
         index,
         imageSrc,
@@ -72,7 +70,7 @@ export default function UploaderForm(props: {
                     h={'100%'}
                     src={imageSrc}
                     objectFit={'contain'}
-                    transform={`rotate(${rotation * 90}deg)`}
+                    transform={`rotate(${formProps.values.content[index].rotation}deg)`}
                 />
                 <IconButton
                     color={'#667080'}
@@ -85,7 +83,11 @@ export default function UploaderForm(props: {
                     bottom={0}
                     right={0}
                     onClick={() => {
-                        setRotation((prev) => (prev === 0 ? 3 : prev - 1));
+                        const prev = formProps.values.content[index].rotation;
+                        formProps.setFieldValue(
+                            `content.${index}.rotation`,
+                            prev === 0 ? 270 : prev - 90
+                        );
                     }}
                 ></IconButton>
             </Box>

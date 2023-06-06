@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { useQuery } from '@apollo/client';
-import { IPhotoFormik } from './Formik';
+import { IGQLCreatePhoto } from './Formik';
 import { FieldArrayRenderProps, FormikProps } from 'formik';
 import { Camera } from './Camera';
 import UploaderForm from './UploaderForm';
@@ -9,7 +9,7 @@ import { QUERY_IMAGE_OPTIONS } from '../Photo/PhotoCreatePage';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 
 export default function UploaderList(props: {
-    formProps: FormikProps<IPhotoFormik>;
+    formProps: FormikProps<IGQLCreatePhoto>;
     arrayHelper: FieldArrayRenderProps;
 }) {
     const { formProps, arrayHelper } = props;
