@@ -116,11 +116,11 @@ function App() {
                     path="/outsource/form/fault"
                     element={<Layout page="outsource_fault_form" />}
                 />
-                <Route path="/login" element={<Login />}></Route>
+                <Route path="/login" element={<Login />} />
                 <Route
-                    path="/photo-uploader"
+                    path="/mobile/photo-uploader"
                     element={<PhotoUploader />}
-                ></Route>
+                />
                 {/* Single Form Page is linked below */}
                 <Route
                     path="/form/work-permit"
