@@ -16,7 +16,7 @@ import {
     MultiSignatureStateItem,
     SignatureStateItem,
 } from '../../Interface/Signature';
-import SignaturePad from '../Shared/Signature/Pad';
+import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,

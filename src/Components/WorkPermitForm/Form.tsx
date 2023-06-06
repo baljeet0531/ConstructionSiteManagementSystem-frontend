@@ -19,7 +19,7 @@ import { useQuery } from '@apollo/client';
 import { EditIcon, ChevronDownIcon } from '../../Icons/Icons';
 import { SignatureStateItem } from '../../Interface/Signature';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import SignaturePad from '../Shared/Signature/Pad';
+import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
 import {
     titleStyle,

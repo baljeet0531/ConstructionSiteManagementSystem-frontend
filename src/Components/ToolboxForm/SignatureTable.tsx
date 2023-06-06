@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { SignatureListName } from '../../Interface/Toolbox';
 import { MultiSignatureStateItem } from '../../Interface/Signature';
-import SignaturePad from '../Shared/Signature/Pad';
+import SignaturePad from '../Shared/SignaturePad';
 import { ListSignatureHandler } from '../../Utils/Signature/List';
 
 const itemStyle = {

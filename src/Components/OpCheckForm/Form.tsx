@@ -17,7 +17,7 @@ import { OpCheckHandler } from '../../Utils/OpCheck/Handler';
 import { FormLoading } from '../Shared/Loading';
 import FormFactory from './Factory';
 import GridInputItem from '../Shared/GridInputItem';
-import SignaturePad from '../Shared/Signature/Pad';
+import SignaturePad from '../Shared/SignaturePad';
 import { baseStyle, filledStyle, tableStyle, unboxStyle } from './Styles';
 import { SingleSignatureHandler } from '../../Utils/Signature/Single';
 

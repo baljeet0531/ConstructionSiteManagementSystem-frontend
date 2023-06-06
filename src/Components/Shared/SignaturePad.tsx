@@ -19,7 +19,7 @@ import { Cookies } from 'react-cookie';
 import SignatureCanvas from 'react-signature-canvas';
 import dayjs from 'dayjs';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { SignatureHandler } from '../../../Utils/Signature/Abstract';
+import { SignatureHandler } from '../../Utils/Signature/Abstract';
 
 const buttonStyle = {
     border: '2px solid #919AA9',
