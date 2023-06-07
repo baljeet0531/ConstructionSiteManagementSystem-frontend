@@ -1,14 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { DocumentNode } from 'graphql';
 import {
-    MultiSignatureStateItem,
+    ISignature,
+    ObjectSignatureStateItem,
     SignatureStateItem,
-    convertSignList,
+    convertSignObject,
     convertSignature,
     getSignature,
 } from '../../Interface/Signature';
 import {
     IEHSForm,
     IEHSFormFillItem,
+    IEHSFormTargetInItem,
     IEHSSignature,
     IGQLEHSSignature,
 } from '../../Interface/EHSForm/Common';
@@ -21,24 +24,22 @@ export abstract class EHSFormHandler<
     siteId: string;
     day: string;
     supervisorSignature: SignatureStateItem;
-    responsibleSignatures: MultiSignatureStateItem;
+    responsibleSignatures: ObjectSignatureStateItem;
     abstract queryName: string;
     abstract query: DocumentNode;
     abstract mutationName: string;
     abstract mutation: DocumentNode;
-    // eslint-disable-next-line no-unused-vars
     abstract itemGroups: Record<
         string,
         { name: string; items: IEHSFormFillItem[] }
     >;
-    // eslint-disable-next-line no-unused-vars
     abstract isAmeliorateDisabled(values: C, code: string): boolean;
 
     constructor(
         siteId: string,
         day: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: MultiSignatureStateItem
+        responsibleSignatures: ObjectSignatureStateItem
     ) {
         this.siteId = siteId;
         this.day = day;
@@ -66,6 +67,16 @@ export abstract class EHSFormHandler<
         this.setResponsibleSigns(t);
         this.setSupervisorSign(t);
 
+        let key: keyof typeof t;
+        for (key in t) {
+            if (key.includes('Ameliorate') && t[key] !== null) {
+                const target = t[key] as [];
+                target.map((item) => {
+                    delete item['__typename'];
+                });
+            }
+        }
+
         if (!t.location) t.location = '';
         if (!t.checkDept) t.checkDept = '';
         if (!t.checkStaff) t.checkStaff = '';
@@ -74,19 +85,27 @@ export abstract class EHSFormHandler<
     }
 
     marshal(submitValues: IEHSForm) {
-        const [signatureList] = this.responsibleSignatures;
-        submitValues.responsibleUnitSignature = convertSignList(
-            signatureList
-        ) as IEHSSignature[];
-
+        const [signatureObj] = this.responsibleSignatures;
+        const updateObj = convertSignObject(signatureObj);
+        const signList: IEHSSignature[] = [];
+        for (let key in updateObj) {
+            const sign = updateObj[key] as ISignature;
+            signList.push({
+                ...sign,
+                corpName: key,
+                day: submitValues.day,
+            });
+        }
+        submitValues.responsibleUnitSignature = signList;
         const [signature] = this.supervisorSignature;
-        const sign = {
-            ...convertSignature(signature),
-            corpName: '',
-            day: submitValues.day,
-            signatureType: 'supervisor',
-        };
-        submitValues.supervisorUnitSignature = [sign] as IEHSSignature[];
+        if (signature) {
+            const sign = {
+                ...convertSignature(signature),
+                corpName: '',
+                day: submitValues.day,
+            };
+            submitValues.supervisorUnitSignature = [sign] as IEHSSignature[];
+        }
         if (!submitValues.checkDept) submitValues.checkDept = null;
         if (!submitValues.checkStaff) submitValues.checkStaff = null;
         if (!submitValues.location) submitValues.location = null;
@@ -106,12 +125,15 @@ export abstract class EHSFormHandler<
                         ...sign,
                         day: GQLsign.day,
                         corpName: GQLsign.corpName,
-                        signatureType: GQLsign.signatureType,
                     });
                 }
             };
             getSignList().then(() => {
-                setSignature(signs);
+                const newObj: { [key: string]: ISignature } = {};
+                signs.forEach((sign) => {
+                    newObj[sign.corpName] = sign;
+                });
+                setSignature(newObj);
             });
         }
     }
@@ -134,5 +156,26 @@ export abstract class EHSFormHandler<
             count += this.itemGroups[group].items.length;
         }
         return count;
+    }
+
+    getSelectedCorp(
+        values: C,
+        searchName: string[]
+    ): { [key: string]: string[] } {
+        const target = searchName.reduce(
+            (acc, cur) => ({ ...acc, [cur]: [] }),
+            {}
+        ) as { [key: string]: string[] };
+
+        let key: keyof C;
+        for (key in values) {
+            if (key.includes('Ameliorate') && values[key]) {
+                const list = values[key] as IEHSFormTargetInItem[];
+                list.map((item) => {
+                    target[item.corpName].push(item.code);
+                });
+            }
+        }
+        return target;
     }
 }
