@@ -44,3 +44,25 @@ export const WORKITEM_FIELDS = gql`
         __typename
     }
 `;
+
+export const EHSFORM_SIGNATURE_FIELDS = gql`
+    fragment gqlSafetyCheckSignatureFields on gqlSafetyCheckSignature {
+        no
+        siteId
+        day
+        owner
+        path
+        time
+        signatureType
+        __typename
+    }
+`;
+
+export const EHSFORM_IN_ITEM_FIELDS = gql`
+    fragment gqlSafetyCheckTargetInItemFields on gqlSafetyCheckTargetInItem {
+        siteId
+        day
+        code
+        corpName
+    }
+`;
