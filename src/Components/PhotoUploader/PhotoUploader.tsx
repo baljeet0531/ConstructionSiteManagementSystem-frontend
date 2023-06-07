@@ -11,7 +11,6 @@ import { Cookies } from 'react-cookie';
 import PhotoUploaderFormik from './Formik';
 
 export default function PhotoUploader() {
-    const [render, setRender] = React.useState<boolean>(false);
 
     const username: string = new Cookies().get('username');
 
@@ -48,15 +47,7 @@ export default function PhotoUploader() {
         },
     });
 
-    React.useEffect(() => {
-        const rerender = () => setRender(!render);
-
-        const mediaQuery = window.matchMedia('(orientation: landscape)');
-        mediaQuery.addEventListener('change', rerender);
-        return () => {
-            mediaQuery.removeEventListener('change', rerender);
-        };
-    }, []);
+    
 
     return (
         <Flex
