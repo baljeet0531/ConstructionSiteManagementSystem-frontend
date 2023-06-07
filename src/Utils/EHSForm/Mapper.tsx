@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import {
     EHSFormName,
-    SignatureName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
+import { SignatureStateItem } from '../../Interface/Signature';
 import { EHSFormHandler } from './Handler';
 import { EHSFormNormalHandler } from './Normal';
 import { EHSFormSpecialHandler } from './Special';
@@ -11,7 +11,8 @@ import { EHSFormSpecialHandler } from './Special';
 type EHSFormConstructor = new (
     siteId: string,
     day: string,
-    signatures: Record<SignatureName, SignaturesStateItem>
+    supervisorSignature: SignatureStateItem,
+    responsibleSignatures: SignaturesStateItem
 ) => EHSFormHandler;
 
 type EHSFormMapItem = {

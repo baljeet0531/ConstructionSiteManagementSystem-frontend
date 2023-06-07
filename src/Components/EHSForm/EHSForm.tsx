@@ -14,7 +14,7 @@ export default function EHSForm() {
             <EHSFormModal
                 siteId={'M522C0008'}
                 day={'2023-06-03'}
-                type={'normal'}
+                type={'special'}
                 onClose={onClose}
                 isOpen={isOpen}
             />
