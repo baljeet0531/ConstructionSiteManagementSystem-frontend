@@ -14,6 +14,10 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
     const { arrayHelper } = props;
     const [capturing, setCapturing] = React.useState<boolean>(false);
 
+    const [orientation, setOrientation] = React.useState<
+        'portrait' | 'landscape'
+    >('portrait');
+
     const [videoConstraints, setVideoConstraints] =
         React.useState<TVideoConstraints>({
             facingMode: { exact: 'environment' },
@@ -36,6 +40,22 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
             });
         setTimeout(() => setCapturing(false), 500);
     }, [webcamRef]);
+
+    React.useEffect(() => {
+        const handleOrientationChange = (e: MediaQueryListEvent) => {
+            const t = e.currentTarget as MediaQueryList;
+            t.matches
+                ? setOrientation('landscape')
+                : setOrientation('portrait');
+        };
+
+        const mediaQuery = window.matchMedia('(orientation: landscape)');
+        mediaQuery.addEventListener('change', handleOrientationChange);
+        return () => {
+            mediaQuery.removeEventListener('change', handleOrientationChange);
+        };
+    }, []);
+
     return (
         <Flex
             direction={'column'}
@@ -47,6 +67,7 @@ export function Camera(props: { arrayHelper: FieldArrayRenderProps }) {
             borderRadius={'20px'}
         >
             <Webcam
+                key={`${orientation}`}
                 ref={webcamRef}
                 audio={false}
                 screenshotFormat="image/webp"
