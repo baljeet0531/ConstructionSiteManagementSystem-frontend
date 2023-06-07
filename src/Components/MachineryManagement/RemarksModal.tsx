@@ -23,8 +23,9 @@ export default function RemarksTable(props: {
     isOpen: boolean;
     onClose: () => void;
     info: IMachinery;
+    readOnly: boolean;
 }) {
-    const { isOpen, onClose, info } = props;
+    const { isOpen, onClose, info, readOnly } = props;
     const { inspectionNo, siteId, remarks } = info;
     const [editable, setEditable] = React.useState<boolean>(false);
     const [originText, setOriginText] = React.useState<string>(
@@ -97,17 +98,19 @@ export default function RemarksTable(props: {
                             >
                                 備註
                             </Text>
-                            <IconButton
-                                size={'xs'}
-                                h={'20px'}
-                                color={'#667080'}
-                                bg={'#FFFFFF'}
-                                aria-label="edit remarks"
-                                icon={<EditIcon />}
-                                onClick={() => {
-                                    setEditable(true);
-                                }}
-                            />
+                            {!readOnly && (
+                                <IconButton
+                                    size={'xs'}
+                                    h={'20px'}
+                                    color={'#667080'}
+                                    bg={'#FFFFFF'}
+                                    aria-label="edit remarks"
+                                    icon={<EditIcon />}
+                                    onClick={() => {
+                                        setEditable(true);
+                                    }}
+                                />
+                            )}
                         </Flex>
                         <Textarea
                             ref={remarksRef}
