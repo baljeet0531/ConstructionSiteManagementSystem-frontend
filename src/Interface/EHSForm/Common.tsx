@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
 import { IGQLSignature, ISignature } from '../Signature';
 
 export type EHSFormName = 'normal' | 'special';
@@ -13,11 +12,6 @@ export interface IEHSSignature extends ISignature, IEHSSignatureCommon {}
 
 export interface IGQLEHSSignature extends IGQLSignature, IEHSSignatureCommon {}
 
-export type SignaturesStateItem = [
-    IEHSSignature[],
-    Dispatch<SetStateAction<IEHSSignature[]>>
-];
-
 export interface IEHSCheckTarget {
     siteId: string;
     day: string;
@@ -28,6 +22,7 @@ export interface IEHSForm {
     siteId: string;
     day: string;
     checkDept: string | null;
+    checkStaff: string | null;
     checkTarget: IEHSCheckTarget[];
     location: string | null;
     responsibleUnitSignature: IEHSSignature[] | IGQLEHSSignature[];
@@ -47,4 +42,9 @@ export interface IEHSFormFillItem {
     normal: string;
     misfit: string;
     ameliorate: string;
+}
+
+export interface IEHSFormData {
+    searchName: string[];
+    selectedCorp: { [key: string]: string[] };
 }
