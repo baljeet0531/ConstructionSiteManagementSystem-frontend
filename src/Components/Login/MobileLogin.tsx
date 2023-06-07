@@ -1,17 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Text, Flex, Center, Box } from '@chakra-ui/react';
 import { MICIcon } from '../../Icons/Icons';
 import Background from '../../Images/BlueLoginBackground.svg';
 import LoginForm from './LoginForm';
-// import { VERSION } from '../../Constants/EnvConstants';
+import { VERSION } from '../../Constants/EnvConstants';
 
 export default function MobileLogin() {
     return (
         <Center w="100vw" h="100vh" backgroundImage={`url(${Background})`}>
             <Flex
                 w={'300px'}
-                h={'386px'}
                 borderRadius="30px"
                 background="#FFFFFF"
                 direction={'column'}
@@ -47,6 +45,7 @@ export default function MobileLogin() {
                 <Flex direction={'column'} padding={'31px 65px'}>
                     <LoginForm mode={'mobile'} />
                 </Flex>
+                <Text textAlign={'center'}>版本：{VERSION}</Text>
             </Flex>
         </Center>
     );

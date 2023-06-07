@@ -18,6 +18,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout page="dashboard" />} />
+                <Route path="/mobile/" element={<PhotoUploader />} />
                 <Route
                     path="/dashboard"
                     element={<Layout page="dashboard" />}
@@ -118,7 +119,7 @@ function App() {
                     element={<Layout page="outsource_fault_form" />}
                 />
                 <Route path="/login" element={<Login />} />
-                <Route path="mobile/login" element={<MobileLogin />} />
+                <Route path="/mobile/login" element={<MobileLogin />} />
                 <Route
                     path="/mobile/photo-uploader"
                     element={<PhotoUploader />}
