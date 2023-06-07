@@ -328,8 +328,16 @@ export function getFeatureMap(site: {
         outsource_machinery_establishment: {
             name: '機具清單建置',
             path: '/outsource/machinery/establishment',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <MachineryEstablishment
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_fault_form: {
             name: '工安缺失單',

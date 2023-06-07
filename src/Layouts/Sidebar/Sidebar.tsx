@@ -26,6 +26,7 @@ import { useCookies } from 'react-cookie';
 import { VERSION } from '../../Constants/EnvConstants';
 import { TODO_LIST } from '../../Components/Dashboard/TodoList';
 import { useLazyQuery } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -55,6 +56,7 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
+    const navigate = useNavigate();
     const [, , removeCookie] = useCookies(['jwt', 'username']);
 
     const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
@@ -161,7 +163,7 @@ export default function Sidebar(props: {
                             path: '/',
                             secure: false,
                         });
-                        window.location.href = '/login';
+                        navigate('/login');
                     }}
                 >
                     登出
