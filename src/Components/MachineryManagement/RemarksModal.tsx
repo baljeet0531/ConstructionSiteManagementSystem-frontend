@@ -23,10 +23,11 @@ export default function RemarksTable(props: {
     isOpen: boolean;
     onClose: () => void;
     info: IMachinery;
+    editable: boolean;
 }) {
-    const { isOpen, onClose, info } = props;
+    const { isOpen, onClose, info, editable } = props;
     const { inspectionNo, siteId, remarks } = info;
-    const [editable, setEditable] = React.useState<boolean>(false);
+    const [editMode, setEditMode] = React.useState<boolean>(false);
     const [originText, setOriginText] = React.useState<string>(
         remarks.text || ''
     );
@@ -78,7 +79,7 @@ export default function RemarksTable(props: {
         <Modal
             isOpen={isOpen}
             onClose={() => {
-                setEditable(false);
+                setEditMode(false);
                 onClose();
             }}
             size={'xl'}
@@ -97,17 +98,19 @@ export default function RemarksTable(props: {
                             >
                                 備註
                             </Text>
-                            <IconButton
-                                size={'xs'}
-                                h={'20px'}
-                                color={'#667080'}
-                                bg={'#FFFFFF'}
-                                aria-label="edit remarks"
-                                icon={<EditIcon />}
-                                onClick={() => {
-                                    setEditable(true);
-                                }}
-                            />
+                            {editable && (
+                                <IconButton
+                                    size={'xs'}
+                                    h={'20px'}
+                                    color={'#667080'}
+                                    bg={'#FFFFFF'}
+                                    aria-label="edit remarks"
+                                    icon={<EditIcon />}
+                                    onClick={() => {
+                                        setEditMode(true);
+                                    }}
+                                />
+                            )}
                         </Flex>
                         <Textarea
                             ref={remarksRef}
@@ -130,7 +133,7 @@ export default function RemarksTable(props: {
                                 opacity: 1,
                                 bg: '#FFFFFF',
                             }}
-                            disabled={!editable}
+                            disabled={!editMode}
                         ></Textarea>
                         <Text
                             variant={'w700s16'}
@@ -150,7 +153,7 @@ export default function RemarksTable(props: {
                                 listType="picture"
                                 fileList={remarksPhotos}
                                 autoUpload={false}
-                                removable={editable}
+                                removable={editMode}
                                 draggable
                                 multiple
                                 action="#"
@@ -171,7 +174,7 @@ export default function RemarksTable(props: {
                                     </Box>
                                 )}
                             >
-                                {editable ? (
+                                {editMode ? (
                                     <Box
                                         style={{
                                             margin: '0px',
@@ -195,7 +198,7 @@ export default function RemarksTable(props: {
                                 )}
                             </Uploader>
                         </Flex>
-                        {editable ? (
+                        {editMode ? (
                             <Flex justify={'space-between'} width={'100%'}>
                                 <Button
                                     variant={'buttonGrayOutline'}
@@ -203,7 +206,7 @@ export default function RemarksTable(props: {
                                     height={'36px'}
                                     mr={3}
                                     onClick={() => {
-                                        setEditable(false);
+                                        setEditMode(false);
                                         setRemarksText(originText);
                                         setRemarksPhotos(originPhotos);
                                     }}
@@ -226,7 +229,7 @@ export default function RemarksTable(props: {
                                                 ),
                                             },
                                         }).then(() => {
-                                            setEditable(false);
+                                            setEditMode(false);
                                             setRemarksText(
                                                 remarksRef.current?.value || ''
                                             );

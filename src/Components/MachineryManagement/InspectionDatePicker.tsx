@@ -2,19 +2,26 @@ import { Box } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import { DatePicker } from 'rsuite';
-import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
+import {
+    dataCellStyle,
+    defaultElement,
+    getElementProps,
+} from '../Shared/ReactWindowTable';
 import { useUpdateMachinery } from '../../Hooks/GQLMutation';
 import { TableLoading } from '../Shared/Loading';
 
-export default function InspectionDatePicker(props: getElementProps) {
-    const { style, info, variable } = props;
+export default function InspectionDatePicker(
+    props: getElementProps & { editable: boolean }
+) {
+    const { editable, ...restProps } = props;
+    const { style, info, variable } = restProps;
 
     const [updateMachinery, { loading }] = useUpdateMachinery(info['siteId']);
     const [date, setDate] = React.useState<Date | null>(
         info[variable] ? dayjs(info[variable]).toDate() : null
     );
 
-    return (
+    return editable ? (
         <Box
             {...dataCellStyle}
             style={{
@@ -32,6 +39,7 @@ export default function InspectionDatePicker(props: getElementProps) {
                     textAlignLast: 'center',
                 }}
                 editable={false}
+                disabled={!editable}
                 oneTap
                 ranges={[
                     {
@@ -62,5 +70,7 @@ export default function InspectionDatePicker(props: getElementProps) {
             />
             {loading && <TableLoading />}
         </Box>
+    ) : (
+        defaultElement({ ...restProps })
     );
 }
