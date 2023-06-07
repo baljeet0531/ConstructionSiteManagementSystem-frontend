@@ -13,8 +13,8 @@ export default function EHSForm() {
             <Button onClick={onOpen}>Test</Button>
             <EHSFormModal
                 siteId={'M522C0008'}
-                day={'2023-06-03'}
-                type={'special'}
+                day={'2023-06-07'}
+                type={'normal'}
                 onClose={onClose}
                 isOpen={isOpen}
             />

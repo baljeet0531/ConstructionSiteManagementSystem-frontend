@@ -59,17 +59,17 @@ export default function EHSForm({
             role: '外包商',
         },
         onCompleted: (d) => {
-            setData({
-                searchName: d.searchName,
-                selectedCorp: d.searchName.reduce(
-                    (acc: Object, cur: string) => ({ ...acc, [cur]: [] }),
-                    {}
-                ),
-            });
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
             }
+            setData({
+                searchName: d.searchName,
+                selectedCorp: handler.getSelectedCorp(
+                    singleFormData as IEHSFormNormal | IEHSFormSpecial,
+                    d.searchName
+                ),
+            });
             setLoading(false);
         },
         onError: (err) => {
@@ -80,6 +80,9 @@ export default function EHSForm({
         },
         fetchPolicy: 'network-only',
     });
+    const objectSignatureHandler = new ObjectSignatureHandler(
+        handler.responsibleSignatures
+    );
     const signListComponent = signList.map((corpName, index) => {
         return (
             <GridItem
@@ -94,11 +97,7 @@ export default function EHSForm({
                 <SignaturePad
                     title={`缺失責任單位 - ${corpName}`}
                     signatureName={`responsible-sign-${index}.jpg`}
-                    handler={
-                        new ObjectSignatureHandler(
-                            handler.responsibleSignatures
-                        )
-                    }
+                    handler={objectSignatureHandler}
                     index={corpName}
                     placeHolderText={corpName}
                     showTime={true}
@@ -118,6 +117,8 @@ export default function EHSForm({
         for (const [key, value] of Object.entries(data.selectedCorp)) {
             if (value.length > 0) {
                 updateList.push(key);
+            } else {
+                objectSignatureHandler.removeSignature(key);
             }
         }
         setSignList(updateList);
