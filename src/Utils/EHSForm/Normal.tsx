@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
-import { IEHSFormFillItem } from '../../Interface/EHSForm/Common';
+import {
+    IEHSFormFillItem,
+} from '../../Interface/EHSForm/Common';
 import { IEHSFormNormal, NormalGroupKey } from '../../Interface/EHSForm/Normal';
 import {
     EHSFORM_SIGNATURE_FIELDS,
@@ -7,7 +9,7 @@ import {
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
 import {
-    MultiSignatureStateItem,
+    ObjectSignatureStateItem,
     SignatureStateItem,
 } from '../../Interface/Signature';
 
@@ -302,154 +304,154 @@ export class EHSFormNormalHandler extends EHSFormHandler<IEHSFormNormal> {
     mutationName = 'updateEHSFormNormal';
     mutation = gql`
         mutation updateEHSFormNormal(
-            $AA01Ameliorate: gqlEHSFormTargetInItemInput
+            $AA01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA01Misfit: Boolean
             $AA01Normal: Boolean
-            $AA02Ameliorate: gqlEHSFormTargetInItemInput
+            $AA02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA02Misfit: Boolean
             $AA02Normal: Boolean
-            $AA03Ameliorate: gqlEHSFormTargetInItemInput
+            $AA03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA03Misfit: Boolean
             $AA03Normal: Boolean
-            $AA04Ameliorate: gqlEHSFormTargetInItemInput
+            $AA04Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA04Misfit: Boolean
             $AA04Normal: Boolean
-            $AA05Ameliorate: gqlEHSFormTargetInItemInput
+            $AA05Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA05Misfit: Boolean
             $AA05Normal: Boolean
-            $AA06Ameliorate: gqlEHSFormTargetInItemInput
+            $AA06Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA06Misfit: Boolean
             $AA06Normal: Boolean
-            $AA07Ameliorate: gqlEHSFormTargetInItemInput
+            $AA07Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA07Misfit: Boolean
             $AA07Normal: Boolean
-            $AA08Ameliorate: gqlEHSFormTargetInItemInput
+            $AA08Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA08Misfit: Boolean
             $AA08Normal: Boolean
-            $AA09Ameliorate: gqlEHSFormTargetInItemInput
+            $AA09Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA09Misfit: Boolean
             $AA09Normal: Boolean
-            $AA10Ameliorate: gqlEHSFormTargetInItemInput
+            $AA10Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA10Misfit: Boolean
             $AA10Normal: Boolean
-            $AA11Ameliorate: gqlEHSFormTargetInItemInput
+            $AA11Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA11Misfit: Boolean
             $AA11Normal: Boolean
-            $AA12Ameliorate: gqlEHSFormTargetInItemInput
+            $AA12Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA12Misfit: Boolean
             $AA12Normal: Boolean
-            $AA13Ameliorate: gqlEHSFormTargetInItemInput
+            $AA13Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA13Misfit: Boolean
             $AA13Normal: Boolean
-            $AA14Ameliorate: gqlEHSFormTargetInItemInput
+            $AA14Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA14Misfit: Boolean
             $AA14Normal: Boolean
-            $AA15Ameliorate: gqlEHSFormTargetInItemInput
+            $AA15Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA15Misfit: Boolean
             $AA15Normal: Boolean
-            $AA16Ameliorate: gqlEHSFormTargetInItemInput
+            $AA16Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA16Misfit: Boolean
             $AA16Normal: Boolean
-            $AA17Ameliorate: gqlEHSFormTargetInItemInput
+            $AA17Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA17Misfit: Boolean
             $AA17Normal: Boolean
-            $AA18Ameliorate: gqlEHSFormTargetInItemInput
+            $AA18Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA18Misfit: Boolean
             $AA18Normal: Boolean
-            $AA19Ameliorate: gqlEHSFormTargetInItemInput
+            $AA19Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA19Misfit: Boolean
             $AA19Normal: Boolean
-            $AA20Ameliorate: gqlEHSFormTargetInItemInput
+            $AA20Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA20Misfit: Boolean
             $AA20Normal: Boolean
-            $AA21Ameliorate: gqlEHSFormTargetInItemInput
+            $AA21Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA21Misfit: Boolean
             $AA21Normal: Boolean
-            $AA22Ameliorate: gqlEHSFormTargetInItemInput
+            $AA22Ameliorate: [gqlEHSFormTargetInItemInput]
             $AA22Misfit: Boolean
             $AA22Normal: Boolean
-            $AB01Ameliorate: gqlEHSFormTargetInItemInput
+            $AB01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB01Misfit: Boolean
             $AB01Normal: Boolean
-            $AB02Ameliorate: gqlEHSFormTargetInItemInput
+            $AB02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB02Misfit: Boolean
             $AB02Normal: Boolean
-            $AB03Ameliorate: gqlEHSFormTargetInItemInput
+            $AB03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB03Misfit: Boolean
             $AB03Normal: Boolean
-            $AB04Ameliorate: gqlEHSFormTargetInItemInput
+            $AB04Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB04Misfit: Boolean
             $AB04Normal: Boolean
-            $AB05Ameliorate: gqlEHSFormTargetInItemInput
+            $AB05Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB05Misfit: Boolean
             $AB05Normal: Boolean
-            $AB06Ameliorate: gqlEHSFormTargetInItemInput
+            $AB06Ameliorate: [gqlEHSFormTargetInItemInput]
             $AB06Misfit: Boolean
             $AB06Normal: Boolean
-            $AC01Ameliorate: gqlEHSFormTargetInItemInput
+            $AC01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AC01Misfit: Boolean
             $AC01Normal: Boolean
-            $AC02Ameliorate: gqlEHSFormTargetInItemInput
+            $AC02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AC02Misfit: Boolean
             $AC02Normal: Boolean
-            $AC03Ameliorate: gqlEHSFormTargetInItemInput
+            $AC03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AC03Misfit: Boolean
             $AC03Normal: Boolean
-            $AD01Ameliorate: gqlEHSFormTargetInItemInput
+            $AD01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD01Misfit: Boolean
             $AD01Normal: Boolean
-            $AD02Ameliorate: gqlEHSFormTargetInItemInput
+            $AD02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD02Misfit: Boolean
             $AD02Normal: Boolean
-            $AD03Ameliorate: gqlEHSFormTargetInItemInput
+            $AD03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD03Misfit: Boolean
             $AD03Normal: Boolean
-            $AD04Ameliorate: gqlEHSFormTargetInItemInput
+            $AD04Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD04Misfit: Boolean
             $AD04Normal: Boolean
-            $AD05Ameliorate: gqlEHSFormTargetInItemInput
+            $AD05Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD05Misfit: Boolean
             $AD05Normal: Boolean
-            $AD06Ameliorate: gqlEHSFormTargetInItemInput
+            $AD06Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD06Misfit: Boolean
             $AD06Normal: Boolean
-            $AD07Ameliorate: gqlEHSFormTargetInItemInput
+            $AD07Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD07Misfit: Boolean
             $AD07Normal: Boolean
-            $AD08Ameliorate: gqlEHSFormTargetInItemInput
+            $AD08Ameliorate: [gqlEHSFormTargetInItemInput]
             $AD08Misfit: Boolean
             $AD08Normal: Boolean
-            $AE01Ameliorate: gqlEHSFormTargetInItemInput
+            $AE01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE01Misfit: Boolean
             $AE01Normal: Boolean
-            $AE02Ameliorate: gqlEHSFormTargetInItemInput
+            $AE02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE02Misfit: Boolean
             $AE02Normal: Boolean
-            $AE03Ameliorate: gqlEHSFormTargetInItemInput
+            $AE03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE03Misfit: Boolean
             $AE03Normal: Boolean
-            $AE04Ameliorate: gqlEHSFormTargetInItemInput
+            $AE04Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE04Misfit: Boolean
             $AE04Normal: Boolean
-            $AE05Ameliorate: gqlEHSFormTargetInItemInput
+            $AE05Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE05Misfit: Boolean
             $AE05Normal: Boolean
-            $AE06Ameliorate: gqlEHSFormTargetInItemInput
+            $AE06Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE06Misfit: Boolean
             $AE06Normal: Boolean
-            $AE07Ameliorate: gqlEHSFormTargetInItemInput
+            $AE07Ameliorate: [gqlEHSFormTargetInItemInput]
             $AE07Misfit: Boolean
             $AE07Normal: Boolean
-            $AF01Ameliorate: gqlEHSFormTargetInItemInput
+            $AF01Ameliorate: [gqlEHSFormTargetInItemInput]
             $AF01Misfit: Boolean
             $AF01Normal: Boolean
-            $AF02Ameliorate: gqlEHSFormTargetInItemInput
+            $AF02Ameliorate: [gqlEHSFormTargetInItemInput]
             $AF02Misfit: Boolean
             $AF02Normal: Boolean
-            $AF03Ameliorate: gqlEHSFormTargetInItemInput
+            $AF03Ameliorate: [gqlEHSFormTargetInItemInput]
             $AF03Misfit: Boolean
             $AF03Normal: Boolean
-            $AF04Ameliorate: gqlEHSFormTargetInItemInput
+            $AF04Ameliorate: [gqlEHSFormTargetInItemInput]
             $AF04Misfit: Boolean
             $AF04Normal: Boolean
             $checkDept: String
@@ -1029,7 +1031,7 @@ export class EHSFormNormalHandler extends EHSFormHandler<IEHSFormNormal> {
         siteId: string,
         number: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: MultiSignatureStateItem
+        responsibleSignatures: ObjectSignatureStateItem
     ) {
         super(siteId, number, supervisorSignature, responsibleSignatures);
     }

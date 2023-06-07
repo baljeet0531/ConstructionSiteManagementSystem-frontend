@@ -5,7 +5,6 @@ export type EHSFormName = 'normal' | 'special';
 interface IEHSSignatureCommon {
     corpName: string;
     day: string;
-    signatureType: 'responsible' | 'supervisor';
 }
 
 export interface IEHSSignature extends ISignature, IEHSSignatureCommon {}

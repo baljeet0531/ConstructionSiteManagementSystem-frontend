@@ -25,6 +25,11 @@ export type MultiSignatureStateItem = [
     Dispatch<SetStateAction<ISignature[]>>
 ];
 
+export type ObjectSignatureStateItem = [
+    { [key: string]: ISignature },
+    Dispatch<SetStateAction<{ [key: string]: ISignature }>>
+];
+
 export async function getSignature(sign: IGQLSignature) {
     const target: ISignature = {
         no: sign.no,
@@ -55,4 +60,19 @@ export const convertSignList = (signList: ISignature[]) => {
         no: Number(s?.no),
         time: s?.time?.format('YYYY-MM-DDTHH:mm:ss'),
     }));
+};
+
+export const convertSignObject = (signObject: {
+    [key: string]: ISignature;
+}) => {
+    const newObj: { [key: string]: any } = {};
+    Object.keys(signObject).forEach((key) => {
+        const sign = signObject[key];
+        newObj[key] = {
+            ...sign,
+            no: Number(sign?.no),
+            time: sign?.time?.format('YYYY-MM-DDTHH:mm:ss'),
+        };
+    });
+    return newObj;
 };

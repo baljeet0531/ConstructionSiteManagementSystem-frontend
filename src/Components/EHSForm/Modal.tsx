@@ -37,7 +37,7 @@ export default function EHSFormModal({
     const reminderDisClosure = useDisclosure();
     const toast = useToast();
     const supervisorSignature = useState<ISignature>();
-    const responsibleSignatures = useState<ISignature[]>([]);
+    const responsibleSignatures = useState<{ [key: string]: ISignature }>({});
     const handler = new EHSFormMap[type].handler(
         siteId,
         day,
@@ -45,7 +45,7 @@ export default function EHSFormModal({
         responsibleSignatures
     );
     const [updateEHSForm] = useMutation(handler.mutation, {
-        onCompleted: ({ d }) => {
+        onCompleted: (d) => {
             const response = d[handler.mutationName];
             if (response.ok) {
                 toast({

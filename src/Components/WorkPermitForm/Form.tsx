@@ -40,6 +40,7 @@ import { GQL_WORK_PERMIT_QUERY, parseWorkPermit } from './GQL';
 import { FormLoading } from '../Shared/Loading';
 import dayjs from 'dayjs';
 import { defaultWarningToast } from '../../Utils/DefaultToast';
+import { SingleSignatureHandler } from '../../Utils/Signature/Single';
 
 export default function WorkPermitForm({
     formProps,
@@ -68,7 +69,7 @@ export default function WorkPermitForm({
     const f = new FormFactory(formProps, data, setData, options, setOptions);
     document.title = `工作許可單(${number})`;
 
-   useQuery(GQL_WORK_PERMIT_QUERY, {
+    useQuery(GQL_WORK_PERMIT_QUERY, {
         variables: {
             siteId: localStorage.getItem('siteId'),
             number: number,
@@ -268,7 +269,10 @@ export default function WorkPermitForm({
                         }}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
-                        invalidStyle={{ color: 'red.default', fontWeight: 'bold' }}
+                        invalidStyle={{
+                            color: 'red.default',
+                            fontWeight: 'bold',
+                        }}
                         invalidMsg="結束日期不得早於開始日期"
                     />
 
@@ -471,7 +475,9 @@ export default function WorkPermitForm({
                         <SignaturePad
                             title="核准 - 簽名"
                             signatureName="approved-signature.png"
-                            state={signatures.approved}
+                            handler={
+                                new SingleSignatureHandler(signatures.approved)
+                            }
                             disable={!!signatures.approved[0]?.no}
                         />
                     </GridItem>
@@ -479,7 +485,9 @@ export default function WorkPermitForm({
                         <SignaturePad
                             title="審核 - 簽名"
                             signatureName="review-signature.png"
-                            state={signatures.review}
+                            handler={
+                                new SingleSignatureHandler(signatures.review)
+                            }
                             disable={!!signatures.review[0]?.no}
                         />
                     </GridItem>
@@ -487,7 +495,11 @@ export default function WorkPermitForm({
                         <SignaturePad
                             title="申請單位主管 - 簽名"
                             signatureName="supplierManager-signature.png"
-                            state={signatures.supplierManager}
+                            handler={
+                                new SingleSignatureHandler(
+                                    signatures.supplierManager
+                                )
+                            }
                             disable={!!signatures.supplierManager[0]?.no}
                         />
                     </GridItem>
@@ -495,7 +507,9 @@ export default function WorkPermitForm({
                         <SignaturePad
                             title="申請人 - 簽名"
                             signatureName="supplier-signature.png"
-                            state={signatures.supplier}
+                            handler={
+                                new SingleSignatureHandler(signatures.supplier)
+                            }
                             disable={!!signatures.supplier[0]?.no}
                         />
                     </GridItem>

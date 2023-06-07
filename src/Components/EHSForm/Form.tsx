@@ -29,6 +29,8 @@ import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
+import { SingleSignatureHandler } from '../../Utils/Signature/Single';
+import { ObjectSignatureHandler } from '../../Utils/Signature/Object';
 
 export default function EHSForm({
     formProps,
@@ -57,17 +59,17 @@ export default function EHSForm({
             role: '外包商',
         },
         onCompleted: (d) => {
-            setData({
-                searchName: d.searchName,
-                selectedCorp: d.searchName.reduce(
-                    (acc: Object, cur: string) => ({ ...acc, [cur]: [] }),
-                    {}
-                ),
-            });
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
             }
+            setData({
+                searchName: d.searchName,
+                selectedCorp: handler.getSelectedCorp(
+                    singleFormData as IEHSFormNormal | IEHSFormSpecial,
+                    d.searchName
+                ),
+            });
             setLoading(false);
         },
         onError: (err) => {
@@ -78,18 +80,49 @@ export default function EHSForm({
         },
         fetchPolicy: 'network-only',
     });
+    const objectSignatureHandler = new ObjectSignatureHandler(
+        handler.responsibleSignatures
+    );
+    const signListComponent = signList.map((corpName, index) => {
+        return (
+            <GridItem
+                key={`responsible-sign-${index}`}
+                {...baseStyle}
+                h="150px"
+                colStart={(index % 3) + 1}
+                colEnd={(index % 3) + 2}
+                rowStart={Math.floor(index / 3) + 2}
+                rowEnd={Math.floor(index / 3) + 3}
+            >
+                <SignaturePad
+                    title={`缺失責任單位 - ${corpName}`}
+                    signatureName={`responsible-sign-${index}.jpg`}
+                    handler={objectSignatureHandler}
+                    index={corpName}
+                    placeHolderText={corpName}
+                    showTime={true}
+                    leftBottomComponent={
+                        <Text w="100%" fontSize="0.75rem" align="left">
+                            {corpName}
+                        </Text>
+                    }
+                    disable={!!handler.responsibleSignatures[0][corpName]?.no}
+                />
+            </GridItem>
+        );
+    });
 
     useEffect(() => {
         const updateList = [];
         for (const [key, value] of Object.entries(data.selectedCorp)) {
             if (value.length > 0) {
                 updateList.push(key);
+            } else {
+                objectSignatureHandler.removeSignature(key);
             }
         }
         setSignList(updateList);
     }, [data.selectedCorp]);
-
-    console.log(signList);
 
     return (
         <Form>
@@ -270,6 +303,7 @@ export default function EHSForm({
                     <GridItem colStart={4} colEnd={5}>
                         <Text>MIC監工單位：</Text>
                     </GridItem>
+                    {signListComponent}
                     <GridItem
                         {...baseStyle}
                         h="150px"
@@ -281,7 +315,11 @@ export default function EHSForm({
                         <SignaturePad
                             title="MIC監工單位"
                             signatureName="supervisor-unit-signature.png"
-                            state={handler.supervisorSignature}
+                            handler={
+                                new SingleSignatureHandler(
+                                    handler.supervisorSignature
+                                )
+                            }
                             placeHolderText="簽名"
                             showTime={true}
                             disable={!!handler.supervisorSignature[0]?.no}
