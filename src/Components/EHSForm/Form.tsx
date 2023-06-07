@@ -1,4 +1,4 @@
-import { IEHSForm } from '../../Interface/EHSForm/Common';
+import { EHSFormName, IEHSForm } from '../../Interface/EHSForm/Common';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
 import {
@@ -10,12 +10,16 @@ import {
     Image,
     Text,
     VStack,
+    useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../Icons/Icons';
 // import { useQuery } from '@apollo/client';
 // import { GQL_FAULT_FORM_QUERY } from './GQL';
 import { useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
+import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
+import { useQuery } from '@apollo/client';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 // import GridInputItem from '../Shared/GridInputItem';
 // import { contentStyle, tableContentStyle, tableTitleStyle } from './Styles';
 // import { getImage } from '../../Utils/Resources';
@@ -24,53 +28,44 @@ import { FormLoading } from '../Shared/Loading';
 
 export default function EHSForm({
     formProps,
-    siteId,
-    day,
-    normal,
-}: // onClose,
-{
+    type,
+    handler,
+    onClose,
+}: {
     formProps: FormikProps<IEHSForm>;
-    siteId: string;
-    day: string;
-    normal: boolean;
-    // onClose: () => void;
+    type: EHSFormName;
+    handler: EHSFormHandler;
+    onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
-    // const toast = useToast();
-    const f = new FormFactory(formProps);
-    // useQuery(GQL_FAULT_FORM_QUERY, {
-    //     variables: {
-    //         siteId: siteId,
-    //         dailyId: dailyId,
-    //     },
-    //     onCompleted: (d) => {
-    //         const singleFormData = parseDailyReport(d.dailyReport);
-    //         if (singleFormData) {
-    //             formProps.setValues(singleFormData, false);
-    //         }
-    //         type Node = { node: { siteId: string; avatar: string } };
-    //         const targetSites: Node = d.allSites.edges.find(
-    //             (i: Node) => i.node.siteId === siteId
-    //         );
-    //         if (targetSites && targetSites.node.avatar) {
-    //             getImage(targetSites.node.avatar).then((b) =>
-    //                 setOwnerIconURL(URL.createObjectURL(b as Blob))
-    //             );
-    //         }
-    //         setLoading(false);
-    //     },
-    //     onError: (err) => {
-    //         console.error(err);
-    //         setLoading(false);
-    //         defaultErrorToast(toast)
-    //         onClose();
-    //     },
-    //     fetchPolicy: 'network-only',
-    // });
+    const groupsCount = Object.keys(handler.itemGroups).length;
+    const toast = useToast();
+    const f = new FormFactory(formProps, type, handler);
+    useQuery(handler.query, {
+        variables: {
+            siteId: handler.siteId,
+            day: handler.day,
+        },
+        onCompleted: (d) => {
+            const singleFormData = handler.parse(d[handler.queryName]);
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
+            setLoading(false);
+        },
+        onError: (err) => {
+            console.error(err);
+            setLoading(false);
+            defaultErrorToast(toast);
+            onClose();
+        },
+        fetchPolicy: 'network-only',
+    });
 
-    console.log(`siteId: ${siteId} day: ${day} normal: ${normal}`);
+    console.log(`siteId: ${handler.siteId} day: ${handler.day} type: ${type}`);
     console.log(`${f}`);
     console.log(`${setLoading}`);
+    console.log(`${groupsCount}`);
     console.log(formProps.values);
 
     return (

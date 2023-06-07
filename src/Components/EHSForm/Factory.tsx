@@ -1,17 +1,22 @@
-import {
-    Input,
-    InputProps,
-    Textarea,
-} from '@chakra-ui/react';
-import { IEHSForm } from '../../Interface/EHSForm/Common';
+import { Input, InputProps, Textarea } from '@chakra-ui/react';
+import { EHSFormName, IEHSForm } from '../../Interface/EHSForm/Common';
 import { FormikProps } from 'formik';
 import { disabledStyle, placeholderStyle } from './Styles';
+import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 
 export default class FormFactory {
     formProps: FormikProps<IEHSForm>;
+    type: EHSFormName;
+    handler: EHSFormHandler;
 
-    constructor(formProps: FormikProps<IEHSForm>) {
+    constructor(
+        formProps: FormikProps<IEHSForm>,
+        type: EHSFormName,
+        handler: EHSFormHandler
+    ) {
         this.formProps = formProps;
+        this.type = type;
+        this.handler = handler;
     }
     input(props: InputProps) {
         return (
