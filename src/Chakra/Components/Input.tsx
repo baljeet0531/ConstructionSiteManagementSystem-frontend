@@ -15,6 +15,7 @@ const Input = {
                     borderColor: '#919AA9',
                     height: '36px',
                     bg: '#FFFFFF',
+                    color: '#667080',
                     _placeholder: {
                         color: '#66708080',
                     },
