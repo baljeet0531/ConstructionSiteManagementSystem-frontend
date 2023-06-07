@@ -157,14 +157,29 @@ export default class FormFactory {
                         ? this.formProps.setFieldValue(item.normal, target)
                         : this.formProps.setFieldValue(item.normal, null);
                     target !== true || checked !== true
-                        ? this.formProps.setFieldValue(item.ameliorate, [])
+                        ? this.clearAmeliorate(item)
                         : '';
                     target === true && checked === true
-                        ? this.formProps.setFieldValue(item.ameliorate, [])
+                        ? this.clearAmeliorate(item)
                         : '';
                 }}
             />
         );
+    }
+    clearAmeliorate(item: IEHSFormFillItem) {
+        const selected = this.data.selectedCorp;
+        const newSelected = {} as { [k: string]: string[] };
+        for (let key in selected) {
+            const corpList = selected[key];
+            newSelected[key] = corpList.filter((code) => {
+                code !== item.code;
+            });
+        }
+        this.formProps.setFieldValue(item.ameliorate, []);
+        this.setData({
+            ...this.data,
+            selectedCorp: newSelected,
+        });
     }
     misfitCheckbox(item: IEHSFormFillItem) {
         const values = this.formProps.values as IEHSFormNormal &
@@ -179,7 +194,7 @@ export default class FormFactory {
                     this.formProps.setFieldValue(item.misfit, checked);
                     if (checked === true) {
                         this.formProps.setFieldValue(item.normal, null);
-                        this.formProps.setFieldValue(item.ameliorate, []);
+                        this.clearAmeliorate(item);
                     }
                 }}
             />

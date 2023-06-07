@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { DocumentNode } from 'graphql';
 import {
     ISignature,
@@ -10,6 +11,7 @@ import {
 import {
     IEHSForm,
     IEHSFormFillItem,
+    IEHSFormTargetInItem,
     IEHSSignature,
     IGQLEHSSignature,
 } from '../../Interface/EHSForm/Common';
@@ -27,12 +29,10 @@ export abstract class EHSFormHandler<
     abstract query: DocumentNode;
     abstract mutationName: string;
     abstract mutation: DocumentNode;
-    // eslint-disable-next-line no-unused-vars
     abstract itemGroups: Record<
         string,
         { name: string; items: IEHSFormFillItem[] }
     >;
-    // eslint-disable-next-line no-unused-vars
     abstract isAmeliorateDisabled(values: C, code: string): boolean;
 
     constructor(
@@ -66,6 +66,16 @@ export abstract class EHSFormHandler<
 
         this.setResponsibleSigns(t);
         this.setSupervisorSign(t);
+
+        let key: keyof typeof t;
+        for (key in t) {
+            if (key.includes('Ameliorate') && t[key] !== null) {
+                const target = t[key] as [];
+                target.map((item) => {
+                    delete item['__typename'];
+                });
+            }
+        }
 
         if (!t.location) t.location = '';
         if (!t.checkDept) t.checkDept = '';
@@ -146,5 +156,26 @@ export abstract class EHSFormHandler<
             count += this.itemGroups[group].items.length;
         }
         return count;
+    }
+
+    getSelectedCorp(
+        values: C,
+        searchName: string[]
+    ): { [key: string]: string[] } {
+        const target = searchName.reduce(
+            (acc, cur) => ({ ...acc, [cur]: [] }),
+            {}
+        ) as { [key: string]: string[] };
+
+        let key: keyof C;
+        for (key in values) {
+            if (key.includes('Ameliorate') && values[key]) {
+                const list = values[key] as IEHSFormTargetInItem[];
+                list.map((item) => {
+                    target[item.corpName].push(item.code);
+                });
+            }
+        }
+        return target;
     }
 }
