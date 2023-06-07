@@ -98,7 +98,7 @@ export default function RemarksTable(props: {
                             >
                                 備註
                             </Text>
-                            {!editable && (
+                            {editable && (
                                 <IconButton
                                     size={'xs'}
                                     h={'20px'}
