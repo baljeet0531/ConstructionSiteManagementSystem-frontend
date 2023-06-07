@@ -5,9 +5,10 @@ import {
     VStack,
     Avatar,
     Text,
-    AspectRatio,
     Button,
     Flex,
+    AvatarBadge,
+    Box,
 } from '@chakra-ui/react';
 
 import { featureName, featureItem } from '../FeatureMap';
@@ -23,6 +24,9 @@ import { ISiteObject } from '../Layout';
 import { LogoutIcon } from '../../Icons/Icons';
 import { useCookies } from 'react-cookie';
 import { VERSION } from '../../Constants/EnvConstants';
+import { TODO_LIST } from '../../Components/Dashboard/TodoList';
+import { useLazyQuery } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -52,7 +56,33 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
+    const navigate = useNavigate();
     const [, , removeCookie] = useCookies(['jwt', 'username']);
+
+    const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
+    const [getTodoListAmount] = useLazyQuery(TODO_LIST, {
+        onCompleted: ({
+            dashboardTodolist,
+        }: {
+            dashboardTodolist: string[];
+        }) => {
+            setTodoListAmount(dashboardTodolist.length);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    React.useEffect(() => {
+        selectedSiteId &&
+            getTodoListAmount({
+                variables: {
+                    siteId: selectedSiteId,
+                    username: username,
+                },
+            });
+    }, [selectedSiteId]);
 
     return (
         <VStack
@@ -62,14 +92,39 @@ export default function Sidebar(props: {
             overflowY={'auto'}
             justify={'space-between'}
         >
-            <Flex direction={'column'} align={'center'} justify={'flex-start'} w={'100%'}>
-                <AspectRatio w="66%" ratio={1}>
+            <Flex
+                direction={'column'}
+                align={'center'}
+                justify={'flex-start'}
+                w={'100%'}
+            >
+                <Box w={'66%'} style={{ aspectRatio: 1 }}>
                     <Avatar
-                        name=""
+                        w={'100%'}
+                        h={'100%'}
                         src={roleAvatarMap[role as keyof typeof roleAvatarMap]}
                         ignoreFallback
-                    ></Avatar>
-                </AspectRatio>
+                    >
+                        {todoListAmount !== 0 && (
+                            <AvatarBadge
+                                boxSize="20%"
+                                bg="red"
+                                right={'9.46%'}
+                                bottom={'9.46%'}
+                            >
+                                <Text
+                                    fontSize={'75%'}
+                                    lineHeight={'100%'}
+                                    color={'#FFFFFF'}
+                                >
+                                    {todoListAmount > 99
+                                        ? '99+'
+                                        : todoListAmount}
+                                </Text>
+                            </AvatarBadge>
+                        )}
+                    </Avatar>
+                </Box>
                 <Text
                     mt={'15px'}
                     mb={'5px'}
@@ -108,7 +163,7 @@ export default function Sidebar(props: {
                             path: '/',
                             secure: false,
                         });
-                        window.location.href = '/login';
+                        navigate('/login');
                     }}
                 >
                     登出
