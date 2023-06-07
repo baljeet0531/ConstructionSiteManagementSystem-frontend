@@ -26,12 +26,12 @@ interface IEHSFormNormalGroup {
 }
 
 export class EHSFormSpecialHandler extends EHSFormHandler {
-    queryName = 'safetyCheckSpecial';
+    queryName = 'EHSFormSpecial';
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
         ${EHSFORM_IN_ITEM_FIELDS}
-        query safetyCheckSpecial($siteId: String!, $day: Date) {
-            safetyCheckSpecial(siteId: $siteId, day: $day) {
+        query EHSFormSpecial($siteId: String!, $day: Date) {
+            EHSFormSpecial(siteId: $siteId, day: $day) {
                 siteId
                 day
                 checkDept
@@ -43,10 +43,10 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
                 }
                 location
                 responsibleUnitSignature {
-                    ...gqlSafetyCheckSignatureFields
+                    ...gqlEHSFormSignatureFields
                 }
                 supervisorUnitSignature {
-                    ...gqlSafetyCheckSignatureFields
+                    ...gqlEHSFormSignatureFields
                 }
                 BA01Normal
                 BA02Normal
@@ -223,543 +223,543 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
                 BJ04Misfit
                 BJ05Misfit
                 BA01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA08Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BA09Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB08Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB09Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB10Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB11Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB12Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB13Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB14Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB15Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB16Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BB17Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC08Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC09Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC10Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BC11Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD08Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD09Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD10Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD11Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD12Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD13Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD14Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD15Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BD16Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BE01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BE02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BE03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BE04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF08Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF09Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF10Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BF11Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG06Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BG07Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BH01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BH02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BH03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BH04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BI01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BI02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BI03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BJ01Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BJ02Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BJ03Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BJ04Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
                 BJ05Ameliorate {
-                    ...gqlSafetyCheckTargetInItemFields
+                    ...gqlEHSFormTargetInItemFields
                 }
             }
         }
     `;
-    mutationName = 'updateSafetyCheckSpecial';
+    mutationName = 'updateEHSFormSpecial';
     mutation = gql`
-        mutation updateSafetyCheckSpecial(
-            $BA01Ameliorate: gqlSafetyCheckTargetInItemInput
+        mutation updateEHSFormSpecial(
+            $BA01Ameliorate: gqlEHSFormTargetInItemInput
             $BA01Misfit: Boolean
             $BA01Normal: Boolean
-            $BA02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA02Ameliorate: gqlEHSFormTargetInItemInput
             $BA02Misfit: Boolean
             $BA02Normal: Boolean
-            $BA03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA03Ameliorate: gqlEHSFormTargetInItemInput
             $BA03Misfit: Boolean
             $BA03Normal: Boolean
-            $BA04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA04Ameliorate: gqlEHSFormTargetInItemInput
             $BA04Misfit: Boolean
             $BA04Normal: Boolean
-            $BA05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA05Ameliorate: gqlEHSFormTargetInItemInput
             $BA05Misfit: Boolean
             $BA05Normal: Boolean
-            $BA06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA06Ameliorate: gqlEHSFormTargetInItemInput
             $BA06Misfit: Boolean
             $BA06Normal: Boolean
-            $BA07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA07Ameliorate: gqlEHSFormTargetInItemInput
             $BA07Misfit: Boolean
             $BA07Normal: Boolean
-            $BA08Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA08Ameliorate: gqlEHSFormTargetInItemInput
             $BA08Misfit: Boolean
             $BA08Normal: Boolean
-            $BA09Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BA09Ameliorate: gqlEHSFormTargetInItemInput
             $BA09Misfit: Boolean
             $BA09Normal: Boolean
-            $BB01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB01Ameliorate: gqlEHSFormTargetInItemInput
             $BB01Misfit: Boolean
             $BB01Normal: Boolean
-            $BB02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB02Ameliorate: gqlEHSFormTargetInItemInput
             $BB02Misfit: Boolean
             $BB02Normal: Boolean
-            $BB03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB03Ameliorate: gqlEHSFormTargetInItemInput
             $BB03Misfit: Boolean
             $BB03Normal: Boolean
-            $BB04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB04Ameliorate: gqlEHSFormTargetInItemInput
             $BB04Misfit: Boolean
             $BB04Normal: Boolean
-            $BB05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB05Ameliorate: gqlEHSFormTargetInItemInput
             $BB05Misfit: Boolean
             $BB05Normal: Boolean
-            $BB06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB06Ameliorate: gqlEHSFormTargetInItemInput
             $BB06Misfit: Boolean
             $BB06Normal: Boolean
-            $BB07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB07Ameliorate: gqlEHSFormTargetInItemInput
             $BB07Misfit: Boolean
             $BB07Normal: Boolean
-            $BB08Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB08Ameliorate: gqlEHSFormTargetInItemInput
             $BB08Misfit: Boolean
             $BB08Normal: Boolean
-            $BB09Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB09Ameliorate: gqlEHSFormTargetInItemInput
             $BB09Misfit: Boolean
             $BB09Normal: Boolean
-            $BB10Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB10Ameliorate: gqlEHSFormTargetInItemInput
             $BB10Misfit: Boolean
             $BB10Normal: Boolean
-            $BB11Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB11Ameliorate: gqlEHSFormTargetInItemInput
             $BB11Misfit: Boolean
             $BB11Normal: Boolean
-            $BB12Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB12Ameliorate: gqlEHSFormTargetInItemInput
             $BB12Misfit: Boolean
             $BB12Normal: Boolean
-            $BB13Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB13Ameliorate: gqlEHSFormTargetInItemInput
             $BB13Misfit: Boolean
             $BB13Normal: Boolean
-            $BB14Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB14Ameliorate: gqlEHSFormTargetInItemInput
             $BB14Misfit: Boolean
             $BB14Normal: Boolean
-            $BB15Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB15Ameliorate: gqlEHSFormTargetInItemInput
             $BB15Misfit: Boolean
             $BB15Normal: Boolean
-            $BB16Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB16Ameliorate: gqlEHSFormTargetInItemInput
             $BB16Misfit: Boolean
             $BB16Normal: Boolean
-            $BB17Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BB17Ameliorate: gqlEHSFormTargetInItemInput
             $BB17Misfit: Boolean
             $BB17Normal: Boolean
-            $BC01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC01Ameliorate: gqlEHSFormTargetInItemInput
             $BC01Misfit: Boolean
             $BC01Normal: Boolean
-            $BC02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC02Ameliorate: gqlEHSFormTargetInItemInput
             $BC02Misfit: Boolean
             $BC02Normal: Boolean
-            $BC03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC03Ameliorate: gqlEHSFormTargetInItemInput
             $BC03Misfit: Boolean
             $BC03Normal: Boolean
-            $BC04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC04Ameliorate: gqlEHSFormTargetInItemInput
             $BC04Misfit: Boolean
             $BC04Normal: Boolean
-            $BC05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC05Ameliorate: gqlEHSFormTargetInItemInput
             $BC05Misfit: Boolean
             $BC05Normal: Boolean
-            $BC06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC06Ameliorate: gqlEHSFormTargetInItemInput
             $BC06Misfit: Boolean
             $BC06Normal: Boolean
-            $BC07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC07Ameliorate: gqlEHSFormTargetInItemInput
             $BC07Misfit: Boolean
             $BC07Normal: Boolean
-            $BC08Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC08Ameliorate: gqlEHSFormTargetInItemInput
             $BC08Misfit: Boolean
             $BC08Normal: Boolean
-            $BC09Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC09Ameliorate: gqlEHSFormTargetInItemInput
             $BC09Misfit: Boolean
             $BC09Normal: Boolean
-            $BC10Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC10Ameliorate: gqlEHSFormTargetInItemInput
             $BC10Misfit: Boolean
             $BC10Normal: Boolean
-            $BC11Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BC11Ameliorate: gqlEHSFormTargetInItemInput
             $BC11Misfit: Boolean
             $BC11Normal: Boolean
-            $BD01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD01Ameliorate: gqlEHSFormTargetInItemInput
             $BD01Misfit: Boolean
             $BD01Normal: Boolean
-            $BD02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD02Ameliorate: gqlEHSFormTargetInItemInput
             $BD02Misfit: Boolean
             $BD02Normal: Boolean
-            $BD03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD03Ameliorate: gqlEHSFormTargetInItemInput
             $BD03Misfit: Boolean
             $BD03Normal: Boolean
-            $BD04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD04Ameliorate: gqlEHSFormTargetInItemInput
             $BD04Misfit: Boolean
             $BD04Normal: Boolean
-            $BD05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD05Ameliorate: gqlEHSFormTargetInItemInput
             $BD05Misfit: Boolean
             $BD05Normal: Boolean
-            $BD06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD06Ameliorate: gqlEHSFormTargetInItemInput
             $BD06Misfit: Boolean
             $BD06Normal: Boolean
-            $BD07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD07Ameliorate: gqlEHSFormTargetInItemInput
             $BD07Misfit: Boolean
             $BD07Normal: Boolean
-            $BD08Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD08Ameliorate: gqlEHSFormTargetInItemInput
             $BD08Misfit: Boolean
             $BD08Normal: Boolean
-            $BD09Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD09Ameliorate: gqlEHSFormTargetInItemInput
             $BD09Misfit: Boolean
             $BD09Normal: Boolean
-            $BD10Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD10Ameliorate: gqlEHSFormTargetInItemInput
             $BD10Misfit: Boolean
             $BD10Normal: Boolean
-            $BD11Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD11Ameliorate: gqlEHSFormTargetInItemInput
             $BD11Misfit: Boolean
             $BD11Normal: Boolean
-            $BD12Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD12Ameliorate: gqlEHSFormTargetInItemInput
             $BD12Misfit: Boolean
             $BD12Normal: Boolean
-            $BD13Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD13Ameliorate: gqlEHSFormTargetInItemInput
             $BD13Misfit: Boolean
             $BD13Normal: Boolean
-            $BD14Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD14Ameliorate: gqlEHSFormTargetInItemInput
             $BD14Misfit: Boolean
             $BD14Normal: Boolean
-            $BD15Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD15Ameliorate: gqlEHSFormTargetInItemInput
             $BD15Misfit: Boolean
             $BD15Normal: Boolean
-            $BD16Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BD16Ameliorate: gqlEHSFormTargetInItemInput
             $BD16Misfit: Boolean
             $BD16Normal: Boolean
-            $BE01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BE01Ameliorate: gqlEHSFormTargetInItemInput
             $BE01Misfit: Boolean
             $BE01Normal: Boolean
-            $BE02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BE02Ameliorate: gqlEHSFormTargetInItemInput
             $BE02Misfit: Boolean
             $BE02Normal: Boolean
-            $BE03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BE03Ameliorate: gqlEHSFormTargetInItemInput
             $BE03Misfit: Boolean
             $BE03Normal: Boolean
-            $BE04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BE04Ameliorate: gqlEHSFormTargetInItemInput
             $BE04Misfit: Boolean
             $BE04Normal: Boolean
-            $BF01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF01Ameliorate: gqlEHSFormTargetInItemInput
             $BF01Misfit: Boolean
             $BF01Normal: Boolean
-            $BF02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF02Ameliorate: gqlEHSFormTargetInItemInput
             $BF02Misfit: Boolean
             $BF02Normal: Boolean
-            $BF03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF03Ameliorate: gqlEHSFormTargetInItemInput
             $BF03Misfit: Boolean
             $BF03Normal: Boolean
-            $BF04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF04Ameliorate: gqlEHSFormTargetInItemInput
             $BF04Misfit: Boolean
             $BF04Normal: Boolean
-            $BF05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF05Ameliorate: gqlEHSFormTargetInItemInput
             $BF05Misfit: Boolean
             $BF05Normal: Boolean
-            $BF06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF06Ameliorate: gqlEHSFormTargetInItemInput
             $BF06Misfit: Boolean
             $BF06Normal: Boolean
-            $BF07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF07Ameliorate: gqlEHSFormTargetInItemInput
             $BF07Misfit: Boolean
             $BF07Normal: Boolean
-            $BF08Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF08Ameliorate: gqlEHSFormTargetInItemInput
             $BF08Misfit: Boolean
             $BF08Normal: Boolean
-            $BF09Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF09Ameliorate: gqlEHSFormTargetInItemInput
             $BF09Misfit: Boolean
             $BF09Normal: Boolean
-            $BF10Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF10Ameliorate: gqlEHSFormTargetInItemInput
             $BF10Misfit: Boolean
             $BF10Normal: Boolean
-            $BF11Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BF11Ameliorate: gqlEHSFormTargetInItemInput
             $BF11Misfit: Boolean
             $BF11Normal: Boolean
-            $BG01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG01Ameliorate: gqlEHSFormTargetInItemInput
             $BG01Misfit: Boolean
             $BG01Normal: Boolean
-            $BG02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG02Ameliorate: gqlEHSFormTargetInItemInput
             $BG02Misfit: Boolean
             $BG02Normal: Boolean
-            $BG03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG03Ameliorate: gqlEHSFormTargetInItemInput
             $BG03Misfit: Boolean
             $BG03Normal: Boolean
-            $BG04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG04Ameliorate: gqlEHSFormTargetInItemInput
             $BG04Misfit: Boolean
             $BG04Normal: Boolean
-            $BG05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG05Ameliorate: gqlEHSFormTargetInItemInput
             $BG05Misfit: Boolean
             $BG05Normal: Boolean
-            $BG06Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG06Ameliorate: gqlEHSFormTargetInItemInput
             $BG06Misfit: Boolean
             $BG06Normal: Boolean
-            $BG07Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BG07Ameliorate: gqlEHSFormTargetInItemInput
             $BG07Misfit: Boolean
             $BG07Normal: Boolean
-            $BH01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BH01Ameliorate: gqlEHSFormTargetInItemInput
             $BH01Misfit: Boolean
             $BH01Normal: Boolean
-            $BH02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BH02Ameliorate: gqlEHSFormTargetInItemInput
             $BH02Misfit: Boolean
             $BH02Normal: Boolean
-            $BH03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BH03Ameliorate: gqlEHSFormTargetInItemInput
             $BH03Misfit: Boolean
             $BH03Normal: Boolean
-            $BH04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BH04Ameliorate: gqlEHSFormTargetInItemInput
             $BH04Misfit: Boolean
             $BH04Normal: Boolean
-            $BI01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BI01Ameliorate: gqlEHSFormTargetInItemInput
             $BI01Misfit: Boolean
             $BI01Normal: Boolean
-            $BI02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BI02Ameliorate: gqlEHSFormTargetInItemInput
             $BI02Misfit: Boolean
             $BI02Normal: Boolean
-            $BI03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BI03Ameliorate: gqlEHSFormTargetInItemInput
             $BI03Misfit: Boolean
             $BI03Normal: Boolean
-            $BJ01Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BJ01Ameliorate: gqlEHSFormTargetInItemInput
             $BJ01Misfit: Boolean
             $BJ01Normal: Boolean
-            $BJ02Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BJ02Ameliorate: gqlEHSFormTargetInItemInput
             $BJ02Misfit: Boolean
             $BJ02Normal: Boolean
-            $BJ03Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BJ03Ameliorate: gqlEHSFormTargetInItemInput
             $BJ03Misfit: Boolean
             $BJ03Normal: Boolean
-            $BJ04Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BJ04Ameliorate: gqlEHSFormTargetInItemInput
             $BJ04Misfit: Boolean
             $BJ04Normal: Boolean
-            $BJ05Ameliorate: gqlSafetyCheckTargetInItemInput
+            $BJ05Ameliorate: gqlEHSFormTargetInItemInput
             $BJ05Misfit: Boolean
             $BJ05Normal: Boolean
             $checkDept: String
             $checkStaff: String
-            $checkTarget: [gqlSafetyCheckTargetInput]
+            $checkTarget: [gqlEHSFormTargetInput]
             $day: Date!
             $location: String
-            $responsibleUnitSignature: [gqlSafetyCheckSignatureInput]
+            $responsibleUnitSignature: [gqlEHSFormSignatureInput]
             $siteId: String!
-            $supervisorUnitSignature: [gqlSafetyCheckSignatureInput]
+            $supervisorUnitSignature: [gqlEHSFormSignatureInput]
         ) {
-            updateSafetyCheckSpecial(
+            updateEHSFormSpecial(
                 BA01Ameliorate: $BA01Ameliorate
                 BA01Misfit: $BA01Misfit
                 BA01Normal: $BA01Normal
