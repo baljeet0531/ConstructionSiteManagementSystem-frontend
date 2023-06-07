@@ -1,8 +1,5 @@
 import { gql } from '@apollo/client';
-import {
-    IEHSFormFillItem,
-    SignaturesStateItem,
-} from '../../Interface/EHSForm/Common';
+import { IEHSFormFillItem } from '../../Interface/EHSForm/Common';
 import {
     IEHSFormSpecial,
     SpecialGroupKey,
@@ -12,7 +9,10 @@ import {
     EHSFORM_IN_ITEM_FIELDS,
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
-import { SignatureStateItem } from '../../Interface/Signature';
+import {
+    MultiSignatureStateItem,
+    SignatureStateItem,
+} from '../../Interface/Signature';
 
 interface IEHSFormSpecialItem extends IEHSFormFillItem {
     normal: keyof IEHSFormSpecial;
@@ -25,12 +25,13 @@ interface IEHSFormNormalGroup {
     items: IEHSFormSpecialItem[];
 }
 
-export class EHSFormSpecialHandler extends EHSFormHandler {
+export class EHSFormSpecialHandler extends EHSFormHandler<IEHSFormSpecial> {
     queryName = 'EHSFormSpecial';
     query = gql`
         ${EHSFORM_SIGNATURE_FIELDS}
         ${EHSFORM_IN_ITEM_FIELDS}
-        query EHSFormSpecial($siteId: String!, $day: Date) {
+        query EHSFormSpecial($siteId: String!, $day: Date, $role: String) {
+            searchName(siteId: $siteId, role: $role)
             EHSFormSpecial(siteId: $siteId, day: $day) {
                 siteId
                 day
@@ -1594,7 +1595,7 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
                     content: '遇地震時立即停止作業，使人員退避至安全避難場所。',
                     normal: 'BG03Normal',
                     misfit: 'BG03Misfit',
-                    ameliorate: 'BG04Ameliorate',
+                    ameliorate: 'BG03Ameliorate',
                 },
                 {
                     code: 'BG04',
@@ -1736,7 +1737,7 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
         siteId: string,
         number: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: SignaturesStateItem
+        responsibleSignatures: MultiSignatureStateItem
     ) {
         super(siteId, number, supervisorSignature, responsibleSignatures);
     }
@@ -2009,5 +2010,13 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
             BJ04Ameliorate: [],
             BJ05Ameliorate: [],
         };
+    }
+
+    isAmeliorateDisabled(values: IEHSFormSpecial, code: string): boolean {
+        const normalKey = `${code}Normal` as keyof IEHSFormSpecial;
+        const misfitKey = `${code}Misfit` as keyof IEHSFormSpecial;
+        const normal = values[normalKey];
+        const misfit = values[misfitKey];
+        return normal !== false || misfit === true;
     }
 }

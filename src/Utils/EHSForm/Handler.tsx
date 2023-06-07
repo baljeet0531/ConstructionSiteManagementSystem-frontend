@@ -1,5 +1,6 @@
 import { DocumentNode } from 'graphql';
 import {
+    MultiSignatureStateItem,
     SignatureStateItem,
     convertSignList,
     convertSignature,
@@ -10,14 +11,17 @@ import {
     IEHSFormFillItem,
     IEHSSignature,
     IGQLEHSSignature,
-    SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
+import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
+import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 
-export abstract class EHSFormHandler {
+export abstract class EHSFormHandler<
+    C extends IEHSFormNormal | IEHSFormSpecial
+> {
     siteId: string;
     day: string;
     supervisorSignature: SignatureStateItem;
-    responsibleSignatures: SignaturesStateItem;
+    responsibleSignatures: MultiSignatureStateItem;
     abstract queryName: string;
     abstract query: DocumentNode;
     abstract mutationName: string;
@@ -27,12 +31,14 @@ export abstract class EHSFormHandler {
         string,
         { name: string; items: IEHSFormFillItem[] }
     >;
+    // eslint-disable-next-line no-unused-vars
+    abstract isAmeliorateDisabled(values: C, code: string): boolean;
 
     constructor(
         siteId: string,
         day: string,
         supervisorSignature: SignatureStateItem,
-        responsibleSignatures: SignaturesStateItem
+        responsibleSignatures: MultiSignatureStateItem
     ) {
         this.siteId = siteId;
         this.day = day;
@@ -45,6 +51,7 @@ export abstract class EHSFormHandler {
             siteId: this.siteId,
             day: this.day,
             checkDept: '',
+            checkStaff: '',
             checkTarget: [],
             location: '',
             responsibleUnitSignature: [],
@@ -58,6 +65,10 @@ export abstract class EHSFormHandler {
 
         this.setResponsibleSigns(t);
         this.setSupervisorSign(t);
+
+        if (!t.location) t.location = '';
+        if (!t.checkDept) t.checkDept = '';
+        if (!t.checkStaff) t.checkStaff = '';
 
         return t;
     }
@@ -76,6 +87,9 @@ export abstract class EHSFormHandler {
             signatureType: 'supervisor',
         };
         submitValues.supervisorUnitSignature = [sign] as IEHSSignature[];
+        if (!submitValues.checkDept) submitValues.checkDept = null;
+        if (!submitValues.checkStaff) submitValues.checkStaff = null;
+        if (!submitValues.location) submitValues.location = null;
     }
 
     setResponsibleSigns(form: IEHSForm) {

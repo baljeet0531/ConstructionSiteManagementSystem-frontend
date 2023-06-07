@@ -1,4 +1,8 @@
-import { EHSFormName, IEHSForm } from '../../Interface/EHSForm/Common';
+import {
+    EHSFormName,
+    IEHSForm,
+    IEHSFormData,
+} from '../../Interface/EHSForm/Common';
 import { FormikProps, Form } from 'formik';
 import FormFactory from './Factory';
 import {
@@ -14,8 +18,8 @@ import {
     VStack,
     useToast,
 } from '@chakra-ui/react';
-import { EditIcon } from '../../Icons/Icons';
-import { useState } from 'react';
+import { ChevronDownIcon, EditIcon } from '../../Icons/Icons';
+import { useEffect, useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
@@ -23,28 +27,43 @@ import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
 import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
+import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
+import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
 
 export default function EHSForm({
     formProps,
     type,
     handler,
-}: // onClose,
-{
+    onClose,
+}: {
     formProps: FormikProps<IEHSForm>;
     type: EHSFormName;
-    handler: EHSFormHandler;
+    handler: EHSFormHandler<IEHSFormNormal | IEHSFormSpecial>;
     onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState<IEHSFormData>({
+        searchName: [],
+        selectedCorp: {},
+    });
+    const [signList, setSignList] = useState<string[]>([]);
     const rowCount = handler.getRowCount();
     const toast = useToast();
-    const f = new FormFactory(formProps, type, handler);
+    const f = new FormFactory(formProps, type, handler, data, setData);
     useQuery(handler.query, {
         variables: {
             siteId: handler.siteId,
             day: handler.day,
+            role: '外包商',
         },
         onCompleted: (d) => {
+            setData({
+                searchName: d.searchName,
+                selectedCorp: d.searchName.reduce(
+                    (acc: Object, cur: string) => ({ ...acc, [cur]: [] }),
+                    {}
+                ),
+            });
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
@@ -55,16 +74,22 @@ export default function EHSForm({
             console.error(err);
             setLoading(false);
             defaultErrorToast(toast);
-            // onClose();
+            onClose();
         },
         fetchPolicy: 'network-only',
     });
 
-    console.log(`siteId: ${handler.siteId} day: ${handler.day} type: ${type}`);
-    console.log(`${f}`);
-    console.log(`${setLoading}`);
-    console.log(`${rowCount}`);
-    console.log(formProps.values);
+    useEffect(() => {
+        const updateList = [];
+        for (const [key, value] of Object.entries(data.selectedCorp)) {
+            if (value.length > 0) {
+                updateList.push(key);
+            }
+        }
+        setSignList(updateList);
+    }, [data.selectedCorp]);
+
+    console.log(signList);
 
     return (
         <Form>
@@ -168,10 +193,9 @@ export default function EHSForm({
                     <GridItem {...unboxStyle}>巡檢對象</GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 6, 7]}
-                        fieldName="location"
-                        inputComponent={f.input({
-                            type: 'text',
-                        })}
+                        fieldName="checkTarget"
+                        inputComponent={f.corpNameSelect('checkTarget')}
+                        inputRightComponent={<ChevronDownIcon />}
                         pr={'15px'}
                     />
                 </Grid>
