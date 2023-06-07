@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
 import { defaultErrorToast, defaultSuccessToast } from '../Utils/DefaultToast';
-import { QUERY_MACHINERY } from '../Components/MachineryManagement/MachineryManagement';
+import { QUERY_MACHINERY } from '../Components/MachineryManagement/MachineryPage';
 
 const UPDATE_MACHINERY = gql`
     mutation UpdateMachineryManagement(
