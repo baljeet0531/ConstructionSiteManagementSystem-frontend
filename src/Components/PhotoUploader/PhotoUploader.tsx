@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import Background from '../../Images/WhiteLoginBackground.svg';
 import { useQuery } from '@apollo/client';
 import {
@@ -7,12 +7,19 @@ import {
     ISiteObject,
     QUERY_ACCOUNT_SITES,
 } from '../../Layouts/Layout';
-import { Cookies } from 'react-cookie';
+import { Cookies, useCookies } from 'react-cookie';
 import PhotoUploaderFormik from './Formik';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { LogoutIcon } from '../../Icons/Icons';
 
 export default function PhotoUploader() {
-
+    const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
+    const navigate = useNavigate();
+    if (!cookieValue || !username)
+        return <Navigate to={'/mobile/login'}></Navigate>;
+
+    const [, , removeCookie] = useCookies(['jwt', 'username']);
 
     const [accountSites, setAccountSites] = React.useState<IAccountSite[]>([]);
     const [siteObject, setSiteObject] = React.useState<ISiteObject>({});
@@ -47,8 +54,6 @@ export default function PhotoUploader() {
         },
     });
 
-    
-
     return (
         <Flex
             w={'100vw'}
@@ -58,6 +63,28 @@ export default function PhotoUploader() {
             bgImage={`url(${Background})`}
             overflowY={'auto'}
         >
+            <Button
+                position={'absolute'}
+                top={'5px'}
+                left={'5px'}
+                leftIcon={<LogoutIcon />}
+                color={'#667080'}
+                bg={'#6670801A'}
+                borderRadius={'30px'}
+                onClick={() => {
+                    removeCookie('jwt', {
+                        path: '/',
+                        secure: false,
+                    });
+                    removeCookie('username', {
+                        path: '/',
+                        secure: false,
+                    });
+                    navigate('/mobile/login');
+                }}
+            >
+                登出
+            </Button>
             <PhotoUploaderFormik
                 accountSites={accountSites}
                 siteObject={siteObject}
