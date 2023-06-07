@@ -1,5 +1,6 @@
 import React from 'react';
 import 'rsuite/dist/rsuite.min.css';
+import './Rsuite/rsuite-custom.css';
 import './App.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -9,12 +10,15 @@ import Login from './Components/Login/Login';
 import WorkPermitFormik from './Components/WorkPermitForm/Formik';
 import ToolboxFormik from './Components/ToolboxForm/Formik';
 import OpCheckFormik from './Components/OpCheckForm/Formik';
+import PhotoUploader from './Components/PhotoUploader/PhotoUploader';
+import MobileLogin from './Components/Login/MobileLogin';
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout page="dashboard" />} />
+                <Route path="/mobile/" element={<PhotoUploader />} />
                 <Route
                     path="/dashboard"
                     element={<Layout page="dashboard" />}
@@ -114,7 +118,12 @@ function App() {
                     path="/outsource/form/fault"
                     element={<Layout page="outsource_fault_form" />}
                 />
-                <Route path="/login" element={<Login />}></Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/mobile/login" element={<MobileLogin />} />
+                <Route
+                    path="/mobile/photo-uploader"
+                    element={<PhotoUploader />}
+                />
                 {/* Single Form Page is linked below */}
                 <Route
                     path="/form/work-permit"

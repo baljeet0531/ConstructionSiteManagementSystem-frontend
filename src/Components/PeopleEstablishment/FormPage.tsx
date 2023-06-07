@@ -19,7 +19,7 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
-import { formFiles, formValues } from './PeopleEstablishment';
+import { formFiles, formValues } from '../../Interface/PeopleManagement';
 import { EditIcon, ReplyIcon } from '../../Icons/Icons';
 import GridInputItem from './GridInputItem';
 import GridFileItem from './GridFileItem';
@@ -38,15 +38,45 @@ import {
 } from '../../Utils/DefaultToast';
 import { PageLoading } from '../Shared/Loading';
 
-type imageType =
-    | 'F6Img'
-    | 'GImg'
-    | 'HImgs'
-    | 'IDFImg'
-    | 'IDRImg'
-    | 'LImg'
-    | 'PImg'
-    | 'R6Img';
+type imageType = keyof formFiles;
+type formFileUrls = {
+    [K in imageType]?: K extends 'HImgs' ? string[] : string;
+};
+
+const imageTypeArray: imageType[] = [
+    'F6Img',
+    'G1Img',
+    'G2Img',
+    'G3Img',
+    'HImgs',
+    'IDFImg',
+    'IDRImg',
+    'LImg',
+    'PImg',
+    'R6Img',
+    'MAFImg',
+    'MARImg',
+    'AFImg',
+    'ARImg',
+    'WAHFImg',
+    'WAHRImg',
+    'LFImg',
+    'LRImg',
+    'CFImg',
+    'CRImg',
+    'HFImg',
+    'HRImg',
+    'EXFImg',
+    'EXRImg',
+    'SFImg',
+    'SRImg',
+    'SAFImg',
+    'SARImg',
+    'OSFImg',
+    'OSRImg',
+    'O2FImg',
+    'O2RImg',
+];
 
 const UPLOAD_HR_ZIP = gql`
     mutation UploadHRZip($file: Upload!) {
@@ -80,11 +110,21 @@ export const GET_HUMAN_RESOURCE = gql`
             certificationName
             certificationIssue
             certificationWithdraw
-            accidentInsuranceStart
-            accidentInsuranceEnd
-            accidentInsuranceAmount
-            accidentInsuranceSignDate
-            accidentInsuranceCompanyName
+            accidentInsuranceStartOne
+            accidentInsuranceStartTwo
+            accidentInsuranceStartThree
+            accidentInsuranceEndOne
+            accidentInsuranceEndTwo
+            accidentInsuranceEndThree
+            accidentInsuranceAmountOne
+            accidentInsuranceAmountTwo
+            accidentInsuranceAmountThree
+            accidentInsuranceSignDateOne
+            accidentInsuranceSignDateTwo
+            accidentInsuranceSignDateThree
+            accidentInsuranceCompanyNameOne
+            accidentInsuranceCompanyNameTwo
+            accidentInsuranceCompanyNameThree
             contractingCompanyName
             viceContractingCompanyName
             aCertificationDate
@@ -110,19 +150,43 @@ export const GET_HUMAN_RESOURCE = gql`
             saStatus
             osStatus
             o2Status
-            F6Img
-            GImg
-            HImgs
+            PImg
+            LImg
             IDFImg
             IDRImg
-            LImg
-            PImg
+            G1Img
+            G2Img
+            G3Img
+            F6Img
             R6Img
+            MAFImg
+            MARImg
+            ARImg
+            AFImg
+            WAHFImg
+            WAHRImg
+            LFImg
+            LRImg
+            CFImg
+            CRImg
+            HFImg
+            HRImg
+            EXFImg
+            EXRImg
+            SFImg
+            SRImg
+            SAFImg
+            SARImg
+            OSFImg
+            OSRImg
+            O2FImg
+            O2RImg
+            HImgs
         }
     }
 `;
 
-export default function FromPage(props: {
+export default function FormPage(props: {
     formProps: FormikProps<formValues>;
     fileStates: formFiles;
     setFileStates: React.Dispatch<React.SetStateAction<formFiles>>;
@@ -155,6 +219,15 @@ export default function FromPage(props: {
     const [zipFile, setZipFile] = React.useState<File>();
     const [imgLoading, setImgLoading] = React.useState<boolean>(true);
     const toast = useToast();
+
+    const handleSubmit = () => {
+        formProps.validateForm().then((errors) => {
+            Object.keys(errors).length == 0
+                ? formProps.submitForm()
+                : defaultErrorToast(toast, '欄位錯誤');
+        });
+    };
+
     function checkStatus(
         e: React.ChangeEvent<HTMLInputElement>,
         target: string,
@@ -244,59 +317,52 @@ export default function FromPage(props: {
         }, 300);
     };
 
-    const [filePath, setFilePath] = React.useState<{
-        F6Img: string;
-        GImg: string;
-        HImgs: string[];
-        IDFImg: string;
-        IDRImg: string;
-        LImg: string;
-        PImg: string;
-        R6Img: string;
-    }>({
-        F6Img: '',
-        GImg: '',
-        HImgs: [''],
-        IDFImg: '',
-        IDRImg: '',
-        LImg: '',
-        PImg: '',
-        R6Img: '',
-    });
+    const [filePath, setFilePath] = React.useState<formFileUrls>(
+        imageTypeArray.reduce((acc, imageType) => {
+            imageType == 'HImgs'
+                ? (acc[imageType] = [''])
+                : (acc[imageType] = '');
+            return acc;
+        }, {} as formFileUrls)
+    );
 
     const [getHumanresource] = useLazyQuery(GET_HUMAN_RESOURCE, {
-        onCompleted: ({ humanresource }) => {
-            const {
-                F6Img,
-                GImg,
-                HImgs,
-                IDFImg,
-                IDRImg,
-                LImg,
-                PImg,
-                R6Img,
-                ...rest
-            } = humanresource[0];
+        onCompleted: ({
+            humanresource,
+        }: {
+            humanresource: (formValues & formFileUrls)[];
+        }) => {
+            const { imgs, rest } = imageTypeArray.reduce(
+                (acc, imageType) => {
+                    if (imageType === 'HImgs') {
+                        const { [imageType]: val, ...rest } = acc.rest;
+                        acc.imgs[imageType] = val ? [...val, ''] : [''];
+                        acc.rest = rest;
+                    } else {
+                        const { [imageType]: val, ...rest } = acc.rest;
+                        acc.imgs[imageType] = val || '';
+                        acc.rest = rest;
+                    }
 
-            setFilePath({
-                F6Img: F6Img || '',
-                GImg: GImg || '',
-                HImgs: HImgs ? [...HImgs, ''] : [''],
-                IDFImg: IDFImg || '',
-                IDRImg: IDRImg || '',
-                LImg: LImg || '',
-                PImg: PImg || '',
-                R6Img: R6Img || '',
-            });
+                    return acc;
+                },
+                {
+                    imgs: {} as formFileUrls,
+                    rest: humanresource[0],
+                }
+            );
+
+            setFilePath(imgs);
             Object.keys(rest).forEach((key) => {
                 if (
-                    rest[key] == null ||
-                    rest[key] == '0001-01-01' ||
-                    rest[key] == '無法判斷：發證/回訓 月/日 輸入不合理'
+                    rest[key as keyof formValues] == null ||
+                    rest[key as keyof formValues] == '0001-01-01' ||
+                    rest[key as keyof formValues] ==
+                        '無法判斷：發證/回訓 月/日 輸入不合理'
                 )
-                    rest[key] = '';
+                    rest[key as keyof formValues] = '';
             });
-            formProps.setValues({ ...rest });
+            formProps.setValues(rest);
         },
         onError: (err) => {
             console.log(err);
@@ -306,19 +372,11 @@ export default function FromPage(props: {
     });
 
     React.useEffect(() => {
+        setImgLoading(true);
         const controller = new AbortController();
         const signal = controller.signal;
         let setFiles = true;
-        let newFileStates: formFiles = {
-            F6Img: undefined,
-            GImg: undefined,
-            HImgs: [],
-            IDFImg: undefined,
-            IDRImg: undefined,
-            LImg: undefined,
-            PImg: undefined,
-            R6Img: undefined,
-        };
+        let newFileStates: formFiles = { HImgs: [] };
         const fetchImg = async (imageType: imageType, imgPath: string) => {
             if (imgPath !== '') {
                 const cookieValue = new Cookies().get('jwt');
@@ -370,7 +428,7 @@ export default function FromPage(props: {
             for await (const items of Object.entries(filePath)) {
                 const [type, path] = items as [imageType, any];
                 if (type == 'HImgs') {
-                    for await (const path of filePath.HImgs) {
+                    for await (const path of filePath.HImgs || '') {
                         await fetchImg(type, path);
                     }
                 } else {
@@ -416,15 +474,11 @@ export default function FromPage(props: {
                 p={'2.938rem 2.625rem 1.563rem 2.125rem'}
                 position={'sticky'}
             >
-                <Text fontSize={'2.25rem'} color={'#667080'}>
-                    人員資料建置
-                </Text>
-                <Flex gap={'10px'}>
+                <Text fontSize={'2.25rem'}>人員資料建置</Text>
+                <Flex gap={'10px'} align={'center'}>
                     <Button
                         leftIcon={<ReplyIcon />}
-                        bg={'rgba(102, 112, 128, 0.1)'}
-                        color={'#667080'}
-                        border={'2px solid #919AA9'}
+                        variant={'buttonGrayOutline'}
                         onClick={onOpen}
                     >
                         匯入
@@ -433,8 +487,7 @@ export default function FromPage(props: {
                         leftIcon={<EditIcon />}
                         variant={'buttonBlueSolid'}
                         isLoading={formProps.isSubmitting}
-                        onClick={formProps.submitForm}
-                        type="submit"
+                        onClick={handleSubmit}
                     >
                         確定編輯
                     </Button>
@@ -462,30 +515,29 @@ export default function FromPage(props: {
                         </Text>
                         <Grid
                             w={'100%'}
-                            templateRows="repeat(5, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(3, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px 388px 224px 388px 388px"
+                            templateRows="repeat(5, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(3, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px repeat(2, 50px) 20px 388px 224px 388px 388px"
                             templateColumns="repeat(6, 1fr)"
                             gap={'4px 45px'}
                         >
                             <GridIdnoItem
                                 fieldName="idno"
+                                colSpan={2}
                                 handleValidate={validateEmpty}
                                 formlabel={'身分證字號'}
                                 searchResult={searchResult}
                                 setHumanToBeUpdated={setHumanToBeUpdated}
                                 handleDebounceSearch={handleDebounceSearch}
-                                setSearchResult={setSearchResult}
                                 formProps={formProps}
-                                gridRange={[1, 2, 1, 3]}
                             ></GridIdnoItem>
                             <GridInputItem
-                                gridRange={[1, 2, 3, 5]}
+                                colSpan={2}
                                 handleValidate={validateEmpty}
                                 fieldName="name"
                                 formlabel="姓名"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[1, 2, 5, 7]}
+                                colSpan={2}
                                 fieldName="gender"
                                 formlabel="性別"
                                 inputComponent={
@@ -495,15 +547,14 @@ export default function FromPage(props: {
                                     </Select>
                                 }
                             ></GridInputItem>
-
                             <GridInputItem
-                                gridRange={[2, 3, 1, 3]}
+                                colSpan={2}
                                 fieldName="birthday"
                                 formlabel="出生日期"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[2, 3, 3, 5]}
+                                colSpan={2}
                                 fieldName="bloodType"
                                 formlabel="血型"
                                 inputComponent={
@@ -517,52 +568,52 @@ export default function FromPage(props: {
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
                             <GridInputItem
-                                gridRange={[3, 4, 1, 3]}
+                                colSpan={2}
                                 fieldName="tel"
                                 formlabel="連絡電話"
                                 inputComponent={<Input type={'tel'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[3, 4, 3, 5]}
+                                colSpan={2}
                                 fieldName="liaison"
                                 formlabel="家屬聯絡人"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[3, 4, 5, 7]}
+                                colSpan={2}
                                 fieldName="emergencyTel"
                                 formlabel={`緊急聯絡\n電話`}
                                 inputComponent={<Input type={'tel'} />}
                             ></GridInputItem>
-
                             <GridInputItem
-                                gridRange={[4, 5, 1, 5]}
+                                colSpan={4}
                                 fieldName="address"
                                 formlabel="聯絡地址"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
                             <GridInputItem
-                                gridRange={[5, 6, 1, 3]}
+                                colSpan={2}
                                 fieldName="hazardNotifyDate"
                                 formlabel="危害告知日期"
                                 inputComponent={<Input type={'date'} />}
                                 helpText="*須有存查資料"
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[5, 6, 3, 5]}
+                                colSpan={2}
                                 fieldName="supplierIndustrialSafetyNumber"
                                 formlabel="供應商工安認證編號"
                                 inputComponent={<Input type={'text'} />}
                                 helpText="*須有存查資料"
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
+
                             <GridTitle
-                                gridRange={[6, 7, 1, 6]}
+                                colSpan={5}
                                 title="一般安全衛生教育訓練（6小時）"
                             ></GridTitle>
                             <GridInputItem
-                                gridRange={[7, 8, 1, 3]}
+                                colSpan={2}
                                 fieldName="safetyHealthyEducationIssue"
                                 formlabel={'發證/回訓'}
                                 independent={false}
@@ -582,7 +633,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[7, 8, 3, 5]}
+                                colSpan={2}
                                 fieldName="safetyHealthyEducationWithdraw"
                                 formlabel={'應回訓日期'}
                                 independent={false}
@@ -602,7 +653,7 @@ export default function FromPage(props: {
                                 helpText="*三年減一天"
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[7, 8, 5, 7]}
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="sixStatus"
                                 formlabel="6小時效期狀況"
@@ -612,32 +663,29 @@ export default function FromPage(props: {
                                 helpText="*期效3年"
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[8, 9, 1, 3]}
+                                colSpan={2}
                                 fieldName="laborInsuranceApplyDate"
                                 formlabel={`勞保申請\n日期`}
                                 inputComponent={<Input type={'date'} />}
                                 helpText="*提供一個月內"
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[8, 9, 3, 5]}
+                                colSpan={2}
                                 fieldName="laborAssociationDate"
                                 formlabel={`工會申請\n日期`}
                                 inputComponent={<Input type={'date'} />}
                                 helpText="*提供一個月內"
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
-                            <GridTitle
-                                gridRange={[9, 10, 1, 5]}
-                                title="主管證照"
-                            ></GridTitle>
+                            <GridTitle colSpan={6} title="主管證照"></GridTitle>
                             <GridInputItem
-                                gridRange={[10, 11, 1, 3]}
+                                colSpan={2}
                                 fieldName="certificationName"
                                 formlabel="證照名稱"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[10, 11, 3, 5]}
+                                colSpan={2}
                                 fieldName="certificationIssue"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -657,7 +705,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[10, 11, 5, 7]}
+                                colSpan={2}
                                 fieldName="certificationWithdraw"
                                 formlabel="應回訓日期"
                                 independent={false}
@@ -677,7 +725,7 @@ export default function FromPage(props: {
                                 helpText="*兩年減一天"
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[11, 12, 1, 3]}
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="certificationStatus"
                                 formlabel={`主管證照\n效期狀況`}
@@ -688,59 +736,137 @@ export default function FromPage(props: {
                             ></GridInputItem>
                             <GridItem colSpan={4}></GridItem>
                             <GridTitle
-                                gridRange={[12, 13, 1, 5]}
-                                title="意外險有效期"
+                                colSpan={6}
+                                title="意外險有效期(1)"
                             ></GridTitle>
                             <GridInputItem
-                                gridRange={[13, 14, 1, 3]}
-                                fieldName="accidentInsuranceStart"
+                                colSpan={2}
+                                fieldName="accidentInsuranceStartOne"
                                 formlabel="起始日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[13, 14, 3, 5]}
-                                fieldName="accidentInsuranceEnd"
+                                colSpan={2}
+                                fieldName="accidentInsuranceEndOne"
                                 formlabel="截止日"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[13, 14, 5, 7]}
-                                fieldName="accidentInsuranceAmount"
+                                colSpan={2}
+                                fieldName="accidentInsuranceAmountOne"
                                 formlabel={`保險金額\n（萬元）`}
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[14, 15, 1, 3]}
-                                fieldName="accidentInsuranceSignDate"
+                                colSpan={2}
+                                fieldName="accidentInsuranceSignDateOne"
                                 formlabel="加保日期"
                                 inputComponent={<Input type={'date'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[14, 15, 3, 5]}
-                                fieldName="accidentInsuranceCompanyName"
+                                colSpan={2}
+                                fieldName="accidentInsuranceCompanyNameOne"
+                                formlabel="保險公司"
+                                inputComponent={<Input type={'text'} />}
+                            ></GridInputItem>
+                            <GridItem colSpan={2}></GridItem>
+                            <GridTitle
+                                colSpan={6}
+                                title="意外險有效期(2)"
+                            ></GridTitle>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceStartTwo"
+                                formlabel="起始日"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceEndTwo"
+                                formlabel="截止日"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceAmountTwo"
+                                formlabel={`保險金額\n（萬元）`}
+                                inputComponent={<Input type={'text'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceSignDateTwo"
+                                formlabel="加保日期"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceCompanyNameTwo"
+                                formlabel="保險公司"
+                                inputComponent={<Input type={'text'} />}
+                            ></GridInputItem>
+                            <GridItem colSpan={2}></GridItem>
+                            <GridTitle
+                                colSpan={6}
+                                title="意外險有效期(3)"
+                            ></GridTitle>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceStartThree"
+                                formlabel="起始日"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceEndThree"
+                                formlabel="截止日"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceAmountThree"
+                                formlabel={`保險金額\n（萬元）`}
+                                inputComponent={<Input type={'text'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceSignDateThree"
+                                formlabel="加保日期"
+                                inputComponent={<Input type={'date'} />}
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                fieldName="accidentInsuranceCompanyNameThree"
                                 formlabel="保險公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
                             <GridInputItem
-                                gridRange={[15, 16, 1, 3]}
+                                colSpan={2}
                                 fieldName="contractingCompanyName"
                                 formlabel="承攬公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[15, 16, 3, 5]}
+                                colSpan={2}
                                 fieldName="viceContractingCompanyName"
                                 formlabel="次承攬公司"
                                 inputComponent={<Input type={'text'} />}
                             ></GridInputItem>
                             <GridItem colSpan={2}></GridItem>
                             <GridTitle
-                                gridRange={[16, 17, 1, 3]}
+                                colSpan={2}
                                 title="高空工作車(A)"
                             ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="高處（施工架）(WAH)"
+                            ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="吊掛作業(L)"
+                            ></GridTitle>
                             <GridInputItem
-                                gridRange={[17, 18, 1, 3]}
+                                colSpan={2}
                                 fieldName="aCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -759,22 +885,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[18, 19, 1, 3]}
-                                handleValidate={validateExpired}
-                                fieldName="aStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[16, 17, 3, 5]}
-                                title="高處（施工架）(WAH)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[17, 18, 3, 5]}
+                                colSpan={2}
                                 fieldName="wahCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -793,22 +904,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[18, 19, 3, 5]}
-                                handleValidate={validateExpired}
-                                fieldName="wahStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[16, 17, 5, 7]}
-                                title="吊掛作業(L)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[17, 18, 5, 7]}
+                                colSpan={2}
                                 fieldName="lCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -827,7 +923,27 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[18, 19, 5, 7]}
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="aStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="wahStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="lStatus"
                                 formlabel="期效狀況"
@@ -836,13 +952,20 @@ export default function FromPage(props: {
                                 }
                                 helpText="*期效3年"
                             ></GridInputItem>
-
                             <GridTitle
-                                gridRange={[19, 20, 1, 3]}
+                                colSpan={2}
                                 title="侷限空間(C)"
                             ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="有機溶劑(H)"
+                            ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="防爆區(Ex)"
+                            ></GridTitle>
                             <GridInputItem
-                                gridRange={[20, 21, 1, 3]}
+                                colSpan={2}
                                 fieldName="cCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -861,22 +984,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[21, 22, 1, 3]}
-                                handleValidate={validateExpired}
-                                fieldName="cStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[19, 20, 3, 5]}
-                                title="有機溶劑(H)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[20, 21, 3, 5]}
+                                colSpan={2}
                                 fieldName="hCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -895,22 +1003,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[21, 22, 3, 5]}
-                                handleValidate={validateExpired}
-                                fieldName="hStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[19, 20, 5, 7]}
-                                title="防爆區(Ex)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[20, 21, 5, 7]}
+                                colSpan={2}
                                 fieldName="exCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -929,7 +1022,27 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[21, 22, 5, 7]}
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="cStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="hStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="exStatus"
                                 formlabel="期效狀況"
@@ -938,13 +1051,20 @@ export default function FromPage(props: {
                                 }
                                 helpText="*期效3年"
                             ></GridInputItem>
-
                             <GridTitle
-                                gridRange={[22, 23, 1, 3]}
+                                colSpan={2}
                                 title="營造業主管(S)"
                             ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="施工架作業主管(SA)"
+                            ></GridTitle>
+                            <GridTitle
+                                colSpan={2}
+                                title="有機溶劑作業主管(OS)"
+                            ></GridTitle>
                             <GridInputItem
-                                gridRange={[23, 24, 1, 3]}
+                                colSpan={2}
                                 fieldName="sCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -963,22 +1083,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[24, 25, 1, 3]}
-                                handleValidate={validateExpired}
-                                fieldName="sStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[22, 23, 3, 5]}
-                                title="施工架作業主管(SA)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[23, 24, 3, 5]}
+                                colSpan={2}
                                 fieldName="saCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -989,7 +1094,7 @@ export default function FromPage(props: {
                                             checkStatus(
                                                 e,
                                                 'saCertificationDate',
-                                                'sStatus',
+                                                'saStatus',
                                                 3
                                             );
                                         }}
@@ -997,22 +1102,7 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[24, 25, 3, 5]}
-                                handleValidate={validateExpired}
-                                fieldName="sStatus"
-                                formlabel="期效狀況"
-                                inputComponent={
-                                    <Input type={'text'} disabled />
-                                }
-                                helpText="*期效3年"
-                            ></GridInputItem>
-
-                            <GridTitle
-                                gridRange={[22, 23, 5, 7]}
-                                title="有機溶劑作業主管(OS)"
-                            ></GridTitle>
-                            <GridInputItem
-                                gridRange={[23, 24, 5, 7]}
+                                colSpan={2}
                                 fieldName="osCertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -1031,7 +1121,27 @@ export default function FromPage(props: {
                                 }
                             ></GridInputItem>
                             <GridInputItem
-                                gridRange={[24, 25, 5, 7]}
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="sStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
+                                handleValidate={validateExpired}
+                                fieldName="saStatus"
+                                formlabel="期效狀況"
+                                inputComponent={
+                                    <Input type={'text'} disabled />
+                                }
+                                helpText="*期效3年"
+                            ></GridInputItem>
+                            <GridInputItem
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="osStatus"
                                 formlabel="期效狀況"
@@ -1040,13 +1150,13 @@ export default function FromPage(props: {
                                 }
                                 helpText="*期效3年"
                             ></GridInputItem>
-
                             <GridTitle
-                                gridRange={[25, 26, 1, 3]}
+                                colSpan={2}
                                 title="缺氧作業主管(O2)"
                             ></GridTitle>
+                            <GridItem colSpan={4}></GridItem>
                             <GridInputItem
-                                gridRange={[26, 27, 1, 3]}
+                                colSpan={2}
                                 fieldName="o2CertificationDate"
                                 formlabel="發證/回訓"
                                 independent={false}
@@ -1064,8 +1174,9 @@ export default function FromPage(props: {
                                     />
                                 }
                             ></GridInputItem>
+                            <GridItem colSpan={4}></GridItem>
                             <GridInputItem
-                                gridRange={[27, 28, 1, 3]}
+                                colSpan={2}
                                 handleValidate={validateExpired}
                                 fieldName="o2Status"
                                 formlabel="期效狀況"
@@ -1074,14 +1185,15 @@ export default function FromPage(props: {
                                 }
                                 helpText="*期效3年"
                             ></GridInputItem>
+                            <GridItem colSpan={4}></GridItem>
 
                             <GridTitle
-                                gridRange={[28, 29, 1, 5]}
+                                colSpan={6}
                                 title="照片佐證資料"
                             ></GridTitle>
 
                             <GridFileItem
-                                gridRange={[29, 30, 1, 4]}
+                                colSpan={3}
                                 fieldName="PImg"
                                 formlabel="個人照"
                                 fileStates={fileStates}
@@ -1089,62 +1201,72 @@ export default function FromPage(props: {
                                 imgLoading={imgLoading}
                             ></GridFileItem>
                             <GridFileItem
-                                gridRange={[29, 30, 4, 7]}
+                                colSpan={3}
                                 fieldName="LImg"
                                 formlabel="勞保"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
-
                             <GridFileItem
-                                gridRange={[30, 31, 1, 4]}
+                                colSpan={3}
                                 fieldName="IDFImg"
-                                formlabel="身分證影本(正面)"
+                                formlabel="身分證影本（正面）"
                                 height={'210px'}
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
                             <GridFileItem
-                                gridRange={[30, 31, 4, 7]}
+                                colSpan={3}
                                 fieldName="IDRImg"
-                                formlabel="身分證影本(反面)"
+                                formlabel="身分證影本（反面）"
                                 height={'210px'}
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
-
                             <GridFileItem
-                                gridRange={[31, 32, 1, 4]}
+                                colSpan={3}
                                 fieldName="F6Img"
-                                formlabel="一般安全衛生教育訓練證明(正面)"
+                                formlabel="一般安全衛生教育訓練證明（正面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
-
                             <GridFileItem
-                                gridRange={[31, 32, 4, 7]}
+                                colSpan={3}
                                 fieldName="R6Img"
-                                formlabel="一般安全衛生教育訓練證明(反面)"
+                                formlabel="一般安全衛生教育訓練證明（反面）"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
-
                             <GridFileItem
-                                gridRange={[32, 33, 1, 4]}
-                                fieldName="GImg"
-                                formlabel="團保"
+                                colSpan={3}
+                                fieldName="G1Img"
+                                formlabel="團保(1)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
                                 imgLoading={imgLoading}
                             ></GridFileItem>
-
-                            <GridItem colSpan={4} rowSpan={3}></GridItem>
-                            {fileStates.HImgs.map((file, index) => {
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="G2Img"
+                                formlabel="團保(2)"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="G3Img"
+                                formlabel="團保(3)"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            {fileStates.HImgs.map((_, index) => {
                                 return (
                                     <GridFileItem
                                         key={index}
@@ -1159,6 +1281,189 @@ export default function FromPage(props: {
                                     ></GridFileItem>
                                 );
                             })}
+                        </Grid>
+                        <Grid
+                            w={'100%'}
+                            templateRows="388px"
+                            templateColumns="repeat(6, 1fr)"
+                            gap={'4px 45px'}
+                        >
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="MAFImg"
+                                formlabel="主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="MARImg"
+                                formlabel="主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="AFImg"
+                                formlabel="高空工作車證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="ARImg"
+                                formlabel="高空工作車證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="WAHFImg"
+                                formlabel="高處施工架證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="WAHRImg"
+                                formlabel="高處施工架證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="LFImg"
+                                formlabel="吊掛作業證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="LRImg"
+                                formlabel="吊掛作業證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="CFImg"
+                                formlabel="侷限空間證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="CRImg"
+                                formlabel="侷限空間證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="HFImg"
+                                formlabel="有機溶劑證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="HRImg"
+                                formlabel="有機溶劑證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="EXFImg"
+                                formlabel="防爆區證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="EXRImg"
+                                formlabel="防爆區證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="SFImg"
+                                formlabel="營造業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="SRImg"
+                                formlabel="營造業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="SAFImg"
+                                formlabel="施工架作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="SARImg"
+                                formlabel="施工架作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="OSFImg"
+                                formlabel="有機溶劑作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="OSRImg"
+                                formlabel="有機溶劑作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="O2FImg"
+                                formlabel="缺氧作業主管證照（正面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
+                            <GridFileItem
+                                colSpan={3}
+                                fieldName="O2RImg"
+                                formlabel="缺氧作業主管證照（反面）"
+                                fileStates={fileStates}
+                                setFileStates={setFileStates}
+                                imgLoading={imgLoading}
+                            ></GridFileItem>
                         </Grid>
                     </Flex>
                 </Form>
