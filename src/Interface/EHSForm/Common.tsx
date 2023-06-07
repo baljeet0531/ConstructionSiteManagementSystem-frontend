@@ -3,15 +3,6 @@ import { IGQLSignature, ISignature } from '../Signature';
 
 export type EHSFormName = 'normal' | 'special';
 
-export type SignatureName =
-    | 'responsibleUnitSignature'
-    | 'supervisorUnitSignature';
-
-export const signatureColNames: SignatureName[] = [
-    'responsibleUnitSignature',
-    'supervisorUnitSignature',
-];
-
 interface IEHSSignatureCommon {
     corpName: string;
     day: string;

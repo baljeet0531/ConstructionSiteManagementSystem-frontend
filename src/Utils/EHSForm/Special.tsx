@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 import {
     IEHSFormFillItem,
-    SignatureName,
     SignaturesStateItem,
 } from '../../Interface/EHSForm/Common';
 import {
@@ -13,6 +12,7 @@ import {
     EHSFORM_IN_ITEM_FIELDS,
 } from '../GQLFragments';
 import { EHSFormHandler } from './Handler';
+import { SignatureStateItem } from '../../Interface/Signature';
 
 interface IEHSFormSpecialItem extends IEHSFormFillItem {
     normal: keyof IEHSFormSpecial;
@@ -1708,7 +1708,8 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
                 },
                 {
                     code: 'BJ03',
-                    content: '化學物質使用完畢後，置於指定地點。',
+                    content:
+                        '化學物質使用、處置、儲存、作業，備有物質安全資料表(MSDS)。',
                     normal: 'BJ03Normal',
                     misfit: 'BJ03Misfit',
                     ameliorate: 'BJ03Ameliorate',
@@ -1734,9 +1735,10 @@ export class EHSFormSpecialHandler extends EHSFormHandler {
     constructor(
         siteId: string,
         number: string,
-        signatures: Record<SignatureName, SignaturesStateItem>
+        supervisorSignature: SignatureStateItem,
+        responsibleSignatures: SignaturesStateItem
     ) {
-        super(siteId, number, signatures);
+        super(siteId, number, supervisorSignature, responsibleSignatures);
     }
 
     getInitialValues(): IEHSFormSpecial {
