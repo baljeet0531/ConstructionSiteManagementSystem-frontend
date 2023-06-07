@@ -31,6 +31,15 @@ export interface ISiteObject {
     [siteId: string]: siteValue;
 }
 
+export interface IAccountSite {
+    siteId: string;
+    siteRef: {
+        name: string;
+        archived: boolean;
+    };
+    role: string;
+}
+
 export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
