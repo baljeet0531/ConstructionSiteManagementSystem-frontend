@@ -4,9 +4,9 @@ import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
 import RemarksModal from './RemarksModal';
 
 export default function Remarks(
-    props: getElementProps & { readOnly?: boolean }
+    props: getElementProps & { editable: boolean }
 ) {
-    const { info, style, readOnly = false } = props;
+    const { info, style, editable } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <Box
@@ -36,7 +36,7 @@ export default function Remarks(
                 isOpen={isOpen}
                 onClose={onClose}
                 info={info}
-                readOnly={readOnly}
+                editable={editable}
             />
         </Box>
     );

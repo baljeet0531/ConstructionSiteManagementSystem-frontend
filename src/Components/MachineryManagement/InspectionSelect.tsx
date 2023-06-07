@@ -12,8 +12,11 @@ const statusMap = {
     未選: null,
 };
 
-export default function InspectionSelect(props: getElementProps) {
-    const { style, info, variable } = props;
+export default function InspectionSelect(
+    props: getElementProps & { editable: boolean }
+) {
+    const { editable, ...restProps } = props;
+    const { style, info, variable } = restProps;
     const [updateMachinery, { loading }] = useUpdateMachinery(info['siteId']);
 
     const [status, setStatus] = React.useState<statusType>(
@@ -24,7 +27,7 @@ export default function InspectionSelect(props: getElementProps) {
             : '未選'
     );
 
-    return (
+    return editable ? (
         <Box
             {...dataCellStyle}
             style={{
@@ -66,6 +69,15 @@ export default function InspectionSelect(props: getElementProps) {
                 <option value={'不合格'}>不合格</option>
             </Select>
             {loading && <TableLoading />}
+        </Box>
+    ) : (
+        <Box
+            {...dataCellStyle}
+            style={style}
+            {...(status === '未選' && { color: '#66708080' })}
+            {...(status === '不合格' && { bg: '#FDFFE3' })}
+        >
+            {status}
         </Box>
     );
 }
