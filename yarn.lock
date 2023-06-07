@@ -9289,6 +9289,11 @@ react-style-singleton@^2.2.1:
     invariant "^2.2.4"
     tslib "^2.0.0"
 
+react-webcam@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-webcam/-/react-webcam-7.1.0.tgz#4cbaecf9dc5b743704d500b55a8ca90de1a61278"
+  integrity sha512-QzqXbTVoAuVA8BgTQWQmm6pnKgpQPNyQ3MtjjgT6cUgaqNE9ih6oDDaHRXyzZmJYJObEIvnKHSX3dQuhiZIm6A==
+
 react-window@^1.8.8:
   version "1.8.8"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.8.tgz#1b52919f009ddf91970cbdb2050a6c7be44df243"

@@ -18,6 +18,7 @@ export default function CloseButton(props: {
             top={0}
             right={0}
             onClick={handleClick}
+            color={'#667080'}
         ></IconButton>
     );
 }
