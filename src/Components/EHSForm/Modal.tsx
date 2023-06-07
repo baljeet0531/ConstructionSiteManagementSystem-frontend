@@ -46,7 +46,6 @@ export default function EHSFormModal({
     );
     const [updateEHSForm] = useMutation(handler.mutation, {
         onCompleted: (d) => {
-            console.log(d)
             const response = d[handler.mutationName];
             if (response.ok) {
                 toast({
