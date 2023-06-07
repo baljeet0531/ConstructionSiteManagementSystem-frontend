@@ -244,14 +244,13 @@ export function getFeatureMap(site: {
         ehs_form: {
             name: '工安自主檢查',
             path: '/ehs/form/ehs-form',
-            // page: <EHSForm />,
-            page: noContentPage,
+            page: <EHSForm />,
         },
         ehs_fault_form: {
             name: '工安缺失單',
             path: '/ehs/form/fault',
-            // page: <EHSFaultForm />,
-            page: noContentPage,
+            page: <EHSFaultForm />,
+            // page: noContentPage,
         },
         ehs_machinery_management: {
             name: '機具檢點管理',
