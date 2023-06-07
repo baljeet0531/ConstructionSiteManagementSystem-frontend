@@ -6,7 +6,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
-import { QUERY_MACHINERY } from './MachineryManagement';
+import { QUERY_MACHINERY } from './MachineryPage';
 
 const DELETE_MACHINERY = gql`
     mutation DeleteMachineryManagement($checkId: [String]!, $siteId: String!) {

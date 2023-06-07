@@ -3,7 +3,7 @@ import React from 'react';
 import BlueBodyModal from '../Shared/BlueBodyModal';
 import { gql, useMutation } from '@apollo/client';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
-import { QUERY_MACHINERY } from './MachineryManagement';
+import { QUERY_MACHINERY } from './MachineryPage';
 
 const CREATE_MACHINERY = gql`
     mutation CreateMachineryManagement(
