@@ -87,13 +87,6 @@ export default function SignaturePad({
             time: dayjs(),
             owner: new Cookies().get('username'),
         };
-        // if (signatures[idx]) {
-        //     const arr = [...signatures];
-        //     arr[idx] = new_item;
-        //     setSignatures(arr);
-        // } else {
-        //     setSignatures([...signatures, new_item]);
-        // }
         handler.setSignature(index, new_item);
         onClose();
     };
@@ -116,7 +109,6 @@ export default function SignaturePad({
 
     return (
         <>
-            {/* {signatures[idx]?.image && !signatures[idx]?.no ? ( */}
             {handler.canDelete(index) ? (
                 <RepeatIcon
                     boxSize={4}
@@ -137,7 +129,6 @@ export default function SignaturePad({
                 flexDirection="column"
                 onClick={disable ? () => {} : onOpen}
             >
-                {/* {signatures[idx]?.image ? ( */}
                 {handler.hasImage(index) ? (
                     <Image
                         src={imageURL}
