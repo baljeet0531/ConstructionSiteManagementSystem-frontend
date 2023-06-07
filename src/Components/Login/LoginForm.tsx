@@ -15,11 +15,14 @@ import {
 import { useCookies } from 'react-cookie';
 import { AccountIcon, LockIcon, ShowPasswordIcon } from '../../Icons/Icons';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { useNavigate } from 'react-router-dom';
 
-export default function LoginForm() {
+export default function LoginForm(props: { mode: 'mobile' | 'desktop' }) {
+    const { mode } = props;
     const [show, setShow] = React.useState(false);
     const [, setCookie] = useCookies(['jwt', 'username']);
     const toast = useToast();
+    const navigate = useNavigate();
 
     const fetchLogin = async (username: string, password: string) => {
         let response = await fetch(BACKEND + '/login', {
@@ -47,7 +50,9 @@ export default function LoginForm() {
                 path: '/',
                 secure: false,
             });
-            window.location.href = '/';
+            mode === 'desktop'
+                ? navigate('/', { replace: true })
+                : navigate('/mobile/', { replace: true });
         }
     };
 
@@ -68,7 +73,6 @@ export default function LoginForm() {
                         align="center"
                         justify="center"
                         gap="20px"
-                        pt="25px"
                     >
                         <Field
                             name="account"
@@ -144,7 +148,7 @@ export default function LoginForm() {
                             borderRadius="20px"
                             isLoading={props.isSubmitting}
                         >
-                            log in
+                            登入
                         </Button>
                     </Flex>
                 </Form>
