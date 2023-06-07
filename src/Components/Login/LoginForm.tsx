@@ -52,7 +52,7 @@ export default function LoginForm(props: { mode: 'mobile' | 'desktop' }) {
             });
             mode === 'desktop'
                 ? navigate('/', { replace: true })
-                : navigate('/mobile/photo-uploader', { replace: true });
+                : navigate('/mobile/', { replace: true });
         }
     };
 
@@ -148,7 +148,7 @@ export default function LoginForm(props: { mode: 'mobile' | 'desktop' }) {
                             borderRadius="20px"
                             isLoading={props.isSubmitting}
                         >
-                            log in
+                            登入
                         </Button>
                     </Flex>
                 </Form>

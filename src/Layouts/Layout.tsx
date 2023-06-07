@@ -43,8 +43,7 @@ export interface IAccountSite {
 export default function Layout(props: { page: featureName }) {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
-    if (!cookieValue || !username)
-        return <Navigate to={'/login'} replace={true}></Navigate>;
+    if (!cookieValue || !username) return <Navigate to={'/login'}></Navigate>;
 
     const { page } = props;
 
