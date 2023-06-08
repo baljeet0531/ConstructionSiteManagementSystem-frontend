@@ -244,7 +244,12 @@ export function getFeatureMap(site: {
         ehs_form: {
             name: '工安自主檢查',
             path: '/ehs/form/ehs-form',
-            page: <EHSForm />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EHSForm key={siteId} siteId={siteId} siteName={siteName} />
+                ),
         },
         ehs_fault_form: {
             name: '工安缺失單',

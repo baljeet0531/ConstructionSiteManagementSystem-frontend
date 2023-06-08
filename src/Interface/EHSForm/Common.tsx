@@ -2,6 +2,12 @@ import { IGQLSignature, ISignature } from '../Signature';
 
 export type EHSFormName = 'normal' | 'special';
 
+type EHSFormNameValue = {
+    label: string;
+    queryName: string;
+};
+export type TEHSFormNameMap = Record<EHSFormName, EHSFormNameValue>;
+
 interface IEHSSignatureCommon {
     corpName: string;
     day: string;
@@ -46,4 +52,24 @@ export interface IEHSFormFillItem {
 export interface IEHSFormData {
     searchName: string[];
     selectedCorp: { [key: string]: string[] };
+}
+
+export interface IEHSFormOverview {
+    day: string;
+    checkDept: string;
+    checkStaff: string;
+    checkTarget: {
+        corpName: string;
+    }[];
+    responsibleUnitSignature: IGQLSignature[];
+    supervisorUnitSignature: IGQLSignature[];
+}
+
+export interface IEHSFormOverviewChecked extends IEHSFormOverview {
+    index: number;
+    isChecked: boolean;
+}
+
+export interface IEHSFormOverviewTable {
+    [day: string]: IEHSFormOverviewChecked;
 }
