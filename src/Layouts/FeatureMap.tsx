@@ -24,6 +24,7 @@ import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
 import { Center, Flex, Image, Text } from '@chakra-ui/react';
+import EHSOverview from '../Components/EHSForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -248,7 +249,11 @@ export function getFeatureMap(site: {
                 siteId == '' ? (
                     emptySiteIdPage
                 ) : (
-                    <EHSForm key={siteId} siteId={siteId} siteName={siteName} />
+                    <EHSOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
                 ),
         },
         ehs_fault_form: {
