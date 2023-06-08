@@ -1,19 +1,19 @@
 import React from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import Background from '../../Images/WhiteLoginBackground.svg';
-import { Cookies, useCookies } from 'react-cookie';
+import { Cookies } from 'react-cookie';
 import PhotoUploaderFormik from './Formik';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { LogoutIcon } from '../../Icons/Icons';
+import { useLogOut } from '../../Hooks/UseLogOut';
 
 export default function PhotoUploader() {
     const cookieValue = new Cookies().get('jwt');
     const username: string = new Cookies().get('username');
-    const navigate = useNavigate();
     if (!cookieValue || !username)
         return <Navigate to={'/mobile/login'}></Navigate>;
 
-    const [, , removeCookie] = useCookies(['jwt', 'username']);
+    const logout = useLogOut('/mobile/login');
 
     return (
         <Flex
@@ -32,17 +32,7 @@ export default function PhotoUploader() {
                 color={'#667080'}
                 bg={'#6670801A'}
                 borderRadius={'30px'}
-                onClick={() => {
-                    removeCookie('jwt', {
-                        path: '/',
-                        secure: false,
-                    });
-                    removeCookie('username', {
-                        path: '/',
-                        secure: false,
-                    });
-                    navigate('/mobile/login');
-                }}
+                onClick={logout}
             >
                 登出
             </Button>
