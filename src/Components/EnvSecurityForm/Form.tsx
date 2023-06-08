@@ -130,8 +130,8 @@ export default function EnvSecurityForm({
                 <Grid
                     w="100%"
                     mt="15px"
-                    templateColumns="45fr 60fr 460fr 50fr 50fr 95fr"
-                    templateRows={`20px 20px repeat(42, min-content)`}
+                    templateColumns="45px 60fr 460fr 50fr 50fr 95fr"
+                    templateRows={`20px 20px repeat(42, 35px)`}
                 >
                     <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
                         項目
@@ -230,8 +230,8 @@ export default function EnvSecurityForm({
                     mt="30px"
                     borderTop="1px"
                     borderColor="#919AA9"
-                    templateColumns="45fr 60fr 460fr 50fr 50fr 95fr"
-                    templateRows={`repeat(8, min-content)`}
+                    templateColumns="45px 60fr 460fr 50fr 50fr 95fr"
+                    templateRows="repeat(8, 35px)"
                 >
                     <GridItem
                         colStart={1}
