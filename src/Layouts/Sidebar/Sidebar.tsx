@@ -22,11 +22,10 @@ import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
 import { ISiteObject } from '../Layout';
 import { LogoutIcon } from '../../Icons/Icons';
-import { useCookies } from 'react-cookie';
 import { VERSION } from '../../Constants/EnvConstants';
 import { TODO_LIST } from '../../Components/Dashboard/TodoList';
 import { useLazyQuery } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
+import { useLogOut } from '../../Hooks/UseLogOut';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -56,8 +55,7 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
-    const navigate = useNavigate();
-    const [, , removeCookie] = useCookies(['jwt', 'username']);
+    const logout = useLogOut('/login');
 
     const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
     const [getTodoListAmount] = useLazyQuery(TODO_LIST, {
@@ -154,17 +152,7 @@ export default function Sidebar(props: {
                     bg={'#6670801A'}
                     borderRadius={'30px'}
                     fontSize={'15px'}
-                    onClick={() => {
-                        removeCookie('jwt', {
-                            path: '/',
-                            secure: false,
-                        });
-                        removeCookie('username', {
-                            path: '/',
-                            secure: false,
-                        });
-                        navigate('/login');
-                    }}
+                    onClick={logout}
                 >
                     登出
                 </Button>
