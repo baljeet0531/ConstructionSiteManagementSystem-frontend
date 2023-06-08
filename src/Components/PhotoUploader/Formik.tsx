@@ -94,42 +94,43 @@ export default function PhotoUploaderFormik() {
             validateOnBlur={false}
             onSubmit={(values, actions) => {
                 actions.setSubmitting(true);
-                Promise.all(
-                    values.content.map((content) => handleContents(content))
-                )
-                    .then((contents) => {
-                        console.log({
-                            ...values,
-                            content: contents,
-                        });
-                        createPhotos({
-                            variables: {
-                                ...values,
-                                content: contents,
-                            },
-                            onCompleted: ({ createImageManagement }) => {
-                                const { message, ok } = createImageManagement;
-                                if (ok) {
-                                    defaultSuccessToast(toast, message);
-                                }
-                                actions.setSubmitting(false);
-                                actions.setValues((values) => ({
-                                    ...values,
-                                    content: [],
-                                }));
-                            },
-                            onError: (err) => {
-                                console.log(err);
-                                defaultErrorToast(toast);
-                                actions.setSubmitting(false);
-                            },
-                        });
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        defaultErrorToast(toast);
-                        actions.setSubmitting(false);
-                    });
+                values.content.length
+                    ? Promise.all(
+                          values.content.map((content) =>
+                              handleContents(content)
+                          )
+                      )
+                          .then((contents) => {
+                              createPhotos({
+                                  variables: {
+                                      ...values,
+                                      content: contents,
+                                  },
+                                  onCompleted: ({ createImageManagement }) => {
+                                      const { message, ok } =
+                                          createImageManagement;
+                                      if (ok) {
+                                          defaultSuccessToast(toast, message);
+                                      }
+                                      actions.setSubmitting(false);
+                                      actions.setValues((values) => ({
+                                          ...values,
+                                          content: [],
+                                      }));
+                                  },
+                                  onError: (err) => {
+                                      console.log(err);
+                                      defaultErrorToast(toast);
+                                      actions.setSubmitting(false);
+                                  },
+                              });
+                          })
+                          .catch((err) => {
+                              console.log(err);
+                              defaultErrorToast(toast);
+                              actions.setSubmitting(false);
+                          })
+                    : actions.setSubmitting(false);
             }}
         >
             {(props) => (
