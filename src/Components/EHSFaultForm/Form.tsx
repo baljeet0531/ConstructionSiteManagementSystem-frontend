@@ -33,7 +33,7 @@ export default function FaultForm({
     faultId: number;
     // onClose: () => void;
 }) {
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     // const toast = useToast();
     const f = new FormFactory(formProps);
     // useQuery(GQL_FAULT_FORM_QUERY, {
