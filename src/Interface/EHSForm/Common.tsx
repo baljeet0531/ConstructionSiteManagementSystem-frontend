@@ -55,6 +55,7 @@ export interface IEHSFormData {
 }
 
 export interface IEHSFormOverview {
+    siteId: string;
     day: string;
     checkDept: string;
     checkStaff: string;

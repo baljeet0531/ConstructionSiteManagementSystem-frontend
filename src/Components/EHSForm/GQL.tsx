@@ -7,6 +7,7 @@ const EHSFORM_OVERVIEW_INPUTS = `
 `;
 const EHSFORM_OVERVIEW_FIELDS = `
 {
+    siteId
     day
     checkDept
     checkStaff

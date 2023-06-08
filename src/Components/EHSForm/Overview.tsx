@@ -31,6 +31,7 @@ import {
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
 import { QUERY_EHS_FORM } from './GQL';
+import EHSForm from './EHSForm';
 
 const EHSFormNameMap: TEHSFormNameMap = {
     normal: {
@@ -52,14 +53,16 @@ export default function EHSOverview(props: {
     siteId: string;
     siteName: string;
 }) {
-    if (!IsPermit('eng_op_check_form'))
-        return <Navigate to="/" replace={true} />;
+    if (!IsPermit('ehs_form')) return <Navigate to="/" replace={true} />;
+
     const columnMap: IColumnMap[] = [
         {
             title: '日期',
             width: 120,
             variable: 'day',
-            getElement: defaultElement,
+            getElement: (props: getElementProps) => (
+                <EHSForm {...props} type={queryType} />
+            ),
         },
         {
             title: '巡檢單位',
