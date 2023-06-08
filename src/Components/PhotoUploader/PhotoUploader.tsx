@@ -1,12 +1,6 @@
 import React from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import Background from '../../Images/WhiteLoginBackground.svg';
-import { useQuery } from '@apollo/client';
-import {
-    IAccountSite,
-    ISiteObject,
-    QUERY_ACCOUNT_SITES,
-} from '../../Layouts/Layout';
 import { Cookies, useCookies } from 'react-cookie';
 import PhotoUploaderFormik from './Formik';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -20,39 +14,6 @@ export default function PhotoUploader() {
         return <Navigate to={'/mobile/login'}></Navigate>;
 
     const [, , removeCookie] = useCookies(['jwt', 'username']);
-
-    const [accountSites, setAccountSites] = React.useState<IAccountSite[]>([]);
-    const [siteObject, setSiteObject] = React.useState<ISiteObject>({});
-
-    useQuery(QUERY_ACCOUNT_SITES, {
-        variables: {
-            username: username,
-            archived: false,
-        },
-        onCompleted: ({ accountSite }: { accountSite: IAccountSite[] }) => {
-            if (!localStorage.getItem('siteId')) {
-                localStorage.setItem('siteName', accountSites[0].siteRef.name);
-                localStorage.setItem('siteId', accountSites[0].siteId);
-            }
-
-            const siteObject = accountSite.reduce(
-                (a, { siteId, siteRef: { name }, role }) => {
-                    a[siteId] = {
-                        siteId: siteId,
-                        siteName: name,
-                        role: role,
-                    };
-                    return a;
-                },
-                {} as ISiteObject
-            );
-            setSiteObject(siteObject);
-            setAccountSites(accountSite);
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-    });
 
     return (
         <Flex
@@ -85,10 +46,7 @@ export default function PhotoUploader() {
             >
                 登出
             </Button>
-            <PhotoUploaderFormik
-                accountSites={accountSites}
-                siteObject={siteObject}
-            />
+            <PhotoUploaderFormik />
         </Flex>
     );
 }
