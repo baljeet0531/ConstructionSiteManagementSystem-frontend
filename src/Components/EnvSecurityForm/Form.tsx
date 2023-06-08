@@ -131,7 +131,7 @@ export default function EnvSecurityForm({
                     w="100%"
                     mt="15px"
                     templateColumns="45px 60fr 460fr 50fr 50fr 95fr"
-                    templateRows={`20px 20px repeat(42, 35px)`}
+                    templateRows={`20px 20px repeat(42, 40px)`}
                 >
                     <GridItem rowStart={1} rowEnd={3} {...filledStyle}>
                         項目
