@@ -10,7 +10,7 @@ import ReactWindowTable, {
     defaultElement,
     getElementProps,
 } from '../Shared/ReactWindowTable';
-// import { PageLoading } from '../Shared/Loading';
+import { PageLoading } from '../Shared/Loading';
 import { DateRangePicker } from 'rsuite';
 import { IsPermit } from '../../Mockdata/Mockdata';
 import { Navigate } from 'react-router';
@@ -23,24 +23,37 @@ import {
     TEHSFormNameMap,
 } from '../../Interface/EHSForm/Common';
 import {
+    ApolloCache,
+    DefaultContext,
+    MutationHookOptions,
     OperationVariables,
     QueryHookOptions,
     useLazyQuery,
+    useMutation,
     useQuery,
 } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
-import { QUERY_EHS_FORM } from './GQL';
+import {
+    EXPORT_EHS_FORM_NORMAL,
+    EXPORT_EHS_FORM_SPECIAL,
+    QUERY_EHS_FORM,
+} from './GQL';
 import EHSForm from './EHSForm';
+import { Cookies } from 'react-cookie';
+import { IExportField } from '../../Interface/IGQL';
+import { exportFile } from '../../Utils/Resources';
 
 const EHSFormNameMap: TEHSFormNameMap = {
     normal: {
         label: '一般作業巡迴檢查表',
         queryName: 'EHSFormNormal',
+        exportName: 'exportEHSFormNormal',
     },
     special: {
         label: '特殊作業巡迴檢查表',
         queryName: 'EHSFormSpecial',
+        exportName: 'exportFormSpecial',
     },
 };
 
@@ -125,15 +138,13 @@ export default function EHSOverview(props: {
             title: '全選',
             width: 50,
             variable: 'isChecked',
-            getElement: (props: getElementProps) => {
-                return (
-                    <CheckboxElement
-                        getElementProps={props}
-                        setTableData={setTableData}
-                        primaryKey={props.info.day}
-                    ></CheckboxElement>
-                );
-            },
+            getElement: (props: getElementProps) => (
+                <CheckboxElement
+                    getElementProps={props}
+                    setTableData={setTableData}
+                    primaryKey={props.info.day}
+                />
+            ),
         },
     ];
 
@@ -145,6 +156,7 @@ export default function EHSOverview(props: {
         )
     );
 
+    const username = new Cookies().get('username');
     const { siteId, siteName } = props;
     const toast = useToast();
 
@@ -176,6 +188,23 @@ export default function EHSOverview(props: {
             : updateSpecial(variables);
     };
 
+    const handleExport = () => {
+        const days = Object.values(tableData).flatMap(({ isChecked, day }) =>
+            isChecked ? day : []
+        );
+
+        const variables = {
+            variables: {
+                day: days,
+                siteId: siteId,
+                username: username,
+            },
+        };
+        queryType === 'normal'
+            ? exportNormal(variables)
+            : exportSpecial(variables);
+    };
+
     const queryOptions = (
         queryType: EHSFormName,
         filter: boolean = false
@@ -197,22 +226,51 @@ export default function EHSOverview(props: {
         },
         fetchPolicy: 'network-only',
     });
+    const exportOptions = (
+        queryType: EHSFormName
+    ): MutationHookOptions<
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>
+    > => ({
+        onCompleted: (data) => {
+            const { ok, message, path } = data[
+                EHSFormNameMap[queryType].exportName
+            ] as IExportField;
+            ok && exportFile(path, message, toast);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
 
-    useQuery(QUERY_EHS_FORM('normal'), {
+    const { loading } = useQuery(QUERY_EHS_FORM('normal'), {
         variables: {
             siteId: siteId,
         },
         ...queryOptions('normal'),
     });
 
-    const [updateNormal] = useLazyQuery(
+    const [updateNormal, { loading: updateNormalLoading }] = useLazyQuery(
         QUERY_EHS_FORM('normal'),
         queryOptions('normal', true)
     );
 
-    const [updateSpecial] = useLazyQuery(
+    const [updateSpecial, { loading: updateSpecialLoading }] = useLazyQuery(
         QUERY_EHS_FORM('special'),
         queryOptions('special', true)
+    );
+
+    const [exportNormal, { loading: exportNormalLoading }] = useMutation(
+        EXPORT_EHS_FORM_NORMAL,
+        exportOptions('normal')
+    );
+    const [exportSpecial, { loading: exportSpecialLoading }] = useMutation(
+        EXPORT_EHS_FORM_SPECIAL,
+        exportOptions('special')
     );
 
     return (
@@ -256,24 +314,7 @@ export default function EHSOverview(props: {
                 <Button
                     leftIcon={<LaunchIcon />}
                     variant={'buttonGrayOutline'}
-                    onClick={() => {
-                        // const username = new Cookies().get('username');
-                        // const infos = Object.values(tableData).flatMap((info) =>
-                        //     info.isChecked
-                        //         ? {
-                        //               number: info.number,
-                        //               ftype: info.type,
-                        //           }
-                        //         : []
-                        // );
-                        // exportOpCheck({
-                        //     variables: {
-                        //         infos: infos,
-                        //         siteId: siteId,
-                        //         username: username,
-                        //     },
-                        // });
-                    }}
+                    onClick={handleExport}
                 >
                     輸出
                 </Button>
@@ -285,7 +326,11 @@ export default function EHSOverview(props: {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
             />
-            {/*{(loading || exportLoading) && <PageLoading />} */}
+            {(loading ||
+                updateNormalLoading ||
+                updateSpecialLoading ||
+                exportNormalLoading ||
+                exportSpecialLoading) && <PageLoading />}
         </Flex>
     );
 }
