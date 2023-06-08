@@ -1,7 +1,6 @@
 import { Field, FieldArray, Form, Formik } from 'formik';
 import React from 'react';
-import { Flex, Text, Select, useToast } from '@chakra-ui/react';
-import { IAccountSite, ISiteObject } from '../../Layouts/Layout';
+import { Flex, Text, useToast } from '@chakra-ui/react';
 import UploaderList from './UploaderList';
 import { useMutation } from '@apollo/client';
 import { CREATE_PHOTOS } from '../Photo/PhotoCreatePage';
@@ -10,6 +9,7 @@ import {
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
+import SiteSelector from './SiteSelector';
 
 interface IGQLPhoto {
     image: File | null;
@@ -28,19 +28,8 @@ export interface IGQLCreatePhoto {
     siteId: string | undefined;
 }
 
-export default function PhotoUploaderFormik(props: {
-    accountSites: IAccountSite[];
-    siteObject: ISiteObject;
-}) {
-    const { accountSites, siteObject } = props;
+export default function PhotoUploaderFormik() {
     const toast = useToast();
-    const siteOptions = accountSites.map(
-        ({ siteId, siteRef: { name } }, index) => (
-            <option key={index} value={siteId}>
-                {name}
-            </option>
-        )
-    );
 
     const [createPhotos] = useMutation(CREATE_PHOTOS, {
         fetchPolicy: 'network-only',
@@ -95,7 +84,7 @@ export default function PhotoUploaderFormik(props: {
 
     const initialValues: IGQLCreatePhoto = {
         content: [],
-        siteId: localStorage.getItem('siteId') || accountSites[0].siteId,
+        siteId: undefined,
     };
 
     return (
@@ -157,31 +146,21 @@ export default function PhotoUploaderFormik(props: {
                         </Text>
                         <Field name="siteId">
                             {({ field }: any) => (
-                                <Select
-                                    variant={'grayOutline'}
-                                    {...field}
-                                    onChange={(e) => {
-                                        const siteId = e.target.value;
-                                        props.setFieldValue(field.name, siteId);
-                                        localStorage.setItem('siteId', siteId);
-                                        localStorage.setItem(
-                                            'siteName',
-                                            siteObject[siteId].siteName
-                                        );
-                                    }}
-                                >
-                                    {siteOptions}
-                                </Select>
+                                <SiteSelector field={field} formProps={props} />
                             )}
                         </Field>
-                        <FieldArray name="content">
-                            {(arrayHelper) => (
-                                <UploaderList
-                                    formProps={props}
-                                    arrayHelper={arrayHelper}
-                                />
-                            )}
-                        </FieldArray>
+                        {props.values.siteId ? (
+                            <FieldArray name="content">
+                                {(arrayHelper) => (
+                                    <UploaderList
+                                        formProps={props}
+                                        arrayHelper={arrayHelper}
+                                    />
+                                )}
+                            </FieldArray>
+                        ) : (
+                            <Text>請先加入或選擇專案</Text>
+                        )}
                     </Flex>
                 </Form>
             )}
