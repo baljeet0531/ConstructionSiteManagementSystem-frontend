@@ -194,7 +194,7 @@ export default function ReactWindowTable(props: {
         }>
     >;
     columnMap: IColumnMap[];
-    sizes: ISizes;
+    sizes?: ISizes;
     filteredPrimaryKey?: string[];
     sortReversed?: boolean;
     sortBy?: string;
@@ -221,7 +221,7 @@ export default function ReactWindowTable(props: {
         padding,
         fixedWidth,
         fixedHeight,
-    } = sizes;
+    } = sizes || {};
 
     const {
         topPadding = 148,
