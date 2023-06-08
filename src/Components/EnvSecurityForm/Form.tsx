@@ -95,35 +95,48 @@ export default function EnvSecurityForm({
                     w="100%"
                     mt="15px"
                     templateColumns="repeat(2, 80px 200px)"
+                    templateRows="50px 3px 50px"
                 >
                     <GridItem {...unboxStyle}>作業單位</GridItem>
                     <GridInputItem
                         fieldName="department"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
-                    <GridItem {...unboxStyle} justifyContent="flex-end">
+                    <GridItem
+                        {...unboxStyle}
+                        justifyContent={'flex-end'}
+                        pr={'10px'}
+                    >
                         廠區
                     </GridItem>
                     <GridInputItem
                         fieldName="zone"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
-                    <GridItem {...unboxStyle} justifyContent="flex-end">
-                        施工地點
-                    </GridItem>
+                    <GridItem />
+                    <GridItem />
+                    <GridItem />
+                    <GridItem />
+                    <GridItem {...unboxStyle}>施工地點</GridItem>
                     <GridInputItem
                         fieldName="area"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
-                    <GridItem {...unboxStyle} justifyContent="flex-end">
+                    <GridItem
+                        {...unboxStyle}
+                        justifyContent={'flex-end'}
+                        pr={'10px'}
+                    >
                         日期
                     </GridItem>
                     <GridInputItem
                         fieldName="day"
-                        inputComponent={<Input type="date" size="sm" />}
+                        inputComponent={
+                            <Input type="date" size="sm" isDisabled />
+                        }
                         style={{ ...unboxStyle }}
                     />
                 </Grid>
