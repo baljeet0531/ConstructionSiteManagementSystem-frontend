@@ -5,6 +5,7 @@ export type EHSFormName = 'normal' | 'special';
 type EHSFormNameValue = {
     label: string;
     queryName: string;
+    exportName: string;
 };
 export type TEHSFormNameMap = Record<EHSFormName, EHSFormNameValue>;
 
