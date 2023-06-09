@@ -22,7 +22,7 @@ export default function GridInputItem({
     handleValidate,
     style,
     invalidStyle,
-    invalidMsg = 'Invalid',
+    // invalidMsg = 'Invalid',
     ...rest
 }: GridItemProps & {
     fieldName: string;
@@ -40,7 +40,7 @@ export default function GridInputItem({
     handleValidate?: Function;
     style?: GridItemProps;
     invalidStyle?: object;
-    invalidMsg?: string;
+    // invalidMsg?: string;
 }) {
     return (
         <GridItem
@@ -89,7 +89,7 @@ export default function GridInputItem({
                                     {...inputComponent.props}
                                 />
                             )}
-                            {inputRightComponent && (
+                            {inputRightComponent && !form.errors[fieldName] && (
                                 <InputRightElement
                                     h="100%"
                                     pointerEvents="none"
@@ -98,8 +98,8 @@ export default function GridInputItem({
                                 />
                             )}
                             {form.errors[fieldName] && (
-                                <InputRightElement h="100%">
-                                    <Pin msg={invalidMsg}>
+                                <InputRightElement h="100%" w="16px" mx="10px">
+                                    <Pin msg={form.errors[fieldName] as string}>
                                         <WarningIcon color="red.default" />
                                     </Pin>
                                 </InputRightElement>
