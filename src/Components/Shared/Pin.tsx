@@ -5,7 +5,7 @@ export default function Pin({
     msg,
     children,
 }: {
-    msg: string | JSX.Element;
+    msg: string | JSX.Element | undefined;
     children: any;
 }) {
     const [isLabelOpen, setIsLabelOpen] = useState(false);
@@ -17,7 +17,7 @@ export default function Pin({
     const childWithProps = cloneElement(children, { ...childProps });
 
     return (
-        <Tooltip label={msg} isOpen={isLabelOpen} closeOnClick={false}>
+        <Tooltip label={msg || 'Invalid'} isOpen={isLabelOpen} closeOnClick={false}>
             {childWithProps}
         </Tooltip>
     );

@@ -263,9 +263,10 @@ export default function WorkPermitForm({
                             <Input type="datetime-local" border="0px" />
                         }
                         handleValidate={(value: string) => {
-                            return (
-                                dayjs(formProps.values.workStart) > dayjs(value)
-                            );
+                            return dayjs(formProps.values.workStart) >
+                                dayjs(value)
+                                ? '結束日期不得早於開始日期'
+                                : undefined;
                         }}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
@@ -273,7 +274,6 @@ export default function WorkPermitForm({
                             color: 'red.default',
                             fontWeight: 'bold',
                         }}
-                        invalidMsg="結束日期不得早於開始日期"
                     />
 
                     <GridItem {...numberStyle}>5</GridItem>
