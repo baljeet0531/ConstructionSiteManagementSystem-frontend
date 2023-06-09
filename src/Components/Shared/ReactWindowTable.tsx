@@ -155,18 +155,17 @@ export const SignatureStatusElement = (props: {
     );
 };
 
-export interface getElementProps {
+export interface getElementProps<TData = any, TVariable = any> {
     style: React.CSSProperties;
-    info: any;
-    variable: string;
+    info: TData;
+    variable: TVariable;
 }
-
-export interface IColumnMap {
+export interface IColumnMap<TData = any> {
     title: string;
     width: number;
     variable: string;
     // eslint-disable-next-line no-unused-vars
-    getElement: (props: getElementProps) => JSX.Element;
+    getElement: (props: getElementProps<TData>) => JSX.Element;
     customHeaderStyle?: ChakraProps;
 }
 
