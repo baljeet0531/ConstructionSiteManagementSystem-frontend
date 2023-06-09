@@ -26,8 +26,11 @@ import {
 import { SingleSignatureHandler } from '../../Utils/Signature/Single';
 import { IEnvSecurityForm } from '../../Interface/EnvSecurityForm';
 import { EnvSecurityFormHandler } from '../../Utils/EnvSecurityFormHandler';
-import { useState } from 'react';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { useEffect, useState } from 'react';
+import {
+    defaultErrorToast,
+    defaultWarningToast,
+} from '../../Utils/DefaultToast';
 
 export default function EnvSecurityForm({
     formProps,
@@ -38,18 +41,15 @@ export default function EnvSecurityForm({
     handler: EnvSecurityFormHandler;
     onClose: () => void;
 }) {
-    const [loading, setLoading] = useState<boolean>(true);
     const toast = useToast();
-    // const onItemsCount = Object.keys(handler.onItems).length;
-    // const offItemsCount = Object.keys(handler.offItems).length;
     const f = new FormFactory(formProps, handler);
+    const [loading, setLoading] = useState<boolean>(true);
     useQuery(handler.query, {
         variables: {
             siteId: handler.siteId,
             number: handler.number,
         },
         onCompleted: (d) => {
-            console.log(d);
             const singleFormData = handler.parse(d[handler.queryName]);
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
@@ -64,6 +64,18 @@ export default function EnvSecurityForm({
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        if (formProps.isSubmitting && !formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isSubmitting]);
+
+    // console.log(formProps)
 
     return (
         <Form>
@@ -335,7 +347,9 @@ export default function EnvSecurityForm({
                     </GridItem>
                 </Grid>
             </Box>
-            {(loading || formProps.isSubmitting) && <FormLoading />}
+            {(loading || formProps.isSubmitting || formProps.isValidating) && (
+                <FormLoading />
+            )}
         </Form>
     );
 }
