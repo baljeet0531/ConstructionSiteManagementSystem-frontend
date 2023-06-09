@@ -1,4 +1,12 @@
+import {
+    ApolloCache,
+    DefaultContext,
+    LazyQueryExecFunction,
+    MutationTuple,
+    OperationVariables,
+} from '@apollo/client';
 import { IGQLSignature, ISignature } from '../Signature';
+import React from 'react';
 
 export type EHSFormName = 'normal' | 'special';
 
@@ -6,6 +14,15 @@ type EHSFormNameValue = {
     label: string;
     queryName: string;
     exportName: string;
+    tableData: IEHSFormOverviewTable;
+    setTableData: React.Dispatch<React.SetStateAction<IEHSFormOverviewTable>>;
+    updateFunction: LazyQueryExecFunction<any, OperationVariables>;
+    exportFunction: MutationTuple<
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>
+    >[0];
 };
 export type TEHSFormNameMap = Record<EHSFormName, EHSFormNameValue>;
 

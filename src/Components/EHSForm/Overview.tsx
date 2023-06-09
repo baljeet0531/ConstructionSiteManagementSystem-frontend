@@ -45,19 +45,6 @@ import { IExportField } from '../../Interface/IGQL';
 import { exportFile } from '../../Utils/Resources';
 import { IGQLSignature } from '../../Interface/Signature';
 
-const EHSFormNameMap: TEHSFormNameMap = {
-    normal: {
-        label: '一般作業巡迴檢查表',
-        queryName: 'EHSFormNormal',
-        exportName: 'exportEHSFormNormal',
-    },
-    special: {
-        label: '特殊作業巡迴檢查表',
-        queryName: 'EHSFormSpecial',
-        exportName: 'exportEHSFormSpecial',
-    },
-};
-
 const sizes: ISizes = {
     headerHeight: 44,
     cellHeight: 44,
@@ -68,6 +55,19 @@ export default function EHSOverview(props: {
     siteName: string;
 }) {
     if (!IsPermit('ehs_form')) return <Navigate to="/" replace={true} />;
+
+    const username = new Cookies().get('username');
+    const { siteId, siteName } = props;
+    const toast = useToast();
+
+    const [queryType, setQueryType] = React.useState<EHSFormName>('normal');
+    const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
+    const [tableDataNormal, setTableDataNormal] =
+        React.useState<IEHSFormOverviewTable>({});
+    const [tableDataSpecial, setTableDataSpecial] =
+        React.useState<IEHSFormOverviewTable>({});
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
+        React.useState<string[]>();
 
     const columnMap: IColumnMap[] = [
         {
@@ -147,30 +147,12 @@ export default function EHSOverview(props: {
             getElement: (props: getElementProps) => (
                 <CheckboxElement
                     getElementProps={props}
-                    setTableData={setTableData}
+                    setTableData={EHSFormNameMap[queryType].setTableData}
                     primaryKey={props.info.day}
                 />
             ),
         },
     ];
-
-    const EHSOptions = Object.entries(EHSFormNameMap).map(
-        ([key, value], index) => (
-            <option key={index} value={key}>
-                {value.label}
-            </option>
-        )
-    );
-
-    const username = new Cookies().get('username');
-    const { siteId, siteName } = props;
-    const toast = useToast();
-
-    const [queryType, setQueryType] = React.useState<EHSFormName>('normal');
-    const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-    const [tableData, setTableData] = React.useState<IEHSFormOverviewTable>({});
-    const [filteredPrimaryKey, setFilteredPrimaryKey] =
-        React.useState<string[]>();
 
     const handleData = (data: IEHSFormOverview[]) =>
         data.reduce((acc, value, index) => {
@@ -189,14 +171,12 @@ export default function EHSOverview(props: {
                 end: dateRange && dayjs(dateRange[1]).format('YYYY-MM-DD'),
             },
         };
-        queryType === 'normal'
-            ? updateNormal(variables)
-            : updateSpecial(variables);
+        EHSFormNameMap[queryType].updateFunction(variables);
     };
 
     const handleExport = () => {
-        const days = Object.values(tableData).flatMap(({ isChecked, day }) =>
-            isChecked ? day : []
+        const days = Object.values(EHSFormNameMap[queryType].tableData).flatMap(
+            ({ isChecked, day }) => (isChecked ? day : [])
         );
 
         const variables = {
@@ -206,9 +186,8 @@ export default function EHSOverview(props: {
                 username: username,
             },
         };
-        queryType === 'normal'
-            ? exportNormal(variables)
-            : exportSpecial(variables);
+
+        EHSFormNameMap[queryType].exportFunction(variables);
     };
 
     const queryOptions = (
@@ -221,9 +200,12 @@ export default function EHSOverview(props: {
             ] as IEHSFormOverview[];
             if (filter) {
                 setFilteredPrimaryKey(queryData.map(({ day }) => day));
+            } else {
+                const formattedData = handleData(queryData);
+                queryType === 'normal'
+                    ? setTableDataNormal(formattedData)
+                    : setTableDataSpecial(formattedData);
             }
-            const formattedData = handleData(queryData);
-            setTableData(formattedData);
         },
         onError: (err) => {
             console.log(err);
@@ -239,7 +221,7 @@ export default function EHSOverview(props: {
         DefaultContext,
         ApolloCache<any>
     > => ({
-        onCompleted: (data) => {
+        onCompleted: async (data) => {
             const { ok, message, path } = data[
                 EHSFormNameMap[queryType].exportName
             ] as IExportField;
@@ -252,12 +234,22 @@ export default function EHSOverview(props: {
         fetchPolicy: 'network-only',
     });
 
-    const { loading } = useQuery(QUERY_EHS_FORM('normal'), {
+    const { loading: querNormalLoading } = useQuery(QUERY_EHS_FORM('normal'), {
         variables: {
             siteId: siteId,
         },
         ...queryOptions('normal'),
     });
+
+    const { loading: querSpecialLoading } = useQuery(
+        QUERY_EHS_FORM('special'),
+        {
+            variables: {
+                siteId: siteId,
+            },
+            ...queryOptions('special'),
+        }
+    );
 
     const [updateNormal, { loading: updateNormalLoading }] = useLazyQuery(
         QUERY_EHS_FORM('normal'),
@@ -276,6 +268,35 @@ export default function EHSOverview(props: {
     const [exportSpecial, { loading: exportSpecialLoading }] = useMutation(
         EXPORT_EHS_FORM_SPECIAL,
         exportOptions('special')
+    );
+
+    const EHSFormNameMap: TEHSFormNameMap = {
+        normal: {
+            label: '一般作業巡迴檢查表',
+            queryName: 'EHSFormNormal',
+            exportName: 'exportEHSFormNormal',
+            tableData: tableDataNormal,
+            setTableData: setTableDataNormal,
+            updateFunction: updateNormal,
+            exportFunction: exportNormal,
+        },
+        special: {
+            label: '特殊作業巡迴檢查表',
+            queryName: 'EHSFormSpecial',
+            exportName: 'exportEHSFormSpecial',
+            tableData: tableDataSpecial,
+            setTableData: setTableDataSpecial,
+            updateFunction: updateSpecial,
+            exportFunction: exportSpecial,
+        },
+    };
+
+    const EHSOptions = Object.entries(EHSFormNameMap).map(
+        ([key, value], index) => (
+            <option key={index} value={key}>
+                {value.label}
+            </option>
+        )
     );
 
     return (
@@ -325,13 +346,15 @@ export default function EHSOverview(props: {
                 </Button>
             </Flex>
             <ReactWindowTable
-                tableData={tableData}
-                setTableData={setTableData}
+                key={queryType}
+                tableData={EHSFormNameMap[queryType].tableData}
+                setTableData={EHSFormNameMap[queryType].setTableData}
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
             />
-            {(loading ||
+            {(querNormalLoading ||
+                querSpecialLoading ||
                 updateNormalLoading ||
                 updateSpecialLoading ||
                 exportNormalLoading ||
