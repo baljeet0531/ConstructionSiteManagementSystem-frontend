@@ -202,9 +202,7 @@ export default function EHSOverview(props: {
                 setFilteredPrimaryKey(queryData.map(({ day }) => day));
             } else {
                 const formattedData = handleData(queryData);
-                queryType === 'normal'
-                    ? setTableDataNormal(formattedData)
-                    : setTableDataSpecial(formattedData);
+                EHSFormNameMap[queryType].setTableData(formattedData);
             }
         },
         onError: (err) => {
