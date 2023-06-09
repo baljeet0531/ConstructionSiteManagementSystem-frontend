@@ -214,8 +214,7 @@ export function getFeatureMap(site: {
         eng_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/eng/form/env-security',
-            // page: <EnvSecurityForm />,
-            page: noContentPage,
+            page: <EnvSecurityForm />,
         },
         eng_op_check_form: {
             name: '特殊作業自主檢點表',
@@ -308,8 +307,7 @@ export function getFeatureMap(site: {
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/outsource/form/env-security',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page: <EnvSecurityForm />,
         },
         outsource_op_check_form: {
             name: '特殊作業自主檢點表',
