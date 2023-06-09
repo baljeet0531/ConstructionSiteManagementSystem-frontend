@@ -1,23 +1,50 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { IsPermit } from '../../Mockdata/Mockdata';
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import EHSFormModal from './Modal';
+import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
+import {
+    EHSFormName,
+    IEHSFormOverviewChecked,
+} from '../../Interface/EHSForm/Common';
 
-export default function EHSForm() {
-    if (!IsPermit('ehs_form')) return <Navigate to="/" replace={true} />;
+export default function EHSForm(
+    props: getElementProps & { type: EHSFormName }
+) {
+    const {
+        style,
+        info: { siteId, day },
+        type,
+    }: {
+        style: React.CSSProperties;
+        info: IEHSFormOverviewChecked;
+        type: EHSFormName;
+    } = props;
+
     const { onOpen, onClose, isOpen } = useDisclosure();
-
     return (
-        <>
-            <Button onClick={onOpen}>Test</Button>
+        <Box key={day} {...dataCellStyle} style={style} pt={0} p={0}>
+            <Button
+                variant={'ghost'}
+                height={'44px'}
+                width={'100%'}
+                fontFamily={'Inter'}
+                fontStyle={'normal'}
+                fontWeight={400}
+                fontSize={'14px'}
+                lineHeight={'20px'}
+                color={'#667080'}
+                onClick={onOpen}
+                textDecor={'underline'}
+            >
+                {day}
+            </Button>
             <EHSFormModal
-                siteId={'M522C0008'}
-                day={'2023-06-07'}
-                type={'normal'}
+                siteId={siteId}
+                day={day}
+                type={type}
                 onClose={onClose}
                 isOpen={isOpen}
             />
-        </>
+        </Box>
     );
 }
