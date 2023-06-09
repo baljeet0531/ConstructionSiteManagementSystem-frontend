@@ -41,9 +41,8 @@ import {
 } from './GQL';
 import EHSForm from './EHSForm';
 import { Cookies } from 'react-cookie';
-import { IExportField } from '../../Interface/IGQL';
-import { exportFile } from '../../Utils/Resources';
 import { IGQLSignature } from '../../Interface/Signature';
+import { useFileExport } from '../../Hooks/UseFileExport';
 
 const sizes: ISizes = {
     headerHeight: 44,
@@ -59,6 +58,7 @@ export default function EHSOverview(props: {
     const username = new Cookies().get('username');
     const { siteId, siteName } = props;
     const toast = useToast();
+    const { fileLoading, exportFile } = useFileExport();
 
     const [queryType, setQueryType] = React.useState<EHSFormName>('normal');
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
@@ -221,11 +221,8 @@ export default function EHSOverview(props: {
         DefaultContext,
         ApolloCache<any>
     > => ({
-        onCompleted: async (data) => {
-            const { ok, message, path } = data[
-                EHSFormNameMap[queryType].exportName
-            ] as IExportField;
-            ok && exportFile(path, message, toast);
+        onCompleted: (data) => {
+            exportFile(data[EHSFormNameMap[queryType].exportName]);
         },
         onError: (err) => {
             console.log(err);
@@ -358,7 +355,8 @@ export default function EHSOverview(props: {
                 updateNormalLoading ||
                 updateSpecialLoading ||
                 exportNormalLoading ||
-                exportSpecialLoading) && <PageLoading />}
+                exportSpecialLoading ||
+                fileLoading) && <PageLoading />}
         </Flex>
     );
 }
