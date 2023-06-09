@@ -98,14 +98,14 @@ export default function WorkPermitForm({
     const toast = useToast();
 
     useEffect(() => {
-        if (formProps.isSubmitting && !formProps.isValid) {
+        if (!formProps.isValid) {
             defaultWarningToast(
                 toast,
                 '填寫內容不符合規定',
                 '請檢查並修改後再上傳。'
             );
         }
-    }, [formProps.isSubmitting]);
+    }, [formProps.isValid]);
 
     return (
         <Form>
