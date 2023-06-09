@@ -24,6 +24,7 @@ import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
 import { Center, Flex, Image, Text } from '@chakra-ui/react';
+import EHSOverview from '../Components/EHSForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -243,7 +244,16 @@ export function getFeatureMap(site: {
         ehs_form: {
             name: '工安自主檢查',
             path: '/ehs/form/ehs-form',
-            page: <EHSForm />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EHSOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         ehs_fault_form: {
             name: '工安缺失單',

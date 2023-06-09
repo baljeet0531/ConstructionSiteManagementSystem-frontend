@@ -20,6 +20,7 @@ import { EHSFormMap } from '../../Utils/EHSForm/Mapper';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { useMutation } from '@apollo/client';
 import { ISignature } from '../../Interface/Signature';
+import { QUERY_EHS_FORM } from './GQL';
 
 export default function EHSFormModal({
     siteId,
@@ -65,14 +66,7 @@ export default function EHSFormModal({
             defaultErrorToast(toast);
             throw new Error();
         },
-        refetchQueries: [
-            {
-                query: handler.query,
-                variables: {
-                    siteId: siteId,
-                },
-            },
-        ],
+        refetchQueries: [QUERY_EHS_FORM(type)],
     });
 
     useEffect(() => {

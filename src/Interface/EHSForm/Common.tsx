@@ -1,6 +1,30 @@
+import {
+    ApolloCache,
+    DefaultContext,
+    LazyQueryExecFunction,
+    MutationTuple,
+    OperationVariables,
+} from '@apollo/client';
 import { IGQLSignature, ISignature } from '../Signature';
+import React from 'react';
 
 export type EHSFormName = 'normal' | 'special';
+
+type EHSFormNameValue = {
+    label: string;
+    queryName: string;
+    exportName: string;
+    tableData: IEHSFormOverviewTable;
+    setTableData: React.Dispatch<React.SetStateAction<IEHSFormOverviewTable>>;
+    updateFunction: LazyQueryExecFunction<any, OperationVariables>;
+    exportFunction: MutationTuple<
+        any,
+        OperationVariables,
+        DefaultContext,
+        ApolloCache<any>
+    >[0];
+};
+export type TEHSFormNameMap = Record<EHSFormName, EHSFormNameValue>;
 
 interface IEHSSignatureCommon {
     corpName: string;
@@ -46,4 +70,25 @@ export interface IEHSFormFillItem {
 export interface IEHSFormData {
     searchName: string[];
     selectedCorp: { [key: string]: string[] };
+}
+
+export interface IEHSFormOverview {
+    siteId: string;
+    day: string;
+    checkDept: string;
+    checkStaff: string;
+    checkTarget: {
+        corpName: string;
+    }[];
+    responsibleUnitSignature: IGQLSignature[];
+    supervisorUnitSignature: IGQLSignature[];
+}
+
+export interface IEHSFormOverviewChecked extends IEHSFormOverview {
+    index: number;
+    isChecked: boolean;
+}
+
+export interface IEHSFormOverviewTable {
+    [day: string]: IEHSFormOverviewChecked;
 }
