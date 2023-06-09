@@ -34,6 +34,7 @@ export default function EHSForm(
                 lineHeight={'20px'}
                 color={'#667080'}
                 onClick={onOpen}
+                textDecor={'underline'}
             >
                 {day}
             </Button>
