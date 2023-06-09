@@ -43,6 +43,7 @@ import EHSForm from './EHSForm';
 import { Cookies } from 'react-cookie';
 import { IExportField } from '../../Interface/IGQL';
 import { exportFile } from '../../Utils/Resources';
+import { IGQLSignature } from '../../Interface/Signature';
 
 const EHSFormNameMap: TEHSFormNameMap = {
     normal: {
@@ -53,7 +54,7 @@ const EHSFormNameMap: TEHSFormNameMap = {
     special: {
         label: '特殊作業巡迴檢查表',
         queryName: 'EHSFormSpecial',
-        exportName: 'exportFormSpecial',
+        exportName: 'exportEHSFormSpecial',
     },
 };
 
@@ -116,15 +117,20 @@ export default function EHSOverview(props: {
             getElement: (props: getElementProps) => {
                 const { responsibleUnitSignature, supervisorUnitSignature } =
                     props.info as IEHSFormOverviewChecked;
-                const signatureFieldList = [
+                const signatureFieldList: {
+                    signature: IGQLSignature | null;
+                    fieldLabel: string;
+                }[] = [
                     ...responsibleUnitSignature.map((sign) => ({
                         signature: sign,
                         fieldLabel: '缺失責任單位',
                     })),
-                    ...supervisorUnitSignature.map((sign) => ({
-                        signature: sign,
-                        fieldLabel: 'MIC監工單位',
-                    })),
+                    ...(supervisorUnitSignature.length
+                        ? supervisorUnitSignature.map((sign) => ({
+                              signature: sign,
+                              fieldLabel: 'MIC監工單位',
+                          }))
+                        : [{ signature: null, fieldLabel: 'MIC監工單位' }]),
                 ];
                 return (
                     <SignatureStatusElement
@@ -215,10 +221,9 @@ export default function EHSOverview(props: {
             ] as IEHSFormOverview[];
             if (filter) {
                 setFilteredPrimaryKey(queryData.map(({ day }) => day));
-            } else {
-                const formattedData = handleData(queryData);
-                setTableData(formattedData);
             }
+            const formattedData = handleData(queryData);
+            setTableData(formattedData);
         },
         onError: (err) => {
             console.log(err);
@@ -285,7 +290,7 @@ export default function EHSOverview(props: {
             gap={'11px'}
         >
             <Text variant={'pageSiteName'}>{siteName}</Text>
-            <Text variant={'pageTitle'}>特殊作業自主檢點表</Text>
+            <Text variant={'pageTitle'}>工安自主檢查</Text>
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
                     <DateRangePicker
