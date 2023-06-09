@@ -15,11 +15,14 @@ import {
     IEnvSecurityForm,
     IEnvSecurityItem,
     IGQLEnvSecurityForm,
-    offKeys,
     onKeys,
+    offKeys,
+    onKeyList,
+    offKeyList,
 } from '../Interface/EnvSecurityForm';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from './GQLFragments';
+import { FormikErrors } from 'formik';
 
 export class EnvSecurityFormHandler {
     siteId: string;
@@ -756,5 +759,27 @@ export class EnvSecurityFormHandler {
             const [signature] = this.signatures[key];
             submitValues[key] = convertSignature(signature) as ISignature;
         }
+    }
+
+    validate(values: IEnvSecurityForm) {
+        const errors: FormikErrors<IEnvSecurityForm> = {};
+        const filledOffKeys = [];
+        for (let key of onKeyList) {
+            if (values[key] === null) {
+                errors[key] = '必填';
+            }
+        }
+        for (let key of offKeyList) {
+            filledOffKeys.push(values[key]);
+        }
+
+        if (filledOffKeys.some((key) => key === true || key === false)) {
+            for (let key of offKeyList) {
+                if (values[key] === null) {
+                    errors[key] = '必填';
+                }
+            }
+        }
+        return errors;
     }
 }
