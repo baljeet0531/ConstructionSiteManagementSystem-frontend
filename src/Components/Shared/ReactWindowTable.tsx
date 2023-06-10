@@ -115,7 +115,7 @@ export const SignatureTooltip = (props: {
             {dayjs(signature.time).format('YYYY-MM-DD HH:mm:ss')}
         </Text>
     ) : (
-        ''
+        `${fieldLabel}：`
     );
     return (
         <Pin msg={label}>
@@ -162,7 +162,7 @@ export const ModalOpenButtonElement = ({
     variable,
     onClick,
 }: getElementProps & {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick: (event: React.MouseEvent<HTMLElement>) => void;
 }) => {
     return (
         <Box {...dataCellStyle} style={style} pt={0} p={0}>
