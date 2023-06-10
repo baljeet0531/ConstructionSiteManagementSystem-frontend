@@ -41,6 +41,7 @@ import { useFileExport } from '../../Hooks/UseFileExport';
 import { PageLoading } from '../Shared/Loading';
 import EnvSecurityFormModal from './Modal';
 import { getElementProps } from '../Shared/ReactWindowTable';
+import dayjs from 'dayjs';
 
 const separator = '?';
 
@@ -56,8 +57,8 @@ const QUERY_ENV_SECURITY = gql`
         $number: String
         $start: Date
         $end: Date
-        $dept: String
-        $area: String
+        $dept: [String]
+        $area: [String]
     ) {
         envSecurityCheck(
             siteId: $siteId
@@ -335,19 +336,11 @@ export default function EnvSecurityOverview(props: {
 
     const handleSearch = (dateRange: DateRange | null) => {
         const [dept, area] = handleCheckedDeptsAreas();
-
-        console.log({
-            siteId: siteId,
-            start: dateRange && dateRange[0],
-            end: dateRange && dateRange[1],
-            dept: dept,
-            area: area,
-        });
         searchEnvSecurity({
             variables: {
                 siteId: siteId,
-                start: dateRange && dateRange[0],
-                end: dateRange && dateRange[1],
+                start: dateRange && dayjs(dateRange[0]).format('YYYY/MM/DD'),
+                end: dateRange && dayjs(dateRange[1]).format('YYYY/MM/DD'),
                 dept: dept,
                 area: area,
             },
