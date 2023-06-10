@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
@@ -11,69 +10,40 @@ import {
     PopoverContent,
     PopoverArrow,
     PopoverBody,
-    Grid,
-    Checkbox,
-    // useToast,
-    // Checkbox,
-    // Box,
-    // Link,
+    useToast,
 } from '@chakra-ui/react';
-import { DateRangePicker } from 'rsuite';
+import { DateRangePicker, MultiCascader } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
-import { gql } from '@apollo/client';
-import { IGQLSignature } from '../../Interface/Signature';
-import { ChevronRightIcon } from '@chakra-ui/icons';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import ReactWindowTable from '../Shared/ReactWindowTable';
+import {
+    IEnvSecurityDeptArea,
+    IEnvSecurityDeptAreaMap,
+    IEnvSecurityFormOverview,
+    IEnvSecurityOverviewTable,
+} from '../../Interface/EnvSecurityForm';
+import { ValueType } from 'rsuite/esm/MultiCascader/MultiCascader';
+import { ItemDataType } from 'rsuite/esm/@types/common';
+import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
 // import { Cookies } from 'react-cookie';
 
-export interface IEnvSecurityFormOverview {
-    siteId: string;
-    day: string;
-    number: string;
-    department: string;
-    area: string;
-    supervisorBeforeRef: IGQLSignature | null;
-    staffBeforeRef: IGQLSignature | null;
-    supervisorAfterRef: IGQLSignature | null;
-    staffAfterRef: IGQLSignature | null;
-}
+const separator = '?';
 
-export interface IEnvSecurityOverviewChecked extends IEnvSecurityFormOverview {
-    index: number;
-    isChecked: boolean;
-}
-
-export interface IEnvSecurityOverviewTable {
-    [day: string]: IEnvSecurityOverviewChecked;
-}
-
-interface IEnvSecurityDeptArea {
-    dept: string;
-    area: string[];
-}
-
-interface IEnvSecurityDeptAreaMap {
-    [dept: string]: {
-        areas: {
-            [area: string]: {
-                isChecked: boolean;
-            };
-        };
-        isChecked: boolean;
-    };
-}
-// eslint-disable-next-line no-unused-vars
 const QUERY_ENV_FORM = gql`
-    query envSecurityCheck(
+    ${SIGNATURE_FIELDS}
+    query EnvSecurityOverview(
         $siteId: String!
+        $number: String
         $start: Date
         $end: Date
-        $dept: String
-        $area: String
+        $dept: [String]
+        $area: [String]
     ) {
         envSecurityCheck(
             siteId: $siteId
+            number: $number
             start: $start
             end: $end
             dept: $dept
@@ -111,97 +81,128 @@ export default function EnvSecurityOverview(props: {
 }) {
     if (!IsPermit('eng_fault_form')) return <Navigate to="/" replace={true} />;
 
-    const { siteName } = props;
+    const { siteName, siteId } = props;
+    const toast = useToast();
     // const username = new Cookies().get('username');
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [tableData, setTableData] = React.useState<IEnvSecurityOverviewTable>(
         {}
     );
-    // eslint-disable-next-line no-unused-vars
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
-    // eslint-disable-next-line no-unused-vars
     const [deptAreaMap, setDeptAreaMap] =
-        React.useState<IEnvSecurityDeptAreaMap>({
-            dept1: {
-                areas: {
-                    area1: {
-                        isChecked: false,
-                    },
-                    area2: {
-                        isChecked: false,
-                    },
-                    area3: {
-                        isChecked: false,
-                    },
-                    area4: {
-                        isChecked: false,
-                    },
+        React.useState<IEnvSecurityDeptAreaMap>({});
+    const [multiCascaderData, setMultiCascaderData] = React.useState<
+        ItemDataType<string | number>[]
+    >([]);
+
+    useQuery(QUERY_ENV_FORM, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            envSecurityCheck,
+            envSecurityCheckCondition,
+        }: {
+            envSecurityCheck: IEnvSecurityFormOverview[];
+            envSecurityCheckCondition: IEnvSecurityDeptArea[];
+        }) => {
+            const formattedData = envSecurityCheck.reduce((acc, val, index) => {
+                const { number } = val;
+                acc[number] = {
+                    ...val,
+                    index: index,
+                    isChecked: false,
+                };
+                return acc;
+            }, {} as IEnvSecurityOverviewTable);
+            setTableData(formattedData);
+
+            const { mapper, cascader } = envSecurityCheckCondition.reduce(
+                (acc, { dept, area }) => {
+                    acc.mapper[dept] = {
+                        areas: area,
+                    };
+                    acc.cascader.push({
+                        label: dept,
+                        value: dept,
+                        children: area.map((area) => ({
+                            label: area,
+                            value: dept + separator + area,
+                        })),
+                    });
+                    return acc;
                 },
-                isChecked: false,
-            },
-            dept3: {
-                areas: {
-                    area1: {
-                        isChecked: false,
-                    },
-                    area2: {
-                        isChecked: false,
-                    },
-                    area5: {
-                        isChecked: false,
-                    },
-                },
-                isChecked: false,
+                {
+                    mapper: {},
+                    cascader: [],
+                } as {
+                    mapper: IEnvSecurityDeptAreaMap;
+                    cascader: ItemDataType<string | number>[];
+                }
+            );
+            setDeptAreaMap(mapper);
+            setMultiCascaderData(cascader);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [searchEnvSecurity] = useLazyQuery(QUERY_ENV_FORM, {
+        onCompleted: ({
+            envSecurityCheck,
+        }: {
+            envSecurityCheck: IEnvSecurityFormOverview[];
+        }) => {
+            setFilteredPrimaryKey(envSecurityCheck.map(({ number }) => number));
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [value, setValue] = React.useState<ValueType>([]);
+
+    const handleCheckedDeptsAreas = React.useCallback(() => {
+        const checkedDepts = new Set<string>();
+        const checkedAreas = new Set<string>();
+        value.forEach((val) => {
+            const [dept, area] = val.toString().split(separator);
+
+            area
+                ? checkedAreas.add(area)
+                : deptAreaMap[dept].areas.forEach((area) =>
+                      checkedAreas.add(area)
+                  );
+            checkedDepts.add(dept);
+        });
+        return [Array.from(checkedDepts), Array.from(checkedAreas)];
+    }, [value]);
+
+    const handleSearch = (dateRange: DateRange | null) => {
+        const [dept, area] = handleCheckedDeptsAreas();
+
+        console.log({
+            siteId: siteId,
+            start: dateRange && dateRange[0],
+            end: dateRange && dateRange[1],
+            dept: dept,
+            area: area,
+        });
+        searchEnvSecurity({
+            variables: {
+                siteId: siteId,
+                start: dateRange && dateRange[0],
+                end: dateRange && dateRange[1],
+                dept: dept,
+                area: area,
             },
         });
-    const [currentDept, setCurrentDept] = React.useState<string>('');
-
-    const deptCheckbox = Object.entries(deptAreaMap)
-        .sort()
-        .map(([dept, { isChecked }], index) => (
-            <Flex key={index} align={'center'} gap={'10px'}>
-                <Checkbox
-                    isChecked={isChecked}
-                    onChange={(e) => {
-                        setCurrentDept(dept);
-                        const { [dept]: deptAreas, ...rest } = deptAreaMap;
-                        setDeptAreaMap({
-                            [dept]: {
-                                ...deptAreas,
-                                isChecked: e.target.checked,
-                            },
-                            ...rest,
-                        });
-                    }}
-                >
-                    {dept}
-                </Checkbox>
-                {dept === currentDept && <ChevronRightIcon />}
-            </Flex>
-        ));
-
-    const areaCheckbox =
-        deptAreaMap[currentDept] &&
-        Object.entries(deptAreaMap[currentDept].areas).map(
-            ([area, { isChecked }], index) => (
-                <Checkbox
-                    key={index}
-                    isChecked={isChecked}
-                    onChange={() => {
-                        // setDeptAreaMap({
-                        //     [dept]: {
-                        //         ...deptAreas,
-                        //         isChecked: e.target.checked,
-                        //     },
-                        //     ...rest,
-                        // });
-                    }}
-                >
-                    {area}
-                </Checkbox>
-            )
-        );
+    };
 
     return (
         <Flex
@@ -225,7 +226,7 @@ export default function EnvSecurityOverview(props: {
                             borderRadius: '6px',
                         }}
                         onChange={(value) => {
-                            // handleSearch(value);
+                            handleSearch(value);
                             setDateRange(value);
                         }}
                     />
@@ -244,52 +245,53 @@ export default function EnvSecurityOverview(props: {
                                 display={'flex'}
                                 padding={'24px'}
                                 height={'328px'}
+                                width={'328px'}
                                 flexDirection={'column'}
                                 justifyContent={'space-between'}
                             >
-                                <Grid
-                                    padding={'10px'}
-                                    gap={'10px'}
-                                    templateColumns={'repeat(2,1fr)'}
-                                >
+                                <Flex direction={'column'}>
                                     <Flex
-                                        direction={'column'}
-                                        gap={'12px'}
-                                        overflowX={'hidden'}
+                                        width={'100%'}
+                                        align={'center'}
+                                        justify={'center'}
                                     >
-                                        <Text>作業單位</Text>
-                                        <Flex
-                                            direction={'column'}
-                                            gap={'12px'}
-                                            overflowY={'auto'}
-                                            wordBreak={'break-word'}
-                                            maxH={'202px'}
+                                        <Text
+                                            pl={'10px'}
+                                            flexBasis={'50%'}
+                                            fontWeight={700}
+                                            fontSize={'1rem'}
+                                            lineHeight={'1.5rem'}
                                         >
-                                            {deptCheckbox}
-                                        </Flex>
-                                    </Flex>
-                                    <Flex
-                                        direction={'column'}
-                                        gap={'12px'}
-                                        overflowX={'hidden'}
-                                    >
-                                        <Text>施工地點</Text>
-                                        <Flex
-                                            direction={'column'}
-                                            gap={'12px'}
-                                            overflowY={'auto'}
-                                            wordBreak={'break-word'}
-                                            maxH={'202px'}
+                                            作業單位
+                                        </Text>
+                                        <Text
+                                            pl={'10px'}
+                                            flexBasis={'50%'}
+                                            fontWeight={700}
+                                            fontSize={'1rem'}
+                                            lineHeight={'1.5rem'}
                                         >
-                                            {areaCheckbox}
-                                        </Flex>
+                                            施工地點
+                                        </Text>
                                     </Flex>
-                                </Grid>
+                                    <MultiCascader
+                                        inline
+                                        menuWidth={140}
+                                        menuHeight="auto"
+                                        data={multiCascaderData}
+                                        value={value}
+                                        onChange={setValue}
+                                        countable={false}
+                                        preventOverflow
+                                        searchable={false}
+                                    />
+                                </Flex>
+
                                 <Flex justifyContent="flex-end">
                                     <Button
                                         variant={'buttonBlueSolid'}
                                         onClick={() => {
-                                            // handleSearch(dateRange);
+                                            handleSearch(dateRange);
                                         }}
                                     >
                                         確定搜尋
