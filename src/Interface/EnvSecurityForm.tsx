@@ -1,4 +1,5 @@
 import { IGQLOpCheck, IOpCheck } from './OpCheck/Common';
+import { IGQLSignature } from './Signature';
 
 export interface IEnvSecurityForm extends IOpCheck {
     AA01: boolean | null;
@@ -226,3 +227,35 @@ export const offKeyList: offKeys[] = [
     'AB05',
     'AB06',
 ];
+
+export interface IEnvSecurityFormOverview {
+    siteId: string;
+    day: string;
+    number: string;
+    department: string;
+    area: string;
+    supervisorBeforeRef: IGQLSignature | null;
+    staffBeforeRef: IGQLSignature | null;
+    supervisorAfterRef: IGQLSignature | null;
+    staffAfterRef: IGQLSignature | null;
+}
+
+export interface IEnvSecurityOverviewChecked extends IEnvSecurityFormOverview {
+    index: number;
+    isChecked: boolean;
+}
+
+export interface IEnvSecurityOverviewTable {
+    [day: string]: IEnvSecurityOverviewChecked;
+}
+
+export interface IEnvSecurityDeptArea {
+    dept: string;
+    area: string[];
+}
+
+export interface IEnvSecurityDeptAreaMap {
+    [dept: string]: {
+        areas: string[];
+    };
+}
