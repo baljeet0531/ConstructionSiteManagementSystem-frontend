@@ -171,9 +171,7 @@ export default class FormFactory {
         const newSelected = {} as { [k: string]: string[] };
         for (let key in selected) {
             const corpList = selected[key];
-            newSelected[key] = corpList.filter((code) => {
-                code !== item.code;
-            });
+            newSelected[key] = corpList.filter((code) => code !== item.code);
         }
         this.formProps.setFieldValue(item.ameliorate, []);
         this.setData({

@@ -9,6 +9,7 @@ import {
     GridItem,
     Input,
     Flex,
+    useToast,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { EditIcon } from '../../Icons/Icons';
@@ -20,6 +21,8 @@ import GridInputItem from '../Shared/GridInputItem';
 import SignaturePad from '../Shared/SignaturePad';
 import { baseStyle, filledStyle, tableStyle, unboxStyle } from './Styles';
 import { SingleSignatureHandler } from '../../Utils/Signature/Single';
+import { useEffect } from 'react';
+import { defaultWarningToast } from '../../Utils/DefaultToast';
 
 export default function OpCheckForm({
     formProps,
@@ -31,6 +34,7 @@ export default function OpCheckForm({
     handler: OpCheckHandler;
 }) {
     document.title = `特殊作業工安自主檢點表(${handler.number})`;
+    const toast = useToast();
     const onItemsCount = Object.keys(handler.onItems).length;
     const offItemsCount = Object.keys(handler.offItems).length;
     const f = new FormFactory(formProps, type, handler);
@@ -50,6 +54,17 @@ export default function OpCheckForm({
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        if (!formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isValid]);
+
     return (
         <Form>
             <Button
