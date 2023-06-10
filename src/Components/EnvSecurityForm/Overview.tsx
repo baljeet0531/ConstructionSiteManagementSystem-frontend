@@ -95,6 +95,8 @@ export default function EnvSecurityOverview(props: {
     const [multiCascaderData, setMultiCascaderData] = React.useState<
         ItemDataType<string | number>[]
     >([]);
+    const [multiCascaderValue, setMultiCascaderValue] =
+        React.useState<ValueType>([]);
 
     useQuery(QUERY_ENV_FORM, {
         variables: {
@@ -165,12 +167,10 @@ export default function EnvSecurityOverview(props: {
         fetchPolicy: 'network-only',
     });
 
-    const [value, setValue] = React.useState<ValueType>([]);
-
     const handleCheckedDeptsAreas = React.useCallback(() => {
         const checkedDepts = new Set<string>();
         const checkedAreas = new Set<string>();
-        value.forEach((val) => {
+        multiCascaderValue.forEach((val) => {
             const [dept, area] = val.toString().split(separator);
 
             area
@@ -181,7 +181,7 @@ export default function EnvSecurityOverview(props: {
             checkedDepts.add(dept);
         });
         return [Array.from(checkedDepts), Array.from(checkedAreas)];
-    }, [value]);
+    }, [multiCascaderValue]);
 
     const handleSearch = (dateRange: DateRange | null) => {
         const [dept, area] = handleCheckedDeptsAreas();
@@ -279,8 +279,8 @@ export default function EnvSecurityOverview(props: {
                                         menuWidth={140}
                                         menuHeight="auto"
                                         data={multiCascaderData}
-                                        value={value}
-                                        onChange={setValue}
+                                        value={multiCascaderValue}
+                                        onChange={setMultiCascaderValue}
                                         countable={false}
                                         preventOverflow
                                         searchable={false}
