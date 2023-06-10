@@ -15,7 +15,7 @@ import {
 import { DateRangePicker, MultiCascader } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import ReactWindowTable, {
     CheckboxElement,
     IColumnMap,
@@ -34,7 +34,9 @@ import { ValueType } from 'rsuite/esm/MultiCascader/MultiCascader';
 import { ItemDataType } from 'rsuite/esm/@types/common';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
-// import { Cookies } from 'react-cookie';
+import { Cookies } from 'react-cookie';
+import { useFileExport } from '../../Hooks/UseFileExport';
+import { PageLoading } from '../Shared/Loading';
 
 const separator = '?';
 
@@ -43,7 +45,7 @@ const sizes: ISizes = {
     cellHeight: 44,
 };
 
-const QUERY_ENV_FORM = gql`
+const QUERY_ENV_SECURITY = gql`
     ${SIGNATURE_FIELDS}
     query EnvSecurityOverview(
         $siteId: String!
@@ -87,6 +89,24 @@ const QUERY_ENV_FORM = gql`
     }
 `;
 
+const EXPORT_ENV_SECURITY = gql`
+    mutation ExportEnvSecurityCheck(
+        $number: [String]!
+        $siteId: String!
+        $username: String!
+    ) {
+        exportEnvSecurityCheck(
+            number: $number
+            siteId: $siteId
+            username: $username
+        ) {
+            ok
+            message
+            path
+        }
+    }
+`;
+
 export default function EnvSecurityOverview(props: {
     siteId: string;
     siteName: string;
@@ -95,7 +115,9 @@ export default function EnvSecurityOverview(props: {
 
     const { siteName, siteId } = props;
     const toast = useToast();
-    // const username = new Cookies().get('username');
+    const { fileLoading, exportFile } = useFileExport();
+    const username = new Cookies().get('username');
+
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [tableData, setTableData] = React.useState<IEnvSecurityOverviewTable>(
         {}
@@ -109,91 +131,6 @@ export default function EnvSecurityOverview(props: {
     >([]);
     const [multiCascaderValue, setMultiCascaderValue] =
         React.useState<ValueType>([]);
-
-    useQuery(QUERY_ENV_FORM, {
-        variables: {
-            siteId: siteId,
-        },
-        onCompleted: ({
-            envSecurityCheck,
-            envSecurityCheckCondition,
-        }: {
-            envSecurityCheck: IEnvSecurityFormOverview[];
-            envSecurityCheckCondition: IEnvSecurityDeptArea[];
-        }) => {
-            const formattedData = envSecurityCheck.reduce((acc, val, index) => {
-                const { number } = val;
-                acc[number] = {
-                    ...val,
-                    index: index,
-                    isChecked: false,
-                };
-                return acc;
-            }, {} as IEnvSecurityOverviewTable);
-            setTableData(formattedData);
-
-            const { mapper, cascader } = envSecurityCheckCondition.reduce(
-                (acc, { dept, area }) => {
-                    acc.mapper[dept] = {
-                        areas: area,
-                    };
-                    acc.cascader.push({
-                        label: dept,
-                        value: dept,
-                        children: area.map((area) => ({
-                            label: area,
-                            value: dept + separator + area,
-                        })),
-                    });
-                    return acc;
-                },
-                {
-                    mapper: {},
-                    cascader: [],
-                } as {
-                    mapper: IEnvSecurityDeptAreaMap;
-                    cascader: ItemDataType<string | number>[];
-                }
-            );
-            setDeptAreaMap(mapper);
-            setMultiCascaderData(cascader);
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    const [searchEnvSecurity] = useLazyQuery(QUERY_ENV_FORM, {
-        onCompleted: ({
-            envSecurityCheck,
-        }: {
-            envSecurityCheck: IEnvSecurityFormOverview[];
-        }) => {
-            setFilteredPrimaryKey(envSecurityCheck.map(({ number }) => number));
-        },
-        onError: (err) => {
-            console.log(err);
-            defaultErrorToast(toast);
-        },
-        fetchPolicy: 'network-only',
-    });
-
-    const handleCheckedDeptsAreas = React.useCallback(() => {
-        const checkedDepts = new Set<string>();
-        const checkedAreas = new Set<string>();
-        multiCascaderValue.forEach((val) => {
-            const [dept, area] = val.toString().split(separator);
-
-            area
-                ? checkedAreas.add(area)
-                : deptAreaMap[dept].areas.forEach((area) =>
-                      checkedAreas.add(area)
-                  );
-            checkedDepts.add(dept);
-        });
-        return [Array.from(checkedDepts), Array.from(checkedAreas)];
-    }, [multiCascaderValue]);
 
     const columnMap: IColumnMap<IEnvSecurityOverviewChecked>[] = [
         {
@@ -274,6 +211,110 @@ export default function EnvSecurityOverview(props: {
             ),
         },
     ];
+
+    const { loading } = useQuery(QUERY_ENV_SECURITY, {
+        variables: {
+            siteId: siteId,
+        },
+        onCompleted: ({
+            envSecurityCheck,
+            envSecurityCheckCondition,
+        }: {
+            envSecurityCheck: IEnvSecurityFormOverview[];
+            envSecurityCheckCondition: IEnvSecurityDeptArea[];
+        }) => {
+            const formattedData = envSecurityCheck.reduce((acc, val, index) => {
+                const { number } = val;
+                acc[number] = {
+                    ...val,
+                    index: index,
+                    isChecked: false,
+                };
+                return acc;
+            }, {} as IEnvSecurityOverviewTable);
+            setTableData(formattedData);
+
+            const { mapper, cascader } = envSecurityCheckCondition.reduce(
+                (acc, { dept, area }) => {
+                    acc.mapper[dept] = {
+                        areas: area,
+                    };
+                    acc.cascader.push({
+                        label: dept,
+                        value: dept,
+                        children: area.map((area) => ({
+                            label: area,
+                            value: dept + separator + area,
+                        })),
+                    });
+                    return acc;
+                },
+                {
+                    mapper: {},
+                    cascader: [],
+                } as {
+                    mapper: IEnvSecurityDeptAreaMap;
+                    cascader: ItemDataType<string | number>[];
+                }
+            );
+            setDeptAreaMap(mapper);
+            setMultiCascaderData(cascader);
+        },
+        onError: (err) => {
+            console.log(err);
+        },
+        fetchPolicy: 'network-only',
+    });
+
+    const [searchEnvSecurity, { loading: searchLoading }] = useLazyQuery(
+        QUERY_ENV_SECURITY,
+        {
+            onCompleted: ({
+                envSecurityCheck,
+            }: {
+                envSecurityCheck: IEnvSecurityFormOverview[];
+            }) => {
+                setFilteredPrimaryKey(
+                    envSecurityCheck.map(({ number }) => number)
+                );
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const [exportEnvSecurity, { loading: exportLoading }] = useMutation(
+        EXPORT_ENV_SECURITY,
+        {
+            onCompleted: (exportEnvSecurityCheck) => {
+                exportFile(exportEnvSecurityCheck);
+            },
+            onError: (err) => {
+                console.log(err);
+                defaultErrorToast(toast);
+            },
+            fetchPolicy: 'network-only',
+        }
+    );
+
+    const handleCheckedDeptsAreas = React.useCallback(() => {
+        const checkedDepts = new Set<string>();
+        const checkedAreas = new Set<string>();
+        multiCascaderValue.forEach((val) => {
+            const [dept, area] = val.toString().split(separator);
+
+            area
+                ? checkedAreas.add(area)
+                : deptAreaMap[dept].areas.forEach((area) =>
+                      checkedAreas.add(area)
+                  );
+            checkedDepts.add(dept);
+        });
+        return [Array.from(checkedDepts), Array.from(checkedAreas)];
+    }, [multiCascaderValue]);
 
     const handleSearch = (dateRange: DateRange | null) => {
         const [dept, area] = handleCheckedDeptsAreas();
@@ -397,16 +438,17 @@ export default function EnvSecurityOverview(props: {
                     leftIcon={<LaunchIcon />}
                     variant={'buttonGrayOutline'}
                     onClick={() => {
-                        // const numbers = Object.values(tableData).flatMap(
-                        //     (info) => (info.isChecked ? info.number : [])
-                        // );
-                        // exportToolbox({
-                        //     variables: {
-                        //         number: numbers,
-                        //         siteId: siteId,
-                        //         username: username,
-                        //     },
-                        // });
+                        const numbers = Object.values(tableData).flatMap(
+                            (info) => (info.isChecked ? info.number : [])
+                        );
+                        numbers.length &&
+                            exportEnvSecurity({
+                                variables: {
+                                    number: numbers,
+                                    siteId: siteId,
+                                    username: username,
+                                },
+                            });
                     }}
                 >
                     輸出
@@ -420,7 +462,9 @@ export default function EnvSecurityOverview(props: {
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
             />
-            {/* {(loading || searchLoading || exportLoading) && <PageLoading />} */}
+            {(loading || searchLoading || exportLoading || fileLoading) && (
+                <PageLoading />
+            )}
         </Flex>
     );
 }
