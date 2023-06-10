@@ -75,8 +75,6 @@ export default function EnvSecurityForm({
         }
     }, [formProps.isValid]);
 
-    // console.log(formProps)
-
     return (
         <Form>
             <Button
