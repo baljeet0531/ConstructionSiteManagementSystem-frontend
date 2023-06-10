@@ -11,6 +11,7 @@ import {
     PopoverArrow,
     PopoverBody,
     useToast,
+    useDisclosure,
 } from '@chakra-ui/react';
 import { DateRangePicker, MultiCascader } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
@@ -20,6 +21,7 @@ import ReactWindowTable, {
     CheckboxElement,
     IColumnMap,
     ISizes,
+    ModalOpenButtonElement,
     SignatureStatusElement,
     defaultElement,
 } from '../Shared/ReactWindowTable';
@@ -37,6 +39,8 @@ import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { Cookies } from 'react-cookie';
 import { useFileExport } from '../../Hooks/UseFileExport';
 import { PageLoading } from '../Shared/Loading';
+import EnvSecurityFormModal from './Modal';
+import { getElementProps } from '../Shared/ReactWindowTable';
 
 const separator = '?';
 
@@ -52,8 +56,8 @@ const QUERY_ENV_SECURITY = gql`
         $number: String
         $start: Date
         $end: Date
-        $dept: [String]
-        $area: [String]
+        $dept: String
+        $area: String
     ) {
         envSecurityCheck(
             siteId: $siteId
@@ -115,6 +119,7 @@ export default function EnvSecurityOverview(props: {
 
     const { siteName, siteId } = props;
     const toast = useToast();
+    const { onOpen, onClose, isOpen } = useDisclosure();
     const { fileLoading, exportFile } = useFileExport();
     const username = new Cookies().get('username');
 
@@ -131,6 +136,7 @@ export default function EnvSecurityOverview(props: {
     >([]);
     const [multiCascaderValue, setMultiCascaderValue] =
         React.useState<ValueType>([]);
+    const [openingNumber, setOpeningNumber] = React.useState<string>('');
 
     const columnMap: IColumnMap<IEnvSecurityOverviewChecked>[] = [
         {
@@ -142,22 +148,33 @@ export default function EnvSecurityOverview(props: {
         {
             title: '單號',
             width: 130,
-            variable: 'checkDept',
-            getElement: defaultElement,
-            // getElement: (props: getElementProps) => (
-            //     <EHSForm {...props} type={queryType} />
-            // ),
+            variable: 'number',
+            getElement: ({
+                style,
+                info,
+                variable,
+            }: getElementProps<IEnvSecurityOverviewChecked, 'number'>) => (
+                <ModalOpenButtonElement
+                    style={style}
+                    info={info}
+                    variable={variable}
+                    onClick={() => {
+                        setOpeningNumber(info[variable]);
+                        onOpen();
+                    }}
+                />
+            ),
         },
         {
             title: '作業單位',
             width: 130,
-            variable: 'checkStaff',
+            variable: 'department',
             getElement: defaultElement,
         },
         {
             title: '施工地點',
             width: 130,
-            variable: 'checkTarget',
+            variable: 'area',
             getElement: defaultElement,
         },
         {
@@ -461,6 +478,12 @@ export default function EnvSecurityOverview(props: {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
+            />
+            <EnvSecurityFormModal
+                siteId={siteId}
+                number={openingNumber}
+                onClose={onClose}
+                isOpen={isOpen}
             />
             {(loading || searchLoading || exportLoading || fileLoading) && (
                 <PageLoading />
