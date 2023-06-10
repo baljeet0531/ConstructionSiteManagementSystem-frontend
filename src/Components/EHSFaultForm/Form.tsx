@@ -10,66 +10,57 @@ import {
     Image,
     Text,
     VStack,
+    useToast,
 } from '@chakra-ui/react';
 import { EditIcon } from '../../Icons/Icons';
-// import { useQuery } from '@apollo/client';
-// import { GQL_FAULT_FORM_QUERY } from './GQL';
+import { useQuery } from '@apollo/client';
 import { useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import GridInputItem from '../Shared/GridInputItem';
 import { contentStyle, tableContentStyle, tableTitleStyle } from './Styles';
-// import { getImage } from '../../Utils/Resources';
-
-// import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { FaultFormHandler } from '../../Utils/FaultFormHandler';
+import dayjs from 'dayjs';
 
 export default function FaultForm({
     formProps,
-    siteId,
-    faultId,
-}: // onClose,
-{
+    handler,
+    onClose,
+}: {
     formProps: FormikProps<IFaultForm>;
-    siteId: string;
-    faultId: number;
-    // onClose: () => void;
+    handler: FaultFormHandler;
+    onClose: () => void;
 }) {
     const [loading, setLoading] = useState<boolean>(true);
-    // const toast = useToast();
+    const toast = useToast();
     const f = new FormFactory(formProps);
-    // useQuery(GQL_FAULT_FORM_QUERY, {
-    //     variables: {
-    //         siteId: siteId,
-    //         dailyId: dailyId,
-    //     },
-    //     onCompleted: (d) => {
-    //         const singleFormData = parseDailyReport(d.dailyReport);
-    //         if (singleFormData) {
-    //             formProps.setValues(singleFormData, false);
-    //         }
-    //         type Node = { node: { siteId: string; avatar: string } };
-    //         const targetSites: Node = d.allSites.edges.find(
-    //             (i: Node) => i.node.siteId === siteId
-    //         );
-    //         if (targetSites && targetSites.node.avatar) {
-    //             getImage(targetSites.node.avatar).then((b) =>
-    //                 setOwnerIconURL(URL.createObjectURL(b as Blob))
-    //             );
-    //         }
-    //         setLoading(false);
-    //     },
-    //     onError: (err) => {
-    //         console.error(err);
-    //         setLoading(false);
-    //         defaultErrorToast(toast)
-    //         onClose();
-    //     },
-    //     fetchPolicy: 'network-only',
-    // });
+    useQuery(handler.query, {
+        variables: {
+            siteId: handler.siteId,
+            day: handler.day,
+            responsibleTarget: handler.responsibleTarget,
+            code: handler.code,
+        },
+        onCompleted: (d) => {
+            const singleFormData = handler.parse(
+                d[handler.queryName],
+                formProps
+            );
+            console.log(singleFormData);
+            if (singleFormData) {
+                formProps.setValues(singleFormData, false);
+            }
 
-    console.log(`siteId: ${siteId} faultId: ${faultId}`);
-    console.log(`${f}`);
-    console.log(`${setLoading}`);
-    console.log(formProps.values);
+            setLoading(false);
+        },
+        onError: (err) => {
+            console.error(err);
+            setLoading(false);
+            defaultErrorToast(toast);
+            onClose();
+        },
+        fetchPolicy: 'network-only',
+    });
 
     return (
         <Form>
@@ -111,11 +102,11 @@ export default function FaultForm({
                         {...contentStyle}
                         justifyContent="center"
                     >
-                        {'Unit'}-
+                        M5-
                     </GridItem>
                     <GridInputItem
                         gridRange={[0, 1, 3, 4]}
-                        fieldName=""
+                        fieldName="jobNumber"
                         inputComponent={f.input({
                             type: 'text',
                         })}
@@ -126,7 +117,13 @@ export default function FaultForm({
                         {...contentStyle}
                         justifyContent="center"
                     >
-                        -{'年/月/流水號'}
+                        -
+                        {`${dayjs(formProps.values.day).format(
+                            'YYYY/MM'
+                        )}/${String(formProps.values.serialNumber).padStart(
+                            3,
+                            '0'
+                        )}`}
                     </GridItem>
                 </Grid>
                 <Grid
@@ -143,7 +140,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[1, 2, 2, 3]}
-                        fieldName=""
+                        fieldName="department"
                         inputComponent={f.input({
                             type: 'text',
                         })}
@@ -160,7 +157,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[1, 2, 4, 5]}
-                        fieldName=""
+                        fieldName="staff"
                         inputComponent={f.input({
                             type: 'text',
                         })}
@@ -174,7 +171,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 2, 3]}
-                        fieldName=""
+                        fieldName="issueDate"
                         inputComponent={f.input({
                             type: 'date',
                         })}
@@ -185,7 +182,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[2, 3, 4, 5]}
-                        fieldName=""
+                        fieldName="siteId"
                         inputComponent={f.input({
                             type: 'text',
                         })}
@@ -198,7 +195,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[3, 4, 2, 3]}
-                        fieldName=""
+                        fieldName="day"
                         inputComponent={f.input({
                             type: 'date',
                         })}
@@ -216,7 +213,7 @@ export default function FaultForm({
                     <GridInputItem
                         gridRange={[3, 4, 4, 5]}
                         fieldName=""
-                        inputComponent={f.unitField('siteId', 'MIC')}
+                        inputComponent={f.unitField(true, 'MIC')}
                         style={tableContentStyle}
                         borderRight="#919AA9 solid 1px"
                     />
@@ -232,7 +229,7 @@ export default function FaultForm({
                     </GridItem>
                     <GridInputItem
                         gridRange={[4, 5, 2, 3]}
-                        fieldName=""
+                        fieldName="area"
                         inputComponent={f.input({
                             type: 'text',
                         })}
@@ -241,7 +238,7 @@ export default function FaultForm({
                     <GridInputItem
                         gridRange={[4, 5, 4, 5]}
                         fieldName=""
-                        inputComponent={f.unitField('siteId', '供應商')}
+                        inputComponent={f.unitField(false, '供應商')}
                         style={tableContentStyle}
                         borderRight="#919AA9 solid 1px"
                     />
@@ -252,6 +249,7 @@ export default function FaultForm({
                         colStart={1}
                         colEnd={2}
                         {...tableTitleStyle}
+                        letterSpacing="1.1em"
                         borderBottom="0px"
                     >
                         缺失說明&照片：
@@ -268,7 +266,7 @@ export default function FaultForm({
                     />
                     <GridInputItem
                         gridRange={[6, 7, 1, 5]}
-                        fieldName=""
+                        fieldName="description"
                         inputComponent={f.textArea()}
                         style={{
                             ...tableContentStyle,
@@ -278,7 +276,7 @@ export default function FaultForm({
                     />
                     <GridInputItem
                         gridRange={[7, 8, 1, 5]}
-                        fieldName=""
+                        fieldName="images"
                         inputComponent={f.imageUploader()}
                         style={{
                             ...tableContentStyle,
@@ -324,7 +322,7 @@ export default function FaultForm({
                                 rowStart={1}
                                 {...contentStyle}
                             >
-                                {f.checkBox('checked', '已立即完成改正')}
+                                {f.checkBox('promptFix', '已立即完成改正')}
                             </GridItem>
                             <GridItem
                                 colStart={3}
@@ -349,7 +347,7 @@ export default function FaultForm({
                                 {...contentStyle}
                             >
                                 {f.checkBox(
-                                    'checked',
+                                    'fixReport',
                                     '須提出矯正預防措施報告'
                                 )}
                             </GridItem>
@@ -394,7 +392,7 @@ export default function FaultForm({
                             >
                                 {f.input({
                                     type: 'text',
-                                    value: '123',
+                                    value: formProps.values.code,
                                     isDisabled: true,
                                 })}
                             </GridItem>
@@ -407,7 +405,7 @@ export default function FaultForm({
                             </GridItem>
                             <GridInputItem
                                 gridRange={[3, 4, 2, 4]}
-                                fieldName=""
+                                fieldName="faultPoint"
                                 inputComponent={f.input({ type: 'number' })}
                                 style={contentStyle}
                                 w="10%"
@@ -438,7 +436,7 @@ export default function FaultForm({
                             </GridItem>
                             <GridInputItem
                                 gridRange={[1, 2, 2, 4]}
-                                fieldName=""
+                                fieldName="reviewDate"
                                 inputComponent={f.input({ type: 'date' })}
                                 style={contentStyle}
                                 w="20%"
@@ -452,7 +450,7 @@ export default function FaultForm({
                             </GridItem>
                             <GridInputItem
                                 gridRange={[2, 3, 2, 4]}
-                                fieldName=""
+                                fieldName="reviewer"
                                 inputComponent={f.input({ type: 'text' })}
                                 style={contentStyle}
                                 w="20%"
