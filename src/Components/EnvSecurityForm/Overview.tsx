@@ -16,11 +16,18 @@ import { DateRangePicker, MultiCascader } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import { ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import ReactWindowTable from '../Shared/ReactWindowTable';
+import ReactWindowTable, {
+    CheckboxElement,
+    IColumnMap,
+    ISizes,
+    SignatureStatusElement,
+    defaultElement,
+} from '../Shared/ReactWindowTable';
 import {
     IEnvSecurityDeptArea,
     IEnvSecurityDeptAreaMap,
     IEnvSecurityFormOverview,
+    IEnvSecurityOverviewChecked,
     IEnvSecurityOverviewTable,
 } from '../../Interface/EnvSecurityForm';
 import { ValueType } from 'rsuite/esm/MultiCascader/MultiCascader';
@@ -30,6 +37,11 @@ import { defaultErrorToast } from '../../Utils/DefaultToast';
 // import { Cookies } from 'react-cookie';
 
 const separator = '?';
+
+const sizes: ISizes = {
+    headerHeight: 44,
+    cellHeight: 44,
+};
 
 const QUERY_ENV_FORM = gql`
     ${SIGNATURE_FIELDS}
@@ -183,6 +195,86 @@ export default function EnvSecurityOverview(props: {
         return [Array.from(checkedDepts), Array.from(checkedAreas)];
     }, [multiCascaderValue]);
 
+    const columnMap: IColumnMap<IEnvSecurityOverviewChecked>[] = [
+        {
+            title: '日期',
+            width: 130,
+            variable: 'day',
+            getElement: defaultElement,
+        },
+        {
+            title: '單號',
+            width: 130,
+            variable: 'checkDept',
+            getElement: defaultElement,
+            // getElement: (props: getElementProps) => (
+            //     <EHSForm {...props} type={queryType} />
+            // ),
+        },
+        {
+            title: '作業單位',
+            width: 130,
+            variable: 'checkStaff',
+            getElement: defaultElement,
+        },
+        {
+            title: '施工地點',
+            width: 130,
+            variable: 'checkTarget',
+            getElement: defaultElement,
+        },
+        {
+            title: '簽核狀態',
+            width: 307,
+            variable: 'signatureStatus',
+            getElement: (props) => {
+                const {
+                    supervisorBeforeRef,
+                    staffBeforeRef,
+                    supervisorAfterRef,
+                    staffAfterRef,
+                } = props.info;
+                const signatureFieldList = [
+                    {
+                        signature: supervisorBeforeRef,
+                        fieldLabel: '監工(施工前)',
+                    },
+                    {
+                        signature: staffBeforeRef,
+                        fieldLabel: '作業人員(施工前)',
+                    },
+                    {
+                        signature: supervisorAfterRef,
+                        fieldLabel: '監工(收工前)',
+                    },
+                    {
+                        signature: staffAfterRef,
+                        fieldLabel: '作業人員(收工前)',
+                    },
+                ];
+
+                return (
+                    <SignatureStatusElement
+                        getElementProps={props}
+                        signatureFieldList={signatureFieldList}
+                    ></SignatureStatusElement>
+                );
+            },
+        },
+        {
+            title: '全選',
+            width: 50,
+            variable: 'isChecked',
+            getElement: (props) => (
+                <CheckboxElement
+                    getElementProps={props}
+                    setTableData={setTableData}
+                    primaryKey={props.info.number}
+                />
+            ),
+        },
+    ];
+
     const handleSearch = (dateRange: DateRange | null) => {
         const [dept, area] = handleCheckedDeptsAreas();
 
@@ -323,9 +415,8 @@ export default function EnvSecurityOverview(props: {
             <ReactWindowTable
                 tableData={tableData}
                 setTableData={setTableData}
-                columnMap={[]}
-                // columnMap={columnMap}
-                // sizes={sizes}
+                columnMap={columnMap}
+                sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
             />
