@@ -90,24 +90,25 @@ export abstract class OpCheckHandler {
     validate(values: any) {
         const onList = Object.keys(this.onItems);
         const offList = Object.keys(this.offItems);
-        const errors: FormikErrors<IOpCheck> = {};
-        const filledOffKeys = [];
+        let errors: FormikErrors<IOpCheck> = {};
 
         for (let key of onList) {
             if (values[key as keyof IOpCheck] === null) {
                 errors[key as keyof IOpCheck] = '必填';
             }
         }
+        const newError: {[key: string]: string} = {}
+        let flag = false;
         for (let key of offList) {
-            filledOffKeys.push(values[key as keyof IOpCheck]);
+            if (values[key as keyof IOpCheck] === null) {
+                newError[key as keyof IOpCheck] = '必填';
+            } else {
+                flag = true;
+            }
         }
 
-        if (filledOffKeys.some((key: any) => key === true || key === false)) {
-            for (let key of offList) {
-                if (values[key as keyof IOpCheck] === null) {
-                    errors[key as keyof IOpCheck] = '必填';
-                }
-            }
+        if (flag) {
+            errors = {...errors, ...newError}
         }
         return errors;
     }
