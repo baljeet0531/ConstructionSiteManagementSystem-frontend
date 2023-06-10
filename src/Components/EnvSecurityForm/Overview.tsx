@@ -307,7 +307,7 @@ export default function EnvSecurityOverview(props: {
     const [exportEnvSecurity, { loading: exportLoading }] = useMutation(
         EXPORT_ENV_SECURITY,
         {
-            onCompleted: (exportEnvSecurityCheck) => {
+            onCompleted: ({ exportEnvSecurityCheck }) => {
                 exportFile(exportEnvSecurityCheck);
             },
             onError: (err) => {
