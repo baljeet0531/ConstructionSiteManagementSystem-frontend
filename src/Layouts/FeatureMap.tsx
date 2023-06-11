@@ -25,6 +25,7 @@ import NoContentPageIcon from '../Images/NoContentPage.svg';
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
 import { Center, Flex, Image, Text } from '@chakra-ui/react';
 import EHSOverview from '../Components/EHSForm/Overview';
+import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -215,7 +216,16 @@ export function getFeatureMap(site: {
         eng_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/eng/form/env-security',
-            page: <EnvSecurityForm />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EnvSecurityOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_op_check_form: {
             name: '特殊作業自主檢點表',
