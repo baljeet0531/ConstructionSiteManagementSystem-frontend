@@ -82,6 +82,7 @@ export default function EHSFormModal({
                     <Formik
                         initialValues={handler.getInitialValues()}
                         validateOnChange={false}
+                        validateOnBlur={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
                             const submitValues = {

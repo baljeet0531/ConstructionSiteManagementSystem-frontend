@@ -85,6 +85,7 @@ export default function EnvSecurityFormModal({
                     <Formik
                         initialValues={handler.getInitialValues()}
                         validateOnChange={false}
+                        validateOnBlur={false}
                         validate={handler.validate}
                         onSubmit={(values, actions) => {
                             const submitValues = {

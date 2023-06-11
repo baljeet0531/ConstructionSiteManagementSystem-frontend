@@ -123,6 +123,7 @@ export default function WorkPermitFormik() {
             <Formik
                 initialValues={initialValues}
                 validateOnChange={false}
+                validateOnBlur={false}
                 onSubmit={(values, actions) => {
                     const submitValues = { ...values };
                     if (submitValues.zone instanceof Array) {

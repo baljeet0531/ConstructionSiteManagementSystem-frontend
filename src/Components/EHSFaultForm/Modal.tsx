@@ -70,6 +70,7 @@ export default function FaultFormModal({
                     <Formik
                         initialValues={handler.getInitialValues()}
                         validateOnChange={false}
+                        validateOnBlur={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
                             const submitValues = handler.marshal(values);
