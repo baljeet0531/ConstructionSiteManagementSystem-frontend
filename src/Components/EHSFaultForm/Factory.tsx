@@ -118,8 +118,10 @@ export default class FormFactory {
                         const value = e.target.checked;
                         if (value) {
                             this.formProps.setFieldValue('promptFix', false);
-                            this.formProps.setFieldValue('fixDeadline', '');
+                        } else {
+                            this.formProps.setFieldValue('promptFix', null);
                         }
+                        this.formProps.setFieldValue('fixDeadline', '');
                     }}
                 >
                     限期改善完成時間
@@ -132,7 +134,7 @@ export default class FormFactory {
                         isDisabled={!checked}
                         _disabled={disabledStyle}
                         value={
-                            (this.formProps.values.fixDeadline as string) &&
+                            (this.formProps.values.fixDeadline as string) ||
                             (dayjs()
                                 .add(1, 'day')
                                 .format('YYYY-MM-DD') as string)
