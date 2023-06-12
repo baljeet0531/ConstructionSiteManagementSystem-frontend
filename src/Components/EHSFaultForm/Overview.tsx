@@ -280,7 +280,7 @@ export default function EHSFaultOverview(props: {
             gap={'11px'}
         >
             <Text variant={'pageSiteName'}>{siteName}</Text>
-            <Text variant={'pageTitle'}>環安衛自主檢點表</Text>
+            <Text variant={'pageTitle'}>工安缺失單</Text>
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
                     <DateRangePicker
