@@ -167,7 +167,7 @@ export default function EHSFaultOverview(props: {
         {
             title: '地點',
             width: 100,
-            variable: 'area ',
+            variable: 'area',
             getElement: defaultElement,
         },
         {
