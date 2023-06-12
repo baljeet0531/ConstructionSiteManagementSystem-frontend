@@ -26,6 +26,7 @@ import { DashboardIcon, SiteIcon } from '../Icons/Icons';
 import { Center, Flex, Image, Text } from '@chakra-ui/react';
 import EHSOverview from '../Components/EHSForm/Overview';
 import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
+import EHSFaultOverview from '../Components/EHSFaultForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -268,8 +269,16 @@ export function getFeatureMap(site: {
         ehs_fault_form: {
             name: '工安缺失單',
             path: '/ehs/form/fault',
-            page: <EHSFaultForm />,
-            // page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EHSFaultOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         ehs_machinery_management: {
             name: '機具檢點管理',
