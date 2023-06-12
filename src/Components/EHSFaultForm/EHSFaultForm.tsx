@@ -13,7 +13,9 @@ export default function EHSFaultForm() {
             <Button onClick={onOpen}>Test</Button>
             <FaultFormModal
                 siteId={'M522C0008'}
-                faultId={1}
+                day={'2023-06-07'}
+                responsibleTarget={'帆宣M5'}
+                code={'AA01'}
                 onClose={onClose}
                 isOpen={isOpen}
             />

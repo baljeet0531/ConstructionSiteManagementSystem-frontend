@@ -5,62 +5,61 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalOverlay,
-    // useToast,
+    useToast,
 } from '@chakra-ui/react';
-import { IFaultForm } from '../../Interface/FaultForm';
 import FaultForm from './Form';
-// import { GQL_FAULT_FORM_MUTATION } from './GQL';
-// import { defaultErrorToast } from '../../Utils/DefaultToast';
-// import { useMutation } from '@apollo/client';
-// import { QUERY_FAULT_FORM } from './Overview';
+import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { useMutation } from '@apollo/client';
+import { FaultFormHandler } from '../../Utils/FaultFormHandler';
 
 export default function FaultFormModal({
     siteId,
-    faultId,
+    day,
+    responsibleTarget,
+    code,
     onClose,
     isOpen,
 }: {
     siteId: string;
-    faultId: number;
+    day: string;
+    responsibleTarget: string;
+    code: string;
     onClose: () => void;
     isOpen: boolean;
 }) {
-    const initialValues: IFaultForm = {
-        siteId: siteId,
-        faultId: faultId,
-        checked: false,
-        validDate: '',
-        photos: [],
-    };
-    // const toast = useToast();
-    // const [updateFaultForm] = useMutation(GQL_FAULT_FORM_MUTATION, {
-    //     onCompleted: ({ updateFaultForm }) => {
-    //         if (updateFaultForm.ok) {
-    //             toast({
-    //                 title: updateFaultForm.message,
-    //                 description: '視窗將於 3 秒後關閉',
-    //                 status: 'success',
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //                 onCloseComplete: () => {
-    //                     onClose();
-    //                 },
-    //             });
-    //         }
-    //     },
-    //     onError: (err) => {
-    //         console.error(err);
-    //         defaultErrorToast(toast);
-    //         throw new Error();
-    //     },
-        // refetchQueries:[{
-        //     query:QUERY_FAULT_FORM,
-        //     variables:{
-        //         siteId:siteId,
-        //     },
-        // }
-        // ],
-    // });
+    const toast = useToast();
+    const handler = new FaultFormHandler(siteId, day, responsibleTarget, code);
+
+    const [updateFaultForm] = useMutation(handler.mutation, {
+        onCompleted: (d) => {
+            const response = d[handler.mutationName];
+            if (response.ok) {
+                toast({
+                    title: response.message,
+                    description: '視窗將於 3 秒後關閉',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                    onCloseComplete: () => {
+                        onClose();
+                    },
+                });
+            }
+        },
+        onError: (err) => {
+            console.error(err);
+            defaultErrorToast(toast);
+            throw new Error();
+        },
+        refetchQueries: [
+            {
+                query: handler.query,
+                variables: {
+                    siteId: siteId,
+                },
+            },
+        ],
+    });
 
     return (
         <Modal onClose={onClose} isOpen={isOpen} size="full">
@@ -69,24 +68,22 @@ export default function FaultFormModal({
                 <ModalCloseButton position="fixed" top="12px" right="15px" />
                 <ModalBody>
                     <Formik
-                        initialValues={initialValues}
+                        initialValues={handler.getInitialValues()}
                         validateOnChange={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
-                            const submitValues = {
-                                ...values,
-                            } as IFaultForm;
+                            const submitValues = handler.marshal(values);
                             console.log(submitValues);
-                            // updateFaultForm({
-                            //     variables: submitValues,
-                            // }).catch(() => actions.setSubmitting(false));
+                            updateFaultForm({
+                                variables: submitValues,
+                            }).catch(() => actions.setSubmitting(false));
                         }}
                     >
                         {(props) => (
                             <FaultForm
                                 formProps={props}
-                                siteId={siteId}
-                                faultId={faultId}
+                                handler={handler}
+                                onClose={onClose}
                             />
                         )}
                     </Formik>

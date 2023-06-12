@@ -12,9 +12,9 @@ import {
 import { IFaultForm } from '../../Interface/FaultForm';
 import { FormikProps } from 'formik';
 import { disabledStyle, placeholderStyle } from './Styles';
-import { useEffect, useState } from 'react';
 import { AddFileIcon } from '../../Icons/Icons';
 import { Uploader } from 'rsuite';
+import dayjs from 'dayjs';
 
 export default class FormFactory {
     formProps: FormikProps<IFaultForm>;
@@ -45,19 +45,8 @@ export default class FormFactory {
             />
         );
     }
-    unitField(name: keyof IFaultForm, text: string) {
-        const [enable, setEnable] = useState(false);
-        // TODO: Need to fix this
-        useEffect(() => {
-            if (
-                this.formProps.values[name] !== null &&
-                this.formProps.values[name] !== ''
-            ) {
-                setEnable(true);
-            } else {
-                setEnable(false);
-            }
-        }, [this.formProps.values[name]]);
+    unitField(target: boolean, text: string) {
+        const enable = this.formProps.values.responsibleUnitStatus === target;
         return (
             <HStack w="100%">
                 <Checkbox
@@ -66,11 +55,15 @@ export default class FormFactory {
                     size="sm"
                     isChecked={enable}
                     variant="grey"
-                    onChange={() => {
-                        if (enable) {
-                            this.formProps.setFieldValue(name, '');
+                    onChange={(e) => {
+                        const value = e.target.checked;
+                        if (value) {
+                            this.formProps.setFieldValue(
+                                'responsibleUnitStatus',
+                                target
+                            );
                         }
-                        setEnable(!enable);
+                        this.formProps.setFieldValue('responsibleTarget', '');
                     }}
                 >
                     {text}
@@ -78,24 +71,31 @@ export default class FormFactory {
                 <Input
                     type="text"
                     border="0px"
+                    size="sm"
                     isDisabled={!enable}
                     placeholder={enable ? '填寫' : ''}
                     _placeholder={placeholderStyle}
-                    value={this.formProps.values[name] as string}
+                    value={
+                        enable ? this.formProps.values.responsibleTarget : ''
+                    }
                     onChange={(e) => {
-                        this.formProps.setFieldValue(name, e.target.value);
+                        this.formProps.setFieldValue(
+                            'responsibleTarget',
+                            e.target.value
+                        );
                     }}
                 />
             </HStack>
         );
     }
-    checkBox(name: keyof IFaultForm, text: string) {
+    checkBox(name: keyof IFaultForm, text: string, target: boolean = true) {
+        const checked = this.formProps.values[name] === target;
         return (
             <Checkbox
                 pl={3}
                 size="sm"
                 variant="grey"
-                isChecked={this.formProps.values[name] as boolean}
+                isChecked={checked}
                 onChange={(e) => {
                     this.formProps.setFieldValue(name, e.target.checked);
                 }}
@@ -105,46 +105,48 @@ export default class FormFactory {
         );
     }
     validDateCheckBox() {
-        const [enable, setEnable] = useState(false);
-        // TODO: Need to fix this
-        useEffect(() => {
-            if (enable) {
-                setEnable(true);
-            } else {
-                setEnable(false);
-            }
-        }, [this.formProps.values['validDate']]);
+        const checked = this.formProps.values.promptFix === false;
         return (
             <HStack>
                 <Checkbox
                     px={3}
                     w="200px"
-                    isChecked={enable}
+                    isChecked={checked}
                     variant="grey"
                     size="sm"
-                    onChange={() => {
-                        if (enable) {
-                            this.formProps.setFieldValue('validDate', '');
+                    onChange={(e) => {
+                        const value = e.target.checked;
+                        if (value) {
+                            this.formProps.setFieldValue('promptFix', false);
+                        } else {
+                            this.formProps.setFieldValue('promptFix', null);
                         }
-                        setEnable(!enable);
+                        this.formProps.setFieldValue('fixDeadline', '');
                     }}
                 >
                     限期改善完成時間
                 </Checkbox>
-                <Input
-                    type="date"
-                    size="sm"
-                    w="200px"
-                    isDisabled={!enable}
-                    _disabled={disabledStyle}
-                    value={this.formProps.values['validDate'] as string}
-                    onChange={(e) => {
-                        this.formProps.setFieldValue(
-                            'validDate',
-                            e.target.value
-                        );
-                    }}
-                />
+                {checked && (
+                    <Input
+                        type="date"
+                        size="sm"
+                        w="200px"
+                        isDisabled={!checked}
+                        _disabled={disabledStyle}
+                        value={
+                            (this.formProps.values.fixDeadline as string) ||
+                            (dayjs()
+                                .add(1, 'day')
+                                .format('YYYY-MM-DD') as string)
+                        }
+                        onChange={(e) => {
+                            this.formProps.setFieldValue(
+                                'fixDeadline',
+                                e.target.value
+                            );
+                        }}
+                    />
+                )}
             </HStack>
         );
     }
@@ -155,12 +157,12 @@ export default class FormFactory {
                     pl={3}
                     size="sm"
                     variant="grey"
-                    isChecked={this.formProps.values['checked'] as boolean}
+                    isChecked={this.formProps.values.reviewResult === true}
                     onChange={(e) => {
-                        this.formProps.setFieldValue(
-                            'checked',
-                            e.target.checked
-                        );
+                        const value = e.target.checked;
+                        if (value) {
+                            this.formProps.setFieldValue('reviewResult', true);
+                        }
                     }}
                 >
                     已完成改正
@@ -169,12 +171,12 @@ export default class FormFactory {
                     pl={3}
                     size="sm"
                     variant="grey"
-                    isChecked={!this.formProps.values['checked'] as boolean}
+                    isChecked={this.formProps.values.reviewResult === false}
                     onChange={(e) => {
-                        this.formProps.setFieldValue(
-                            'checked',
-                            !e.target.checked
-                        );
+                        const value = e.target.checked;
+                        if (value) {
+                            this.formProps.setFieldValue('reviewResult', false);
+                        }
                     }}
                 >
                     未完成改正（要求改善，再次開立工安缺失紀錄表）
@@ -193,7 +195,7 @@ export default class FormFactory {
             >
                 <Uploader
                     listType="picture"
-                    fileList={this.formProps.values.photos}
+                    fileList={this.formProps.values.uploaderImages}
                     autoUpload={false}
                     removable
                     draggable
@@ -201,7 +203,7 @@ export default class FormFactory {
                     action="#"
                     accept="image/*"
                     onChange={(fileList) => {
-                        this.formProps.setFieldValue('photos', fileList);
+                        this.formProps.setFieldValue('uploaderImages', fileList);
                     }}
                     renderThumbnail={(file, thumbnail: any) => (
                         <Box width={'250px'} height={'250px'} bg={'#919AA91A'}>
