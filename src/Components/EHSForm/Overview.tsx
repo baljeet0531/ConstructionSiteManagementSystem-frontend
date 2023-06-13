@@ -347,6 +347,9 @@ export default function EHSOverview(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
+                sortBy="day"
+                sortFormatter={(day: string) => dayjs(day).valueOf()}
+                sortReversed
             />
             {(querNormalLoading ||
                 querSpecialLoading ||
