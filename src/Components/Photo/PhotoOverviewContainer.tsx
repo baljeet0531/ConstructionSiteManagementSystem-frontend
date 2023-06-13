@@ -4,6 +4,7 @@ import React from 'react';
 import PhotoOverviewElement from './PhotoOverviewElement';
 import {
     ICategoryChecked,
+    IDate,
     IDateChecked,
     IFilteredPhotos,
     IFormattedPhotos,
@@ -20,7 +21,10 @@ export default function PhotoOverviewContainer(props: {
         props;
 
     const dateGroup = Object.entries(filteredPhotos || checkedRef.current)
-        .sort()
+        .sort((a: [string, IDate], b: [string, IDate]) => {
+            const diff = dayjs(a[0]).valueOf() - dayjs(b[0]).valueOf();
+            return -diff;
+        })
         .map(([time, { categories }]) => (
             <DateElement
                 key={time}
