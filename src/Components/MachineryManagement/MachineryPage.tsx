@@ -100,13 +100,13 @@ export default function MachineryPage(props: {
         },
         {
             title: '廠商',
-            width: 100,
+            width: !entryTableOnly ? 100 : 131,
             variable: 'vendor',
             getElement: defaultElement,
         },
         {
             title: '主要機具',
-            width: 130,
+            width: !entryTableOnly ? 130 : 161,
             variable: 'mainEquipment',
             getElement: defaultElement,
         },
@@ -144,24 +144,28 @@ export default function MachineryPage(props: {
                 <Remarks {...props} editable={tableEditable} />
             ),
         },
-        {
-            title: '全選',
-            width: 62,
-            variable: 'isChecked',
-            getElement: (props: getElementProps) => (
-                <CheckboxElement
-                    getElementProps={{
-                        ...props,
-                        style: {
-                            ...props.style,
-                            paddingTop: '6px',
-                        },
-                    }}
-                    setTableData={setTableData}
-                    primaryKey={props.info['inspectionNo']}
-                />
-            ),
-        },
+        ...(!entryTableOnly
+            ? [
+                  {
+                      title: '全選',
+                      width: 62,
+                      variable: 'isChecked',
+                      getElement: (props: getElementProps) => (
+                          <CheckboxElement
+                              getElementProps={{
+                                  ...props,
+                                  style: {
+                                      ...props.style,
+                                      paddingTop: '6px',
+                                  },
+                              }}
+                              setTableData={setTableData}
+                              primaryKey={props.info['inspectionNo']}
+                          />
+                      ),
+                  },
+              ]
+            : []),
     ];
 
     const createModalDisclosure = useDisclosure();
@@ -391,6 +395,7 @@ export default function MachineryPage(props: {
                                     sortFormatter={(inspectionNo: string) =>
                                         Number(inspectionNo.slice(3))
                                     }
+                                    sortReversed
                                     filteredPrimaryKey={filteredPrimaryKey}
                                 />
                             </TabPanel>
@@ -431,14 +436,6 @@ export default function MachineryPage(props: {
                         >
                             匯入
                         </Button>
-                        <Button
-                            variant={'buttonGrayOutline'}
-                            h={'36px'}
-                            leftIcon={<DeleteIcon />}
-                            onClick={handleDeleteModalOpen}
-                        >
-                            刪除
-                        </Button>
                     </Flex>
                 </Flex>
             )}
@@ -453,6 +450,7 @@ export default function MachineryPage(props: {
                     sortFormatter={(inspectionNo: string) =>
                         Number(inspectionNo.slice(3))
                     }
+                    sortReversed
                     filteredPrimaryKey={filteredPrimaryKey}
                 />
             )}
