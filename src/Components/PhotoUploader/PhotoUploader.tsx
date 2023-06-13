@@ -23,6 +23,7 @@ export default function PhotoUploader() {
             align={'center'}
             bgImage={`url(${Background})`}
             overflowY={'auto'}
+            overflowX={'hidden'}
         >
             <Button
                 position={'absolute'}
