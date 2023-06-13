@@ -105,14 +105,15 @@ export default function Sidebar(props: {
                     >
                         {todoListAmount !== 0 && (
                             <AvatarBadge
-                                boxSize="20%"
-                                bg="red"
+                                boxSize="25px"
+                                bg="#DB504A"
                                 right={'9.46%'}
                                 bottom={'9.46%'}
                             >
                                 <Text
-                                    fontSize={'75%'}
-                                    lineHeight={'100%'}
+                                    fontWeight={700}
+                                    fontSize={'0.875rem'}
+                                    lineHeight={'1.25rem'}
                                     color={'#FFFFFF'}
                                 >
                                     {todoListAmount > 99
