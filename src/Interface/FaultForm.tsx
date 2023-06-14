@@ -39,3 +39,30 @@ export const stringKeys: (keyof IFaultForm)[] = [
     'reviewDate',
     'reviewer',
 ];
+
+export interface IFaultFormPrimaryKey {
+    day: string;
+    responsibleTarget: string;
+    code: string;
+}
+
+export interface IFaultFormOverview {
+    day: string;
+    responsibleTarget: string;
+    code: string;
+    staff: string;
+}
+
+export interface IEHSFaultFormOverview extends IFaultFormOverview {
+    area: string;
+}
+export interface IEngFaultFormOverview extends IFaultFormOverview {
+    outsourcerStatus: boolean | null;
+    engineerStatus: boolean | null;
+    managerStatus: boolean | null;
+    engineerDescription: string;
+}
+export interface IOutsourceFaultFormOverview extends IFaultFormOverview {
+    outsourcerStatus: boolean | null;
+    outsourcerDescription: string;
+}

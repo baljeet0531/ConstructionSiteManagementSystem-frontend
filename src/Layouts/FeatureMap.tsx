@@ -12,7 +12,7 @@ import Report from '../Components/Report/Report';
 import Photo from '../Components/Photo/Photo';
 import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
 import ToolboxFormOverview from '../Components/ToolboxForm/Overview';
-import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
+import EngFaultOverview from '../Components/EngFaultForm/Overview';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
 import OpCheckOverview from '../Components/OpCheckForm/Overview';
 import EHSForm from '../Components/EHSForm/EHSForm';
@@ -211,8 +211,16 @@ export function getFeatureMap(site: {
         eng_fault_form: {
             name: '工安缺失單',
             path: '/eng/form/fault',
-            // page: <EngFaultForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EngFaultOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_env_security_form: {
             name: '環安衛自主檢點表',

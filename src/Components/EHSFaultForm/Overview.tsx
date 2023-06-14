@@ -27,29 +27,11 @@ import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
 import { codeContentMap } from '../../Utils/Mapper';
-
-export interface IEHSFaultFormOverview {
-    day: string;
-    responsibleTarget: string;
-    code: string;
-    staff: string;
-    area: string;
-}
-
-export interface IEHSFaultFormOverviewChecked extends IEHSFaultFormOverview {
-    index: number;
-    isChecked: boolean;
-}
-
-export interface IEHSFaultFormOverviewTable {
-    [key: string]: IEHSFaultFormOverviewChecked;
-}
-
-export interface IFaultFormPrimaryKey {
-    day: string;
-    responsibleTarget: string;
-    code: string;
-}
+import {
+    IEHSFaultFormOverview,
+    IFaultFormPrimaryKey,
+} from '../../Interface/FaultForm';
+import { TOverviewChecked, TOverviewTable } from '../../Hooks/UseGQLOverview';
 
 const QUERY_FAULT_FROM_OVERVIEW = gql`
     query EHSFaultFormOverview($siteId: String!, $start: Date, $end: Date) {
@@ -94,8 +76,9 @@ export default function EHSFaultOverview(props: {
     const username = new Cookies().get('username');
 
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-    const [tableData, setTableData] =
-        React.useState<IEHSFaultFormOverviewTable>({});
+    const [tableData, setTableData] = React.useState<
+        TOverviewTable<IEHSFaultFormOverview>
+    >({});
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
 
@@ -106,7 +89,7 @@ export default function EHSFaultOverview(props: {
             code: '',
         });
 
-    const columnMap: IColumnMap<IEHSFaultFormOverviewChecked>[] = [
+    const columnMap: IColumnMap<TOverviewChecked<IEHSFaultFormOverview>>[] = [
         {
             title: '日期',
             width: 100,
@@ -115,7 +98,10 @@ export default function EHSFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<IEHSFaultFormOverviewChecked, 'day'>) => (
+            }: getElementProps<
+                TOverviewChecked<IEHSFaultFormOverview>,
+                'day'
+            >) => (
                 <ModalOpenButtonElement
                     style={style}
                     info={info}
@@ -154,7 +140,10 @@ export default function EHSFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<IEHSFaultFormOverviewChecked, 'code'>) => (
+            }: getElementProps<
+                TOverviewChecked<IEHSFaultFormOverview>,
+                'code'
+            >) => (
                 <Box {...dataCellStyle} style={style}>
                     {
                         codeContentMap[
@@ -213,7 +202,7 @@ export default function EHSFaultOverview(props: {
                     isChecked: false,
                 };
                 return acc;
-            }, {} as IEHSFaultFormOverviewTable);
+            }, {} as TOverviewTable<IEHSFaultFormOverview>);
             setTableData(formattedData);
         },
         onError: (err) => {
