@@ -1,4 +1,5 @@
 import { FileType } from 'rsuite/esm/Uploader';
+import { IGQLSignature } from './Signature';
 
 export interface IFaultForm {
     siteId: string;
@@ -48,21 +49,26 @@ export interface IFaultFormPrimaryKey {
 
 export interface IFaultFormOverview {
     day: string;
-    responsibleTarget: string;
     code: string;
     staff: string;
 }
 
 export interface IEHSFaultFormOverview extends IFaultFormOverview {
     area: string;
+    responsibleTarget: string;
 }
 export interface IEngFaultFormOverview extends IFaultFormOverview {
     outsourcerStatus: boolean | null;
     engineerStatus: boolean | null;
     managerStatus: boolean | null;
     engineerDescription: string;
+    outsourcerSignature: IGQLSignature | null;
+    engineerSignature: IGQLSignature | null;
+    target: string;
 }
 export interface IOutsourceFaultFormOverview extends IFaultFormOverview {
     outsourcerStatus: boolean | null;
     outsourcerDescription: string;
+    outsourcerSignature: IGQLSignature | null;
+    target: string;
 }

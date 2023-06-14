@@ -1,11 +1,10 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import ReactWindowTable, {
-    CheckboxElement,
     IColumnMap,
     ISizes,
     ModalOpenButtonElement,
@@ -39,6 +38,7 @@ const QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW = gql`
             code
             staff
             outsourcerStatus
+            outsourcerDescription
             outsourcerSignature {
                 ...gqlSignatureFields
             }
@@ -83,10 +83,10 @@ export default function OutsourceFaultOverview(props: {
         gqlOverview: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleData: (data) =>
             data['faultFormCheck'].reduce((acc, value, index) => {
-                const { day, responsibleTarget, code } = value;
+                const { day, target, code } = value;
                 const primaryKey = JSON.stringify({
                     day,
-                    responsibleTarget,
+                    target,
                     code,
                 });
                 acc[primaryKey] = {
@@ -98,8 +98,8 @@ export default function OutsourceFaultOverview(props: {
             }, {} as TOverviewTable<IOutsourceFaultFormOverview>),
         gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
-            data['faultFormCheck'].map(({ day, responsibleTarget, code }) =>
-                JSON.stringify({ day, responsibleTarget, code })
+            data['faultFormCheck'].map(({ day, target, code }) =>
+                JSON.stringify({ day, target, code })
             ),
     });
 
@@ -123,8 +123,12 @@ export default function OutsourceFaultOverview(props: {
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        const { day, responsibleTarget, code } = info;
-                        setOpeningTarget({ day, responsibleTarget, code });
+                        const { day, target, code } = info;
+                        setOpeningTarget({
+                            day,
+                            responsibleTarget: target,
+                            code,
+                        });
                         onOpen();
                     }}
                 />
@@ -133,7 +137,7 @@ export default function OutsourceFaultOverview(props: {
         {
             title: '巡檢對象',
             width: 100,
-            variable: 'responsibleTarget',
+            variable: 'target',
             getElement: defaultElement,
         },
         {
@@ -170,27 +174,61 @@ export default function OutsourceFaultOverview(props: {
             ),
         },
         {
-            title: '地點',
-            width: 100,
-            variable: 'area',
-            getElement: defaultElement,
-        },
-        {
-            title: '全選',
-            width: 50,
-            variable: 'isChecked',
-            getElement: (props) => {
-                const { day, responsibleTarget, code } = props.info;
+            title: '動作',
+            width: 133,
+            variable: 'outsourcerStatus',
+            getElement: ({ style, info }) => {
+                const {
+                    outsourcerStatus,
+                    // eslint-disable-next-line no-unused-vars
+                    outsourcerDescription,
+                    // eslint-disable-next-line no-unused-vars
+                    outsourcerSignature,
+                } = info;
+
                 return (
-                    <CheckboxElement
-                        getElementProps={props}
-                        setTableData={setTableData}
-                        primaryKey={JSON.stringify({
-                            day,
-                            responsibleTarget,
-                            code,
-                        })}
-                    />
+                    <Box {...dataCellStyle} style={style} pt={0} p={0}>
+                        {outsourcerStatus === null ? (
+                            <Flex
+                                h={'44px'}
+                                align={'center'}
+                                justify={'center'}
+                                gap={'10px'}
+                            >
+                                <Button
+                                    variant={'buttonBlueSolid'}
+                                    height={'20px'}
+                                    width={'36px'}
+                                    fontSize={'10px'}
+                                    onClick={() => {
+                                        // navSingleWorkPermit(info['number'], false);
+                                    }}
+                                >
+                                    申請
+                                </Button>
+                                <Button
+                                    variant={'buttonBlueSolid'}
+                                    height={'20px'}
+                                    width={'36px'}
+                                    fontSize={'10px'}
+                                    bg={'#DB504A'}
+                                    _hover={{ bg: '#DB504A77' }}
+                                    onClick={() => {
+                                        // navSingleWorkPermit(info['number'], true);
+                                    }}
+                                >
+                                    異動
+                                </Button>
+
+                                {/* <Button>接受</Button>
+                                <Button>異議</Button> */}
+                            </Flex>
+                        ) : outsourcerStatus ? (
+                            <Text>接受</Text>
+                        ) : (
+                            <Text>異議</Text>
+                        )}
+                    </Box>
                 );
             },
         },
