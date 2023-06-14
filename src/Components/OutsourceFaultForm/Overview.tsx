@@ -15,7 +15,7 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
 import {
-    IEngFaultFormOverview,
+    IOutsourceFaultFormOverview,
     IFaultFormPrimaryKey,
 } from '../../Interface/FaultForm';
 import { IExportField } from '../../Interface/IGQL';
@@ -29,7 +29,7 @@ import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { codeContentMap } from '../../Utils/Mapper';
 import dayjs from 'dayjs';
 
-const QUERY_ENG_FAULT_FROM_OVERVIEW = gql`
+const QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW = gql`
     ${SIGNATURE_FIELDS}
     query FaultFormCheck($siteId: String!, $start: Date, $end: Date) {
         faultFormCheck(siteId: $siteId, start: $start, end: $end) {
@@ -39,13 +39,7 @@ const QUERY_ENG_FAULT_FROM_OVERVIEW = gql`
             code
             staff
             outsourcerStatus
-            engineerStatus
-            managerStatus
-            engineerDescription
             outsourcerSignature {
-                ...gqlSignatureFields
-            }
-            engineerSignature {
                 ...gqlSignatureFields
             }
         }
@@ -57,12 +51,12 @@ const sizes: ISizes = {
     cellHeight: 44,
 };
 
-export default function EngFaultOverview(props: {
+export default function OutsourceFaultOverview(props: {
     siteId: string;
     siteName: string;
 }) {
-    if (!IsPermit('eng_fault_form')) return <Navigate to="/" replace={true} />;
-
+    if (!IsPermit('outsource_fault_form'))
+        return <Navigate to="/" replace={true} />;
     const { siteId, siteName } = props;
     // eslint-disable-next-line no-unused-vars
     const { onOpen, onClose, isOpen } = useDisclosure();
@@ -81,12 +75,12 @@ export default function EngFaultOverview(props: {
         searchFunction,
         loading,
     } = useGQLOverview<
-        IEngFaultFormOverview,
-        { faultFormCheck: IEngFaultFormOverview[] },
+        IOutsourceFaultFormOverview,
+        { faultFormCheck: IOutsourceFaultFormOverview[] },
         { exportFaultForm: IExportField }
     >({
         siteId: siteId,
-        gqlOverview: QUERY_ENG_FAULT_FROM_OVERVIEW,
+        gqlOverview: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleData: (data) =>
             data['faultFormCheck'].reduce((acc, value, index) => {
                 const { day, responsibleTarget, code } = value;
@@ -101,15 +95,17 @@ export default function EngFaultOverview(props: {
                     isChecked: false,
                 };
                 return acc;
-            }, {} as TOverviewTable<IEngFaultFormOverview>),
-        gqlFilter: QUERY_ENG_FAULT_FROM_OVERVIEW,
+            }, {} as TOverviewTable<IOutsourceFaultFormOverview>),
+        gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, responsibleTarget, code }) =>
                 JSON.stringify({ day, responsibleTarget, code })
             ),
     });
 
-    const columnMap: IColumnMap<TOverviewChecked<IEngFaultFormOverview>>[] = [
+    const columnMap: IColumnMap<
+        TOverviewChecked<IOutsourceFaultFormOverview>
+    >[] = [
         {
             title: '日期',
             width: 100,
@@ -119,7 +115,7 @@ export default function EngFaultOverview(props: {
                 info,
                 variable,
             }: getElementProps<
-                TOverviewChecked<IEngFaultFormOverview>,
+                TOverviewChecked<IOutsourceFaultFormOverview>,
                 'day'
             >) => (
                 <ModalOpenButtonElement
@@ -161,7 +157,7 @@ export default function EngFaultOverview(props: {
                 info,
                 variable,
             }: getElementProps<
-                TOverviewChecked<IEngFaultFormOverview>,
+                TOverviewChecked<IOutsourceFaultFormOverview>,
                 'code'
             >) => (
                 <Box {...dataCellStyle} style={style}>
@@ -247,11 +243,11 @@ export default function EngFaultOverview(props: {
                 sortReversed={true}
             />
             {/* <FaultFormModal
-                siteId={siteId}
-                {...openingTarget}
-                onClose={onClose}
-                isOpen={isOpen}
-            /> */}
+        siteId={siteId}
+        {...openingTarget}
+        onClose={onClose}
+        isOpen={isOpen}
+    /> */}
             {loading && <PageLoading />}
         </Flex>
     );
