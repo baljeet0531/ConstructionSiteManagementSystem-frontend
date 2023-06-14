@@ -37,7 +37,7 @@ export default function LoginForm(props: { mode: 'mobile' | 'desktop' }) {
         });
 
         if (response.status >= 400) {
-            response.statusText == 'Unauthorized'
+            response.status == 401
                 ? defaultErrorToast(toast, '帳號或密碼錯誤')
                 : defaultErrorToast(toast, `${response.statusText}`);
         } else {
