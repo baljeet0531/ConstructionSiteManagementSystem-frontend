@@ -224,7 +224,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 },
             }}
             setTableData={setTableValue}
-            primaryKey={errorOnly ? props.info.no : props.info.idno}
+            primaryKey={`${props.info.idno}|${props.info.no ?? ''}`}
         ></CheckboxElement>
     );
 
@@ -897,11 +897,11 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         onCompleted: ({ allHumanresource }) => {
             const appendedHumanTable = allHumanresource.map(
                 (info: any, index: number) => {
-                    const primaryKey = errorOnly ? info.no : info.idno;
                     Object.keys(info).forEach((key) => {
                         if (info[key] == '0001-01-01') info[key] = '日期錯誤';
                         else if (info[key] === null) info[key] = '';
                     });
+                    const primaryKey = `${info.idno}|${info.no ?? ''}`;
                     return {
                         [primaryKey as string]: {
                             ...info,
