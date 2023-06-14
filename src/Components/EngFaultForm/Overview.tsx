@@ -89,10 +89,10 @@ export default function EngFaultOverview(props: {
         gqlOverview: QUERY_ENG_FAULT_FROM_OVERVIEW,
         handleData: (data) =>
             data['faultFormCheck'].reduce((acc, value, index) => {
-                const { day, responsibleTarget, code } = value;
+                const { day, target, code } = value;
                 const primaryKey = JSON.stringify({
                     day,
-                    responsibleTarget,
+                    target,
                     code,
                 });
                 acc[primaryKey] = {
@@ -104,8 +104,8 @@ export default function EngFaultOverview(props: {
             }, {} as TOverviewTable<IEngFaultFormOverview>),
         gqlFilter: QUERY_ENG_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
-            data['faultFormCheck'].map(({ day, responsibleTarget, code }) =>
-                JSON.stringify({ day, responsibleTarget, code })
+            data['faultFormCheck'].map(({ day, target, code }) =>
+                JSON.stringify({ day, target, code })
             ),
     });
 
@@ -127,8 +127,12 @@ export default function EngFaultOverview(props: {
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        const { day, responsibleTarget, code } = info;
-                        setOpeningTarget({ day, responsibleTarget, code });
+                        const { day, target, code } = info;
+                        setOpeningTarget({
+                            day,
+                            responsibleTarget: target,
+                            code,
+                        });
                         onOpen();
                     }}
                 />
@@ -137,7 +141,7 @@ export default function EngFaultOverview(props: {
         {
             title: '巡檢對象',
             width: 100,
-            variable: 'responsibleTarget',
+            variable: 'target',
             getElement: defaultElement,
         },
         {
@@ -184,14 +188,14 @@ export default function EngFaultOverview(props: {
             width: 50,
             variable: 'isChecked',
             getElement: (props) => {
-                const { day, responsibleTarget, code } = props.info;
+                const { day, target, code } = props.info;
                 return (
                     <CheckboxElement
                         getElementProps={props}
                         setTableData={setTableData}
                         primaryKey={JSON.stringify({
                             day,
-                            responsibleTarget,
+                            target,
                             code,
                         })}
                     />
