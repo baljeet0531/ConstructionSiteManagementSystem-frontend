@@ -21,7 +21,12 @@ export type TOverviewChecked<T> = T & {
 
 export type TOverviewTable<T> = Record<string, TOverviewChecked<T>>;
 
-export const useGQLOverview = <TOverview, TData, TExport>(config: {
+export const useGQLOverview = <
+    TOverview,
+    TData,
+    TExport = {},
+    TUpdate = {}
+>(config: {
     siteId: string;
     gqlOverview: DocumentNode;
     handleData: (data: TData) => TOverviewTable<TOverview>;
@@ -29,15 +34,19 @@ export const useGQLOverview = <TOverview, TData, TExport>(config: {
     handleFilterKey?: ((data: TData) => string[]) | undefined;
     gqlExport?: DocumentNode | undefined;
     handleExportData?: ((data: TExport) => IExportField) | undefined;
+    gqlUpdate?: DocumentNode | undefined;
+    handleUpdate?: ((data: TUpdate) => void) | undefined;
 }) => {
     const {
-        gqlOverview,
-        gqlFilter,
-        gqlExport,
         siteId,
+        gqlOverview,
         handleData,
+        gqlFilter,
         handleFilterKey,
+        gqlExport,
         handleExportData,
+        gqlUpdate,
+        handleUpdate,
     } = config;
     const toast = useToast();
     const { fileLoading, exportFile } = useFileExport();
@@ -63,8 +72,8 @@ export const useGQLOverview = <TOverview, TData, TExport>(config: {
 
     const [searchFunction, { loading: searchLoading }] =
         gqlFilter && handleFilterKey
-            ? useLazyQuery(gqlFilter, {
-                  onCompleted: (data: TData) => {
+            ? useLazyQuery<TData>(gqlFilter, {
+                  onCompleted: (data) => {
                       setFilteredPrimaryKey(handleFilterKey(data));
                   },
                   onError: (error) => {
@@ -77,8 +86,8 @@ export const useGQLOverview = <TOverview, TData, TExport>(config: {
 
     const [exportFunction, { loading: exportLoading }] =
         gqlExport && handleExportData
-            ? useMutation(gqlExport, {
-                  onCompleted: (data: TExport) => {
+            ? useMutation<TExport>(gqlExport, {
+                  onCompleted: (data) => {
                       exportFile(handleExportData(data));
                   },
                   onError: (error) => {
@@ -89,8 +98,26 @@ export const useGQLOverview = <TOverview, TData, TExport>(config: {
               })
             : [() => {}, { loading: false }];
 
+    const [updateFunction, { loading: updateLoading }] =
+        gqlUpdate && handleUpdate
+            ? useMutation<TUpdate>(gqlUpdate, {
+                  onCompleted: (data) => {
+                      handleUpdate(data);
+                  },
+                  onError: (error) => {
+                      console.log(error);
+                      defaultErrorToast(toast);
+                  },
+                  fetchPolicy: 'network-only',
+              })
+            : [() => {}, { loading: false }];
+
     const loading =
-        fileLoading || queryLoading || searchLoading || exportLoading;
+        fileLoading ||
+        queryLoading ||
+        searchLoading ||
+        exportLoading ||
+        updateLoading;
 
     return {
         tableData,
@@ -99,6 +126,7 @@ export const useGQLOverview = <TOverview, TData, TExport>(config: {
         loading,
         searchFunction,
         exportFunction,
+        updateFunction,
     };
 };
 
