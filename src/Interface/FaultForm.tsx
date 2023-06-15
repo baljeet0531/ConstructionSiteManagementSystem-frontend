@@ -46,6 +46,11 @@ export interface IFaultFormPrimaryKey {
     responsibleTarget: string;
     code: string;
 }
+export interface IFaultFormCheckPrimaryKey {
+    day: string;
+    target: string;
+    code: string;
+}
 
 export interface IFaultFormOverview {
     day: string;
