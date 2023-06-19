@@ -344,7 +344,16 @@ export function getFeatureMap(site: {
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/outsource/form/env-security',
-            page: <EnvSecurityForm />,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EnvSecurityOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_op_check_form: {
             name: '特殊作業自主檢點表',
