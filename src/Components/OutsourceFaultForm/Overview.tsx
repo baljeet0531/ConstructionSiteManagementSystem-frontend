@@ -1,19 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import {
-    Box,
-    Button,
-    ButtonProps,
-    Flex,
-    Text,
-    TextProps,
-    useDisclosure,
-    useToast,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import ReactWindowTable, {
+    AcceptDenyElement,
     IColumnMap,
     ISizes,
     ModalOpenButtonElement,
@@ -22,10 +14,7 @@ import ReactWindowTable, {
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
-import {
-    IOutsourceFaultFormOverview,
-    IFaultFormCheckPrimaryKey,
-} from '../../Interface/FaultForm';
+import { IOutsourceFaultFormOverview } from '../../Interface/FaultForm';
 import {
     TOverviewChecked,
     TOverviewTable,
@@ -37,7 +26,9 @@ import { codeContentMap } from '../../Utils/Mapper';
 import dayjs from 'dayjs';
 
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
-import AcceptDenySignatureModal from '../Shared/AcceptDenyModal';
+import AcceptDenySignatureModal, {
+    TUpdateFaultFormCheck,
+} from '../Shared/AcceptDenySignatureModal';
 
 export const QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW = gql`
     ${SIGNATURE_FIELDS}
@@ -96,16 +87,14 @@ export default function OutsourceFaultOverview(props: {
     const toast = useToast();
     const { siteId, siteName } = props;
 
-    const formDisclosure = useDisclosure();
+    const faultFormDisclosure = useDisclosure();
     const signatureDisclosure = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [openingTarget, setOpeningTarget] =
-        React.useState<IFaultFormCheckPrimaryKey>({
-            day: '',
-            target: '',
-            code: '',
-        });
+        React.useState<IOutsourceFaultFormOverview>(
+            {} as IOutsourceFaultFormOverview
+        );
 
     const {
         tableData,
@@ -118,12 +107,7 @@ export default function OutsourceFaultOverview(props: {
         IOutsourceFaultFormOverview,
         { faultFormCheck: IOutsourceFaultFormOverview[] },
         {},
-        {
-            updateFaultFormCheck: {
-                ok: boolean;
-                message: string;
-            };
-        }
+        TUpdateFaultFormCheck
     >({
         siteId: siteId,
         gqlOverview: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
@@ -135,13 +119,9 @@ export default function OutsourceFaultOverview(props: {
                     target,
                     code,
                 });
-                acc[primaryKey] = {
-                    ...value,
-                    index: index,
-                    isChecked: false,
-                };
+                acc[primaryKey] = { ...value, index: index };
                 return acc;
-            }, {} as TOverviewTable<IOutsourceFaultFormOverview>),
+            }, {} as TOverviewTable<IOutsourceFaultFormOverview & { index: number }>),
         gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -174,13 +154,9 @@ export default function OutsourceFaultOverview(props: {
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        const { day, target, code } = info;
-                        setOpeningTarget({
-                            day,
-                            target,
-                            code,
-                        });
-                        formDisclosure.onOpen();
+                        // const { day, target, code } = info;
+                        setOpeningTarget(info);
+                        faultFormDisclosure.onOpen();
                     }}
                 />
             ),
@@ -228,69 +204,22 @@ export default function OutsourceFaultOverview(props: {
             title: '動作',
             width: 133,
             variable: 'outsourcerStatus',
-            getElement: ({ style, info }) => {
-                const { outsourcerStatus, day, target, code } = info;
-
-                const buttonStyle: ButtonProps = {
-                    variant: 'buttonBlueSolid',
-                    height: '20px',
-                    width: '36px',
-                    fontSize: '10px',
-                };
-
-                const textStyle: TextProps = {
-                    h: `${style.height}px`,
-                    lineHeight: `${style.height}px`,
-                };
-
+            getElement: (props) => {
+                // const { day, target, code } = props.info;
                 return (
-                    <Box {...dataCellStyle} style={style} pt={0} p={0}>
-                        {outsourcerStatus === null ? (
-                            <Flex
-                                h={'44px'}
-                                align={'center'}
-                                justify={'center'}
-                                gap={'10px'}
-                            >
-                                <Button
-                                    {...buttonStyle}
-                                    onClick={() => {
-                                        setAccept(true);
-                                        setOpeningTarget({
-                                            day,
-                                            target,
-                                            code,
-                                        });
-                                        signatureDisclosure.onOpen();
-                                    }}
-                                >
-                                    申請
-                                </Button>
-                                <Button
-                                    {...buttonStyle}
-                                    bg={'#DB504A'}
-                                    _hover={{ bg: '#DB504A77' }}
-                                    onClick={() => {
-                                        setAccept(false);
-                                        setOpeningTarget({
-                                            day,
-                                            target,
-                                            code,
-                                        });
-                                        signatureDisclosure.onOpen();
-                                    }}
-                                >
-                                    異動
-                                </Button>
-                            </Flex>
-                        ) : outsourcerStatus ? (
-                            <Text {...textStyle}>接受</Text>
-                        ) : (
-                            <Text {...textStyle} color={'#4C7DE7'}>
-                                異議
-                            </Text>
-                        )}
-                    </Box>
+                    <AcceptDenyElement
+                        {...props}
+                        handleAccept={() => {
+                            setAccept(true);
+                            setOpeningTarget(props.info);
+                            signatureDisclosure.onOpen();
+                        }}
+                        handleDeny={() => {
+                            setAccept(false);
+                            setOpeningTarget(props.info);
+                            signatureDisclosure.onOpen();
+                        }}
+                    />
                 );
             },
         },
@@ -340,13 +269,15 @@ export default function OutsourceFaultOverview(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
+                // sortBy="day"
+                // sortFormatter={(day: string) => dayjs(day).valueOf()}
                 sortReversed={true}
             />
             {/* <FaultFormModal
-        siteId={siteId}
         {...openingTarget}
-        onClose={onClose}
-        isOpen={isOpen}
+        siteId={siteId}
+        onClose={faultFormDisclosure.onClose}
+        isOpen={faultFormDisclosure.isOpen}
     /> */}
             <AcceptDenySignatureModal
                 siteId={siteId}

@@ -3,16 +3,21 @@ import React from 'react';
 import {
     Box,
     Button,
+    ButtonProps,
     Center,
     ChakraProps,
     Checkbox,
     Flex,
     Text,
+    TextProps,
 } from '@chakra-ui/react';
 import { areEqual, VariableSizeGrid } from 'react-window';
 import { IGQLSignature } from '../../Interface/Signature';
 import Pin from './Pin';
 import dayjs from 'dayjs';
+import { codeContentMap } from '../../Utils/Mapper';
+import { TOverviewChecked } from '../../Hooks/UseGQLOverview';
+import { IFaultFormOverview } from '../../Interface/FaultForm';
 
 const tableCellStyle: ChakraProps = {
     border: '1px solid #919AA9',
@@ -59,6 +64,11 @@ export const borderedStyle: React.CSSProperties = {
     borderRight: '1px solid #919AA9',
     borderBottom: '1px solid #919AA9',
 };
+
+export const setTextHeight = (style: React.CSSProperties): TextProps => ({
+    h: `${style.height}px`,
+    lineHeight: `${style.height}px`,
+});
 
 export const defaultElement = ({ style, info, variable }: getElementProps) => (
     <Box {...dataCellStyle} style={style}>
@@ -181,6 +191,74 @@ export const ModalOpenButtonElement = ({
             >
                 {info[variable]}
             </Button>
+        </Box>
+    );
+};
+
+export const faultCodeMapElement = <T extends IFaultFormOverview>({
+    style,
+    info,
+    variable,
+}: getElementProps<TOverviewChecked<T>, 'code'>) => (
+    <Box {...dataCellStyle} style={style}>
+        {codeContentMap[info[variable] as keyof typeof codeContentMap].content}
+    </Box>
+);
+
+export const AcceptDenyElement = (
+    props: getElementProps & {
+        handleAccept: () => void;
+        handleDeny: () => void;
+        acceptText?: string;
+        denyText?: string;
+    }
+) => {
+    const {
+        style,
+        info,
+        variable,
+        handleAccept,
+        handleDeny,
+        acceptText = '接受',
+        denyText = '異議',
+    } = props;
+    const status = info[variable];
+
+    const buttonStyle: ButtonProps = {
+        variant: 'buttonBlueSolid',
+        height: '20px',
+        width: '36px',
+        fontSize: '10px',
+    };
+
+    return (
+        <Box {...dataCellStyle} style={style} pt={0} p={0}>
+            {status === null ? (
+                <Flex
+                    h={'44px'}
+                    align={'center'}
+                    justify={'center'}
+                    gap={'10px'}
+                >
+                    <Button {...buttonStyle} onClick={handleAccept}>
+                        {acceptText}
+                    </Button>
+                    <Button
+                        {...buttonStyle}
+                        bg={'#DB504A'}
+                        _hover={{ bg: '#DB504A77' }}
+                        onClick={handleDeny}
+                    >
+                        {denyText}
+                    </Button>
+                </Flex>
+            ) : status ? (
+                <Text {...setTextHeight(style)}>{acceptText}</Text>
+            ) : (
+                <Text {...setTextHeight(style)} color={'#4C7DE7'}>
+                    {denyText}
+                </Text>
+            )}
         </Box>
     );
 };

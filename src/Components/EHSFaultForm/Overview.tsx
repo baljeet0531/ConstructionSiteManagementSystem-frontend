@@ -77,7 +77,7 @@ export default function EHSFaultOverview(props: {
 
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [tableData, setTableData] = React.useState<
-        TOverviewTable<IEHSFaultFormOverview>
+        TOverviewTable<TOverviewChecked<IEHSFaultFormOverview>>
     >({});
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
@@ -202,7 +202,7 @@ export default function EHSFaultOverview(props: {
                     isChecked: false,
                 };
                 return acc;
-            }, {} as TOverviewTable<IEHSFaultFormOverview>);
+            }, {} as TOverviewTable<TOverviewChecked<IEHSFaultFormOverview>>);
             setTableData(formattedData);
         },
         onError: (err) => {

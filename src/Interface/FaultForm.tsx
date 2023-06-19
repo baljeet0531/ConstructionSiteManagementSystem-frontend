@@ -53,6 +53,7 @@ export interface IFaultFormCheckPrimaryKey {
 }
 
 export interface IFaultFormOverview {
+    siteId: string;
     day: string;
     code: string;
     staff: string;
@@ -63,13 +64,14 @@ export interface IEHSFaultFormOverview extends IFaultFormOverview {
     responsibleTarget: string;
 }
 export interface IEngFaultFormOverview extends IFaultFormOverview {
-    outsourcerStatus: boolean | null;
-    engineerStatus: boolean | null;
-    managerStatus: boolean | null;
-    engineerDescription: string;
-    outsourcerSignature: IGQLSignature | null;
-    engineerSignature: IGQLSignature | null;
     target: string;
+    outsourcerStatus: boolean | null;
+    outsourcerDescription: string;
+    outsourcerSignature: IGQLSignature | null;
+    engineerStatus: boolean | null;
+    engineerDescription: string;
+    engineerSignature: IGQLSignature | null;
+    managerStatus: boolean | null;
 }
 export interface IOutsourceFaultFormOverview extends IFaultFormOverview {
     outsourcerStatus: boolean | null;

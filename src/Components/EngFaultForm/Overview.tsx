@@ -1,24 +1,24 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import ReactWindowTable, {
-    CheckboxElement,
+    AcceptDenyElement,
     IColumnMap,
     ISizes,
     ModalOpenButtonElement,
     dataCellStyle,
     defaultElement,
+    faultCodeMapElement,
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
 import {
     IEngFaultFormOverview,
-    IFaultFormPrimaryKey,
+    // IFaultFormCheckPrimaryKey,
 } from '../../Interface/FaultForm';
-import { IExportField } from '../../Interface/IGQL';
 import {
     TOverviewChecked,
     TOverviewTable,
@@ -26,8 +26,12 @@ import {
 } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
-import { codeContentMap } from '../../Utils/Mapper';
 import dayjs from 'dayjs';
+import AcceptDenySignatureModal, {
+    TUpdateFaultFormCheck,
+} from '../Shared/AcceptDenySignatureModal';
+import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import ManagerAcceptDenyModal from './ManagerAcceptDenyModal';
 
 const QUERY_ENG_FAULT_FROM_OVERVIEW = gql`
     ${SIGNATURE_FIELDS}
@@ -39,15 +43,47 @@ const QUERY_ENG_FAULT_FROM_OVERVIEW = gql`
             code
             staff
             outsourcerStatus
-            engineerStatus
-            managerStatus
-            engineerDescription
+            outsourcerDescription
             outsourcerSignature {
                 ...gqlSignatureFields
             }
+            engineerStatus
+            engineerDescription
             engineerSignature {
                 ...gqlSignatureFields
             }
+            managerStatus
+        }
+    }
+`;
+
+const UPDATE_ENG_FAULT_FORM_OVERVIEW = gql`
+    mutation UpdateEngFaultFormCheck(
+        $code: String!
+        $day: Date!
+        $engineerDescription: String
+        $engineerSignature: signatureInput
+        $engineerStatus: Boolean
+        $managerStatus: Boolean
+        $outsourcerStatus: Boolean
+        $siteId: String!
+        $staff: String
+        $target: String!
+    ) {
+        updateFaultFormCheck(
+            code: $code
+            day: $day
+            engineerDescription: $engineerDescription
+            engineerSignature: $engineerSignature
+            engineerStatus: $engineerStatus
+            managerStatus: $managerStatus
+            outsourcerStatus: $outsourcerStatus
+            siteId: $siteId
+            staff: $staff
+            target: $target
+        ) {
+            ok
+            message
         }
     }
 `;
@@ -64,26 +100,26 @@ export default function EngFaultOverview(props: {
     if (!IsPermit('eng_fault_form')) return <Navigate to="/" replace={true} />;
 
     const { siteId, siteName } = props;
-    // eslint-disable-next-line no-unused-vars
-    const { onOpen, onClose, isOpen } = useDisclosure();
+    const toast = useToast();
+    const faultFormDisclosure = useDisclosure();
+    const signatureDisclosure = useDisclosure();
+    const managerDisclosure = useDisclosure();
+    const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-    // eslint-disable-next-line no-unused-vars
     const [openingTarget, setOpeningTarget] =
-        React.useState<IFaultFormPrimaryKey>({
-            day: '',
-            responsibleTarget: '',
-            code: '',
-        });
+        React.useState<IEngFaultFormOverview>({} as IEngFaultFormOverview);
     const {
         tableData,
         setTableData,
         filteredPrimaryKey,
         searchFunction,
+        updateFunction,
         loading,
     } = useGQLOverview<
         IEngFaultFormOverview,
         { faultFormCheck: IEngFaultFormOverview[] },
-        { exportFaultForm: IExportField }
+        {},
+        TUpdateFaultFormCheck
     >({
         siteId: siteId,
         gqlOverview: QUERY_ENG_FAULT_FROM_OVERVIEW,
@@ -95,18 +131,20 @@ export default function EngFaultOverview(props: {
                     target,
                     code,
                 });
-                acc[primaryKey] = {
-                    ...value,
-                    index: index,
-                    isChecked: false,
-                };
+
+                acc[primaryKey] = { ...value, index };
                 return acc;
-            }, {} as TOverviewTable<IEngFaultFormOverview>),
+            }, {} as TOverviewTable<IEngFaultFormOverview & { index: number }>),
         gqlFilter: QUERY_ENG_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
                 JSON.stringify({ day, target, code })
             ),
+        gqlUpdate: UPDATE_ENG_FAULT_FORM_OVERVIEW,
+        handleUpdate: ({ updateFaultFormCheck: { ok, message } }) => {
+            ok && defaultSuccessToast(toast, message);
+            signatureDisclosure.onClose();
+        },
     });
 
     const columnMap: IColumnMap<TOverviewChecked<IEngFaultFormOverview>>[] = [
@@ -127,13 +165,9 @@ export default function EngFaultOverview(props: {
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        const { day, target, code } = info;
-                        setOpeningTarget({
-                            day,
-                            responsibleTarget: target,
-                            code,
-                        });
-                        onOpen();
+                        // const { day, target, code } = info;
+                        setOpeningTarget(info);
+                        faultFormDisclosure.onOpen();
                     }}
                 />
             ),
@@ -152,52 +186,83 @@ export default function EngFaultOverview(props: {
         },
         {
             title: '代碼',
-            width: 100,
+            width: 79,
             variable: 'code',
             getElement: defaultElement,
         },
         {
             title: '檢點項目',
-            width: 327,
+            width: 198,
             variable: 'code',
+            getElement: faultCodeMapElement<IEngFaultFormOverview>,
+        },
+        {
+            title: '承商意見',
+            width: 100,
+            variable: 'outsourcerStatus',
             getElement: ({
                 style,
                 info,
                 variable,
             }: getElementProps<
                 TOverviewChecked<IEngFaultFormOverview>,
-                'code'
-            >) => (
-                <Box {...dataCellStyle} style={style}>
-                    {
-                        codeContentMap[
-                            info[variable] as keyof typeof codeContentMap
-                        ].content
-                    }
-                </Box>
-            ),
-        },
-        {
-            title: '地點',
-            width: 100,
-            variable: 'area',
-            getElement: defaultElement,
-        },
-        {
-            title: '全選',
-            width: 50,
-            variable: 'isChecked',
-            getElement: (props) => {
-                const { day, target, code } = props.info;
+                'outsourcerStatus'
+            >) => {
+                const status = info[variable];
                 return (
-                    <CheckboxElement
-                        getElementProps={props}
-                        setTableData={setTableData}
-                        primaryKey={JSON.stringify({
-                            day,
-                            target,
-                            code,
-                        })}
+                    <Box
+                        {...dataCellStyle}
+                        style={style}
+                        {...(status === false && { color: '#4C7DE7' })}
+                    >
+                        {status === null ? '待確認' : status ? '接受' : '異議'}
+                    </Box>
+                );
+            },
+        },
+        {
+            title: '工程師意見',
+            width: 100,
+            variable: 'engineerStatus',
+            getElement: (props) => {
+                // const { day, target, code } = props.info;
+                return (
+                    <AcceptDenyElement
+                        {...props}
+                        handleAccept={() => {
+                            setAccept(true);
+                            setOpeningTarget(props.info);
+                            signatureDisclosure.onOpen();
+                        }}
+                        handleDeny={() => {
+                            setAccept(false);
+                            setOpeningTarget(props.info);
+                            signatureDisclosure.onOpen();
+                        }}
+                    />
+                );
+            },
+        },
+        {
+            title: '工地經理意見',
+            width: 100,
+            variable: 'managerStatus',
+            getElement: (props) => {
+                // const { day, target, code } = props.info;
+                return (
+                    <AcceptDenyElement
+                        {...props}
+                        denyText="駁回"
+                        handleAccept={() => {
+                            setAccept(true);
+                            setOpeningTarget(props.info);
+                            managerDisclosure.onOpen();
+                        }}
+                        handleDeny={() => {
+                            setAccept(false);
+                            setOpeningTarget(props.info);
+                            managerDisclosure.onOpen();
+                        }}
                     />
                 );
             },
@@ -256,6 +321,23 @@ export default function EngFaultOverview(props: {
                 onClose={onClose}
                 isOpen={isOpen}
             /> */}
+            <AcceptDenySignatureModal
+                siteId={siteId}
+                openingTarget={openingTarget}
+                accept={accept}
+                updateFunction={updateFunction}
+                role={'engineer'}
+                isOpen={signatureDisclosure.isOpen}
+                onClose={signatureDisclosure.onClose}
+            />
+            <ManagerAcceptDenyModal
+                siteId={siteId}
+                openingTarget={openingTarget}
+                accept={accept}
+                updateFunction={updateFunction}
+                isOpen={managerDisclosure.isOpen}
+                onClose={managerDisclosure.onClose}
+            />
             {loading && <PageLoading />}
         </Flex>
     );
