@@ -19,7 +19,7 @@ export type TOverviewChecked<T> = T & {
     isChecked: boolean;
 };
 
-export type TOverviewTable<T> = Record<string, TOverviewChecked<T>>;
+export type TOverviewTable<T> = Record<string, T>;
 
 export const useGQLOverview = <
     TOverview,

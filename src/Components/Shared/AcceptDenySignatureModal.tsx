@@ -16,7 +16,10 @@ import SignatureCanvas from 'react-signature-canvas';
 import { Cookies } from 'react-cookie';
 import { MutationFunctionOptions } from '@apollo/client';
 import dayjs from 'dayjs';
-import { IFaultFormCheckPrimaryKey } from '../../Interface/FaultForm';
+import {
+    IEngFaultFormOverview,
+    IFaultFormCheckPrimaryKey,
+} from '../../Interface/FaultForm';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 import { ISignature } from '../../Interface/Signature';
 
@@ -27,26 +30,26 @@ const signatureModalTextStyle: TextProps = {
     p: '10px 0px',
 };
 
-type TUpdate = {
+export type TUpdateFaultFormCheck = {
     updateFaultFormCheck: {
         ok: boolean;
         message: string;
     };
 };
 
-type TUpdateVar = {
+export type TUpdateFaultFormCheckVar = {
     siteId: string;
     code: string;
     day: string;
     target: string;
     staff?: string;
-    engineerDescription?: string;
-    engineerSignature?: ISignature;
-    engineerStatus?: boolean;
-    managerStatus?: boolean;
-    outsourcerDescription?: string;
-    outsourcerSignature?: ISignature;
-    outsourcerStatus?: boolean;
+    engineerDescription?: string | null;
+    engineerSignature?: ISignature | null;
+    engineerStatus?: boolean | null;
+    managerStatus?: boolean | null;
+    outsourcerDescription?: string | null;
+    outsourcerSignature?: ISignature | null;
+    outsourcerStatus?: boolean | null;
 };
 
 export default function AcceptDenySignatureModal(props: {
@@ -56,8 +59,13 @@ export default function AcceptDenySignatureModal(props: {
     updateFunction:
         | (() => void)
         | ((
-              options?: MutationFunctionOptions<TUpdate, TUpdateVar> | undefined
-          ) => Promise<TUpdate>);
+              options?:
+                  | MutationFunctionOptions<
+                        TUpdateFaultFormCheck,
+                        TUpdateFaultFormCheckVar
+                    >
+                  | undefined
+          ) => Promise<TUpdateFaultFormCheck>);
     role: 'outsourcer' | 'engineer';
     isOpen: boolean;
     onClose: () => void;
@@ -71,6 +79,9 @@ export default function AcceptDenySignatureModal(props: {
         role,
         siteId,
     } = props;
+
+    console.log(openingTarget);
+
     const sigCanvas = React.useRef<SignatureCanvas>(null);
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
     const clear = () => sigCanvas.current?.clear();
