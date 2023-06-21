@@ -199,7 +199,7 @@ export const faultCodeMapElement = <T extends IFaultFormOverview>({
     style,
     info,
     variable,
-}: getElementProps<TOverviewChecked<T>, 'code'>) => (
+}: getElementProps<T, 'code'>) => (
     <Box {...dataCellStyle} style={style}>
         {codeContentMap[info[variable] as keyof typeof codeContentMap].content}
     </Box>
