@@ -63,7 +63,8 @@ export interface IEHSFaultFormOverview extends IFaultFormOverview {
     area: string;
     responsibleTarget: string;
 }
-export interface IEngFaultFormOverview extends IFaultFormOverview {
+
+export interface IFaultFormCheckOverview extends IFaultFormOverview {
     target: string;
     outsourcerStatus: boolean | null;
     outsourcerDescription: string;
@@ -73,17 +74,7 @@ export interface IEngFaultFormOverview extends IFaultFormOverview {
     engineerSignature: IGQLSignature | null;
     managerStatus: boolean | null;
 }
-export interface IOutsourceFaultFormOverview extends IFaultFormOverview {
-    outsourcerStatus: boolean | null;
-    outsourcerDescription: string;
-    outsourcerSignature: IGQLSignature | null;
-    target: string;
-}
 
-export interface IEngFaultFormOverviewExtend extends IEngFaultFormOverview {
-    index: number;
-}
-export interface IOutsourceFaultFormOverviewExtend
-    extends IOutsourceFaultFormOverview {
+export interface IFaultFormCheckOverviewExtend extends IFaultFormCheckOverview {
     index: number;
 }

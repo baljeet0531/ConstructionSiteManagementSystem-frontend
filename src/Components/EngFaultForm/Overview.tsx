@@ -16,8 +16,8 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
 import {
-    IEngFaultFormOverview,
-    IEngFaultFormOverviewExtend,
+    IFaultFormCheckOverview,
+    IFaultFormCheckOverviewExtend,
 } from '../../Interface/FaultForm';
 import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
@@ -103,7 +103,7 @@ export default function EngFaultOverview(props: {
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [openingTarget, setOpeningTarget] = React.useState(
-        {} as IEngFaultFormOverviewExtend
+        {} as IFaultFormCheckOverviewExtend
     );
     const {
         tableData,
@@ -113,8 +113,8 @@ export default function EngFaultOverview(props: {
         updateFunction,
         loading,
     } = useGQLOverview<
-        IEngFaultFormOverview,
-        { faultFormCheck: IEngFaultFormOverview[] },
+        IFaultFormCheckOverview,
+        { faultFormCheck: IFaultFormCheckOverview[] },
         {},
         TUpdateFaultFormCheck
     >({
@@ -131,7 +131,7 @@ export default function EngFaultOverview(props: {
 
                 acc[primaryKey] = { ...value, index };
                 return acc;
-            }, {} as TOverviewTable<IEngFaultFormOverviewExtend>),
+            }, {} as TOverviewTable<IFaultFormCheckOverviewExtend>),
         gqlFilter: QUERY_ENG_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -144,7 +144,7 @@ export default function EngFaultOverview(props: {
         },
     });
 
-    const columnMap: IColumnMap<IEngFaultFormOverviewExtend>[] = [
+    const columnMap: IColumnMap<IFaultFormCheckOverviewExtend>[] = [
         {
             title: '日期',
             width: 100,
@@ -153,7 +153,7 @@ export default function EngFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<IEngFaultFormOverviewExtend, 'day'>) => (
+            }: getElementProps<IFaultFormCheckOverviewExtend, 'day'>) => (
                 <ModalOpenButtonElement
                     style={style}
                     info={info}
@@ -187,29 +187,39 @@ export default function EngFaultOverview(props: {
             title: '檢點項目',
             width: 198,
             variable: 'code',
-            getElement: faultCodeMapElement<IEngFaultFormOverviewExtend>,
+            getElement: faultCodeMapElement<IFaultFormCheckOverviewExtend>,
         },
         {
             title: '承商意見',
             width: 100,
             variable: 'outsourcerStatus',
-            getElement: ({
-                style,
-                info,
-                variable,
-            }: getElementProps<
-                IEngFaultFormOverviewExtend,
-                'outsourcerStatus'
-            >) => {
+            getElement: (
+                props: getElementProps<
+                    IFaultFormCheckOverviewExtend,
+                    'outsourcerStatus'
+                >
+            ) => {
+                const { style, info, variable } = props;
                 const status = info[variable];
-                return (
-                    <Box
-                        {...dataCellStyle}
-                        style={style}
-                        {...(status === false && { color: '#4C7DE7' })}
-                    >
-                        {status === null ? '待確認' : status ? '接受' : '異議'}
+                return status === null ? (
+                    <Box {...dataCellStyle} style={style}>
+                        待確認
                     </Box>
+                ) : (
+                    <AcceptDenyElement
+                        {...props}
+                        openModal
+                        handleAccept={() => {
+                            setAccept(true);
+                            setOpeningTarget(info);
+                            signatureDisclosure.onOpen();
+                        }}
+                        handleDeny={() => {
+                            setAccept(false);
+                            setOpeningTarget(info);
+                            signatureDisclosure.onOpen();
+                        }}
+                    />
                 );
             },
         },
@@ -221,6 +231,7 @@ export default function EngFaultOverview(props: {
                 return (
                     <AcceptDenyElement
                         {...props}
+                        openModal
                         handleAccept={() => {
                             setAccept(true);
                             setOpeningTarget(props.info);
@@ -316,6 +327,7 @@ export default function EngFaultOverview(props: {
                 siteId={siteId}
                 openingTarget={openingTarget}
                 accept={accept}
+                editable={openingTarget.engineerStatus === null}
                 updateFunction={updateFunction}
                 role={'engineer'}
                 isOpen={signatureDisclosure.isOpen}
