@@ -8,10 +8,8 @@ import ReactWindowTable, {
     AcceptDenyElement,
     IColumnMap,
     ISizes,
-    ModalOpenButtonElement,
     defaultElement,
     faultCodeMapElement,
-    getElementProps,
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
 import {
@@ -85,8 +83,7 @@ export default function OutsourceFaultOverview(props: {
     const toast = useToast();
     const { siteId, siteName } = props;
 
-    const faultFormDisclosure = useDisclosure();
-    const signatureDisclosure = useDisclosure();
+    const { onOpen, onClose, isOpen } = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [openingTarget, setOpeningTarget] = React.useState(
@@ -127,7 +124,7 @@ export default function OutsourceFaultOverview(props: {
         gqlUpdate: UPDATE_OUTSOURCE_FAULT_FORM_OVERVIEW,
         handleUpdate: ({ updateFaultFormCheck: { ok, message } }) => {
             ok && defaultSuccessToast(toast, message);
-            signatureDisclosure.onClose();
+            onClose();
         },
     });
 
@@ -136,21 +133,7 @@ export default function OutsourceFaultOverview(props: {
             title: '日期',
             width: 100,
             variable: 'day',
-            getElement: ({
-                style,
-                info,
-                variable,
-            }: getElementProps<IFaultFormCheckOverviewExtend, 'day'>) => (
-                <ModalOpenButtonElement
-                    style={style}
-                    info={info}
-                    variable={variable}
-                    onClick={() => {
-                        setOpeningTarget(info);
-                        faultFormDisclosure.onOpen();
-                    }}
-                />
-            ),
+            getElement: defaultElement,
         },
         {
             title: '巡檢對象',
@@ -188,12 +171,12 @@ export default function OutsourceFaultOverview(props: {
                         handleAccept={() => {
                             setAccept(true);
                             setOpeningTarget(props.info);
-                            signatureDisclosure.onOpen();
+                            onOpen();
                         }}
                         handleDeny={() => {
                             setAccept(false);
                             setOpeningTarget(props.info);
-                            signatureDisclosure.onOpen();
+                            onOpen();
                         }}
                     />
                 );
@@ -254,8 +237,8 @@ export default function OutsourceFaultOverview(props: {
                 editable={openingTarget.outsourcerStatus === null}
                 updateFunction={updateFunction}
                 role={'outsourcer'}
-                isOpen={signatureDisclosure.isOpen}
-                onClose={signatureDisclosure.onClose}
+                isOpen={isOpen}
+                onClose={onClose}
             />
             {loading && <PageLoading />}
         </Flex>

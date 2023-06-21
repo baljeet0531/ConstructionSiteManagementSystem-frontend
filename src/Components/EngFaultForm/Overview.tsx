@@ -8,7 +8,6 @@ import ReactWindowTable, {
     AcceptDenyElement,
     IColumnMap,
     ISizes,
-    ModalOpenButtonElement,
     dataCellStyle,
     defaultElement,
     faultCodeMapElement,
@@ -99,7 +98,6 @@ export default function EngFaultOverview(props: {
 
     const { siteId, siteName } = props;
     const toast = useToast();
-    const faultFormDisclosure = useDisclosure();
     const signatureDisclosure = useDisclosure();
     const managerDisclosure = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
@@ -152,15 +150,7 @@ export default function EngFaultOverview(props: {
             title: '日期',
             width: 100,
             variable: 'day',
-            getElement: (props) => (
-                <ModalOpenButtonElement
-                    {...props}
-                    onClick={() => {
-                        setOpeningTarget(props.info);
-                        faultFormDisclosure.onOpen();
-                    }}
-                />
-            ),
+            getElement: defaultElement,
         },
         {
             title: '巡檢對象',
