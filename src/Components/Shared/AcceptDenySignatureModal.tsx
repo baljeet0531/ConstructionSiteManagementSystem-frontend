@@ -52,9 +52,11 @@ export type TUpdateFaultFormCheckVar = {
     outsourcerStatus?: boolean | null;
 };
 
-export default function AcceptDenySignatureModal(props: {
+export default function AcceptDenySignatureModal<
+    T extends IFaultFormCheckPrimaryKey
+>(props: {
     siteId: string;
-    openingTarget: IFaultFormCheckPrimaryKey;
+    openingTarget: T;
     accept: boolean;
     updateFunction:
         | (() => void)

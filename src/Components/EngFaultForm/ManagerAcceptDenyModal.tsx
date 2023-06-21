@@ -20,9 +20,11 @@ import {
 } from '../Shared/AcceptDenySignatureModal';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 
-export default function ManagerAcceptDenyModal(props: {
+export default function ManagerAcceptDenyModal<
+    T extends IFaultFormCheckPrimaryKey
+>(props: {
     siteId: string;
-    openingTarget: IFaultFormCheckPrimaryKey;
+    openingTarget: T;
     updateFunction:
         | (() => void)
         | ((
