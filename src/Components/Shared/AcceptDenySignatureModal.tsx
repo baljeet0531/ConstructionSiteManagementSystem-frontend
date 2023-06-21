@@ -18,12 +18,11 @@ import SignatureCanvas from 'react-signature-canvas';
 import { Cookies } from 'react-cookie';
 import { MutationFunctionOptions } from '@apollo/client';
 import dayjs from 'dayjs';
-import {
-    IFaultFormCheckOverview,
-    IFaultFormCheckOverviewExtend,
-} from '../../Interface/FaultForm';
+import { IFaultFormCheckOverviewExtend } from '../../Interface/FaultForm';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 import { ISignature } from '../../Interface/Signature';
+import { getImage } from '../../Utils/Resources';
+import { CustomLoading } from './Loading';
 
 const signatureModalTextStyle: TextProps = {
     fontWeight: 700,
@@ -54,6 +53,8 @@ export type TUpdateFaultFormCheckVar = {
     outsourcerStatus?: boolean | null;
 };
 
+export type TRole = 'outsourcer' | 'engineer';
+
 export default function AcceptDenySignatureModal(props: {
     siteId: string;
     openingTarget: IFaultFormCheckOverviewExtend;
@@ -69,7 +70,7 @@ export default function AcceptDenySignatureModal(props: {
                     >
                   | undefined
           ) => Promise<TUpdateFaultFormCheck>);
-    role: 'outsourcer' | 'engineer';
+    role: TRole;
     isOpen: boolean;
     onClose: () => void;
 }) {
@@ -84,7 +85,22 @@ export default function AcceptDenySignatureModal(props: {
         siteId,
     } = props;
 
-    // console.log(openingTarget);
+    const [imageSrc, setImageSrc] = React.useState<string>('');
+    const [signTime, setTime] = React.useState<string>('');
+    React.useEffect(() => {
+        const image = openingTarget[`${role}Signature`];
+        if (image && !editable) {
+            getImage(image.path).then((blob) => {
+                if (blob) {
+                    setImageSrc(URL.createObjectURL(blob));
+                    setTime(dayjs(image.time).format('YYYY-MM-DD HH:mm'));
+                } else {
+                    setImageSrc('');
+                    setTime('');
+                }
+            });
+        }
+    }, [openingTarget[`${role}Signature`]?.path]);
 
     const sigCanvas = React.useRef<SignatureCanvas>(null);
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -175,7 +191,30 @@ export default function AcceptDenySignatureModal(props: {
                                     }}
                                 />
                             ) : (
-                                <Image />
+                                <Flex
+                                    width={'465px'}
+                                    height={'205px'}
+                                    direction={'column'}
+                                    align={'flex-end'}
+                                >
+                                    {imageSrc ? (
+                                        <Image
+                                            width={'100%'}
+                                            height={'90%'}
+                                            objectFit={'contain'}
+                                            src={imageSrc}
+                                        />
+                                    ) : (
+                                        <CustomLoading />
+                                    )}
+                                    <Text
+                                        fontSize={'0.625rem'}
+                                        lineHeight={'1.25rem'}
+                                        fontWeight={400}
+                                    >
+                                        {signTime}
+                                    </Text>
+                                </Flex>
                             )}
                         </Flex>
                     </Flex>

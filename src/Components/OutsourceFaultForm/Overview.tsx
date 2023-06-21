@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import { Box, Flex, Text, useDisclosure, useToast } from '@chakra-ui/react';
+import { Flex, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
 import ReactWindowTable, {
@@ -9,8 +9,8 @@ import ReactWindowTable, {
     IColumnMap,
     ISizes,
     ModalOpenButtonElement,
-    dataCellStyle,
     defaultElement,
+    faultCodeMapElement,
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
@@ -21,7 +21,6 @@ import {
 import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
-import { codeContentMap } from '../../Utils/Mapper';
 import dayjs from 'dayjs';
 
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
@@ -175,19 +174,7 @@ export default function OutsourceFaultOverview(props: {
             title: '檢點項目',
             width: 344,
             variable: 'code',
-            getElement: ({
-                style,
-                info,
-                variable,
-            }: getElementProps<IFaultFormCheckOverviewExtend, 'code'>) => (
-                <Box {...dataCellStyle} style={style}>
-                    {
-                        codeContentMap[
-                            info[variable] as keyof typeof codeContentMap
-                        ].content
-                    }
-                </Box>
-            ),
+            getElement: faultCodeMapElement<IFaultFormCheckOverviewExtend>,
         },
         {
             title: '動作',
@@ -197,6 +184,7 @@ export default function OutsourceFaultOverview(props: {
                 return (
                     <AcceptDenyElement
                         {...props}
+                        openModal
                         handleAccept={() => {
                             setAccept(true);
                             setOpeningTarget(props.info);

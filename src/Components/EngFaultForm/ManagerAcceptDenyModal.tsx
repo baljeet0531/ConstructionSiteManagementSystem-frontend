@@ -40,7 +40,6 @@ export default function ManagerAcceptDenyModal(props: {
     const { isOpen, onClose, accept, updateFunction, openingTarget, siteId } =
         props;
 
-    console.log(openingTarget);
     return (
         <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
