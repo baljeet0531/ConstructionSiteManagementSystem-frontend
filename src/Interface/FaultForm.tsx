@@ -79,3 +79,11 @@ export interface IOutsourceFaultFormOverview extends IFaultFormOverview {
     outsourcerSignature: IGQLSignature | null;
     target: string;
 }
+
+export interface IEngFaultFormOverviewExtend extends IEngFaultFormOverview {
+    index: number;
+}
+export interface IOutsourceFaultFormOverviewExtend
+    extends IOutsourceFaultFormOverview {
+    index: number;
+}

@@ -17,13 +17,9 @@ import ReactWindowTable, {
 import { PageLoading } from '../Shared/Loading';
 import {
     IEngFaultFormOverview,
-    // IFaultFormCheckPrimaryKey,
+    IEngFaultFormOverviewExtend,
 } from '../../Interface/FaultForm';
-import {
-    TOverviewChecked,
-    TOverviewTable,
-    useGQLOverview,
-} from '../../Hooks/UseGQLOverview';
+import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import dayjs from 'dayjs';
@@ -106,8 +102,9 @@ export default function EngFaultOverview(props: {
     const managerDisclosure = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-    const [openingTarget, setOpeningTarget] =
-        React.useState<IEngFaultFormOverview>({} as IEngFaultFormOverview);
+    const [openingTarget, setOpeningTarget] = React.useState(
+        {} as IEngFaultFormOverviewExtend
+    );
     const {
         tableData,
         setTableData,
@@ -134,7 +131,7 @@ export default function EngFaultOverview(props: {
 
                 acc[primaryKey] = { ...value, index };
                 return acc;
-            }, {} as TOverviewTable<IEngFaultFormOverview & { index: number }>),
+            }, {} as TOverviewTable<IEngFaultFormOverviewExtend>),
         gqlFilter: QUERY_ENG_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -147,7 +144,7 @@ export default function EngFaultOverview(props: {
         },
     });
 
-    const columnMap: IColumnMap<TOverviewChecked<IEngFaultFormOverview>>[] = [
+    const columnMap: IColumnMap<IEngFaultFormOverviewExtend>[] = [
         {
             title: '日期',
             width: 100,
@@ -156,16 +153,12 @@ export default function EngFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<
-                TOverviewChecked<IEngFaultFormOverview>,
-                'day'
-            >) => (
+            }: getElementProps<IEngFaultFormOverviewExtend, 'day'>) => (
                 <ModalOpenButtonElement
                     style={style}
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        // const { day, target, code } = info;
                         setOpeningTarget(info);
                         faultFormDisclosure.onOpen();
                     }}
@@ -194,7 +187,7 @@ export default function EngFaultOverview(props: {
             title: '檢點項目',
             width: 198,
             variable: 'code',
-            getElement: faultCodeMapElement<IEngFaultFormOverview>,
+            getElement: faultCodeMapElement<IEngFaultFormOverviewExtend>,
         },
         {
             title: '承商意見',
@@ -205,7 +198,7 @@ export default function EngFaultOverview(props: {
                 info,
                 variable,
             }: getElementProps<
-                TOverviewChecked<IEngFaultFormOverview>,
+                IEngFaultFormOverviewExtend,
                 'outsourcerStatus'
             >) => {
                 const status = info[variable];
@@ -225,7 +218,6 @@ export default function EngFaultOverview(props: {
             width: 100,
             variable: 'engineerStatus',
             getElement: (props) => {
-                // const { day, target, code } = props.info;
                 return (
                     <AcceptDenyElement
                         {...props}
@@ -248,7 +240,6 @@ export default function EngFaultOverview(props: {
             width: 100,
             variable: 'managerStatus',
             getElement: (props) => {
-                // const { day, target, code } = props.info;
                 return (
                     <AcceptDenyElement
                         {...props}

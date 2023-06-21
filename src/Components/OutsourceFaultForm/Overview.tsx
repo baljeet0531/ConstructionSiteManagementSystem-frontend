@@ -14,12 +14,11 @@ import ReactWindowTable, {
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
-import { IOutsourceFaultFormOverview } from '../../Interface/FaultForm';
 import {
-    TOverviewChecked,
-    TOverviewTable,
-    useGQLOverview,
-} from '../../Hooks/UseGQLOverview';
+    IOutsourceFaultFormOverview,
+    IOutsourceFaultFormOverviewExtend,
+} from '../../Interface/FaultForm';
+import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import { codeContentMap } from '../../Utils/Mapper';
@@ -91,10 +90,9 @@ export default function OutsourceFaultOverview(props: {
     const signatureDisclosure = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
-    const [openingTarget, setOpeningTarget] =
-        React.useState<IOutsourceFaultFormOverview>(
-            {} as IOutsourceFaultFormOverview
-        );
+    const [openingTarget, setOpeningTarget] = React.useState(
+        {} as IOutsourceFaultFormOverviewExtend
+    );
 
     const {
         tableData,
@@ -121,7 +119,7 @@ export default function OutsourceFaultOverview(props: {
                 });
                 acc[primaryKey] = { ...value, index: index };
                 return acc;
-            }, {} as TOverviewTable<IOutsourceFaultFormOverview & { index: number }>),
+            }, {} as TOverviewTable<IOutsourceFaultFormOverviewExtend>),
         gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -134,9 +132,7 @@ export default function OutsourceFaultOverview(props: {
         },
     });
 
-    const columnMap: IColumnMap<
-        TOverviewChecked<IOutsourceFaultFormOverview>
-    >[] = [
+    const columnMap: IColumnMap<IOutsourceFaultFormOverviewExtend>[] = [
         {
             title: '日期',
             width: 100,
@@ -145,16 +141,12 @@ export default function OutsourceFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<
-                TOverviewChecked<IOutsourceFaultFormOverview>,
-                'day'
-            >) => (
+            }: getElementProps<IOutsourceFaultFormOverviewExtend, 'day'>) => (
                 <ModalOpenButtonElement
                     style={style}
                     info={info}
                     variable={variable}
                     onClick={() => {
-                        // const { day, target, code } = info;
                         setOpeningTarget(info);
                         faultFormDisclosure.onOpen();
                     }}
@@ -187,10 +179,7 @@ export default function OutsourceFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<
-                TOverviewChecked<IOutsourceFaultFormOverview>,
-                'code'
-            >) => (
+            }: getElementProps<IOutsourceFaultFormOverviewExtend, 'code'>) => (
                 <Box {...dataCellStyle} style={style}>
                     {
                         codeContentMap[
@@ -205,7 +194,6 @@ export default function OutsourceFaultOverview(props: {
             width: 133,
             variable: 'outsourcerStatus',
             getElement: (props) => {
-                // const { day, target, code } = props.info;
                 return (
                     <AcceptDenyElement
                         {...props}
@@ -269,8 +257,6 @@ export default function OutsourceFaultOverview(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
-                // sortBy="day"
-                // sortFormatter={(day: string) => dayjs(day).valueOf()}
                 sortReversed={true}
             />
             {/* <FaultFormModal
