@@ -65,6 +65,19 @@ export const borderedStyle: React.CSSProperties = {
     borderBottom: '1px solid #919AA9',
 };
 
+const modalOpenButtonStyle: ButtonProps = {
+    variant: 'ghost',
+    height: '44px',
+    width: '100%',
+    fontFamily: 'Inter',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: '14px',
+    lineHeight: '20px',
+    color: '#667080',
+    textDecor: 'underline',
+};
+
 export const setTextHeight = (style: React.CSSProperties): TextProps => ({
     h: `${style.height}px`,
     lineHeight: `${style.height}px`,
@@ -176,19 +189,7 @@ export const ModalOpenButtonElement = ({
 }) => {
     return (
         <Box {...dataCellStyle} style={style} pt={0} p={0}>
-            <Button
-                variant={'ghost'}
-                height={'44px'}
-                width={'100%'}
-                fontFamily={'Inter'}
-                fontStyle={'normal'}
-                fontWeight={400}
-                fontSize={'14px'}
-                lineHeight={'20px'}
-                color={'#667080'}
-                onClick={onClick}
-                textDecor={'underline'}
-            >
+            <Button {...modalOpenButtonStyle} onClick={onClick}>
                 {info[variable]}
             </Button>
         </Box>
@@ -211,6 +212,7 @@ export const AcceptDenyElement = (
         handleDeny: () => void;
         acceptText?: string;
         denyText?: string;
+        openModal?: boolean;
     }
 ) => {
     const {
@@ -221,6 +223,7 @@ export const AcceptDenyElement = (
         handleDeny,
         acceptText = '接受',
         denyText = '異議',
+        openModal = false,
     } = props;
     const status = info[variable];
 
@@ -253,7 +256,25 @@ export const AcceptDenyElement = (
                     </Button>
                 </Flex>
             ) : status ? (
-                <Text {...setTextHeight(style)}>{acceptText}</Text>
+                openModal ? (
+                    <Button
+                        {...modalOpenButtonStyle}
+                        color={'#4C7DE7'}
+                        onClick={handleAccept}
+                    >
+                        {acceptText}
+                    </Button>
+                ) : (
+                    <Text {...setTextHeight(style)}>{acceptText}</Text>
+                )
+            ) : openModal ? (
+                <Button
+                    {...modalOpenButtonStyle}
+                    color={'#4C7DE7'}
+                    onClick={handleDeny}
+                >
+                    {denyText}
+                </Button>
             ) : (
                 <Text {...setTextHeight(style)} color={'#4C7DE7'}>
                     {denyText}
