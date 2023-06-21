@@ -24,6 +24,7 @@ import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import dayjs from 'dayjs';
 import AcceptDenySignatureModal, {
+    TRole,
     TUpdateFaultFormCheck,
 } from '../Shared/AcceptDenySignatureModal';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
@@ -105,6 +106,7 @@ export default function EngFaultOverview(props: {
     const [openingTarget, setOpeningTarget] = React.useState(
         {} as IFaultFormCheckOverviewExtend
     );
+    const [role, setRole] = React.useState<TRole>('outsourcer');
     const {
         tableData,
         setTableData,
@@ -201,6 +203,11 @@ export default function EngFaultOverview(props: {
             ) => {
                 const { style, info, variable } = props;
                 const status = info[variable];
+                const handleClick = () => {
+                    setRole('outsourcer');
+                    setOpeningTarget(info);
+                    signatureDisclosure.onOpen();
+                };
                 return status === null ? (
                     <Box {...dataCellStyle} style={style}>
                         待確認
@@ -211,13 +218,11 @@ export default function EngFaultOverview(props: {
                         openModal
                         handleAccept={() => {
                             setAccept(true);
-                            setOpeningTarget(info);
-                            signatureDisclosure.onOpen();
+                            handleClick();
                         }}
                         handleDeny={() => {
                             setAccept(false);
-                            setOpeningTarget(info);
-                            signatureDisclosure.onOpen();
+                            handleClick();
                         }}
                     />
                 );
@@ -228,19 +233,22 @@ export default function EngFaultOverview(props: {
             width: 100,
             variable: 'engineerStatus',
             getElement: (props) => {
+                const handleClick = () => {
+                    setRole('engineer');
+                    setOpeningTarget(props.info);
+                    signatureDisclosure.onOpen();
+                };
                 return (
                     <AcceptDenyElement
                         {...props}
                         openModal
                         handleAccept={() => {
                             setAccept(true);
-                            setOpeningTarget(props.info);
-                            signatureDisclosure.onOpen();
+                            handleClick();
                         }}
                         handleDeny={() => {
                             setAccept(false);
-                            setOpeningTarget(props.info);
-                            signatureDisclosure.onOpen();
+                            handleClick();
                         }}
                     />
                 );
@@ -281,6 +289,12 @@ export default function EngFaultOverview(props: {
         });
     };
 
+    const modalKey = {
+        day: openingTarget.day,
+        target: openingTarget.target,
+        code: openingTarget.code,
+    };
+
     return (
         <Flex
             direction={'column'}
@@ -318,18 +332,19 @@ export default function EngFaultOverview(props: {
                 sortReversed={true}
             />
             {/* <FaultFormModal
+                {...modalKey}
                 siteId={siteId}
-                {...openingTarget}
                 onClose={onClose}
                 isOpen={isOpen}
             /> */}
             <AcceptDenySignatureModal
+                key={JSON.stringify(modalKey)}
                 siteId={siteId}
                 openingTarget={openingTarget}
                 accept={accept}
-                editable={openingTarget.engineerStatus === null}
+                editable={openingTarget[`${role}Status`] === null}
                 updateFunction={updateFunction}
-                role={'engineer'}
+                role={role}
                 isOpen={signatureDisclosure.isOpen}
                 onClose={signatureDisclosure.onClose}
             />
