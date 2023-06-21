@@ -15,8 +15,8 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 import { PageLoading } from '../Shared/Loading';
 import {
-    IOutsourceFaultFormOverview,
-    IOutsourceFaultFormOverviewExtend,
+    IFaultFormCheckOverview,
+    IFaultFormCheckOverviewExtend,
 } from '../../Interface/FaultForm';
 import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
@@ -91,7 +91,7 @@ export default function OutsourceFaultOverview(props: {
     const [accept, setAccept] = React.useState<boolean>(true);
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const [openingTarget, setOpeningTarget] = React.useState(
-        {} as IOutsourceFaultFormOverviewExtend
+        {} as IFaultFormCheckOverviewExtend
     );
 
     const {
@@ -102,8 +102,8 @@ export default function OutsourceFaultOverview(props: {
         updateFunction,
         loading,
     } = useGQLOverview<
-        IOutsourceFaultFormOverview,
-        { faultFormCheck: IOutsourceFaultFormOverview[] },
+        IFaultFormCheckOverview,
+        { faultFormCheck: IFaultFormCheckOverview[] },
         {},
         TUpdateFaultFormCheck
     >({
@@ -119,7 +119,7 @@ export default function OutsourceFaultOverview(props: {
                 });
                 acc[primaryKey] = { ...value, index: index };
                 return acc;
-            }, {} as TOverviewTable<IOutsourceFaultFormOverviewExtend>),
+            }, {} as TOverviewTable<IFaultFormCheckOverviewExtend>),
         gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -132,7 +132,7 @@ export default function OutsourceFaultOverview(props: {
         },
     });
 
-    const columnMap: IColumnMap<IOutsourceFaultFormOverviewExtend>[] = [
+    const columnMap: IColumnMap<IFaultFormCheckOverviewExtend>[] = [
         {
             title: '日期',
             width: 100,
@@ -141,7 +141,7 @@ export default function OutsourceFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<IOutsourceFaultFormOverviewExtend, 'day'>) => (
+            }: getElementProps<IFaultFormCheckOverviewExtend, 'day'>) => (
                 <ModalOpenButtonElement
                     style={style}
                     info={info}
@@ -179,7 +179,7 @@ export default function OutsourceFaultOverview(props: {
                 style,
                 info,
                 variable,
-            }: getElementProps<IOutsourceFaultFormOverviewExtend, 'code'>) => (
+            }: getElementProps<IFaultFormCheckOverviewExtend, 'code'>) => (
                 <Box {...dataCellStyle} style={style}>
                     {
                         codeContentMap[
@@ -269,6 +269,7 @@ export default function OutsourceFaultOverview(props: {
                 siteId={siteId}
                 openingTarget={openingTarget}
                 accept={accept}
+                editable={openingTarget.outsourcerStatus === null}
                 updateFunction={updateFunction}
                 role={'outsourcer'}
                 isOpen={signatureDisclosure.isOpen}

@@ -12,7 +12,7 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import React from 'react';
-import { IFaultFormCheckPrimaryKey } from '../../Interface/FaultForm';
+import { IFaultFormCheckOverviewExtend } from '../../Interface/FaultForm';
 import { MutationFunctionOptions } from '@apollo/client';
 import {
     TUpdateFaultFormCheck,
@@ -20,11 +20,9 @@ import {
 } from '../Shared/AcceptDenySignatureModal';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 
-export default function ManagerAcceptDenyModal<
-    T extends IFaultFormCheckPrimaryKey
->(props: {
+export default function ManagerAcceptDenyModal(props: {
     siteId: string;
-    openingTarget: T;
+    openingTarget: IFaultFormCheckOverviewExtend;
     updateFunction:
         | (() => void)
         | ((

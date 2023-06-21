@@ -2,8 +2,10 @@
 import {
     Button,
     Flex,
+    Image,
     Modal,
     ModalBody,
+    ModalCloseButton,
     ModalContent,
     ModalFooter,
     ModalOverlay,
@@ -17,8 +19,8 @@ import { Cookies } from 'react-cookie';
 import { MutationFunctionOptions } from '@apollo/client';
 import dayjs from 'dayjs';
 import {
-    IEngFaultFormOverview,
-    IFaultFormCheckPrimaryKey,
+    IFaultFormCheckOverview,
+    IFaultFormCheckOverviewExtend,
 } from '../../Interface/FaultForm';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 import { ISignature } from '../../Interface/Signature';
@@ -52,12 +54,11 @@ export type TUpdateFaultFormCheckVar = {
     outsourcerStatus?: boolean | null;
 };
 
-export default function AcceptDenySignatureModal<
-    T extends IFaultFormCheckPrimaryKey
->(props: {
+export default function AcceptDenySignatureModal(props: {
     siteId: string;
-    openingTarget: T;
+    openingTarget: IFaultFormCheckOverviewExtend;
     accept: boolean;
+    editable: boolean;
     updateFunction:
         | (() => void)
         | ((
@@ -76,13 +77,14 @@ export default function AcceptDenySignatureModal<
         isOpen,
         onClose,
         accept,
+        editable,
         openingTarget,
         updateFunction,
         role,
         siteId,
     } = props;
 
-    console.log(openingTarget);
+    // console.log(openingTarget);
 
     const sigCanvas = React.useRef<SignatureCanvas>(null);
     const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -101,7 +103,8 @@ export default function AcceptDenySignatureModal<
                     updateFunction({
                         variables: {
                             ...openingTarget,
-                            siteId,
+                            outsourcerSignature: null,
+                            engineerSignature: null,
                             [`${role}Signature`]: {
                                 no: undefined,
                                 image: new File([blob], `${role}-sign.png`),
@@ -125,13 +128,16 @@ export default function AcceptDenySignatureModal<
         <Modal size={'lg'} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
+                {!editable && <ModalCloseButton />}
                 <ModalBody>
                     <Flex direction={'column'}>
                         {!accept && (
                             <Flex direction={'column'}>
-                                <Text {...signatureModalTextStyle}>
-                                    請填寫異議原因並簽名
-                                </Text>
+                                {editable && (
+                                    <Text {...signatureModalTextStyle}>
+                                        請填寫異議原因並簽名
+                                    </Text>
+                                )}
                                 <Text {...signatureModalTextStyle}>
                                     異議原因
                                 </Text>
@@ -141,6 +147,13 @@ export default function AcceptDenySignatureModal<
                                     borderColor={'#667080'}
                                     borderRadius={'10px'}
                                     resize={'none'}
+                                    {...(!editable && {
+                                        value:
+                                            openingTarget[
+                                                `${role}Description`
+                                            ] ?? '',
+                                        disabled: true,
+                                    })}
                                 ></Textarea>
                             </Flex>
                         )}
@@ -148,48 +161,57 @@ export default function AcceptDenySignatureModal<
                             <Text {...signatureModalTextStyle}>
                                 {accept ? '接受 - 簽名' : '簽名'}
                             </Text>
-                            <SignatureCanvas
-                                ref={sigCanvas}
-                                canvasProps={{
-                                    className: 'signatureCanvas',
-                                    width: 465,
-                                    height: 205,
-                                    style: {
-                                        border: '1px solid #667080',
-                                        borderRadius: '10px',
-                                    },
-                                }}
-                            />
+                            {editable ? (
+                                <SignatureCanvas
+                                    ref={sigCanvas}
+                                    canvasProps={{
+                                        className: 'signatureCanvas',
+                                        width: 465,
+                                        height: 205,
+                                        style: {
+                                            border: '1px solid #667080',
+                                            borderRadius: '10px',
+                                        },
+                                    }}
+                                />
+                            ) : (
+                                <Image />
+                            )}
                         </Flex>
                     </Flex>
                 </ModalBody>
 
-                <ModalFooter display={'flex'} justifyContent={'space-around'}>
-                    <Button
-                        onClick={() => {
-                            clear();
-                            onClose();
-                        }}
-                        variant={'whiteOutline'}
-                        size={'sm'}
+                {editable && (
+                    <ModalFooter
+                        display={'flex'}
+                        justifyContent={'space-around'}
                     >
-                        取消
-                    </Button>
-                    <Button
-                        onClick={clear}
-                        variant={'whiteOutline'}
-                        size={'sm'}
-                    >
-                        清除
-                    </Button>
-                    <Button
-                        onClick={handleComplete}
-                        variant={'buttonGrayOutline'}
-                        size={'sm'}
-                    >
-                        完成
-                    </Button>
-                </ModalFooter>
+                        <Button
+                            onClick={() => {
+                                clear();
+                                onClose();
+                            }}
+                            variant={'whiteOutline'}
+                            size={'sm'}
+                        >
+                            取消
+                        </Button>
+                        <Button
+                            onClick={clear}
+                            variant={'whiteOutline'}
+                            size={'sm'}
+                        >
+                            清除
+                        </Button>
+                        <Button
+                            onClick={handleComplete}
+                            variant={'buttonGrayOutline'}
+                            size={'sm'}
+                        >
+                            完成
+                        </Button>
+                    </ModalFooter>
+                )}
             </ModalContent>
         </Modal>
     );
