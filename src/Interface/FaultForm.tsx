@@ -1,5 +1,5 @@
 import { FileType } from 'rsuite/esm/Uploader';
-import { IGQLSignature } from './Signature';
+import { IGQLSignature, ISignature } from './Signature';
 
 export interface IFaultForm {
     siteId: string;
@@ -77,4 +77,30 @@ export interface IFaultFormCheckOverview extends IFaultFormOverview {
 
 export interface IFaultFormCheckOverviewExtend extends IFaultFormCheckOverview {
     index: number;
+}
+
+export interface IQueryFaultFormCheck {
+    faultFormCheck: IFaultFormCheckOverview[];
+}
+
+export interface IUpdateFaultFormCheck {
+    updateFaultFormCheck: {
+        ok: boolean;
+        message: string;
+    };
+}
+
+export interface IUpdateFaultFormCheckVar {
+    siteId: string;
+    code: string;
+    day: string;
+    target: string;
+    staff?: string;
+    engineerDescription?: string | null;
+    engineerSignature?: ISignature | null;
+    engineerStatus?: boolean | null;
+    managerStatus?: boolean | null;
+    outsourcerDescription?: string | null;
+    outsourcerSignature?: ISignature | null;
+    outsourcerStatus?: boolean | null;
 }

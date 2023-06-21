@@ -12,12 +12,12 @@ import {
     ModalOverlay,
 } from '@chakra-ui/react';
 import React from 'react';
-import { IFaultFormCheckOverviewExtend } from '../../Interface/FaultForm';
-import { MutationFunctionOptions } from '@apollo/client';
 import {
-    TUpdateFaultFormCheck,
-    TUpdateFaultFormCheckVar,
-} from '../Shared/AcceptDenySignatureModal';
+    IFaultFormCheckOverviewExtend,
+    IUpdateFaultFormCheck,
+    IUpdateFaultFormCheckVar,
+} from '../../Interface/FaultForm';
+import { MutationFunctionOptions } from '@apollo/client';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
 
 export default function ManagerAcceptDenyModal(props: {
@@ -28,11 +28,11 @@ export default function ManagerAcceptDenyModal(props: {
         | ((
               options?:
                   | MutationFunctionOptions<
-                        TUpdateFaultFormCheck,
-                        TUpdateFaultFormCheckVar
+                        IUpdateFaultFormCheck,
+                        IUpdateFaultFormCheckVar
                     >
                   | undefined
-          ) => Promise<TUpdateFaultFormCheck>);
+          ) => Promise<IUpdateFaultFormCheck>);
     accept: boolean;
     isOpen: boolean;
     onClose: () => void;

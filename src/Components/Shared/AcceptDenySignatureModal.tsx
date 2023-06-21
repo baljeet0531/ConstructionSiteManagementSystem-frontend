@@ -18,9 +18,12 @@ import SignatureCanvas from 'react-signature-canvas';
 import { Cookies } from 'react-cookie';
 import { MutationFunctionOptions } from '@apollo/client';
 import dayjs from 'dayjs';
-import { IFaultFormCheckOverviewExtend } from '../../Interface/FaultForm';
+import {
+    IFaultFormCheckOverviewExtend,
+    IUpdateFaultFormCheck,
+    IUpdateFaultFormCheckVar,
+} from '../../Interface/FaultForm';
 import { QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW } from '../OutsourceFaultForm/Overview';
-import { ISignature } from '../../Interface/Signature';
 import { getImage } from '../../Utils/Resources';
 import { CustomLoading } from './Loading';
 
@@ -29,28 +32,6 @@ const signatureModalTextStyle: TextProps = {
     fontSize: '1.25rem',
     lineHeight: '1.25rem',
     p: '10px 0px',
-};
-
-export type TUpdateFaultFormCheck = {
-    updateFaultFormCheck: {
-        ok: boolean;
-        message: string;
-    };
-};
-
-export type TUpdateFaultFormCheckVar = {
-    siteId: string;
-    code: string;
-    day: string;
-    target: string;
-    staff?: string;
-    engineerDescription?: string | null;
-    engineerSignature?: ISignature | null;
-    engineerStatus?: boolean | null;
-    managerStatus?: boolean | null;
-    outsourcerDescription?: string | null;
-    outsourcerSignature?: ISignature | null;
-    outsourcerStatus?: boolean | null;
 };
 
 export type TRole = 'outsourcer' | 'engineer';
@@ -65,11 +46,11 @@ export default function AcceptDenySignatureModal(props: {
         | ((
               options?:
                   | MutationFunctionOptions<
-                        TUpdateFaultFormCheck,
-                        TUpdateFaultFormCheckVar
+                        IUpdateFaultFormCheck,
+                        IUpdateFaultFormCheckVar
                     >
                   | undefined
-          ) => Promise<TUpdateFaultFormCheck>);
+          ) => Promise<IUpdateFaultFormCheck>);
     role: TRole;
     isOpen: boolean;
     onClose: () => void;
