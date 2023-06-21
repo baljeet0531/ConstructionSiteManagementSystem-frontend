@@ -194,6 +194,12 @@ export default function OutsourceFaultOverview(props: {
         });
     };
 
+    const modalKey = {
+        day: openingTarget.day,
+        target: openingTarget.target,
+        code: openingTarget.code,
+    };
+
     return (
         <Flex
             direction={'column'}
@@ -231,6 +237,7 @@ export default function OutsourceFaultOverview(props: {
                 sortReversed={true}
             />
             <AcceptDenySignatureModal
+                key={JSON.stringify(modalKey)}
                 siteId={siteId}
                 openingTarget={openingTarget}
                 accept={accept}
