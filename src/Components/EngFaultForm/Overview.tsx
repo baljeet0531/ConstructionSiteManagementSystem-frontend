@@ -326,12 +326,6 @@ export default function EngFaultOverview(props: {
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
             />
-            {/* <FaultFormModal
-                {...modalKey}
-                siteId={siteId}
-                onClose={onClose}
-                isOpen={isOpen}
-            /> */}
             <AcceptDenySignatureModal
                 key={JSON.stringify(modalKey)}
                 siteId={siteId}

@@ -247,12 +247,6 @@ export default function OutsourceFaultOverview(props: {
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
             />
-            {/* <FaultFormModal
-        {...openingTarget}
-        siteId={siteId}
-        onClose={faultFormDisclosure.onClose}
-        isOpen={faultFormDisclosure.isOpen}
-    /> */}
             <AcceptDenySignatureModal
                 siteId={siteId}
                 openingTarget={openingTarget}
