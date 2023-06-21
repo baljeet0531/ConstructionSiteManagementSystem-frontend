@@ -18,6 +18,8 @@ import { PageLoading } from '../Shared/Loading';
 import {
     IFaultFormCheckOverview,
     IFaultFormCheckOverviewExtend,
+    IQueryFaultFormCheck,
+    IUpdateFaultFormCheck,
 } from '../../Interface/FaultForm';
 import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
@@ -25,7 +27,6 @@ import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import dayjs from 'dayjs';
 import AcceptDenySignatureModal, {
     TRole,
-    TUpdateFaultFormCheck,
 } from '../Shared/AcceptDenySignatureModal';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
 import ManagerAcceptDenyModal from './ManagerAcceptDenyModal';
@@ -116,9 +117,9 @@ export default function EngFaultOverview(props: {
         loading,
     } = useGQLOverview<
         IFaultFormCheckOverview,
-        { faultFormCheck: IFaultFormCheckOverview[] },
+        IQueryFaultFormCheck,
         {},
-        TUpdateFaultFormCheck
+        IUpdateFaultFormCheck
     >({
         siteId: siteId,
         gqlOverview: QUERY_ENG_FAULT_FROM_OVERVIEW,
@@ -151,17 +152,11 @@ export default function EngFaultOverview(props: {
             title: '日期',
             width: 100,
             variable: 'day',
-            getElement: ({
-                style,
-                info,
-                variable,
-            }: getElementProps<IFaultFormCheckOverviewExtend, 'day'>) => (
+            getElement: (props) => (
                 <ModalOpenButtonElement
-                    style={style}
-                    info={info}
-                    variable={variable}
+                    {...props}
                     onClick={() => {
-                        setOpeningTarget(info);
+                        setOpeningTarget(props.info);
                         faultFormDisclosure.onOpen();
                     }}
                 />
