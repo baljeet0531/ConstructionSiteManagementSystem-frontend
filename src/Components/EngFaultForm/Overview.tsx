@@ -223,7 +223,9 @@ export default function EngFaultOverview(props: {
                     setOpeningTarget(props.info);
                     signatureDisclosure.onOpen();
                 };
-                return (
+                return props.info.outsourcerStatus === null ? (
+                    defaultElement(props)
+                ) : (
                     <AcceptDenyElement
                         {...props}
                         openModal
@@ -244,7 +246,9 @@ export default function EngFaultOverview(props: {
             width: 100,
             variable: 'managerStatus',
             getElement: (props) => {
-                return (
+                return props.info.engineerStatus === null ? (
+                    defaultElement(props)
+                ) : (
                     <AcceptDenyElement
                         {...props}
                         denyText="駁回"
