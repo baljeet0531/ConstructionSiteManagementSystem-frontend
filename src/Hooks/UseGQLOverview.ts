@@ -129,13 +129,3 @@ export const useGQLOverview = <
         updateFunction,
     };
 };
-
-const myFunction = (param: string | undefined): string | undefined => {
-    if (param) {
-        return `Hello, ${param}!`;
-    } else {
-        return undefined;
-    }
-};
-
-const a = myFunction('');
