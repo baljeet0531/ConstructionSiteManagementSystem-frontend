@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {
     DocumentNode,
-    LazyQueryExecFunction,
-    MutationTuple,
-    OperationVariables,
     useLazyQuery,
     useMutation,
     useQuery,
@@ -13,13 +10,7 @@ import React from 'react';
 import { useFileExport } from './UseFileExport';
 import { IExportField } from '../Interface/IGQL';
 import { defaultErrorToast } from '../Utils/DefaultToast';
-
-export type TOverviewChecked<T> = T & {
-    index: number;
-    isChecked: boolean;
-};
-
-export type TOverviewTable<T> = Record<string, T>;
+import { TOverviewTable } from '../Types/TableOverview';
 
 export const useGQLOverview = <
     TOverview,

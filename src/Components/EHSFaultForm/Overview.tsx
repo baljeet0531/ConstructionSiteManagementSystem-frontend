@@ -31,8 +31,7 @@ import {
     IEHSFaultFormOverview,
     IFaultFormPrimaryKey,
 } from '../../Interface/FaultForm';
-import { TOverviewChecked, TOverviewTable } from '../../Hooks/UseGQLOverview';
-
+import { TOverviewChecked, TOverviewTable } from '../../Types/TableOverview';
 const QUERY_FAULT_FROM_OVERVIEW = gql`
     query EHSFaultFormOverview($siteId: String!, $start: Date, $end: Date) {
         faultForm(siteId: $siteId, start: $start, end: $end) {
