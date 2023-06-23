@@ -16,7 +16,6 @@ import { IGQLSignature } from '../../Interface/Signature';
 import Pin from './Pin';
 import dayjs from 'dayjs';
 import { codeContentMap } from '../../Utils/Mapper';
-import { TOverviewChecked } from '../../Hooks/UseGQLOverview';
 import { IFaultFormOverview } from '../../Interface/FaultForm';
 
 const tableCellStyle: ChakraProps = {

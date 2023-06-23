@@ -18,13 +18,14 @@ import {
     IQueryFaultFormCheck,
     IUpdateFaultFormCheck,
 } from '../../Interface/FaultForm';
-import { TOverviewTable, useGQLOverview } from '../../Hooks/UseGQLOverview';
+import { useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
 import dayjs from 'dayjs';
 
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
 import AcceptDenySignatureModal from '../Shared/AcceptDenySignatureModal';
+import { TOverviewTable } from '../../Types/TableOverview';
 
 export const QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW = gql`
     ${SIGNATURE_FIELDS}
