@@ -94,7 +94,7 @@ export default class FormFactory extends SharedFactory {
                     const checked = e.target.checked;
                     checked === true
                         ? this.formProps.setFieldValue(id, target)
-                        : this.formProps.setFieldValue(id, undefined);
+                        : this.formProps.setFieldValue(id, null);
                     target !== true || checked !== true
                         ? this.formProps.setFieldValue(ameliorate, '')
                         : '';

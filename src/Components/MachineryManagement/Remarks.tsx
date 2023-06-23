@@ -3,12 +3,14 @@ import React from 'react';
 import { dataCellStyle, getElementProps } from '../Shared/ReactWindowTable';
 import RemarksModal from './RemarksModal';
 
-export default function Remarks(props: getElementProps) {
-    const { info, variable, style } = props;
+export default function Remarks(
+    props: getElementProps & { editable: boolean }
+) {
+    const { info, style, editable } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
-
     return (
         <Box
+            key={info['inspectionNo']}
             {...dataCellStyle}
             style={{
                 ...style,
@@ -26,16 +28,15 @@ export default function Remarks(props: getElementProps) {
                 fontSize={'14px'}
                 lineHeight={'20px'}
                 color={'#4C7DE7'}
-                onClick={() => {
-                    onOpen();
-                }}
+                onClick={onOpen}
             >
                 查看更多
             </Button>
             <RemarksModal
                 isOpen={isOpen}
                 onClose={onClose}
-                remarksInfo={info[variable]}
+                info={info}
+                editable={editable}
             />
         </Box>
     );

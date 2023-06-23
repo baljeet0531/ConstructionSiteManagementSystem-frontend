@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Box,
@@ -114,7 +115,7 @@ export const SignatureTooltip = (props: {
             {dayjs(signature.time).format('YYYY-MM-DD HH:mm:ss')}
         </Text>
     ) : (
-        ''
+        `${fieldLabel}：`
     );
     return (
         <Pin msg={label}>
@@ -155,18 +156,45 @@ export const SignatureStatusElement = (props: {
     );
 };
 
-export interface getElementProps {
-    style: React.CSSProperties;
-    info: any;
-    variable: string;
-}
+export const ModalOpenButtonElement = ({
+    style,
+    info,
+    variable,
+    onClick,
+}: getElementProps & {
+    onClick: (event: React.MouseEvent<HTMLElement>) => void;
+}) => {
+    return (
+        <Box {...dataCellStyle} style={style} pt={0} p={0}>
+            <Button
+                variant={'ghost'}
+                height={'44px'}
+                width={'100%'}
+                fontFamily={'Inter'}
+                fontStyle={'normal'}
+                fontWeight={400}
+                fontSize={'14px'}
+                lineHeight={'20px'}
+                color={'#667080'}
+                onClick={onClick}
+                textDecor={'underline'}
+            >
+                {info[variable]}
+            </Button>
+        </Box>
+    );
+};
 
-export interface IColumnMap {
+export interface getElementProps<TData = any, TVariable = any> {
+    style: React.CSSProperties;
+    info: TData;
+    variable: TVariable;
+}
+export interface IColumnMap<TData = any> {
     title: string;
     width: number;
     variable: string;
-    // eslint-disable-next-line no-unused-vars
-    getElement: (props: getElementProps) => JSX.Element;
+    getElement: (props: getElementProps<TData>) => JSX.Element;
     customHeaderStyle?: ChakraProps;
 }
 
@@ -194,10 +222,11 @@ export default function ReactWindowTable(props: {
         }>
     >;
     columnMap: IColumnMap[];
-    sizes: ISizes;
+    sizes?: ISizes;
     filteredPrimaryKey?: string[];
     sortReversed?: boolean;
     sortBy?: string;
+    sortFormatter?: Function;
     columnBordered?: boolean;
 }) {
     const {
@@ -208,6 +237,7 @@ export default function ReactWindowTable(props: {
         filteredPrimaryKey,
         sortReversed = false,
         sortBy = 'index',
+        sortFormatter = (a: string | number) => a,
         columnBordered = false,
     } = props;
 
@@ -219,7 +249,7 @@ export default function ReactWindowTable(props: {
         padding,
         fixedWidth,
         fixedHeight,
-    } = sizes;
+    } = sizes || {};
 
     const {
         topPadding = 148,
@@ -245,7 +275,9 @@ export default function ReactWindowTable(props: {
               ));
 
     const sortingFunction = (a: string, b: string) => {
-        const diff = displayTableData[a][sortBy] - displayTableData[b][sortBy];
+        const diff =
+            sortFormatter(displayTableData[a][sortBy]) -
+            sortFormatter(displayTableData[b][sortBy]);
         return sortReversed ? -diff : diff;
     };
     const primaryKeys = Object.keys(displayTableData).sort(sortingFunction);

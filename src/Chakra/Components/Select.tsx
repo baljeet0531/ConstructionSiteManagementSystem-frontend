@@ -13,6 +13,7 @@ const Select = {
                     borderColor: '#919AA9',
                     height: '36px',
                     bg: '#FFFFFF',
+                    color: '#667080',
                 },
                 rest,
             };

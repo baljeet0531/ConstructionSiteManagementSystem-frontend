@@ -4,7 +4,6 @@ import { Center, Flex, Text, Button, useToast } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_SITE_ROLES } from '../SiteRoles';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
-import { Cookies } from 'react-cookie';
 import { defaultErrorToast } from '../../../Utils/DefaultToast';
 
 const DELETE_SITE_ROLE = gql`
@@ -35,12 +34,7 @@ export default function DeleteRole(props: {
         },
         refetchQueries: [
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },
-            {
-                query: QUERY_ACCOUNT_SITES,
-                variables: {
-                    username: new Cookies().get('username'),
-                },
-            },
+            QUERY_ACCOUNT_SITES,
         ],
     });
 

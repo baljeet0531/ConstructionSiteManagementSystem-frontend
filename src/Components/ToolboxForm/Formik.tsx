@@ -231,6 +231,7 @@ export default function WorkPermitFormik() {
             <Formik
                 initialValues={initialValues}
                 validateOnChange={false}
+                validateOnBlur={false}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
                     const submitValues = { ...values } as IGQLToolbox;

@@ -155,6 +155,7 @@ export default function DailyReportModal({
                     <Formik
                         initialValues={initialValues}
                         validateOnChange={false}
+                        validateOnBlur={false}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(true);
                             const submitValues = {

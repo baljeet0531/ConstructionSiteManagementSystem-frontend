@@ -10,7 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { SignatureListName } from '../../Interface/Toolbox';
 import { MultiSignatureStateItem } from '../../Interface/Signature';
-import SignatureListPad from '../Shared/SignatureListPad';
+import SignaturePad from '../Shared/SignaturePad';
+import { ListSignatureHandler } from '../../Utils/Signature/List';
 
 const itemStyle = {
     p: '0px',
@@ -57,43 +58,65 @@ export default function SignatureTable(
                     <Text textAlign="center">{idx + 1}</Text>
                 </Td>
                 <Td {...itemStyle}>
-                    <SignatureListPad
+                    <SignaturePad
                         title={`主承攬商出席人員 - 簽名`}
                         signatureName={`prime-app-${idx + 1}.png`}
-                        state={primeContractingCorpAppearance}
-                        idx={idx}
+                        handler={
+                            new ListSignatureHandler(
+                                primeContractingCorpAppearance
+                            )
+                        }
+                        index={idx}
                         h="90px"
                         disable={!!primeContractingCorpAppearance[0][idx]?.no}
                     />
                 </Td>
                 <Td {...itemStyle}>
-                    <SignatureListPad
+                    <SignaturePad
                         title={`次承攬商(1)出席人員 - 簽名`}
                         signatureName={`vice-first-app-${idx + 1}.png`}
-                        state={viceFirstContractingCorpAppearance}
-                        idx={idx}
+                        handler={
+                            new ListSignatureHandler(
+                                viceFirstContractingCorpAppearance
+                            )
+                        }
+                        index={idx}
                         h="90px"
-                        disable={!!viceFirstContractingCorpAppearance[0][idx]?.no}
+                        disable={
+                            !!viceFirstContractingCorpAppearance[0][idx]?.no
+                        }
                     />
                 </Td>
                 <Td {...itemStyle}>
-                    <SignatureListPad
+                    <SignaturePad
                         title={`次承攬商(2)出席人員 - 簽名`}
                         signatureName={`vice-second-app-${idx + 1}.png`}
-                        state={viceSecondContractingCorpAppearance}
-                        idx={idx}
+                        handler={
+                            new ListSignatureHandler(
+                                viceSecondContractingCorpAppearance
+                            )
+                        }
+                        index={idx}
                         h="90px"
-                        disable={!!viceSecondContractingCorpAppearance[0][idx]?.no}
+                        disable={
+                            !!viceSecondContractingCorpAppearance[0][idx]?.no
+                        }
                     />
                 </Td>
                 <Td {...itemStyle}>
-                    <SignatureListPad
+                    <SignaturePad
                         title={`次承攬商(3)出席人員 - 簽名`}
                         signatureName={`vice-third-app-${idx + 1}.png`}
-                        state={viceThirdContractingCorpAppearance}
-                        idx={idx}
+                        handler={
+                            new ListSignatureHandler(
+                                viceThirdContractingCorpAppearance
+                            )
+                        }
+                        index={idx}
                         h="90px"
-                        disable={!!viceThirdContractingCorpAppearance[0][idx]?.no}
+                        disable={
+                            !!viceThirdContractingCorpAppearance[0][idx]?.no
+                        }
                     />
                 </Td>
             </Tr>

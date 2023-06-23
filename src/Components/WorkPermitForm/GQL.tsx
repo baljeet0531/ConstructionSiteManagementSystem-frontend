@@ -11,6 +11,7 @@ import {
     SignatureName,
 } from '../../Interface/WorkPermit';
 import { SIGNATURE_FIELDS } from '../../Utils/GQLFragments';
+import { Cookies } from 'react-cookie';
 
 export const GQL_WORK_PERMIT_MUTATION = gql`
     mutation uwp(
@@ -171,6 +172,10 @@ export function parseWorkPermit(
     ];
 
     const t = { ...list[0] } as IGQLWorkPermit;
+
+    if (t.applicant === null) {
+        t.applicant = new Cookies().get('username');
+    }
 
     if (t.zone === '') {
         t.zone = [];

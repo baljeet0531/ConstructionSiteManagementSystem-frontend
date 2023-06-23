@@ -386,6 +386,9 @@ export default function OpCheckOverview(props: {
                 columnMap={columnMap}
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
+                sortBy="day"
+                sortFormatter={(day: string) => dayjs(day).valueOf()}
+                sortReversed
             />
             {(loading || exportLoading) && <PageLoading />}
         </Flex>

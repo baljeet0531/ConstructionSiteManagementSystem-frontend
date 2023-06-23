@@ -24,6 +24,9 @@ import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
 import { Center, Flex, Image, Text } from '@chakra-ui/react';
+import EHSOverview from '../Components/EHSForm/Overview';
+import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
+import EHSFaultOverview from '../Components/EHSFaultForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -214,8 +217,16 @@ export function getFeatureMap(site: {
         eng_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/eng/form/env-security',
-            // page: <EnvSecurityForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EnvSecurityOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_op_check_form: {
             name: '特殊作業自主檢點表',
@@ -244,14 +255,30 @@ export function getFeatureMap(site: {
         ehs_form: {
             name: '工安自主檢查',
             path: '/ehs/form/ehs-form',
-            // page: <EHSForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EHSOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         ehs_fault_form: {
             name: '工安缺失單',
             path: '/ehs/form/fault',
-            // page: <EHSFaultForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EHSFaultOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         ehs_machinery_management: {
             name: '機具檢點管理',
@@ -309,8 +336,16 @@ export function getFeatureMap(site: {
         outsource_env_security_form: {
             name: '環安衛自主檢點表',
             path: '/outsource/form/env-security',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EnvSecurityOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_op_check_form: {
             name: '特殊作業自主檢點表',
@@ -329,8 +364,16 @@ export function getFeatureMap(site: {
         outsource_machinery_establishment: {
             name: '機具清單建置',
             path: '/outsource/machinery/establishment',
-            // page: <MachineryEstablishment />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <MachineryEstablishment
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         outsource_fault_form: {
             name: '工安缺失單',

@@ -22,10 +22,10 @@ import OutSourcer from '../../Images/Avatars/OutSourcer.svg';
 import Owner from '../../Images/Avatars/Owner.svg';
 import { ISiteObject } from '../Layout';
 import { LogoutIcon } from '../../Icons/Icons';
-import { useCookies } from 'react-cookie';
 import { VERSION } from '../../Constants/EnvConstants';
 import { TODO_LIST } from '../../Components/Dashboard/TodoList';
 import { useLazyQuery } from '@apollo/client';
+import { useLogOut } from '../../Hooks/UseLogOut';
 
 const roleAvatarMap = {
     系統管理員: Admin,
@@ -55,7 +55,7 @@ export default function Sidebar(props: {
         featureMap,
     } = props;
 
-    const [, , removeCookie] = useCookies(['jwt', 'username']);
+    const logout = useLogOut('/login');
 
     const [todoListAmount, setTodoListAmount] = React.useState<number>(0);
     const [getTodoListAmount] = useLazyQuery(TODO_LIST, {
@@ -105,14 +105,15 @@ export default function Sidebar(props: {
                     >
                         {todoListAmount !== 0 && (
                             <AvatarBadge
-                                boxSize="20%"
-                                bg="red"
+                                boxSize="25px"
+                                bg="#DB504A"
                                 right={'9.46%'}
                                 bottom={'9.46%'}
                             >
                                 <Text
-                                    fontSize={'75%'}
-                                    lineHeight={'100%'}
+                                    fontWeight={700}
+                                    fontSize={'0.875rem'}
+                                    lineHeight={'1.25rem'}
                                     color={'#FFFFFF'}
                                 >
                                     {todoListAmount > 99
@@ -152,17 +153,7 @@ export default function Sidebar(props: {
                     bg={'#6670801A'}
                     borderRadius={'30px'}
                     fontSize={'15px'}
-                    onClick={() => {
-                        removeCookie('jwt', {
-                            path: '/',
-                            secure: false,
-                        });
-                        removeCookie('username', {
-                            path: '/',
-                            secure: false,
-                        });
-                        window.location.href = '/login';
-                    }}
+                    onClick={logout}
                 >
                     登出
                 </Button>

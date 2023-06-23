@@ -88,6 +88,8 @@ export default function OpCheckFormik() {
             <Formik
                 initialValues={handler.getInitialValues()}
                 validateOnChange={false}
+                validateOnBlur={false}
+                validate={(v) => handler.validate(v)}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
                     const submitValues = { ...values };

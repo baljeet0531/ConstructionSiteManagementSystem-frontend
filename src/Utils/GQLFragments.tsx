@@ -44,3 +44,27 @@ export const WORKITEM_FIELDS = gql`
         __typename
     }
 `;
+
+export const EHSFORM_SIGNATURE_FIELDS = gql`
+    fragment gqlEHSFormSignatureFields on gqlEHSFormSignature {
+        no
+        siteId
+        day
+        owner
+        path
+        time
+        corpName
+        signatureType
+        __typename
+    }
+`;
+
+export const EHSFORM_IN_ITEM_FIELDS = gql`
+    fragment gqlEHSFormTargetInItemFields on gqlEHSFormTargetInItem {
+        siteId
+        day
+        code
+        corpName
+        __typename
+    }
+`;

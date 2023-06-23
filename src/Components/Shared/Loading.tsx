@@ -1,12 +1,13 @@
 import {
     Center,
+    CenterProps,
     ChakraProps,
     ResponsiveValue,
     Spinner,
 } from '@chakra-ui/react';
 import React from 'react';
 
-export function PageLoading() {
+export function PageLoading(props: CenterProps) {
     return (
         <Center
             position={'absolute'}
@@ -16,13 +17,14 @@ export function PageLoading() {
             h={'100vh'}
             bg={'#D9D9D980'}
             zIndex={99}
+            {...props}
         >
             <Spinner size={'xl'} />
         </Center>
     );
 }
 
-export function FormLoading() {
+export function FormLoading(props: CenterProps) {
     return (
         <Center
             position="fixed"
@@ -31,6 +33,7 @@ export function FormLoading() {
             h="100vh"
             bg={'#D9D9D980'}
             zIndex={99}
+            {...props}
         >
             <Spinner size={'xl'} />
         </Center>
@@ -51,5 +54,20 @@ export function CustomLoading(
         <Center w={'100%'} h={'100%'} {...chakraProps}>
             <Spinner size={size} />
         </Center>
+    );
+}
+
+export function TableLoading() {
+    return (
+        <CustomLoading
+            position={'fixed'}
+            width={'100%'}
+            height={'100%'}
+            top={0}
+            left={0}
+            opacity={0.5}
+            bg={'#D9D9D980'}
+            zIndex={9999}
+        />
     );
 }

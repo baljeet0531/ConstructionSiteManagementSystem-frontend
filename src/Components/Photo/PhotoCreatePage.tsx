@@ -42,7 +42,7 @@ export const QUERY_IMAGE_OPTIONS = gql`
     }
 `;
 
-const CREATE_PHOTOS = gql`
+export const CREATE_PHOTOS = gql`
     mutation CreateImageManagement(
         $content: [imageManagementInput]!
         $siteId: String!

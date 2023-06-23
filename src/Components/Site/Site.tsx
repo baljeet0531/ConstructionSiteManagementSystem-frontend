@@ -122,7 +122,7 @@ export default function SitePage() {
                             fontFamily={'Inter'}
                             color={'#667080'}
                         >
-                            專案管理
+                            專案建置
                         </Text>
                         <Spacer />
                         <Button

@@ -9,6 +9,7 @@ import {
     GridItem,
     Input,
     Flex,
+    useToast,
 } from '@chakra-ui/react';
 import { Form, FormikProps } from 'formik';
 import { EditIcon } from '../../Icons/Icons';
@@ -19,6 +20,9 @@ import FormFactory from './Factory';
 import GridInputItem from '../Shared/GridInputItem';
 import SignaturePad from '../Shared/SignaturePad';
 import { baseStyle, filledStyle, tableStyle, unboxStyle } from './Styles';
+import { SingleSignatureHandler } from '../../Utils/Signature/Single';
+import { useEffect } from 'react';
+import { defaultWarningToast } from '../../Utils/DefaultToast';
 
 export default function OpCheckForm({
     formProps,
@@ -30,6 +34,7 @@ export default function OpCheckForm({
     handler: OpCheckHandler;
 }) {
     document.title = `特殊作業工安自主檢點表(${handler.number})`;
+    const toast = useToast();
     const onItemsCount = Object.keys(handler.onItems).length;
     const offItemsCount = Object.keys(handler.offItems).length;
     const f = new FormFactory(formProps, type, handler);
@@ -49,6 +54,17 @@ export default function OpCheckForm({
         },
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        if (!formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isValid]);
+
     return (
         <Form>
             <Button
@@ -182,10 +198,16 @@ export default function OpCheckForm({
                             <SignaturePad
                                 title="施工前 - 監工 - 簽名"
                                 signatureName="supervisor-before-work-signature.png"
-                                state={handler.signatures.supervisorBefore}
+                                handler={
+                                    new SingleSignatureHandler(
+                                        handler.signatures.supervisorBefore
+                                    )
+                                }
                                 placeHolderText="簽名"
                                 showTime={false}
-                                disable={!!handler.signatures.supervisorBefore[0]?.no}
+                                disable={
+                                    !!handler.signatures.supervisorBefore[0]?.no
+                                }
                             />
                         </GridItem>
                         <GridItem {...filledStyle}>作業人員</GridItem>
@@ -193,10 +215,16 @@ export default function OpCheckForm({
                             <SignaturePad
                                 title="施工前 - 作業人員 - 簽名"
                                 signatureName="staff-before-work-signature.png"
-                                state={handler.signatures.staffBefore}
+                                handler={
+                                    new SingleSignatureHandler(
+                                        handler.signatures.staffBefore
+                                    )
+                                }
                                 placeHolderText="簽名"
                                 showTime={false}
-                                disable={!!handler.signatures.staffBefore[0]?.no}
+                                disable={
+                                    !!handler.signatures.staffBefore[0]?.no
+                                }
                             />
                         </GridItem>
                     </Grid>
@@ -238,10 +266,16 @@ export default function OpCheckForm({
                             <SignaturePad
                                 title="收工前 - 監工 - 簽名"
                                 signatureName="supervisor-after-work-signature.png"
-                                state={handler.signatures.supervisorAfter}
+                                handler={
+                                    new SingleSignatureHandler(
+                                        handler.signatures.supervisorAfter
+                                    )
+                                }
                                 placeHolderText="簽名"
                                 showTime={false}
-                                disable={!!handler.signatures.supervisorAfter[0]?.no}
+                                disable={
+                                    !!handler.signatures.supervisorAfter[0]?.no
+                                }
                             />
                         </GridItem>
                         <GridItem {...filledStyle}>作業人員</GridItem>
@@ -249,7 +283,11 @@ export default function OpCheckForm({
                             <SignaturePad
                                 title="收工前 - 作業人員 - 簽名"
                                 signatureName="staff-after-work-signature.png"
-                                state={handler.signatures.staffAfter}
+                                handler={
+                                    new SingleSignatureHandler(
+                                        handler.signatures.staffAfter
+                                    )
+                                }
                                 placeHolderText="簽名"
                                 showTime={false}
                                 disable={!!handler.signatures.staffAfter[0]?.no}

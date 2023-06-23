@@ -12,6 +12,7 @@ import {
     IGQLSignature,
     SignatureStateItem,
 } from '../../Interface/Signature';
+import { FormikErrors } from 'formik';
 
 export abstract class OpCheckHandler {
     siteId: string;
@@ -74,14 +75,41 @@ export abstract class OpCheckHandler {
     marshal(submitValues: IOpCheck) {
         console.log();
         if (this.signatures.staffBefore[0]?.time) {
-            submitValues.timeBefore = this.signatures.staffBefore[0].time.format(
-                'YYYY-MM-DDTHH:mm:ss'
-            );
+            submitValues.timeBefore =
+                this.signatures.staffBefore[0].time.format(
+                    'YYYY-MM-DDTHH:mm:ss'
+                );
         }
         if (this.signatures.staffAfter[0]?.time) {
             submitValues.timeAfter = this.signatures.staffAfter[0].time.format(
                 'YYYY-MM-DDTHH:mm:ss'
             );
         }
+    }
+
+    validate(values: any) {
+        const onList = Object.keys(this.onItems);
+        const offList = Object.keys(this.offItems);
+        let errors: FormikErrors<IOpCheck> = {};
+
+        for (let key of onList) {
+            if (values[key as keyof IOpCheck] === null) {
+                errors[key as keyof IOpCheck] = '必填';
+            }
+        }
+        const newError: {[key: string]: string} = {}
+        let flag = false;
+        for (let key of offList) {
+            if (values[key as keyof IOpCheck] === null) {
+                newError[key as keyof IOpCheck] = '必填';
+            } else {
+                flag = true;
+            }
+        }
+
+        if (flag) {
+            errors = {...errors, ...newError}
+        }
+        return errors;
     }
 }
