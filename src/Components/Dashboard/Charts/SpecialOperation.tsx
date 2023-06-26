@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './ChartLayout';
+import { granularityType } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import {
@@ -8,7 +8,7 @@ import {
     basicChartOptions,
     chartStyle,
     labelTextStyle,
-} from './ChartOptions';
+} from './Common/ChartOptions';
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
 

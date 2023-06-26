@@ -6,7 +6,7 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
-import ChartLayout from './Charts/ChartLayout';
+import ChartLayout from './Charts/Common/ChartLayout';
 import WeatherTime from './WeatherTime';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
