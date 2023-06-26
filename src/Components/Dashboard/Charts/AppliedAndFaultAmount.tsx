@@ -1,18 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { granularityType } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
-import {
-    barOptions,
-    basicChartOptions,
-    chartStyle,
-    labelTextStyle,
-    legendOptions,
-} from './Common/ChartOptions';
+import { basicChartOptions, chartStyle } from './Common/ChartOptions';
 import { EChartsOption } from 'echarts';
-import { Text } from '@chakra-ui/react';
 
 type gqlAppliedAndFaultAmount = {
     assemble: number;
