@@ -58,7 +58,6 @@ export default function WorkPermitForm({
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
-        workContents: [],
     });
     const [options, setOptions] = useState<IWorkPermitOptions>({
         zones: [],
@@ -77,7 +76,6 @@ export default function WorkPermitForm({
         onCompleted: (d) => {
             setData({
                 siteAreas: d.siteAreas,
-                workContents: d.workContent.content,
             });
 
             const singleFormData = parseWorkPermit(
@@ -375,7 +373,7 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[3, 4, 6, 7]}
                         fieldName="opLift"
-                        inputComponent={f.opCheckBox('opLift', '起架吊掛作業')}
+                        inputComponent={f.opCheckBox('opLift', '起重吊掛作業')}
                         style={lastStyle}
                     />
 

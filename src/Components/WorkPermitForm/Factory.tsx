@@ -10,7 +10,7 @@ import {
 } from '@choc-ui/chakra-autocomplete';
 import { FormikProps } from 'formik';
 import { placeholderStyle } from './Styles';
-import { SystemConstants } from '../../Constants/System';
+import { systemConst } from '../../Constants/System';
 import {
     SetStateAction,
     Dispatch,
@@ -215,24 +215,26 @@ export default class FormFactory {
                     }
                 />
                 <AutoCompleteList>
-                    {SystemConstants.map((system: string, cid: number) => (
-                        <AutoCompleteItem
-                            key={`option-${cid}`}
-                            value={system}
-                            textTransform="capitalize"
-                        >
-                            {system}
-                        </AutoCompleteItem>
-                    ))}
+                    {Object.keys(systemConst).map(
+                        (system: string, cid: number) => (
+                            <AutoCompleteItem
+                                key={`option-${cid}`}
+                                value={system}
+                                textTransform="capitalize"
+                            >
+                                {system}
+                            </AutoCompleteItem>
+                        )
+                    )}
                 </AutoCompleteList>
             </AutoComplete>
         );
     }
 
     getSystemBranches() {
-        return this.data.workContents
-            .map((i) => i.system.systemBranch.name)
-            .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+        return this.formProps.values.system
+            ? Object.keys(systemConst[this.formProps.values.system])
+            : [];
     }
 
     selectSystemBranchInput() {
@@ -277,13 +279,14 @@ export default class FormFactory {
     }
 
     getProjects() {
-        let l: string[] = [];
-        this.data.workContents.map(
-            (i) => (l = [...l, ...i.system.systemBranch.project])
-        );
-        return l.filter(
-            (v: string, i: number, a: string[]) => a.indexOf(v) === i
-        );
+        return this.formProps.values.system &&
+            this.formProps.values.systemBranch
+            ? Object.keys(
+                  systemConst[this.formProps.values.system][
+                      this.formProps.values.systemBranch
+                  ].projects
+              )
+            : [];
     }
 
     selectProjectInput() {
