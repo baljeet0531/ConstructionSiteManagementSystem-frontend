@@ -11,10 +11,11 @@ import {
 import React from 'react';
 import ProjectProgress from '../ProjectProgress';
 import SpecialOperation from '../SpecialOperation';
+import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 
-type chartTitle = '專案進度' | '特殊作業';
+type chartTitle = '專案進度' | '特殊作業' | '申請作業類別與缺失數';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -23,6 +24,9 @@ const chartMap: chartMapType = {
     ),
     特殊作業: (siteId: string, granularity: granularityType) => (
         <SpecialOperation siteId={siteId} granularity={granularity} />
+    ),
+    申請作業類別與缺失數: (siteId: string, granularity: granularityType) => (
+        <AppliedAndFaultAmount siteId={siteId} granularity={granularity} />
     ),
 };
 
@@ -49,7 +53,7 @@ export default function ChartLayout(props: {
                 <Text variant={'w700s16'}>{title}</Text>
                 <TabList>{tabElement}</TabList>
             </Flex>
-            <TabPanels width={'100%'} height={'200px'}>
+            <TabPanels width={'100%'} height={'300px'}>
                 {tabPanelElement}
             </TabPanels>
         </Tabs>
