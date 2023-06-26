@@ -9,8 +9,8 @@ import {
     Center,
 } from '@chakra-ui/react';
 import React from 'react';
-import ProjectProgress from './ProjectProgress';
-import SpecialOperation from './SpecialOperation';
+import ProjectProgress from '../ProjectProgress';
+import SpecialOperation from '../SpecialOperation';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './ChartLayout';
+import { granularityType } from './Common/ChartLayout';
 import {
     basicChartOptions,
     chartStyle,
     labelTextStyle,
     overlappedBarOptions,
-} from './ChartOptions';
+} from './Common/ChartOptions';
 import { Text } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts';
