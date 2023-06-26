@@ -72,7 +72,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <ChartLayout siteId={siteId} title={'各承商缺失率百分比'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>各項作業缺失率</Text>
+                    <ChartLayout siteId={siteId} title={'各項作業缺失率'} />
                 </GridItem>
             </Grid>
         </Flex>

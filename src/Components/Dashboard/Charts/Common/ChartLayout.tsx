@@ -13,6 +13,7 @@ import ProjectProgress from '../ProjectProgress';
 import SpecialOperation from '../SpecialOperation';
 import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
 import FaultRate from '../FaultRate';
+import Opfault from '../OpFault';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 
@@ -20,7 +21,8 @@ type chartTitle =
     | '專案進度'
     | '特殊作業'
     | '申請作業類別與缺失數'
-    | '各承商缺失率百分比';
+    | '各承商缺失率百分比'
+    | '各項作業缺失率';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -35,6 +37,9 @@ const chartMap: chartMapType = {
     ),
     各承商缺失率百分比: (siteId: string, granularity: granularityType) => (
         <FaultRate siteId={siteId} granularity={granularity} />
+    ),
+    各項作業缺失率: (siteId: string, granularity: granularityType) => (
+        <Opfault siteId={siteId} granularity={granularity} />
     ),
 };
 
