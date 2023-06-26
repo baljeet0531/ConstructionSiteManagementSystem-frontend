@@ -14,6 +14,7 @@ import SpecialOperation from '../SpecialOperation';
 import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
 import FaultRate from '../FaultRate';
 import Opfault from '../OpFault';
+import HazardNotify from '../HazardNotify';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 
@@ -22,7 +23,8 @@ type chartTitle =
     | '特殊作業'
     | '申請作業類別與缺失數'
     | '各承商缺失率百分比'
-    | '各項作業缺失率';
+    | '各項作業缺失率'
+    | '危害告知訓練';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -41,6 +43,7 @@ const chartMap: chartMapType = {
     各項作業缺失率: (siteId: string, granularity: granularityType) => (
         <Opfault siteId={siteId} granularity={granularity} />
     ),
+    危害告知訓練: (siteId: string) => <HazardNotify siteId={siteId} />,
 };
 
 export default function ChartLayout(props: {
@@ -64,10 +67,18 @@ export default function ChartLayout(props: {
         <Tabs variant="blueLineTabs" h={'100%'} isLazy>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'w700s16'}>{title}</Text>
-                <TabList>{tabElement}</TabList>
+                {title !== '危害告知訓練' && <TabList>{tabElement}</TabList>}
             </Flex>
             <TabPanels width={'100%'} height={'300px'}>
-                {tabPanelElement}
+                {title === '危害告知訓練' ? (
+                    <TabPanel padding={0} width={'100%'} height={'100%'}>
+                        <Center width={'100%'} h={'100%'}>
+                            {chartMap[title](siteId)}
+                        </Center>
+                    </TabPanel>
+                ) : (
+                    tabPanelElement
+                )}
             </TabPanels>
         </Tabs>
     );
