@@ -57,7 +57,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>危害告知訓練</Text>
+                    <ChartLayout siteId={siteId} title={'危害告知訓練'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <ChartLayout siteId={siteId} title={'特殊作業'} />
