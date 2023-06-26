@@ -12,10 +12,15 @@ import React from 'react';
 import ProjectProgress from '../ProjectProgress';
 import SpecialOperation from '../SpecialOperation';
 import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
+import FaultRate from '../FaultRate';
 
 export type granularityType = '日' | '週' | '月' | '季' | '年';
 
-type chartTitle = '專案進度' | '特殊作業' | '申請作業類別與缺失數';
+type chartTitle =
+    | '專案進度'
+    | '特殊作業'
+    | '申請作業類別與缺失數'
+    | '各承商缺失率百分比';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -27,6 +32,9 @@ const chartMap: chartMapType = {
     ),
     申請作業類別與缺失數: (siteId: string, granularity: granularityType) => (
         <AppliedAndFaultAmount siteId={siteId} granularity={granularity} />
+    ),
+    各承商缺失率百分比: (siteId: string, granularity: granularityType) => (
+        <FaultRate siteId={siteId} granularity={granularity} />
     ),
 };
 
