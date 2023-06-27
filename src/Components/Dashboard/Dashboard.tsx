@@ -63,7 +63,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <ChartLayout siteId={siteId} title={'特殊作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>今日施工作業（缺氧）</Text>
+                    <ChartLayout siteId={siteId} title={'今日施工作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <Text variant={'w700s16'}>當日申請作業類別施工人數</Text>
