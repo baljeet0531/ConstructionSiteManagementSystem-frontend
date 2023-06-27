@@ -15,8 +15,11 @@ import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
 import FaultRate from '../FaultRate';
 import Opfault from '../OpFault';
 import HazardNotify from '../HazardNotify';
+import TodayOp, { todayOpKind } from '../TodayOp';
 
-export type granularityType = '日' | '週' | '月' | '季' | '年';
+export type granularityType<T = '專案進度'> = T extends '今日施工作業'
+    ? todayOpKind
+    : '日' | '週' | '月' | '季' | '年';
 
 type chartTitle =
     | '專案進度'
@@ -24,7 +27,8 @@ type chartTitle =
     | '申請作業類別與缺失數'
     | '各承商缺失率百分比'
     | '各項作業缺失率'
-    | '危害告知訓練';
+    | '危害告知訓練'
+    | '今日施工作業';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -44,6 +48,9 @@ const chartMap: chartMapType = {
         <Opfault siteId={siteId} granularity={granularity} />
     ),
     危害告知訓練: (siteId: string) => <HazardNotify siteId={siteId} />,
+    今日施工作業: (siteId: string, kind: granularityType<'今日施工作業'>) => (
+        <TodayOp siteId={siteId} kind={kind} />
+    ),
 };
 
 export default function ChartLayout(props: {
@@ -51,7 +58,11 @@ export default function ChartLayout(props: {
     title: chartTitle;
 }) {
     const { siteId, title } = props;
-    const granularity: granularityType[] = ['日', '週', '月', '季', '年'];
+
+    const granularity: granularityType<typeof title>[] =
+        title === '今日施工作業'
+            ? ['侷限空間', '起重吊掛']
+            : ['日', '週', '月', '季', '年'];
     const tabElement = granularity.map((element, index) => (
         <Tab key={index}>{element}</Tab>
     ));
