@@ -12,14 +12,13 @@ import Report from '../Components/Report/Report';
 import Photo from '../Components/Photo/Photo';
 import WorkPermitFormOverview from '../Components/WorkPermitForm/Overview';
 import ToolboxFormOverview from '../Components/ToolboxForm/Overview';
-import EngFaultForm from '../Components/EngFaultForm/EngFaultForm';
+import EngFaultOverview from '../Components/EngFaultForm/Overview';
 import EnvSecurityForm from '../Components/EnvSecurityForm/EnvSecurityForm';
 import OpCheckOverview from '../Components/OpCheckForm/Overview';
 import EHSForm from '../Components/EHSForm/EHSForm';
 import EHSFaultForm from '../Components/EHSFaultForm/EHSFaultForm';
 import MachineryManagement from '../Components/MachineryManagement/MachineryManagement';
 import MachineryEstablishment from '../Components/MachineryEstablishment/MachineryEstablishment';
-import OutsourceFaultForm from '../Components/OutsourceFaultForm/OutsourceFaultForm';
 import NoContentPageIcon from '../Images/NoContentPage.svg';
 
 import { DashboardIcon, SiteIcon } from '../Icons/Icons';
@@ -27,6 +26,7 @@ import { Center, Flex, Image, Text } from '@chakra-ui/react';
 import EHSOverview from '../Components/EHSForm/Overview';
 import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
 import EHSFaultOverview from '../Components/EHSFaultForm/Overview';
+import OutsourceFaultOverview from '../Components/OutsourceFaultForm/Overview';
 
 export type featureName =
     | 'dashboard'
@@ -211,8 +211,16 @@ export function getFeatureMap(site: {
         eng_fault_form: {
             name: '工安缺失單',
             path: '/eng/form/fault',
-            // page: <EngFaultForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <EngFaultOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
         eng_env_security_form: {
             name: '環安衛自主檢點表',
@@ -378,8 +386,16 @@ export function getFeatureMap(site: {
         outsource_fault_form: {
             name: '工安缺失單',
             path: '/outsource/form/fault',
-            // page: <OutsourceFaultForm />,
-            page: noContentPage,
+            page:
+                siteId == '' ? (
+                    emptySiteIdPage
+                ) : (
+                    <OutsourceFaultOverview
+                        key={siteId}
+                        siteId={siteId}
+                        siteName={siteName}
+                    />
+                ),
         },
     };
 }
