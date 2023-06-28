@@ -506,7 +506,11 @@ export default function FormPage(props: {
                         align={'center'}
                         justify={'flex-start'}
                     >
-                        <Text pb={'25px'} fontSize={'2.25rem'}>
+                        <Text
+                            pb={'25px'}
+                            fontSize={'2.25rem'}
+                            color={'#667080'}
+                        >
                             個人資料
                         </Text>
                         <Grid
