@@ -159,8 +159,7 @@ export default function WorkPermitForm({
                 </Flex>
                 <Grid
                     width="92.5vw"
-                    height="60vh"
-                    maxH="500px"
+                    height="500px"
                     templateColumns={'50fr 120fr 203fr 120fr 247fr'}
                     templateRows={
                         '36fr 50fr 50fr minmax(80px, 50fr) repeat(4, 50fr)'
@@ -317,8 +316,7 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="40vh"
-                    maxH="300px"
+                    height="300px"
                     templateColumns={'repeat(3, 50fr 203fr)'}
                     templateRows={'36fr repeat(4, 50fr)'}
                 >
@@ -409,15 +407,16 @@ export default function WorkPermitForm({
                         inputComponent={f.opCheckBox('opChemical', '化學作業')}
                         style={contentStyle}
                     />
-                    <GridItem {...numberStyle}></GridItem>
-                    <GridItem {...contentStyle}></GridItem>
+                    <GridItem {...numberStyle}>11</GridItem>
+                    <GridItem {...contentStyle}>
+                        {f.opCheckOtherBox()}
+                    </GridItem>
                     <GridItem {...numberStyle}></GridItem>
                     <GridItem {...lastStyle}></GridItem>
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="50vh"
-                    maxH="400px"
+                    height="400px"
                     templateColumns="50fr 710fr"
                     templateRows="36fr 72fr 90fr repeat(3, 36fr)"
                 >
@@ -458,8 +457,7 @@ export default function WorkPermitForm({
                 </Grid>
                 <Grid
                     width="92.5vw"
-                    height="30vh"
-                    maxH="200px"
+                    height="200px"
                     templateColumns="repeat(4, 1fr)"
                     templateRows="36fr 120fr"
                 >

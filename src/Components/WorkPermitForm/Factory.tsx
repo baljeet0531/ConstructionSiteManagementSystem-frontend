@@ -31,6 +31,18 @@ export default class FormFactory {
     setData: Dispatch<SetStateAction<IWorkPermitData>>;
     options: IWorkPermitOptions;
     setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>;
+    opCheckOtherState: [boolean, Dispatch<SetStateAction<boolean>>];
+    opCheckCols: (keyof IWorkPermit)[] = [
+        'opFire',
+        'opAloft',
+        'opElectric',
+        'opCage',
+        'opLift',
+        'opAssemble',
+        'opDetach',
+        'opHole',
+        'opChemical',
+    ];
 
     constructor(
         formProps: FormikProps<IWorkPermit>,
@@ -44,6 +56,7 @@ export default class FormFactory {
         this.setData = setData;
         this.options = options;
         this.setOptions = setOptions;
+        this.opCheckOtherState = useState<boolean>(false);
     }
 
     opCheckBox(name: keyof IWorkPermit, text: string) {
@@ -200,6 +213,7 @@ export default class FormFactory {
                     if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('systemBranch', '');
                         this.formProps.setFieldValue('project', '');
+                        this.clearOpCheck();
                     }
                     this.formProps.setFieldValue('system', value);
                 }}
@@ -248,8 +262,10 @@ export default class FormFactory {
                     const before = this.formProps.values.systemBranch;
                     if (before !== '' && before !== value) {
                         this.formProps.setFieldValue('project', '');
+                        this.clearOpCheck();
                     }
                     this.formProps.setFieldValue('systemBranch', value);
+                    this.updateOpCheck(value, this.formProps.values.system);
                 }}
             >
                 <AutoCompleteInput
@@ -279,14 +295,17 @@ export default class FormFactory {
     }
 
     getProjects() {
-        return this.formProps.values.system &&
-            this.formProps.values.systemBranch
-            ? Object.keys(
-                  systemConst[this.formProps.values.system][
-                      this.formProps.values.systemBranch
-                  ].projects
-              )
-            : [];
+        const [system, branch] = [
+            this.formProps.values.system,
+            this.formProps.values.systemBranch,
+        ];
+        const exists =
+            system &&
+            branch &&
+            systemConst[system] &&
+            systemConst[system][branch];
+
+        return exists ? Object.keys(systemConst[system][branch].projects) : [];
     }
 
     selectProjectInput() {
@@ -299,6 +318,10 @@ export default class FormFactory {
                 value={this.formProps.values.project}
                 onChange={(value: string) => {
                     this.formProps.setFieldValue('project', value);
+                    this.updateOpCheck(
+                        this.formProps.values.systemBranch,
+                        value
+                    );
                 }}
             >
                 <AutoCompleteInput
@@ -321,6 +344,77 @@ export default class FormFactory {
                     </AutoCompleteCreatable>
                 </AutoCompleteList>
             </AutoComplete>
+        );
+    }
+
+    clearOpCheck() {
+        const [, setIsChecked] = this.opCheckOtherState;
+        this.opCheckCols.map((col) => {
+            this.formProps.setFieldValue(col, false);
+        });
+        this.formProps.setFieldValue('opElse', '');
+        setIsChecked(false);
+    }
+
+    updateOpCheck(branch: string | undefined, project: string | undefined) {
+        const system = this.formProps.values.system;
+        const [, setIsChecked] = this.opCheckOtherState;
+        this.clearOpCheck();
+
+        const exists =
+            system &&
+            branch &&
+            systemConst[system] &&
+            systemConst[system][branch];
+
+        if (exists) {
+            const trigger = systemConst[system][branch].trigger;
+            console.log(trigger);
+            trigger.map((col) => {
+                col === 'opElse'
+                    ? setIsChecked(true)
+                    : this.formProps.setFieldValue(col, true);
+            });
+        }
+
+        if (
+            exists &&
+            project &&
+            systemConst[system][branch].projects[project]
+        ) {
+            const trigger = systemConst[system][branch].projects[project];
+            trigger.map((col) => {
+                col === 'opElse'
+                    ? setIsChecked(true)
+                    : this.formProps.setFieldValue(col, true);
+            });
+        }
+    }
+
+    opCheckOtherBox() {
+        const [isChecked, setIsChecked] = this.opCheckOtherState;
+        return (
+            <>
+                <Checkbox
+                    isChecked={isChecked}
+                    onChange={() => {
+                        setIsChecked(!isChecked);
+                    }}
+                />
+                <Input
+                    type="text"
+                    border="0px"
+                    ml="18px"
+                    placeholder="填寫"
+                    _placeholder={placeholderStyle}
+                    isDisabled={!isChecked}
+                    value={this.formProps.values.opElse}
+                    onChange={(e) => {
+                        const target = e.target.value;
+                        this.formProps.setFieldValue('opElse', target);
+                    }}
+                />
+            </>
         );
     }
 }
