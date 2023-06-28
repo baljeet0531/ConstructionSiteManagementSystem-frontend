@@ -265,7 +265,11 @@ export default class FormFactory {
                         this.clearOpCheck();
                     }
                     this.formProps.setFieldValue('systemBranch', value);
-                    this.updateOpCheck(value, this.formProps.values.system);
+                    this.updateOpCheck(
+                        this.formProps.values.system,
+                        value,
+                        this.formProps.values.project
+                    );
                 }}
             >
                 <AutoCompleteInput
@@ -319,6 +323,7 @@ export default class FormFactory {
                 onChange={(value: string) => {
                     this.formProps.setFieldValue('project', value);
                     this.updateOpCheck(
+                        this.formProps.values.system,
                         this.formProps.values.systemBranch,
                         value
                     );
@@ -356,8 +361,11 @@ export default class FormFactory {
         setIsChecked(false);
     }
 
-    updateOpCheck(branch: string | undefined, project: string | undefined) {
-        const system = this.formProps.values.system;
+    updateOpCheck(
+        system: string | undefined,
+        branch: string | undefined,
+        project: string | undefined
+    ) {
         const [, setIsChecked] = this.opCheckOtherState;
         this.clearOpCheck();
 
@@ -369,7 +377,6 @@ export default class FormFactory {
 
         if (exists) {
             const trigger = systemConst[system][branch].trigger;
-            console.log(trigger);
             trigger.map((col) => {
                 col === 'opElse'
                     ? setIsChecked(true)

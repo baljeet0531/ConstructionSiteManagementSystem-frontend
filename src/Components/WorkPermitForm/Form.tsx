@@ -85,6 +85,20 @@ export default function WorkPermitForm({
             );
             if (singleFormData) {
                 formProps.setValues(singleFormData, false);
+                if (
+                    [
+                        singleFormData.approvedRef,
+                        singleFormData.reviewRef,
+                        singleFormData.supplierManagerRef,
+                        singleFormData.supplierRef,
+                    ].every((s) => !s)
+                ) {
+                    f.updateOpCheck(
+                        singleFormData.system,
+                        singleFormData.systemBranch,
+                        singleFormData.project
+                    );
+                }
             }
             setLoading(false);
         },
@@ -408,9 +422,7 @@ export default function WorkPermitForm({
                         style={contentStyle}
                     />
                     <GridItem {...numberStyle}>11</GridItem>
-                    <GridItem {...contentStyle}>
-                        {f.opCheckOtherBox()}
-                    </GridItem>
+                    <GridItem {...contentStyle}>{f.opCheckOtherBox()}</GridItem>
                     <GridItem {...numberStyle}></GridItem>
                     <GridItem {...lastStyle}></GridItem>
                 </Grid>
