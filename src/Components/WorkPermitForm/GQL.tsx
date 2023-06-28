@@ -156,7 +156,7 @@ export function parseWorkPermit(
     list: object[],
     modified: boolean,
     signatures: Record<SignatureName, SignatureStateItem>
-): IWorkPermit | undefined {
+): (IWorkPermit & IGQLWorkPermit) | undefined {
     if (!list[0]) return;
     const gqlSignatureColName = [
         'approvedRef',
