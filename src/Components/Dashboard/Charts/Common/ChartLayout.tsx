@@ -24,32 +24,26 @@ export type granularityType<T = '專案進度'> = T extends '今日施工作業'
 
 type chartTitle =
     | '專案進度'
-    | '特殊作業'
     | '申請作業類別與缺失數'
-    | '各承商缺失率百分比'
-    | '各項作業缺失率'
     | '危害告知訓練'
+    | '特殊作業'
     | '今日施工作業'
-    | '當日申請作業類別施工人數';
+    | '當日申請作業類別施工人數'
+    | '各承商缺失率百分比'
+    | '各項作業缺失率';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
     專案進度: (siteId: string, granularity: granularityType) => (
         <ProjectProgress siteId={siteId} granularity={granularity} />
     ),
-    特殊作業: (siteId: string, granularity: granularityType) => (
-        <SpecialOperation siteId={siteId} granularity={granularity} />
-    ),
     申請作業類別與缺失數: (siteId: string, granularity: granularityType) => (
         <AppliedAndFaultAmount siteId={siteId} granularity={granularity} />
     ),
-    各承商缺失率百分比: (siteId: string, granularity: granularityType) => (
-        <FaultRate siteId={siteId} granularity={granularity} />
-    ),
-    各項作業缺失率: (siteId: string, granularity: granularityType) => (
-        <Opfault siteId={siteId} granularity={granularity} />
-    ),
     危害告知訓練: (siteId: string) => <HazardNotify siteId={siteId} />,
+    特殊作業: (siteId: string, granularity: granularityType) => (
+        <SpecialOperation siteId={siteId} granularity={granularity} />
+    ),
     今日施工作業: (siteId: string, kind: granularityType<'今日施工作業'>) => (
         <TodayOp siteId={siteId} kind={kind} />
     ),
@@ -57,6 +51,12 @@ const chartMap: chartMapType = {
         siteId: string,
         granularity: granularityType
     ) => <LaborAmountInOp siteId={siteId} granularity={granularity} />,
+    各承商缺失率百分比: (siteId: string, granularity: granularityType) => (
+        <FaultRate siteId={siteId} granularity={granularity} />
+    ),
+    各項作業缺失率: (siteId: string, granularity: granularityType) => (
+        <Opfault siteId={siteId} granularity={granularity} />
+    ),
 };
 
 export default function ChartLayout(props: {
