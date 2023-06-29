@@ -64,7 +64,13 @@ export default function HazardNotify(props: { siteId: string }) {
         ...basicChartOptions,
         xAxis: {
             type: 'category',
-            axisLabel: labelTextStyle,
+            axisLabel: {
+                ...labelTextStyle,
+                interval: 0,
+                rotate: -45,
+                verticalAlign: 'top',
+                margin: 4,
+            },
         },
         yAxis: [
             {
