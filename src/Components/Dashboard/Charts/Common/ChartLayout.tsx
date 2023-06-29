@@ -16,6 +16,7 @@ import FaultRate from '../FaultRate';
 import Opfault from '../OpFault';
 import HazardNotify from '../HazardNotify';
 import TodayOp, { todayOpKind } from '../TodayOp';
+import LaborAmountInOp from '../LaborAmountInOp';
 
 export type granularityType<T = '專案進度'> = T extends '今日施工作業'
     ? todayOpKind
@@ -28,7 +29,8 @@ type chartTitle =
     | '各承商缺失率百分比'
     | '各項作業缺失率'
     | '危害告知訓練'
-    | '今日施工作業';
+    | '今日施工作業'
+    | '當日申請作業類別施工人數';
 type chartMapType = Record<chartTitle, Function>;
 
 const chartMap: chartMapType = {
@@ -51,6 +53,10 @@ const chartMap: chartMapType = {
     今日施工作業: (siteId: string, kind: granularityType<'今日施工作業'>) => (
         <TodayOp siteId={siteId} kind={kind} />
     ),
+    當日申請作業類別施工人數: (
+        siteId: string,
+        granularity: granularityType
+    ) => <LaborAmountInOp siteId={siteId} granularity={granularity} />,
 };
 
 export default function ChartLayout(props: {

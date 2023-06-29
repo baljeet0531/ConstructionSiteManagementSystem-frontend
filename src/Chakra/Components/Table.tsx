@@ -97,6 +97,32 @@ const Table = {
                 overflowX: 'auto',
             },
         },
+        laborAmountInOpChart: {
+            table: {
+                fontWeight: 400,
+                fontSize: '0.75rem',
+                lineHeight: '1.25rem',
+                border: '1px solid #919AA9',
+                tableLayout: 'fixed',
+            },
+            thead: {
+                bg: '#919AA9',
+                color: '#FFFFFF',
+            },
+            tbody: {
+                color: '#667080',
+            },
+            th: {
+                p: '0px 2.5px',
+                textAlign: 'center',
+                border: '1px solid #919AA9',
+            },
+            td: {
+                p: '0px 2.5px',
+                textAlign: 'center',
+                border: '1px solid #919AA9',
+            },
+        },
     },
     defaultProps: {
         variant: 'iemgray',
