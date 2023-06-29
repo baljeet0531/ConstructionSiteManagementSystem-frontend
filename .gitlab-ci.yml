@@ -47,7 +47,7 @@ staging_build:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "staging"
   image: registry.${CI_PROJECT_PATH}:base
   variables:
-    REACT_APP_BACKEND_URL: http://backend.mic.staging.19gale.ai
+    REACT_APP_BACKEND_URL: https://backend.mic.staging.19gale.ai
   script:
     # node_modules already in /root/ of the image
     # If new package is added, the image should be rebuild
