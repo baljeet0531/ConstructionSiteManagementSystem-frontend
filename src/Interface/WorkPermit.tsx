@@ -1,8 +1,7 @@
 import { IGQLSignature, ISignature } from './Signature';
-import { ISiteArea, IWorkContent } from './Site';
+import { ISiteArea } from './Site';
 export interface IWorkPermitData {
     siteAreas: ISiteArea[];
-    workContents: IWorkContent[];
 }
 
 export interface IWorkPermitOptions {
@@ -58,4 +57,12 @@ export interface IGQLWorkPermit extends IWorkPermit {
     reviewRef: IGQLSignature | undefined;
     supplierManagerRef: IGQLSignature | undefined;
     supplierRef: IGQLSignature | undefined;
+}
+
+export interface IProject {
+    trigger: (keyof IWorkPermit)[];
+}
+export interface ISystemBranch {
+    trigger: (keyof IWorkPermit)[];
+    projects: Record<string, (keyof IWorkPermit)[]>;
 }
