@@ -243,7 +243,7 @@ export default function LaborAmountInOp(props: {
                                 },
                                 index
                             ) => (
-                                <Tr>
+                                <Tr key={index}>
                                     <Td>
                                         <Flex
                                             {...tableFlexStyle}
