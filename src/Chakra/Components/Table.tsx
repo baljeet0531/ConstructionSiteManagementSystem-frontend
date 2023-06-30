@@ -80,7 +80,7 @@ const Table = {
             },
             th: {
                 h: '36px',
-                p: '8px',
+                p: '2px',
                 fontSize: '0.75rem',
                 lineHeight: '1.25rem',
                 textAlign: 'center',
@@ -89,7 +89,7 @@ const Table = {
             },
             td: {
                 h: '44px',
-                p: '8px',
+                p: '2px',
                 textAlign: 'center',
                 borderWidth: '0px 1px 1px 0px',
                 borderStyle: 'solid',
