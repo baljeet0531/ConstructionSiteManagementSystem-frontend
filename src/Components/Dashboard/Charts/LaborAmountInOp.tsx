@@ -204,17 +204,17 @@ export default function LaborAmountInOp(props: {
                 option={option}
                 style={{ ...chartStyle, height: '50%' }}
             />
-            <TableContainer w={'91%'} h={'50%'} overflowY={'scroll'}>
+            <TableContainer w={'89%'} ml={'2%'} h={'50%'} overflowY={'scroll'}>
                 <Table variant={'laborAmountInOpChart'}>
                     <Thead position={'sticky'} top={0}>
                         <Tr>
-                            <Th w={'11%'}>
+                            <Th w={'8px'}>
                                 <Flex {...tableFlexStyle} justify={'center'}>
                                     承商
                                 </Flex>
                             </Th>
                             {initData.map(({ name }, index) => (
-                                <Th key={index} w={'8.9%'}>
+                                <Th key={index} w={'8px'}>
                                     <Flex
                                         {...tableFlexStyle}
                                         justify={'center'}
