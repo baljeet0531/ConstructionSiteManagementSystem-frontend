@@ -81,6 +81,7 @@ export default function ProjectProgress(props: {
             type: 'category',
             axisLabel: {
                 ...labelTextStyle,
+                interval: 0,
                 formatter: (axisValue: string) =>
                     dayjs(axisValue).format('MM/DD'),
             },
