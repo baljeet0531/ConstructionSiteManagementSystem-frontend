@@ -178,6 +178,7 @@ export default function OpFault(props: {
                         shadowColor: 'rgba(0, 0, 0, 0.5)',
                     },
                 },
+                nodeClick: false,
             },
         ],
     };
