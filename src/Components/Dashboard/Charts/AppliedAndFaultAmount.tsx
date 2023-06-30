@@ -156,20 +156,23 @@ export default function AppliedAndFaultAmount(props: {
             axisName: {
                 color: '#667080',
             },
-            splitLine: {
-                lineStyle: {
-                    color: '#B0B0B0',
-                },
-            },
             axisLine: {
-                lineStyle: {
-                    color: '#B0B0B0',
-                },
+                show: false,
             },
             axisLabel: {
                 show: true,
                 formatter: (value: number) =>
                     value === max ? value.toString() : '',
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#B0B0B0',
+                },
+            },
+            splitArea: {
+                areaStyle: {
+                    color: ['#E5E5E533'],
+                },
             },
         },
         series: [
