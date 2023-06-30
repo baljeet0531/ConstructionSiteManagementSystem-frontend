@@ -47,10 +47,6 @@ export default function SpecialOperation(props: {
             dashboardSpecialOperation: gqlSpecialOperation[];
         }) => {
             setData(dashboardSpecialOperation);
-            echartsRef.current.getEchartsInstance().setOption({
-                ...option,
-                dataset: { ...option.dataset, source: data },
-            });
         },
         onError: (err) => {
             console.log(err);
