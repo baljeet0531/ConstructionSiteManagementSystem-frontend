@@ -27,9 +27,15 @@ interface IGQLInfo {
     workBefore: Date;
     knockOff: Date;
 }
-
 interface IGQLToolboxInfo extends IGQLInfo {
     workDuring: Date;
+}
+interface IGQLEnvInfo extends IGQLInfo {
+    number: string;
+}
+interface IGQLOpInfo extends IGQLInfo {
+    number: string;
+    name: string;
 }
 
 interface adminInfo {
@@ -49,11 +55,14 @@ const INSTANT_INFO = gql`
                 knockOff
             }
             envInfo {
+                number
                 title
                 workBefore
                 knockOff
             }
             opInfo {
+                number
+                name
                 title
                 workBefore
                 knockOff
@@ -97,8 +106,8 @@ export default function InstantInfo(props: { siteId: string }) {
     const [workPermitAmount, setWorkPermitAmount] =
         React.useState<[string, string]>();
     const [toolboxInfo, setToolboxInfo] = React.useState<IGQLToolboxInfo[]>([]);
-    const [opInfo, setOpInfo] = React.useState<IGQLInfo[]>([]);
-    const [envInfo, setEnvInfo] = React.useState<IGQLInfo[]>([]);
+    const [envInfo, setEnvInfo] = React.useState<IGQLEnvInfo[]>([]);
+    const [opInfo, setOpInfo] = React.useState<IGQLOpInfo[]>([]);
     const [adminInfo, setAdminInfo] = React.useState<adminInfo[]>([]);
 
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
@@ -132,7 +141,11 @@ export default function InstantInfo(props: { siteId: string }) {
     };
 
     const formatDate = (date: Date | null) =>
-        date ? dayjs(date).format('HH:MM') : '-';
+        date ? (
+            <Text>{dayjs(date).format('HH:MM')}</Text>
+        ) : (
+            <Text color={'#DB504A'}>尚未填寫</Text>
+        );
 
     const adminElement = adminInfo.map((element, index) => {
         const { contractingCorp, goal } = element;
@@ -169,10 +182,11 @@ export default function InstantInfo(props: { siteId: string }) {
         );
     });
     const envElement = envInfo.map((element, index) => {
-        const { title, workBefore, knockOff } = element;
+        const { number, title, workBefore, knockOff } = element;
 
         return (
             <Tr key={index}>
+                <Td>{number}</Td>
                 <Td>{title}</Td>
                 <Td>{formatDate(workBefore)}</Td>
                 <Td>{formatDate(knockOff)}</Td>
@@ -180,10 +194,12 @@ export default function InstantInfo(props: { siteId: string }) {
         );
     });
     const opElement = opInfo.map((element, index) => {
-        const { title, workBefore, knockOff } = element;
+        const { number, name, title, workBefore, knockOff } = element;
 
         return (
             <Tr key={index}>
+                <Td>{number}</Td>
+                <Td>{name}</Td>
                 <Td>{title}</Td>
                 <Td>{formatDate(workBefore)}</Td>
                 <Td>{formatDate(knockOff)}</Td>
@@ -296,13 +312,13 @@ export default function InstantInfo(props: { siteId: string }) {
             </Flex>
             <Text variant={'dashboardList'}>工具箱會議</Text>
             <TableContainer>
-                <Table variant={'dashboardBlue'} minW={'382px'}>
+                <Table variant={'dashboardBlue'}>
                     <Thead>
                         <Tr>
-                            <Th w={'142px'}></Th>
-                            <Th w={'80px'}>施工前</Th>
-                            <Th w={'80px'}>施工中</Th>
-                            <Th w={'80px'}>收工前</Th>
+                            <Th w={'150px'}>地點/系統/分類/項目</Th>
+                            <Th w={'50px'}>施工前</Th>
+                            <Th w={'50px'}>施工中</Th>
+                            <Th w={'50px'}>收工前</Th>
                         </Tr>
                     </Thead>
                     <Tbody>{toolboxElement}</Tbody>
@@ -310,12 +326,13 @@ export default function InstantInfo(props: { siteId: string }) {
             </TableContainer>
             <Text variant={'dashboardList'}>自主檢查</Text>
             <TableContainer>
-                <Table variant={'dashboardBlue'} minW={'382px'}>
+                <Table variant={'dashboardBlue'}>
                     <Thead>
                         <Tr>
-                            <Th w={'142px'}></Th>
-                            <Th w={'120px'}>施工前</Th>
-                            <Th w={'120px'}>收工前</Th>
+                            <Th w={'60px'}>單號</Th>
+                            <Th w={'140px'}>單位/地點</Th>
+                            <Th w={'50px'}>施工前</Th>
+                            <Th w={'50px'}>收工前</Th>
                         </Tr>
                     </Thead>
                     <Tbody>{envElement}</Tbody>
@@ -323,12 +340,14 @@ export default function InstantInfo(props: { siteId: string }) {
             </TableContainer>
             <Text variant={'dashboardList'}>特殊作業</Text>
             <TableContainer>
-                <Table variant={'dashboardBlue'} minW={'382px'}>
+                <Table variant={'dashboardBlue'}>
                     <Thead>
                         <Tr>
-                            <Th w={'142px'}></Th>
-                            <Th w={'120px'}>施工前</Th>
-                            <Th w={'120px'}>收工前</Th>
+                            <Th w={'60px'}>單號</Th>
+                            <Th w={'75px'}>類別</Th>
+                            <Th w={'65px'}>單位/地點</Th>
+                            <Th w={'50px'}>施工前</Th>
+                            <Th w={'50px'}>收工前</Th>
                         </Tr>
                     </Thead>
                     <Tbody>{opElement}</Tbody>
@@ -349,38 +368,40 @@ export default function InstantInfo(props: { siteId: string }) {
                 />
             </Flex>
             <TableContainer>
-                <Table variant={'dashboardBlue'} minW={'382px'}>
+                <Table variant={'dashboardBlue'}>
                     <Thead>
                         <Tr>
-                            <Th w={'142px'}>承商</Th>
-                            <Th w={'240px'}>目標值</Th>
+                            <Th w={'150px'}>承商</Th>
+                            <Th w={'150px'}>目標值</Th>
                         </Tr>
                     </Thead>
                     <Tbody>{adminElement}</Tbody>
                 </Table>
             </TableContainer>
-            <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
-                <Button
-                    size={'xs'}
-                    variant={'whiteOutline'}
-                    onClick={() => {
-                        cancelChange();
-                        setEditDisabled(true);
-                    }}
-                >
-                    取消
-                </Button>
-                <Button
-                    size={'xs'}
-                    variant={'buttonBlueSolid'}
-                    onClick={() => {
-                        saveChange();
-                        setEditDisabled(true);
-                    }}
-                >
-                    確定
-                </Button>
-            </Flex>
+            {!editDisabled && (
+                <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
+                    <Button
+                        size={'xs'}
+                        variant={'whiteOutline'}
+                        onClick={() => {
+                            cancelChange();
+                            setEditDisabled(true);
+                        }}
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        size={'xs'}
+                        variant={'buttonBlueSolid'}
+                        onClick={() => {
+                            saveChange();
+                            setEditDisabled(true);
+                        }}
+                    >
+                        確定
+                    </Button>
+                </Flex>
+            )}
         </Flex>
     );
 }
