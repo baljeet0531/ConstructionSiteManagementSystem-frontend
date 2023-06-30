@@ -122,7 +122,7 @@ export default function AppliedAndFaultAmount(props: {
                 confinedFault,
                 scafoldFault,
             ];
-            const max = Math.max(...applied);
+            const max = Math.ceil(Math.max(...applied, ...fault) / 5) * 5;
 
             setApplied(applied);
             setFault(fault);
@@ -166,10 +166,16 @@ export default function AppliedAndFaultAmount(props: {
                     color: '#B0B0B0',
                 },
             },
+            axisLabel: {
+                show: true,
+                formatter: (value: number) =>
+                    value === max ? value.toString() : '',
+            },
         },
         series: [
             {
                 type: 'radar',
+                symbol: 'none',
                 data: [
                     {
                         value: applied,
