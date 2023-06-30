@@ -67,8 +67,11 @@ export default function FaultRate(props: {
                 radius: '50%',
                 data: data,
                 label: {
-                    formatter: '{b}: {c}',
+                    formatter: '{b}\n{c}%',
                     overflow: 'break',
+                },
+                tooltip: {
+                    valueFormatter: (value) => value + '%',
                 },
                 emphasis: {
                     itemStyle: {

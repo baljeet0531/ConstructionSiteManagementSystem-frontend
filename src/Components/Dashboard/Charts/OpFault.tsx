@@ -7,7 +7,7 @@ import { chartStyle } from './Common/ChartOptions';
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
 
-type gqlOpfault = {
+type gqlOpFault = {
     corpName: string;
     corpRate: number;
     assemble: number;
@@ -23,7 +23,7 @@ type gqlOpfault = {
 };
 
 type gqlData = {
-    opfault: gqlOpfault[];
+    opFault: gqlOpFault[];
 };
 
 type chartData = {
@@ -51,7 +51,7 @@ const OP_FAULT = gql`
     }
 `;
 
-export default function Opfault(props: {
+export default function OpFault(props: {
     siteId: string;
     granularity: granularityType;
 }) {
@@ -63,9 +63,9 @@ export default function Opfault(props: {
             siteId: siteId,
             mode: granularity,
         },
-        onCompleted: ({ opfault }) => {
+        onCompleted: ({ opFault }) => {
             setData(
-                opfault.map(
+                opFault.map(
                     ({
                         corpName,
                         corpRate,
@@ -83,34 +83,64 @@ export default function Opfault(props: {
                         name: corpName,
                         value: Number(corpRate.toFixed(2)),
                         children: [
-                            { name: '動火', value: Number(fire.toFixed(2)) },
+                            {
+                                name: '動火',
+                                value: Number(
+                                    ((fire * corpRate) / 100).toFixed(2)
+                                ),
+                            },
                             {
                                 name: '化學',
                                 value: Number(chemical.toFixed(2)),
                             },
-                            { name: '開口', value: Number(hole.toFixed(2)) },
+                            {
+                                name: '開口',
+                                value: Number(
+                                    ((hole * corpRate) / 100).toFixed(2)
+                                ),
+                            },
                             {
                                 name: '管線拆離',
-                                value: Number(pipe.toFixed(2)),
+                                value: Number(
+                                    ((pipe * corpRate) / 100).toFixed(2)
+                                ),
                             },
                             {
                                 name: '施工架組裝',
-                                value: Number(assemble.toFixed(2)),
+                                value: Number(
+                                    ((assemble * corpRate) / 100).toFixed(2)
+                                ),
                             },
                             {
                                 name: '起重吊掛',
-                                value: Number(lift.toFixed(2)),
+                                value: Number(
+                                    ((lift * corpRate) / 100).toFixed(2)
+                                ),
                             },
-                            { name: '吊籠', value: Number(cage.toFixed(2)) },
+                            {
+                                name: '吊籠',
+                                value: Number(
+                                    ((cage * corpRate) / 100).toFixed(2)
+                                ),
+                            },
                             {
                                 name: '電力',
-                                value: Number(electric.toFixed(2)),
+                                value: Number(
+                                    ((electric * corpRate) / 100).toFixed(2)
+                                ),
                             },
                             {
                                 name: '侷限空間',
-                                value: Number(confined.toFixed(2)),
+                                value: Number(
+                                    ((confined * corpRate) / 100).toFixed(2)
+                                ),
                             },
-                            { name: '高架', value: Number(scafold.toFixed(2)) },
+                            {
+                                name: '高架',
+                                value: Number(
+                                    ((scafold * corpRate) / 100).toFixed(2)
+                                ),
+                            },
                         ],
                     })
                 )
@@ -135,8 +165,18 @@ export default function Opfault(props: {
                 label: {
                     rotate: 0,
                     fontSize: 10,
-                    formatter: '{b}\n{c}',
+                    formatter: '{b}\n{c}%',
                     overflow: 'break',
+                },
+                tooltip: {
+                    valueFormatter: (value) => value + '%',
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',
+                    },
                 },
             },
         ],
