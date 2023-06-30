@@ -22,13 +22,13 @@ import {
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 
-interface IGQLOpInfo {
+interface IGQLInfo {
     title: string;
     workBefore: Date;
     knockOff: Date;
 }
 
-interface IGQLToolboxInfo extends IGQLOpInfo {
+interface IGQLToolboxInfo extends IGQLInfo {
     workDuring: Date;
 }
 
@@ -46,6 +46,11 @@ const INSTANT_INFO = gql`
                 title
                 workBefore
                 workDuring
+                knockOff
+            }
+            envInfo {
+                title
+                workBefore
                 knockOff
             }
             opInfo {
@@ -92,7 +97,8 @@ export default function InstantInfo(props: { siteId: string }) {
     const [workPermitAmount, setWorkPermitAmount] =
         React.useState<[string, string]>();
     const [toolboxInfo, setToolboxInfo] = React.useState<IGQLToolboxInfo[]>([]);
-    const [opInfo, setOpInfo] = React.useState<IGQLOpInfo[]>([]);
+    const [opInfo, setOpInfo] = React.useState<IGQLInfo[]>([]);
+    const [envInfo, setEnvInfo] = React.useState<IGQLInfo[]>([]);
     const [adminInfo, setAdminInfo] = React.useState<adminInfo[]>([]);
 
     const [editDisabled, setEditDisabled] = React.useState<boolean>(true);
@@ -162,6 +168,17 @@ export default function InstantInfo(props: { siteId: string }) {
             </Tr>
         );
     });
+    const envElement = envInfo.map((element, index) => {
+        const { title, workBefore, knockOff } = element;
+
+        return (
+            <Tr key={index}>
+                <Td>{title}</Td>
+                <Td>{formatDate(workBefore)}</Td>
+                <Td>{formatDate(knockOff)}</Td>
+            </Tr>
+        );
+    });
     const opElement = opInfo.map((element, index) => {
         const { title, workBefore, knockOff } = element;
 
@@ -179,10 +196,16 @@ export default function InstantInfo(props: { siteId: string }) {
             siteId: siteId,
         },
         onCompleted: ({ instantInfo }) => {
-            const { workPermitFinish, workPermitTotal, toolboxInfo, opInfo } =
-                instantInfo;
+            const {
+                workPermitFinish,
+                workPermitTotal,
+                toolboxInfo,
+                envInfo,
+                opInfo,
+            } = instantInfo;
             setWorkPermitAmount([workPermitFinish, workPermitTotal]);
             setToolboxInfo(toolboxInfo);
+            setEnvInfo(envInfo);
             setOpInfo(opInfo);
         },
         onError: (err) => {
@@ -295,13 +318,7 @@ export default function InstantInfo(props: { siteId: string }) {
                             <Th w={'120px'}>收工前</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        {/* <Tr>
-                            <Td>ＯＯ工程/OB棟</Td>
-                            <Td>09:15</Td>
-                            <Td {...warningText}>尚未填寫</Td>
-                        </Tr> */}
-                    </Tbody>
+                    <Tbody>{envElement}</Tbody>
                 </Table>
             </TableContainer>
             <Text variant={'dashboardList'}>特殊作業</Text>
