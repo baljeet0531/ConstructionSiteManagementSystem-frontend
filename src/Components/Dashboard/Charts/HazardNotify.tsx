@@ -1,6 +1,5 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import {
@@ -12,41 +11,48 @@ import {
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
 
-type gqlSpecialOperation = {
-    name: string;
-    finish: number;
-    unfinish: number;
+type gqlHazardNotify = {
+    corpName: string;
+    finished: number;
+    unfinished: number;
 };
 
-const SPECIAL_OPERATION = gql`
-    query DashboardSpecialOperation($siteId: String!, $mode: String!) {
-        dashboardSpecialOperation(siteId: $siteId, mode: $mode) {
-            name
-            finish
-            unfinish
+type gqlData = {
+    hazardNotify: gqlHazardNotify[];
+};
+
+type chartData = {
+    name: string;
+    finished: number;
+    unfinished: number;
+};
+
+const HAZARD_NOTIFY = gql`
+    query HazardNotify($siteId: String!) {
+        hazardNotify(siteId: $siteId) {
+            corpName
+            finished
+            unfinished
         }
     }
 `;
 
-export default function SpecialOperation(props: {
-    siteId: string;
-    granularity: granularityType;
-}) {
-    const { siteId, granularity } = props;
-    const [data, setData] = React.useState<gqlSpecialOperation[]>([]);
+export default function HazardNotify(props: { siteId: string }) {
+    const { siteId } = props;
+    const [data, setData] = React.useState<chartData[]>([]);
     const echartsRef = React.useRef<EChartsInstance>(null);
 
-    const { loading } = useQuery(SPECIAL_OPERATION, {
+    const { loading } = useQuery<gqlData>(HAZARD_NOTIFY, {
         variables: {
             siteId: siteId,
-            mode: granularity,
         },
-        onCompleted: ({
-            dashboardSpecialOperation,
-        }: {
-            dashboardSpecialOperation: gqlSpecialOperation[];
-        }) => {
-            setData(dashboardSpecialOperation);
+        onCompleted: ({ hazardNotify }) => {
+            setData(
+                hazardNotify.map(({ corpName, ...rest }) => ({
+                    ...rest,
+                    name: corpName,
+                }))
+            );
         },
         onError: (err) => {
             console.log(err);
@@ -58,7 +64,13 @@ export default function SpecialOperation(props: {
         ...basicChartOptions,
         xAxis: {
             type: 'category',
-            axisLabel: labelTextStyle,
+            axisLabel: {
+                ...labelTextStyle,
+                interval: 0,
+                rotate: -45,
+                verticalAlign: 'top',
+                margin: 4,
+            },
         },
         yAxis: [
             {
@@ -67,7 +79,7 @@ export default function SpecialOperation(props: {
             },
         ],
         dataset: {
-            dimensions: ['name', 'finish', 'unfinish'],
+            dimensions: ['name', 'finished', 'unfinished'],
             source: data,
         },
         series: [

@@ -80,7 +80,7 @@ const Table = {
             },
             th: {
                 h: '36px',
-                p: '8px',
+                p: '2px',
                 fontSize: '0.75rem',
                 lineHeight: '1.25rem',
                 textAlign: 'center',
@@ -89,12 +89,38 @@ const Table = {
             },
             td: {
                 h: '44px',
-                p: '8px',
+                p: '2px',
                 textAlign: 'center',
                 borderWidth: '0px 1px 1px 0px',
                 borderStyle: 'solid',
                 borderColor: '#919AA9',
                 overflowX: 'auto',
+            },
+        },
+        laborAmountInOpChart: {
+            table: {
+                fontWeight: 400,
+                fontSize: '0.75rem',
+                lineHeight: '1.25rem',
+                border: '1px solid #919AA9',
+                tableLayout: 'fixed',
+            },
+            thead: {
+                bg: '#919AA9',
+                color: '#FFFFFF',
+            },
+            tbody: {
+                color: '#667080',
+            },
+            th: {
+                p: '0px 2.5px',
+                textAlign: 'center',
+                border: '1px solid #919AA9',
+            },
+            td: {
+                p: '0px 2.5px',
+                textAlign: 'center',
+                border: '1px solid #919AA9',
             },
         },
     },
