@@ -1,6 +1,5 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import {
@@ -12,41 +11,56 @@ import {
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
 
-type gqlSpecialOperation = {
-    name: string;
-    finish: number;
-    unfinish: number;
+export type todayOpKind = '侷限空間' | '起重吊掛';
+
+const todayOpKindMap: Record<todayOpKind, string> = {
+    侷限空間: 'confined',
+    起重吊掛: 'lift',
 };
 
-const SPECIAL_OPERATION = gql`
-    query DashboardSpecialOperation($siteId: String!, $mode: String!) {
-        dashboardSpecialOperation(siteId: $siteId, mode: $mode) {
-            name
-            finish
-            unfinish
+type gqlTodayOp = {
+    corpName: string;
+    total: number;
+    today: number;
+};
+
+type gqlData = {
+    todayOp: gqlTodayOp[];
+};
+
+type chartData = {
+    name: string;
+    total: number;
+    today: number;
+};
+
+const TODAY_OP = gql`
+    query TodayOp($siteId: String!, $kind: String!) {
+        todayOp(siteId: $siteId, kind: $kind) {
+            corpName
+            total
+            today
         }
     }
 `;
 
-export default function SpecialOperation(props: {
-    siteId: string;
-    granularity: granularityType;
-}) {
-    const { siteId, granularity } = props;
-    const [data, setData] = React.useState<gqlSpecialOperation[]>([]);
+export default function TodayOp(props: { siteId: string; kind: todayOpKind }) {
+    const { siteId, kind } = props;
+    const [data, setData] = React.useState<chartData[]>([]);
     const echartsRef = React.useRef<EChartsInstance>(null);
 
-    const { loading } = useQuery(SPECIAL_OPERATION, {
+    const { loading } = useQuery<gqlData>(TODAY_OP, {
         variables: {
-            siteId: siteId,
-            mode: granularity,
+            siteId,
+            kind: todayOpKindMap[kind],
         },
-        onCompleted: ({
-            dashboardSpecialOperation,
-        }: {
-            dashboardSpecialOperation: gqlSpecialOperation[];
-        }) => {
-            setData(dashboardSpecialOperation);
+        onCompleted: ({ todayOp }) => {
+            setData(
+                todayOp.map(({ corpName, ...rest }) => ({
+                    ...rest,
+                    name: corpName,
+                }))
+            );
         },
         onError: (err) => {
             console.log(err);
@@ -56,6 +70,10 @@ export default function SpecialOperation(props: {
 
     const option: EChartsOption = {
         ...basicChartOptions,
+        tooltip: {
+            ...basicChartOptions.tooltip,
+            position: [0, 0],
+        },
         xAxis: {
             type: 'category',
             axisLabel: labelTextStyle,
@@ -67,20 +85,18 @@ export default function SpecialOperation(props: {
             },
         ],
         dataset: {
-            dimensions: ['name', 'finish', 'unfinish'],
+            dimensions: ['name', 'today', 'total'],
             source: data,
         },
         series: [
             {
                 ...barOptions,
-                stack: 'amount',
-                name: '已完成',
+                name: '進場前已完成危害告知人數應',
                 color: '#D0E8FF',
             },
             {
                 ...barOptions,
-                stack: 'amount',
-                name: '未完成',
+                name: `${kind}教育訓練完成人數應`,
                 color: '#FCE382',
             },
         ],

@@ -122,7 +122,7 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
     });
 
     return (
-        <Flex direction={'column'} mr={'11px'}>
+        <Flex direction={'column'}>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'w700s16'}>宣導事項</Text>
                 <IconButton
@@ -141,7 +141,6 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
                 ref={awarenessInfoRef}
                 defaultValue={awarenessInfoValue}
                 mt={'15px'}
-                ml={'11px'}
                 h={'205px'}
                 w={'auto'}
                 resize={'none'}
@@ -159,50 +158,54 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
                 }}
                 disabled={editDisabled}
             ></Textarea>
-            <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
-                <Button
-                    size={'xs'}
-                    variant={'whiteOutline'}
-                    onClick={() => {
-                        if (awarenessInfoRef.current && awarenessInfoValue)
-                            awarenessInfoRef.current.value = awarenessInfoValue;
-                        setEditDisabled(true);
-                    }}
-                >
-                    取消
-                </Button>
-                <Button
-                    size={'xs'}
-                    variant={'buttonBlueSolid'}
-                    onClick={() => {
-                        setAwarenessInfoValue(
-                            awarenessInfoRef.current?.value || ''
-                        );
-                        updateAwareness({
-                            variables: {
-                                siteId: siteId,
-                                matters: awarenessInfoRef.current?.value || '',
-                            },
-                        });
-                        setEditDisabled(true);
-                    }}
-                >
-                    確定
-                </Button>
-            </Flex>
+            {!editDisabled && (
+                <Flex justify={'flex-end'} gap={'10px'} mt={'15px'}>
+                    <Button
+                        size={'xs'}
+                        variant={'whiteOutline'}
+                        onClick={() => {
+                            if (awarenessInfoRef.current && awarenessInfoValue)
+                                awarenessInfoRef.current.value =
+                                    awarenessInfoValue;
+                            setEditDisabled(true);
+                        }}
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        size={'xs'}
+                        variant={'buttonBlueSolid'}
+                        onClick={() => {
+                            setAwarenessInfoValue(
+                                awarenessInfoRef.current?.value || ''
+                            );
+                            updateAwareness({
+                                variables: {
+                                    siteId: siteId,
+                                    matters:
+                                        awarenessInfoRef.current?.value || '',
+                                },
+                            });
+                            setEditDisabled(true);
+                        }}
+                    >
+                        確定
+                    </Button>
+                </Flex>
+            )}
             <Text variant={'w700s16'} mt={'20px'}>
                 今日執行工項列表
             </Text>
-            <TableContainer mt={'15px'} ml={'11px'}>
-                <Table variant={'dashboardBlue'} minW={'360px'}>
+            <TableContainer mt={'15px'}>
+                <Table variant={'dashboardBlue'}>
                     <Thead>
                         <Tr>
-                            <Th w={'60px'}>系統別</Th>
-                            <Th w={'60px'}>作業區域</Th>
-                            <Th w={'60px'}>作業類別</Th>
-                            <Th w={'60px'}>施作項目</Th>
-                            <Th w={'60px'}>承商名稱</Th>
-                            <Th w={'60px'}>施工人數</Th>
+                            <Th w={'50px'}>系統別</Th>
+                            <Th w={'50px'}>作業區域</Th>
+                            <Th w={'50px'}>作業類別</Th>
+                            <Th w={'50px'}>施作項目</Th>
+                            <Th w={'50px'}>承商名稱</Th>
+                            <Th w={'50px'}>施工人數</Th>
                         </Tr>
                     </Thead>
                     <Tbody>{workListElement}</Tbody>

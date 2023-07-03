@@ -6,7 +6,7 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
-import ChartLayout from './Charts/ChartLayout';
+import ChartLayout from './Charts/Common/ChartLayout';
 import WeatherTime from './WeatherTime';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
@@ -33,7 +33,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
             <Grid
                 flexGrow={1}
                 padding={'15px 42px 32px 42px'}
-                gridTemplateRows={'253px 599px repeat(5,287px)'}
+                gridTemplateRows={'253px 599px repeat(5,387px)'}
                 gridTemplateColumns={'1fr 1fr'}
                 gap={'20px 17px'}
                 borderTop={'1px solid #667080'}
@@ -51,25 +51,31 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <ChartLayout siteId={siteId} title={'專案進度'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>申請作業類別與缺失數</Text>
+                    <ChartLayout
+                        siteId={siteId}
+                        title={'申請作業類別與缺失數'}
+                    />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>危害告知訓練</Text>
+                    <ChartLayout siteId={siteId} title={'危害告知訓練'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <ChartLayout siteId={siteId} title={'特殊作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>今日施工作業（缺氧）</Text>
+                    <ChartLayout siteId={siteId} title={'今日施工作業'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <Text variant={'w700s16'}>當日申請作業類別施工人數</Text>
+                    <ChartLayout
+                        siteId={siteId}
+                        title={'當日申請作業類別施工人數'}
+                    />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>各承商缺失率百分比</Text>
+                    <ChartLayout siteId={siteId} title={'各承商缺失率百分比'} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <Text variant={'w700s16'}>各項作業缺失率</Text>
+                    <ChartLayout siteId={siteId} title={'各項作業缺失率'} />
                 </GridItem>
             </Grid>
         </Flex>
