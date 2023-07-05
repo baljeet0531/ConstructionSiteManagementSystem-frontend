@@ -922,7 +922,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
         onCompleted: ({ searchHuman }) => {
             const searchResult = searchHuman.map((info: humanTableValues) => {
-                return errorOnly ? info['no'] : info['idno'];
+                return `${info.idno}|${info.no ?? ''}`;
             });
             setSearchPrimaryKey(searchResult);
         },
