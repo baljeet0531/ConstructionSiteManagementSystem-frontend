@@ -81,12 +81,18 @@ export default function ChartLayout(props: {
     ));
 
     return (
-        <Tabs variant="blueLineTabs" h={'100%'} isLazy>
+        <Tabs
+            variant="blueLineTabs"
+            h={'100%'}
+            isLazy
+            display={'flex'}
+            flexDirection={'column'}
+        >
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'w700s16'}>{title}</Text>
                 {title !== '危害告知訓練' && <TabList>{tabElement}</TabList>}
             </Flex>
-            <TabPanels width={'100%'} height={'300px'}>
+            <TabPanels width={'100%'} flexGrow={1}>
                 {title === '危害告知訓練' ? (
                     <TabPanel padding={0} width={'100%'} height={'100%'}>
                         <Center width={'100%'} h={'100%'}>
