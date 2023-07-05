@@ -33,7 +33,7 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
             <Grid
                 flexGrow={1}
                 padding={'15px 42px 32px 42px'}
-                gridTemplateRows={'253px 599px repeat(5,387px)'}
+                gridTemplateRows={'253px 599px repeat(5,387px) 750px'}
                 gridTemplateColumns={'1fr 1fr'}
                 gap={'20px 17px'}
                 borderTop={'1px solid #667080'}
@@ -71,10 +71,10 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                         title={'當日申請作業類別施工人數'}
                     />
                 </GridItem>
-                <GridItem {...dashboardGridItemStyle}>
+                <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout siteId={siteId} title={'各承商缺失率百分比'} />
                 </GridItem>
-                <GridItem {...dashboardGridItemStyle}>
+                <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout siteId={siteId} title={'各項作業缺失率'} />
                 </GridItem>
             </Grid>
