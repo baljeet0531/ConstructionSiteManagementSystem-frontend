@@ -161,12 +161,9 @@ export default function OpFault(props: {
             {
                 type: 'sunburst',
                 data: data,
-                radius: [24, '100%'],
+                radius: [24, '70%'],
                 label: {
-                    rotate: 0,
                     fontSize: 10,
-                    formatter: '{b}\n{c}%',
-                    overflow: 'break',
                 },
                 tooltip: {
                     valueFormatter: (value) => value + '%',
@@ -179,6 +176,22 @@ export default function OpFault(props: {
                     },
                 },
                 nodeClick: false,
+                levels: [
+                    {},
+                    {
+                        label: {
+                            rotate: 0,
+                            overflow: 'break',
+                            formatter: '{b}\n{c}%',
+                        },
+                    },
+                    {
+                        label: {
+                            formatter: '{b} {c}%',
+                            position: 'outside',
+                        },
+                    },
+                ],
             },
         ],
     };
