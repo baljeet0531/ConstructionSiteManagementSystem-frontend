@@ -20,6 +20,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import useAuth from '../../Hooks/UseAuth';
 
 interface IGQLTodayWorkList {
     system: string;
@@ -121,21 +122,39 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
         fetchPolicy: 'network-only',
     });
 
+    const {
+        actions,
+        lazyQueryResultTuple: [queryAuth],
+    } = useAuth();
+
+    React.useEffect(() => {
+        siteId &&
+            queryAuth({
+                variables: {
+                    siteId: siteId,
+                    service: '即時資訊欄',
+                    subService: 'ALL',
+                },
+            });
+    }, [siteId]);
+
     return (
         <Flex direction={'column'}>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'w700s16'}>宣導事項</Text>
-                <IconButton
-                    size={'xs'}
-                    h={'20px'}
-                    color={'#667080'}
-                    bg={'#FFFFFF'}
-                    aria-label="edit awareness"
-                    icon={<EditIcon />}
-                    onClick={() => {
-                        setEditDisabled(false);
-                    }}
-                />
+                {actions.find((action) => action === 'U') && (
+                    <IconButton
+                        size={'xs'}
+                        h={'20px'}
+                        color={'#667080'}
+                        bg={'#FFFFFF'}
+                        aria-label="edit awareness"
+                        icon={<EditIcon />}
+                        onClick={() => {
+                            setEditDisabled(false);
+                        }}
+                    />
+                )}
             </Flex>
             <Textarea
                 ref={awarenessInfoRef}

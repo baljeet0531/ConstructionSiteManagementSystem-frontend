@@ -21,6 +21,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import useAuth from '../../Hooks/UseAuth';
 
 interface IGQLInfo {
     title: string;
@@ -293,6 +294,22 @@ export default function InstantInfo(props: { siteId: string }) {
         fetchPolicy: 'network-only',
     });
 
+    const {
+        actions,
+        lazyQueryResultTuple: [queryAuth],
+    } = useAuth();
+
+    React.useEffect(() => {
+        siteId &&
+            queryAuth({
+                variables: {
+                    siteId: siteId,
+                    service: '即時資訊欄',
+                    subService: 'ALL',
+                },
+            });
+    }, [siteId]);
+
     return (
         <Flex direction={'column'}>
             <Text variant={'w700s16'}>即時資訊</Text>
@@ -355,17 +372,19 @@ export default function InstantInfo(props: { siteId: string }) {
             </TableContainer>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'dashboardList'}>週月管理值</Text>
-                <IconButton
-                    size={'xs'}
-                    h={'20px'}
-                    color={'#667080'}
-                    bg={'#FFFFFF'}
-                    aria-label="edit administration"
-                    icon={<EditIcon />}
-                    onClick={() => {
-                        setEditDisabled(false);
-                    }}
-                />
+                {actions.find((action) => action === 'U') && (
+                    <IconButton
+                        size={'xs'}
+                        h={'20px'}
+                        color={'#667080'}
+                        bg={'#FFFFFF'}
+                        aria-label="edit administration"
+                        icon={<EditIcon />}
+                        onClick={() => {
+                            setEditDisabled(false);
+                        }}
+                    />
+                )}
             </Flex>
             <TableContainer>
                 <Table variant={'dashboardBlue'}>
