@@ -19,14 +19,17 @@ import {
     OutsourcingIcon,
 } from '../../Icons/Icons';
 import { ISiteObject } from '../Layout';
+import { checkAuth } from '../../Utils/Web';
+import { TUserRole } from '../../Types/Auth';
 
 export default function Menu(props: {
     sitesObject: ISiteObject;
     featureMap: Record<featureName, featureItem>;
     selectedSiteId?: string;
     setSelectedSiteId: Function;
+    role: TUserRole | '';
 }) {
-    const { sitesObject, featureMap, selectedSiteId, setSelectedSiteId } =
+    const { sitesObject, featureMap, selectedSiteId, setSelectedSiteId, role } =
         props;
     const siteSelectElements = Object.values(sitesObject).map(
         ({ siteName, siteId }, index) => {
@@ -118,52 +121,66 @@ export default function Menu(props: {
                         <Feature fItem={featureMap.project_photo} />
                     </AccordionPanel>
                 </AccordionItem>
-                <AccordionItem style={itemStyle}>
-                    <AccordionButton style={buttonStyle}>
-                        <EngineeringIcon />
-                        工程管理
-                    </AccordionButton>
-                    <AccordionPanel sx={panelStyle}>
-                        <Feature fItem={featureMap.eng_work_permit_form} />
-                        <Feature fItem={featureMap.eng_toolbox_form} />
-                        <Feature fItem={featureMap.eng_fault_form} />
-                        <Feature fItem={featureMap.eng_env_security_form} />
-                        <Feature fItem={featureMap.eng_op_check_form} />
-                        <Feature fItem={featureMap.eng_photo} />
-                    </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem style={itemStyle}>
-                    <AccordionButton style={buttonStyle}>
-                        <EHSIcon />
-                        職安衛管理
-                    </AccordionButton>
-                    <AccordionPanel sx={panelStyle}>
-                        <Feature fItem={featureMap.ehs_form} />
-                        <Feature fItem={featureMap.ehs_fault_form} />
-                        <Feature fItem={featureMap.ehs_machinery_management} />
-                        <Feature fItem={featureMap.ehs_photo} />
-                    </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem style={itemStyle}>
-                    <AccordionButton style={buttonStyle}>
-                        <OutsourcingIcon />
-                        承商管理
-                    </AccordionButton>
-                    <AccordionPanel sx={panelStyle}>
-                        <Feature
-                            fItem={featureMap.outsource_work_permit_form}
-                        />
-                        <Feature fItem={featureMap.outsource_toolbox_form} />
-                        <Feature
-                            fItem={featureMap.outsource_env_security_form}
-                        />
-                        <Feature fItem={featureMap.outsource_op_check_form} />
-                        <Feature
-                            fItem={featureMap.outsource_machinery_establishment}
-                        />
-                        <Feature fItem={featureMap.outsource_fault_form} />
-                    </AccordionPanel>
-                </AccordionItem>
+                {checkAuth('工程管理', role) && (
+                    <AccordionItem style={itemStyle}>
+                        <AccordionButton style={buttonStyle}>
+                            <EngineeringIcon />
+                            工程管理
+                        </AccordionButton>
+                        <AccordionPanel sx={panelStyle}>
+                            <Feature fItem={featureMap.eng_work_permit_form} />
+                            <Feature fItem={featureMap.eng_toolbox_form} />
+                            <Feature fItem={featureMap.eng_fault_form} />
+                            <Feature fItem={featureMap.eng_env_security_form} />
+                            <Feature fItem={featureMap.eng_op_check_form} />
+                            <Feature fItem={featureMap.eng_photo} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                )}
+                {checkAuth('職安衛管理', role) && (
+                    <AccordionItem style={itemStyle}>
+                        <AccordionButton style={buttonStyle}>
+                            <EHSIcon />
+                            職安衛管理
+                        </AccordionButton>
+                        <AccordionPanel sx={panelStyle}>
+                            <Feature fItem={featureMap.ehs_form} />
+                            <Feature fItem={featureMap.ehs_fault_form} />
+                            <Feature
+                                fItem={featureMap.ehs_machinery_management}
+                            />
+                            <Feature fItem={featureMap.ehs_photo} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                )}
+                {checkAuth('承商管理', role) && (
+                    <AccordionItem style={itemStyle}>
+                        <AccordionButton style={buttonStyle}>
+                            <OutsourcingIcon />
+                            承商管理
+                        </AccordionButton>
+                        <AccordionPanel sx={panelStyle}>
+                            <Feature
+                                fItem={featureMap.outsource_work_permit_form}
+                            />
+                            <Feature
+                                fItem={featureMap.outsource_toolbox_form}
+                            />
+                            <Feature
+                                fItem={featureMap.outsource_env_security_form}
+                            />
+                            <Feature
+                                fItem={featureMap.outsource_op_check_form}
+                            />
+                            <Feature
+                                fItem={
+                                    featureMap.outsource_machinery_establishment
+                                }
+                            />
+                            <Feature fItem={featureMap.outsource_fault_form} />
+                        </AccordionPanel>
+                    </AccordionItem>
+                )}
             </Accordion>
         </VStack>
     );

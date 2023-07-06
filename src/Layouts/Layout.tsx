@@ -3,10 +3,18 @@ import { Flex } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
-import { featureName, getFeatureMap } from './FeatureMap';
+import { featureName, getFeatureMap, noContentPageLayout } from './FeatureMap';
 import Sidebar from './Sidebar/Sidebar';
 import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
+import useAuth from '../Hooks/UseAuth';
+import { CustomLoading } from '../Components/Shared/Loading';
+import {
+    pagePrefixToRoleFeatureMap,
+    pageToFeatureAuthMap,
+} from '../Constants/Auth';
+import { TUserRole } from '../Types/Auth';
+import { checkAuth } from '../Utils/Web';
 
 export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!, $archived: Boolean) {
@@ -24,7 +32,7 @@ export const QUERY_ACCOUNT_SITES = gql`
 export interface siteValue {
     siteId: string;
     siteName: string;
-    role: string;
+    role: TUserRole;
 }
 
 export interface ISiteObject {
@@ -37,7 +45,7 @@ export interface IAccountSite {
         name: string;
         archived: boolean;
     };
-    role: string;
+    role: TUserRole;
 }
 
 export default function Layout(props: { page: featureName }) {
@@ -46,6 +54,11 @@ export default function Layout(props: { page: featureName }) {
     if (!cookieValue || !username) return <Navigate to={'/login'}></Navigate>;
 
     const { page } = props;
+
+    const {
+        actions,
+        lazyQueryResultTuple: [queryAuth, { loading }],
+    } = useAuth();
 
     const [sitesObject, setSitesObject] = React.useState<ISiteObject>({});
     const [selectedSiteId, setSelectedSiteId] = React.useState<string>();
@@ -71,7 +84,7 @@ export default function Layout(props: { page: featureName }) {
             const sitesListFormatted: ISiteObject[] = accountSite.map(
                 (site: {
                     siteId: string;
-                    role: string;
+                    role: TUserRole;
                     siteRef: {
                         name: string;
                     };
@@ -110,6 +123,27 @@ export default function Layout(props: { page: featureName }) {
         fetchPolicy: 'network-only',
     });
 
+    const checkLayoutAuth = () => {
+        const pagePrefix = page.split('_')[0];
+        const roleFeature = pagePrefixToRoleFeatureMap[pagePrefix];
+        return selectedSiteValue
+            ? roleFeature
+                ? checkAuth(roleFeature, selectedSiteValue.role)
+                : true
+            : false;
+    };
+
+    React.useEffect(() => {
+        selectedSiteId &&
+            queryAuth({
+                variables: {
+                    siteId: selectedSiteId,
+                    service: pageToFeatureAuthMap[page],
+                    subService: 'ALL',
+                },
+            });
+    }, [selectedSiteId, page]);
+
     return (
         <Flex
             direction={'row'}
@@ -126,7 +160,16 @@ export default function Layout(props: { page: featureName }) {
                 setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
-            <MainScreen>{featureMap[page].page}</MainScreen>
+            <MainScreen>
+                {loading ? (
+                    <CustomLoading />
+                ) : checkLayoutAuth() &&
+                  actions.find((action) => action === 'R') ? (
+                    featureMap[page].page
+                ) : (
+                    noContentPageLayout('您沒有訪問權限')
+                )}
+            </MainScreen>
         </Flex>
     );
 }
