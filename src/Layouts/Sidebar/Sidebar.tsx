@@ -26,8 +26,9 @@ import { VERSION } from '../../Constants/EnvConstants';
 import { TODO_LIST } from '../../Components/Dashboard/TodoList';
 import { useLazyQuery } from '@apollo/client';
 import { useLogOut } from '../../Hooks/UseLogOut';
+import { TUserRole } from '../../Types/Auth';
 
-const roleAvatarMap = {
+const roleAvatarMap: Record<TUserRole, string> = {
     系統管理員: Admin,
     專案經理: ProjectManager,
     工地經理: SiteManager,
@@ -40,7 +41,7 @@ const roleAvatarMap = {
 
 export default function Sidebar(props: {
     username: string;
-    role: string;
+    role: TUserRole | '';
     sitesObject: ISiteObject;
     selectedSiteId?: string;
     setSelectedSiteId: Function;
@@ -141,6 +142,7 @@ export default function Sidebar(props: {
                     featureMap={featureMap}
                     selectedSiteId={selectedSiteId}
                     setSelectedSiteId={setSelectedSiteId}
+                    role={role}
                 ></Menu>
             </Flex>
             <VStack w="100%">

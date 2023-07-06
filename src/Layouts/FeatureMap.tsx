@@ -62,7 +62,7 @@ export type featureItem = {
     page: JSX.Element;
 };
 
-const noContentPageLayout = (label: string) => (
+export const noContentPageLayout = (label: string) => (
     <Center w={'100%'} h={'100%'}>
         <Flex
             w={'60%'}
