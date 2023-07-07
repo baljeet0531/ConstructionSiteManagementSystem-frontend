@@ -6,6 +6,7 @@ import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import { chartStyle } from './Common/ChartOptions';
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
+import { opCheckNameMap, opCheckArray } from '../../../Constants/OpCheck';
 
 type gqlOpFault = {
     corpName: string;
@@ -58,6 +59,10 @@ export default function OpFault(props: {
     const { siteId, granularity } = props;
     const [data, setData] = React.useState<chartData[]>([]);
     const echartsRef = React.useRef<EChartsInstance>(null);
+
+    const childrenRate = (val: number, corpRate: number) =>
+        Number(((val * corpRate) / 100).toFixed(2));
+
     const { loading } = useQuery<gqlData>(OP_FAULT, {
         variables: {
             siteId: siteId,
@@ -65,85 +70,17 @@ export default function OpFault(props: {
         },
         onCompleted: ({ opFault }) => {
             setData(
-                opFault.map(
-                    ({
-                        corpName,
-                        corpRate,
-                        assemble,
-                        cage,
-                        chemical,
-                        confined,
-                        electric,
-                        fire,
-                        hole,
-                        lift,
-                        pipe,
-                        scafold,
-                    }) => ({
-                        name: corpName,
-                        value: Number(corpRate.toFixed(2)),
-                        children: [
-                            {
-                                name: '動火',
-                                value: Number(
-                                    ((fire * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '化學',
-                                value: Number(chemical.toFixed(2)),
-                            },
-                            {
-                                name: '開口',
-                                value: Number(
-                                    ((hole * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '管線拆離',
-                                value: Number(
-                                    ((pipe * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '施工架組裝',
-                                value: Number(
-                                    ((assemble * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '起重吊掛',
-                                value: Number(
-                                    ((lift * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '吊籠',
-                                value: Number(
-                                    ((cage * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '電力',
-                                value: Number(
-                                    ((electric * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '侷限空間',
-                                value: Number(
-                                    ((confined * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                            {
-                                name: '高架',
-                                value: Number(
-                                    ((scafold * corpRate) / 100).toFixed(2)
-                                ),
-                            },
-                        ],
-                    })
-                )
+                opFault.map((data) => ({
+                    name: data.corpName,
+                    value: Number(data.corpRate.toFixed(2)),
+                    children: opCheckArray.map((opName) => ({
+                        name: opName,
+                        value: childrenRate(
+                            data[opCheckNameMap[opName]],
+                            data.corpRate
+                        ),
+                    })),
+                }))
             );
         },
         onError: (err) => {
@@ -161,12 +98,9 @@ export default function OpFault(props: {
             {
                 type: 'sunburst',
                 data: data,
-                radius: [24, '100%'],
+                radius: [24, '70%'],
                 label: {
-                    rotate: 0,
                     fontSize: 10,
-                    formatter: '{b}\n{c}%',
-                    overflow: 'break',
                 },
                 tooltip: {
                     valueFormatter: (value) => value + '%',
@@ -179,6 +113,22 @@ export default function OpFault(props: {
                     },
                 },
                 nodeClick: false,
+                levels: [
+                    {},
+                    {
+                        label: {
+                            rotate: 0,
+                            overflow: 'break',
+                            formatter: '{b}\n{c}%',
+                        },
+                    },
+                    {
+                        label: {
+                            formatter: '{b} {c}%',
+                            position: 'outside',
+                        },
+                    },
+                ],
             },
         ],
     };
