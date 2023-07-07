@@ -24,30 +24,8 @@ import {
 } from '@chakra-ui/react';
 import { granularityType } from './Common/ChartLayout';
 import { RectangleIcon } from '../../../Icons/Icons';
-
-type TOpCheck =
-    | 'fire'
-    | 'scafold'
-    | 'confined'
-    | 'electric'
-    | 'cage'
-    | 'lift'
-    | 'assemble'
-    | 'pipe'
-    | 'hole'
-    | 'chemical';
-
-type TOpCheckZh =
-    | '動火'
-    | '高架'
-    | '侷限空間'
-    | '電力'
-    | '吊籠'
-    | '起重吊掛'
-    | '施工架'
-    | '管線拆離'
-    | '開口'
-    | '化學';
+import { TOpCheck, TOpCheckZh } from '../../../Types/OpCheck';
+import { opCheckArray, opCheckNameMap } from '../../../Constants/OpCheck';
 
 type gqlLaborAmountInOp = {
     corpName: string;
@@ -57,31 +35,7 @@ type gqlData = {
     laborAmountInOp: gqlLaborAmountInOp[];
 };
 
-const opCheckMap: Record<TOpCheckZh, TOpCheck> = {
-    動火: 'fire',
-    高架: 'scafold',
-    侷限空間: 'confined',
-    電力: 'electric',
-    吊籠: 'cage',
-    起重吊掛: 'lift',
-    施工架: 'assemble',
-    管線拆離: 'pipe',
-    開口: 'hole',
-    化學: 'chemical',
-};
-
-const initData: { name: TOpCheckZh }[] = [
-    { name: '動火' },
-    { name: '高架' },
-    { name: '侷限空間' },
-    { name: '電力' },
-    { name: '吊籠' },
-    { name: '起重吊掛' },
-    { name: '施工架' },
-    { name: '管線拆離' },
-    { name: '開口' },
-    { name: '化學' },
-];
+const initData: { name: TOpCheckZh }[] = opCheckArray.map((name) => ({ name }));
 const initDimensions: string[] = ['name'];
 const initSeries: BarSeriesOption[] = [];
 const color = ['#FEAEAE', '#9A89FF', '#A9F4D0', '#D0E8FF'];
@@ -131,7 +85,7 @@ export default function LaborAmountInOp(props: {
             const datasetSource = initData.map(({ name }) => ({
                 name,
                 ...laborAmountInOp.reduce(
-                    (acc, { corpName, [opCheckMap[name]]: amount }) => {
+                    (acc, { corpName, [opCheckNameMap[name]]: amount }) => {
                         acc[corpName] = amount;
                         return acc;
                     },
