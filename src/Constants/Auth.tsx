@@ -1,4 +1,4 @@
-import { TRoleFeature, TUserRole } from '../Types/Auth';
+import { TActions, TRoleFeature, TUserRole } from '../Types/Auth';
 
 export const pageToFeatureAuthMap = {
     dashboard: '總覽',
@@ -43,4 +43,11 @@ export const pagePrefixToRoleFeatureMap: Record<string, TRoleFeature> = {
     eng: '工程管理',
     ehs: '職安衛管理',
     outsource: '承商管理',
+};
+
+export const initActions: TActions = {
+    C: false,
+    R: false,
+    U: false,
+    D: false,
 };

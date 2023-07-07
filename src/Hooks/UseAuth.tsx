@@ -1,6 +1,7 @@
 import { QueryHookOptions, gql, useQuery } from '@apollo/client';
 import React from 'react';
 import { TActions } from '../Types/Auth';
+import { initActions } from '../Constants/Auth';
 
 const QUERY_AUTH = gql`
     query Auth($siteId: String!, $service: String!, $subService: String!) {
@@ -14,7 +15,7 @@ const QUERY_AUTH = gql`
 `;
 
 type gqlData = {
-    auth: TActions;
+    auth: TActions | null;
 };
 
 type gqlVariable = {
@@ -26,16 +27,11 @@ type gqlVariable = {
 export default function useAuth(
     options?: QueryHookOptions<gqlData, gqlVariable>
 ) {
-    const [actions, setActions] = React.useState<TActions>({
-        C: false,
-        R: false,
-        U: false,
-        D: false,
-    });
+    const [actions, setActions] = React.useState<TActions>(initActions);
     const queryResult = useQuery<gqlData, gqlVariable>(QUERY_AUTH, {
         ...options,
         onCompleted: ({ auth }) => {
-            setActions(auth);
+            setActions(auth ?? initActions);
         },
         onError: (err) => {
             console.log(err);
