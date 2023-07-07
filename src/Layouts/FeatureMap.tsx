@@ -27,6 +27,7 @@ import EHSOverview from '../Components/EHSForm/Overview';
 import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
 import EHSFaultOverview from '../Components/EHSFaultForm/Overview';
 import OutsourceFaultOverview from '../Components/OutsourceFaultForm/Overview';
+import NoContentPage from '../Components/Shared/NoContentPage';
 
 export type featureName =
     | 'dashboard'
@@ -62,33 +63,8 @@ export type featureItem = {
     page: JSX.Element;
 };
 
-export const noContentPageLayout = (label: string) => (
-    <Center w={'100%'} h={'100%'}>
-        <Flex
-            w={'60%'}
-            direction={'column'}
-            gap={'35px'}
-            justify={'center'}
-            align={'center'}
-        >
-            <Image src={NoContentPageIcon}></Image>
-            <Text
-                fontFamily={'Inter'}
-                fontStyle={'normal'}
-                fontWeight={700}
-                fontSize={'1.5rem'}
-                lineHeight={'1.25rem'}
-                color={'#4C7DE7'}
-                textAlign={'center'}
-            >
-                {label}
-            </Text>
-        </Flex>
-    </Center>
-);
-
-const emptySiteIdPage = noContentPageLayout('請先選擇專案，以顯示內容');
-const noContentPage = noContentPageLayout('目前頁面施工中，敬請期待');
+const emptySiteIdPage = <NoContentPage label="請先選擇專案，以顯示內容" />;
+const noContentPage = <NoContentPage label="目前頁面施工中，敬請期待" />;
 
 export function getFeatureMap(site: {
     siteId: string;
