@@ -3,7 +3,7 @@ import { Flex } from '@chakra-ui/react';
 import { Cookies } from 'react-cookie';
 import { Navigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
-import { featureName, getFeatureMap, noContentPageLayout } from './FeatureMap';
+import { featureName, getFeatureMap } from './FeatureMap';
 import Sidebar from './Sidebar/Sidebar';
 import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
@@ -15,6 +15,7 @@ import {
 } from '../Constants/Auth';
 import { TUserRole } from '../Types/Auth';
 import { checkAuth } from '../Utils/Web';
+import NoContentPage from '../Components/Shared/NoContentPage';
 
 export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!, $archived: Boolean) {
@@ -170,7 +171,7 @@ export default function Layout(props: { page: featureName }) {
                 ) : checkLayoutAuth() && actions.R ? (
                     featureMap[page].page
                 ) : (
-                    noContentPageLayout('您沒有訪問權限')
+                    <NoContentPage label="您沒有訪問權限" />
                 )}
             </MainScreen>
         </Flex>
