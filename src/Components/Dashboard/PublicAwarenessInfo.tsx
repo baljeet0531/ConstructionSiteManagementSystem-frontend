@@ -122,27 +122,19 @@ export default function PublicAwarenessInfo(props: { siteId: string }) {
         fetchPolicy: 'network-only',
     });
 
-    const {
-        actions,
-        lazyQueryResultTuple: [queryAuth],
-    } = useAuth();
-
-    React.useEffect(() => {
-        siteId &&
-            queryAuth({
-                variables: {
-                    siteId: siteId,
-                    service: '即時資訊欄',
-                    subService: 'ALL',
-                },
-            });
-    }, [siteId]);
+    const { actions } = useAuth({
+        variables: {
+            siteId: siteId,
+            service: '即時資訊欄',
+            subService: 'ALL',
+        },
+    });
 
     return (
         <Flex direction={'column'}>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'w700s16'}>宣導事項</Text>
-                {actions.find((action) => action === 'U') && (
+                {actions.U && (
                     <IconButton
                         size={'xs'}
                         h={'20px'}

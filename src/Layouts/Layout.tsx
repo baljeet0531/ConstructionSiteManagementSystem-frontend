@@ -55,11 +55,6 @@ export default function Layout(props: { page: featureName }) {
 
     const { page } = props;
 
-    const {
-        actions,
-        lazyQueryResultTuple: [queryAuth, { loading }],
-    } = useAuth();
-
     const [sitesObject, setSitesObject] = React.useState<ISiteObject>({});
     const [selectedSiteId, setSelectedSiteId] = React.useState<string>();
     const siteValues = Object.values(sitesObject);
@@ -133,14 +128,23 @@ export default function Layout(props: { page: featureName }) {
             : false;
     };
 
+    const {
+        actions,
+        queryResult: { refetch, loading },
+    } = useAuth({
+        variables: {
+            siteId: selectedSiteId || '',
+            service: pageToFeatureAuthMap[page],
+            subService: 'ALL',
+        },
+    });
+
     React.useEffect(() => {
         selectedSiteId &&
-            queryAuth({
-                variables: {
-                    siteId: selectedSiteId,
-                    service: pageToFeatureAuthMap[page],
-                    subService: 'ALL',
-                },
+            refetch({
+                siteId: selectedSiteId,
+                service: pageToFeatureAuthMap[page],
+                subService: 'ALL',
             });
     }, [selectedSiteId, page]);
 
@@ -163,8 +167,7 @@ export default function Layout(props: { page: featureName }) {
             <MainScreen>
                 {loading ? (
                     <CustomLoading />
-                ) : checkLayoutAuth() &&
-                  actions.find((action) => action === 'R') ? (
+                ) : checkLayoutAuth() && actions.R ? (
                     featureMap[page].page
                 ) : (
                     noContentPageLayout('您沒有訪問權限')

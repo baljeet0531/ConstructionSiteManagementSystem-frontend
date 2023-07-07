@@ -294,21 +294,13 @@ export default function InstantInfo(props: { siteId: string }) {
         fetchPolicy: 'network-only',
     });
 
-    const {
-        actions,
-        lazyQueryResultTuple: [queryAuth],
-    } = useAuth();
-
-    React.useEffect(() => {
-        siteId &&
-            queryAuth({
-                variables: {
-                    siteId: siteId,
-                    service: '即時資訊欄',
-                    subService: 'ALL',
-                },
-            });
-    }, [siteId]);
+    const { actions } = useAuth({
+        variables: {
+            siteId: siteId,
+            service: '即時資訊欄',
+            subService: 'ALL',
+        },
+    });
 
     return (
         <Flex direction={'column'}>
@@ -372,7 +364,7 @@ export default function InstantInfo(props: { siteId: string }) {
             </TableContainer>
             <Flex align={'center'} justify={'space-between'}>
                 <Text variant={'dashboardList'}>週月管理值</Text>
-                {actions.find((action) => action === 'U') && (
+                {actions.U && (
                     <IconButton
                         size={'xs'}
                         h={'20px'}

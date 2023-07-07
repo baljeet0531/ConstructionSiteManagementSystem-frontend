@@ -10,4 +10,4 @@ export type TUserRole =
     | '外包商'
     | '業主';
 
-export type TActions = 'C' | 'R' | 'U' | 'D';
+export type TActions = { C: boolean; R: boolean; U: boolean; D: boolean };
