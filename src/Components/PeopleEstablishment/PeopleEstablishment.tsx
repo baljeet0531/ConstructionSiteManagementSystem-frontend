@@ -20,6 +20,8 @@ import {
 } from '../../Utils/DefaultToast';
 import { formFiles, formValues } from '../../Interface/PeopleManagement';
 import { CREATE_HUMAN_RESOURCE, UPDATE_HUMAN_RESOURCE } from './GQL';
+import { ActionsContext } from '../../Context/Context';
+import NoContentPage from '../Shared/NoContentPage';
 
 const filesInitialValues: formFiles = { HImgs: [undefined] };
 
@@ -115,7 +117,9 @@ export default function PeopleEstablishment() {
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
 
-    return (
+    const authActions = React.useContext(ActionsContext);
+
+    return authActions.C ? (
         <Formik
             validateOnChange={false}
             validateOnBlur={false}
@@ -167,9 +171,11 @@ export default function PeopleEstablishment() {
                             ? createHumanResource(
                                   mutationOptions('createHumanResource')
                               )
-                            : updateHumanResource(
+                            : authActions.U
+                            ? updateHumanResource(
                                   mutationOptions('updateHumanResource')
-                              );
+                              )
+                            : defaultErrorToast(toast, '無更新權限');
                     },
                     onError: (err) => {
                         console.log(err);
@@ -193,5 +199,7 @@ export default function PeopleEstablishment() {
                 );
             }}
         </Formik>
+    ) : (
+        <NoContentPage label="您沒有訪問權限" />
     );
 }

@@ -1,4 +1,10 @@
-import { Center, IconButton, useDisclosure, useToast } from '@chakra-ui/react';
+import {
+    Box,
+    Center,
+    IconButton,
+    useDisclosure,
+    useToast,
+} from '@chakra-ui/react';
 import React from 'react';
 import ReactWindowTable, {
     CheckboxElement,
@@ -15,6 +21,7 @@ import DailyReportModal from './Modal';
 import { PageLoading } from '../../Shared/Loading';
 import { defaultErrorToast } from '../../../Utils/DefaultToast';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
+import { ActionsContext } from '../../../Context/Context';
 
 interface IDailyReportOverview {
     dailyId: number;
@@ -67,6 +74,7 @@ export default function DailyReport(props: {
 }) {
     const { siteId, dailyData, setDailyData, dateRange } = props;
     const toast = useToast();
+    const actions = React.useContext(ActionsContext);
 
     const columnMap: IColumnMap[] = [
         {
@@ -104,7 +112,7 @@ export default function DailyReport(props: {
             variable: 'dailyId',
             getElement: ({ style, info, variable }) => {
                 const { onOpen, onClose, isOpen } = useDisclosure();
-                return (
+                return actions.U ? (
                     <Center {...dataCellStyle} paddingTop={'6px'} style={style}>
                         <IconButton
                             aria-label="Search database"
@@ -120,6 +128,8 @@ export default function DailyReport(props: {
                             isOpen={isOpen}
                         />
                     </Center>
+                ) : (
+                    <Box {...dataCellStyle} style={style}></Box>
                 );
             },
         },
