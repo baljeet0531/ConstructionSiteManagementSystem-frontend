@@ -38,6 +38,7 @@ import ReactWindowTable, {
     defaultElement,
     getElementProps,
 } from '../Shared/ReactWindowTable';
+import { ActionsContext } from '../../Context/Context';
 
 export const ALL_HUMAN_RESOURCE = gql`
     query AllHumanresource($errlist: Boolean, $mode: String) {
@@ -987,6 +988,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         }
     );
 
+    const actions = React.useContext(ActionsContext);
+
     React.useEffect(() => {
         if (tableValue) {
             setSelectedHuman(
@@ -1054,7 +1057,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 </Flex>
 
                 <Flex gap={'10px'} align={'center'}>
-                    {selectedHuman.length == 1 && (
+                    {actions.U && selectedHuman.length == 1 && (
                         <Button
                             leftIcon={<EditIcon />}
                             variant={'buttonGrayOutline'}
@@ -1090,14 +1093,16 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             輸出
                         </Button>
                     )}
-                    <Button
-                        leftIcon={<DeleteIcon />}
-                        variant={'buttonGrayOutline'}
-                        h={'36px'}
-                        onClick={onOpen}
-                    >
-                        刪除
-                    </Button>
+                    {actions.D && (
+                        <Button
+                            leftIcon={<DeleteIcon />}
+                            variant={'buttonGrayOutline'}
+                            h={'36px'}
+                            onClick={onOpen}
+                        >
+                            刪除
+                        </Button>
+                    )}
                 </Flex>
             </Flex>
             <Tabs variant={'blueLineTabs'} isFitted isLazy>

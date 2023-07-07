@@ -25,6 +25,7 @@ import { IPhotoChecked } from '../../Interface/Photo';
 import dayjs from 'dayjs';
 import { CustomLoading } from '../Shared/Loading';
 import { QUERY_PHOTOS } from './PhotoOverviewPage';
+import { ActionsContext } from '../../Context/Context';
 
 const UPDATE_PHOTOS = gql`
     mutation UpdateImageManagement(
@@ -87,6 +88,8 @@ export default function PhotoModal(props: {
         refetchQueries: [QUERY_PHOTOS],
         awaitRefetchQueries: true,
     });
+
+    const actions = React.useContext(ActionsContext);
 
     React.useEffect(() => {
         getImage(photoValues.imagePath).then((blob) => {
@@ -219,14 +222,16 @@ export default function PhotoModal(props: {
                             >
                                 關閉
                             </Button>
-                            <Button
-                                variant={'buttonBlueSolid'}
-                                onClick={() => {
-                                    setEditable((prev) => !prev);
-                                }}
-                            >
-                                編輯
-                            </Button>
+                            {actions.U && (
+                                <Button
+                                    variant={'buttonBlueSolid'}
+                                    onClick={() => {
+                                        setEditable((prev) => !prev);
+                                    }}
+                                >
+                                    編輯
+                                </Button>
+                            )}
                         </Flex>
                     ) : (
                         <Flex justify={'flex-end'}>

@@ -31,6 +31,7 @@ import FullCalendarElement from './FullCalenderElement';
 import Preview from './Preview';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { PageLoading } from '../Shared/Loading';
+import { ActionsContext } from '../../Context/Context';
 
 export const QUERY_SCHEDULE = gql`
     query Schedule($siteId: String!) {
@@ -91,7 +92,6 @@ export default function Schedule(props: { siteId: string; siteName: string }) {
         CREATE_SCHEDULE,
         {
             onCompleted: ({ createSchedule }) => {
-                console.log(createSchedule);
                 setPreviewData(createSchedule.preview);
                 setPreview(true);
                 onClose();
@@ -188,6 +188,8 @@ export default function Schedule(props: { siteId: string; siteName: string }) {
         );
     }, [previewData]);
 
+    const actions = React.useContext(ActionsContext);
+
     if (loading)
         return (
             <Center h={'100vh'}>
@@ -234,14 +236,16 @@ export default function Schedule(props: { siteId: string; siteName: string }) {
                             排程管理
                         </Text>
                         <Spacer />
-                        <Button
-                            leftIcon={<ReplyIcon />}
-                            bg={'#4C7DE7'}
-                            color={'#FFFFFF'}
-                            onClick={onOpen}
-                        >
-                            匯入
-                        </Button>
+                        {(data ? actions.U : actions.C) && (
+                            <Button
+                                leftIcon={<ReplyIcon />}
+                                bg={'#4C7DE7'}
+                                color={'#FFFFFF'}
+                                onClick={onOpen}
+                            >
+                                匯入
+                            </Button>
+                        )}
                     </Flex>
                     <FullCalendarElement event={data} />
                 </Flex>
