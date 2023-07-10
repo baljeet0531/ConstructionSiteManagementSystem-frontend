@@ -1,7 +1,8 @@
-import { QueryHookOptions, gql, useQuery } from '@apollo/client';
+import { QueryHookOptions, ServerError, gql, useQuery } from '@apollo/client';
 import React from 'react';
 import { TActions } from '../Types/Auth';
 import { initActions } from '../Constants/Auth';
+import { useLogOut } from './UseLogOut';
 
 const QUERY_AUTH = gql`
     query Auth($siteId: String!, $service: String!, $subService: String!) {
@@ -27,6 +28,7 @@ type gqlVariable = {
 export default function useAuth(
     options?: QueryHookOptions<gqlData, gqlVariable>
 ) {
+    const logout = useLogOut('/login');
     const [actions, setActions] = React.useState<TActions>(initActions);
     const queryResult = useQuery<gqlData, gqlVariable>(QUERY_AUTH, {
         ...options,
@@ -35,6 +37,12 @@ export default function useAuth(
         },
         onError: (err) => {
             console.log(err);
+            if (
+                err.networkError &&
+                (err.networkError as ServerError).statusCode === 401
+            ) {
+                logout();
+            }
         },
         fetchPolicy: 'network-only',
     });
