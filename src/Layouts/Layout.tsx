@@ -7,6 +7,16 @@ import { featureName, getFeatureMap } from './FeatureMap';
 import Sidebar from './Sidebar/Sidebar';
 import MainScreen from './MainScreen/MainScreen';
 import Background from '../Images/WhiteLoginBackground.svg';
+import useAuth from '../Hooks/UseAuth';
+import { CustomLoading } from '../Components/Shared/Loading';
+import {
+    pagePrefixToRoleFeatureMap,
+    pageToFeatureAuthMap,
+} from '../Constants/Auth';
+import { TUserRole } from '../Types/Auth';
+import { checkAuth } from '../Utils/Web';
+import { ActionsContext } from '../Context/Context';
+import NoContentPage from '../Components/Shared/NoContentPage';
 
 export const QUERY_ACCOUNT_SITES = gql`
     query AccountSite($username: String!, $archived: Boolean) {
@@ -24,7 +34,7 @@ export const QUERY_ACCOUNT_SITES = gql`
 export interface siteValue {
     siteId: string;
     siteName: string;
-    role: string;
+    role: TUserRole;
 }
 
 export interface ISiteObject {
@@ -37,7 +47,7 @@ export interface IAccountSite {
         name: string;
         archived: boolean;
     };
-    role: string;
+    role: TUserRole;
 }
 
 export default function Layout(props: { page: featureName }) {
@@ -71,7 +81,7 @@ export default function Layout(props: { page: featureName }) {
             const sitesListFormatted: ISiteObject[] = accountSite.map(
                 (site: {
                     siteId: string;
-                    role: string;
+                    role: TUserRole;
                     siteRef: {
                         name: string;
                     };
@@ -110,6 +120,36 @@ export default function Layout(props: { page: featureName }) {
         fetchPolicy: 'network-only',
     });
 
+    const checkLayoutAuth = () => {
+        const pagePrefix = page.split('_')[0];
+        const roleFeature = pagePrefixToRoleFeatureMap[pagePrefix];
+        return selectedSiteValue
+            ? roleFeature
+                ? checkAuth(roleFeature, selectedSiteValue.role)
+                : true
+            : false;
+    };
+
+    const {
+        actions,
+        queryResult: { refetch, loading },
+    } = useAuth({
+        variables: {
+            siteId: selectedSiteId || '',
+            service: pageToFeatureAuthMap[page],
+            subService: 'ALL',
+        },
+    });
+
+    React.useEffect(() => {
+        selectedSiteId &&
+            refetch({
+                siteId: selectedSiteId,
+                service: pageToFeatureAuthMap[page],
+                subService: 'ALL',
+            });
+    }, [selectedSiteId, page]);
+
     return (
         <Flex
             direction={'row'}
@@ -126,7 +166,17 @@ export default function Layout(props: { page: featureName }) {
                 setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
-            <MainScreen>{featureMap[page].page}</MainScreen>
+            <ActionsContext.Provider value={actions}>
+                <MainScreen>
+                    {loading ? (
+                        <CustomLoading />
+                    ) : checkLayoutAuth() && actions.R ? (
+                        featureMap[page].page
+                    ) : (
+                        <NoContentPage label="您沒有訪問權限" />
+                    )}
+                </MainScreen>
+            </ActionsContext.Provider>
         </Flex>
     );
 }

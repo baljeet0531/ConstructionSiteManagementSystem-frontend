@@ -19,6 +19,7 @@ import { IMachinery } from '../../Interface/Machinery';
 import { getImage } from '../../Utils/Resources';
 import { useUpdateMachinery } from '../../Hooks/GQLMutation';
 import { PageLoading } from '../Shared/Loading';
+import { ActionsContext } from '../../Context/Context';
 export default function RemarksTable(props: {
     isOpen: boolean;
     onClose: () => void;
@@ -41,6 +42,7 @@ export default function RemarksTable(props: {
     const remarksRef = React.useRef<HTMLTextAreaElement>(null);
     const uploader = React.useRef();
     const [updateMachinery, { loading }] = useUpdateMachinery(siteId);
+    const actions = React.useContext(ActionsContext);
 
     const blobToFileType = (data: (Blob | undefined)[]) =>
         data.flatMap((blob, index) =>
@@ -98,7 +100,7 @@ export default function RemarksTable(props: {
                             >
                                 備註
                             </Text>
-                            {editable && (
+                            {actions.U && editable && (
                                 <IconButton
                                     size={'xs'}
                                     h={'20px'}
@@ -158,8 +160,7 @@ export default function RemarksTable(props: {
                                 multiple
                                 action="#"
                                 accept="image/*"
-                                // onChange={setRemarksPhotos}
-                                onChange={(e) => {console.log(e)}}
+                                onChange={setRemarksPhotos}
                                 ref={uploader}
                                 renderThumbnail={(file, thumbnail: any) => (
                                     <Box

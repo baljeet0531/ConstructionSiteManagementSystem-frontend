@@ -23,6 +23,7 @@ import { exportFile } from '../../Utils/Resources';
 import { PageLoading } from '../Shared/Loading';
 import DateRangePicker, { DateRange } from 'rsuite/esm/DateRangePicker';
 import dayjs from 'dayjs';
+import { ActionsContext } from '../../Context/Context';
 
 export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(
@@ -336,6 +337,8 @@ export default function WorkPermitFormOverview(props: {
         }
     );
 
+    const actions = React.useContext(ActionsContext);
+
     const handleSearch = (value: DateRange | null) => {
         searchWorkPermit({
             variables: {
@@ -470,15 +473,17 @@ export default function WorkPermitFormOverview(props: {
                     </Popover>
                 </Flex>
                 <Flex gap={'10px'}>
-                    <Button
-                        leftIcon={<AddIcon />}
-                        variant={'buttonBlueSolid'}
-                        onClick={() => {
-                            navSingleWorkPermit('new', false);
-                        }}
-                    >
-                        新增工單
-                    </Button>
+                    {actions.C && (
+                        <Button
+                            leftIcon={<AddIcon />}
+                            variant={'buttonBlueSolid'}
+                            onClick={() => {
+                                navSingleWorkPermit('new', false);
+                            }}
+                        >
+                            新增工單
+                        </Button>
+                    )}
                     <Button
                         leftIcon={<LaunchIcon />}
                         variant={'buttonGrayOutline'}

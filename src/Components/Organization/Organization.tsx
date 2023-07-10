@@ -35,6 +35,7 @@ import { EXPORT_HUMAN_RESOURCE } from '../PeopleOverview/PeopleOverview';
 import { exportFile } from '../../Utils/Resources';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import { PageLoading } from '../Shared/Loading';
+import { ActionsContext } from '../../Context/Context';
 
 export const SITE_LABOR = gql`
     query SiteLabor($siteId: String!, $context: String) {
@@ -331,6 +332,8 @@ export default function Organization(props: {
         }
     );
 
+    const actions = React.useContext(ActionsContext);
+
     return (
         <Flex
             direction={'column'}
@@ -379,28 +382,32 @@ export default function Organization(props: {
                             onChange={handleDebounceSearch}
                         />
                     </InputGroup>
-                    <Button
-                        leftIcon={<AddIcon />}
-                        variant={'buttonBlueSolid'}
-                        onClick={() => {
-                            setModalName('createLabor');
-                            onOpen();
-                        }}
-                    >
-                        新增人員
-                    </Button>
+                    {actions.C && (
+                        <Button
+                            leftIcon={<AddIcon />}
+                            variant={'buttonBlueSolid'}
+                            onClick={() => {
+                                setModalName('createLabor');
+                                onOpen();
+                            }}
+                        >
+                            新增人員
+                        </Button>
+                    )}
                 </Flex>
                 <Flex gap={'10px'}>
-                    <Button
-                        leftIcon={<ReplyIcon />}
-                        variant={'buttonGrayOutline'}
-                        onClick={() => {
-                            setModalName('multiCreate');
-                            onOpen();
-                        }}
-                    >
-                        批次輸入
-                    </Button>
+                    {actions.C && (
+                        <Button
+                            leftIcon={<ReplyIcon />}
+                            variant={'buttonGrayOutline'}
+                            onClick={() => {
+                                setModalName('multiCreate');
+                                onOpen();
+                            }}
+                        >
+                            批次輸入
+                        </Button>
+                    )}
                     <Button
                         leftIcon={<LaunchIcon />}
                         variant={'buttonGrayOutline'}
@@ -424,16 +431,18 @@ export default function Organization(props: {
                     >
                         輸出
                     </Button>
-                    <Button
-                        leftIcon={<DeleteIcon />}
-                        variant={'buttonGrayOutline'}
-                        onClick={() => {
-                            setModalName('deleteLabor');
-                            onOpen();
-                        }}
-                    >
-                        刪除
-                    </Button>
+                    {actions.D && (
+                        <Button
+                            leftIcon={<DeleteIcon />}
+                            variant={'buttonGrayOutline'}
+                            onClick={() => {
+                                setModalName('deleteLabor');
+                                onOpen();
+                            }}
+                        >
+                            刪除
+                        </Button>
+                    )}
                 </Flex>
             </Flex>
             <ReactWindowTable

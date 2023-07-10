@@ -38,6 +38,7 @@ import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
+import { ActionsContext } from '../../Context/Context';
 
 export const QUERY_MACHINERY = gql`
     query Machinery($siteId: String!, $checkId: String, $keyWord: String) {
@@ -324,6 +325,8 @@ export default function MachineryPage(props: {
         ],
     });
 
+    const actions = React.useContext(ActionsContext);
+
     return (
         <Flex {...tableViewContainerStyle}>
             <Text variant={'pageSiteName'}>{siteName}</Text>
@@ -348,36 +351,42 @@ export default function MachineryPage(props: {
                                     onChange={handleInput}
                                 />
                             </InputGroup>
-                            <Button
-                                variant={'buttonBlueSolid'}
-                                h={'36px'}
-                                leftIcon={<AddIcon />}
-                                onClick={createModalDisclosure.onOpen}
-                            >
-                                新增機具
-                            </Button>
+                            {actions.C && (
+                                <Button
+                                    variant={'buttonBlueSolid'}
+                                    h={'36px'}
+                                    leftIcon={<AddIcon />}
+                                    onClick={createModalDisclosure.onOpen}
+                                >
+                                    新增機具
+                                </Button>
+                            )}
                             <TabList>
                                 <Tab>入場檢點</Tab>
                                 <Tab>場內檢點</Tab>
                             </TabList>
                         </Flex>
                         <Flex gap={'10px'} align={'center'}>
-                            <Button
-                                variant={'buttonGrayOutline'}
-                                h={'36px'}
-                                leftIcon={<ReplyIcon />}
-                                onClick={uploadModalDisclosure.onOpen}
-                            >
-                                匯入
-                            </Button>
-                            <Button
-                                variant={'buttonGrayOutline'}
-                                h={'36px'}
-                                leftIcon={<DeleteIcon />}
-                                onClick={handleDeleteModalOpen}
-                            >
-                                刪除
-                            </Button>
+                            {actions.C && (
+                                <Button
+                                    variant={'buttonGrayOutline'}
+                                    h={'36px'}
+                                    leftIcon={<ReplyIcon />}
+                                    onClick={uploadModalDisclosure.onOpen}
+                                >
+                                    匯入
+                                </Button>
+                            )}
+                            {actions.D && (
+                                <Button
+                                    variant={'buttonGrayOutline'}
+                                    h={'36px'}
+                                    leftIcon={<DeleteIcon />}
+                                    onClick={handleDeleteModalOpen}
+                                >
+                                    刪除
+                                </Button>
+                            )}
                         </Flex>
                     </Flex>
                     <TabPanels>
@@ -418,24 +427,28 @@ export default function MachineryPage(props: {
                                 onChange={handleInput}
                             />
                         </InputGroup>
-                        <Button
-                            variant={'buttonBlueSolid'}
-                            h={'36px'}
-                            leftIcon={<AddIcon />}
-                            onClick={createModalDisclosure.onOpen}
-                        >
-                            新增機具
-                        </Button>
+                        {actions.C && (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                h={'36px'}
+                                leftIcon={<AddIcon />}
+                                onClick={createModalDisclosure.onOpen}
+                            >
+                                新增機具
+                            </Button>
+                        )}
                     </Flex>
                     <Flex gap={'10px'} align={'center'}>
-                        <Button
-                            variant={'buttonGrayOutline'}
-                            h={'36px'}
-                            leftIcon={<ReplyIcon />}
-                            onClick={uploadModalDisclosure.onOpen}
-                        >
-                            匯入
-                        </Button>
+                        {actions.C && (
+                            <Button
+                                variant={'buttonGrayOutline'}
+                                h={'36px'}
+                                leftIcon={<ReplyIcon />}
+                                onClick={uploadModalDisclosure.onOpen}
+                            >
+                                匯入
+                            </Button>
+                        )}
                     </Flex>
                 </Flex>
             )}
