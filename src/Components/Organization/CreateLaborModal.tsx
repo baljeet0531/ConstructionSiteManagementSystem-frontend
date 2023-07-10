@@ -190,7 +190,6 @@ export default function AddPeopleModal(props: {
         SEARCH_HUMAN_BY_CERTAIN_CORP,
         {
             onCompleted: ({ humanInSiteLabor }) => {
-                console.log(humanInSiteLabor);
                 const searchResult = humanInSiteLabor.map(
                     (info: { idno: string }) => info.idno
                 );

@@ -29,6 +29,7 @@ import {
 } from '../../Interface/Photo';
 import PhotoOverviewContainer from './PhotoOverviewContainer';
 import { PageLoading } from '../Shared/Loading';
+import { ActionsContext } from '../../Context/Context';
 
 export const QUERY_PHOTOS = gql`
     query ImageManagement($siteId: String!) {
@@ -270,6 +271,8 @@ export default function PhotoOverviewPage(props: {
         });
     };
 
+    const actions = React.useContext(ActionsContext);
+
     return (
         <Flex
             direction={'column'}
@@ -293,19 +296,23 @@ export default function PhotoOverviewPage(props: {
                             icon={<LaunchIcon />}
                             onClick={handleExport}
                         />
-                        <IconButton
-                            variant={'blueOutline'}
-                            aria-label="delete photos"
-                            icon={<DeleteIcon />}
-                            onClick={deleteModalDisclosure.onOpen}
-                        />
-                        <Button
-                            variant={'buttonBlueSolid'}
-                            leftIcon={<PublishIcon />}
-                            onClick={onToggle}
-                        >
-                            新增相片
-                        </Button>
+                        {actions.D && (
+                            <IconButton
+                                variant={'blueOutline'}
+                                aria-label="delete photos"
+                                icon={<DeleteIcon />}
+                                onClick={deleteModalDisclosure.onOpen}
+                            />
+                        )}
+                        {actions.C && (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                leftIcon={<PublishIcon />}
+                                onClick={onToggle}
+                            >
+                                新增相片
+                            </Button>
+                        )}
                     </Flex>
                 </Flex>
                 <Grid templateColumns={'repeat(4,1fr)'} columnGap={'20px'}>
