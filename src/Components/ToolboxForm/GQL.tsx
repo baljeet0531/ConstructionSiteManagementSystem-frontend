@@ -144,6 +144,12 @@ export const GQL_TOOLBOX_QUERY = gql`
             restorationSupervisor
             abnormal
             abnormalRecord
+            host {
+                ...gqlSignatureFields
+                accountRef {
+                    name
+                }
+            }
             contractingCorpStaffSignatureFirst {
                 ...gqlSignatureFields
             }
@@ -524,6 +530,7 @@ export function parseToolbox(
 ): IToolbox | undefined {
     if (!list[0]) return;
     const signatureColName: SignatureName[] = [
+        'host',
         'contractingCorpStaffSignatureFirst',
         'contractingCorpStaffSignatureSecond',
         'contractingCorpStaffSignatureThird',
@@ -564,7 +571,7 @@ export function parseToolbox(
     }
 
     if (!t.publicityMatters) {
-        t.publicityMatters = dashboardPublicMatters
+        t.publicityMatters = dashboardPublicMatters;
     }
 
     // Handle single singnatures
