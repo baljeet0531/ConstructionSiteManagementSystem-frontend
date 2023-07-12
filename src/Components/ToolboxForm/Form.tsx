@@ -97,8 +97,6 @@ export default function ToolboxForm({
         f.updateAllHint();
     }, [loading]);
 
-    console.log(signatures);
-
     return (
         <Form>
             <Button
