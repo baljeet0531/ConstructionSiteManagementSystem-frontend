@@ -18,7 +18,8 @@ export type SignatureName =
     | 'contractingCorpStaffSignatureFirst'
     | 'contractingCorpStaffSignatureSecond'
     | 'contractingCorpStaffSignatureThird'
-    | 'systemEngineerSignature';
+    | 'systemEngineerSignature'
+    | 'host' ;
 
 export type SignatureListName =
     | 'primeContractingCorpAppearance'
@@ -105,6 +106,7 @@ export interface IToolbox {
     headPlastic: boolean | null;
     headWorkspace: boolean | null;
     heatTouch: boolean | null;
+    host: ISignature | null;
     hypoxia: boolean | null;
     laborAmount: number | null;
     meetingDate: string | null;
