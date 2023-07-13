@@ -179,16 +179,12 @@ export default class FormFactory extends SharedFactory {
     otherCheckbox(name: keyof typeof this.otherEnable, text: string) {
         const [enable, setEnable] = this.otherEnable[name];
         useEffect(() => {
-            if (
-                this.formProps.values[name] !== null &&
-                this.formProps.values[name] !== ''
-            ) {
-                setEnable(true);
-            } else if (this.formProps.values[name] === '') {
-                setEnable(false);
-            } else {
-                setEnable(null);
-            }
+            this.formProps.values[name] !== null &&
+            this.formProps.values[name] !== ''
+                ? setEnable(true)
+                : this.formProps.values[name] === ''
+                ? setEnable(false)
+                : setEnable(null);
         }, [this.formProps.values]);
         return (
             <Checkbox
