@@ -321,7 +321,7 @@ export default class FormFactory extends SharedFactory {
             </AutoComplete>
         );
     }
-    forbidSignOverlay() {
+    forbidOverlay(text: string = '') {
         return (
             <Center
                 w="100%"
@@ -329,14 +329,12 @@ export default class FormFactory extends SharedFactory {
                 p={4}
                 textAlign="center"
                 color="#66708080"
-                backgroundColor="#919AA922"
+                backgroundColor="gray.100"
+                zIndex={99}
             >
-                勾選所有檢查項目後才能簽名
+                {text}
             </Center>
         );
-    }
-    forbidOverlay() {
-        return <Center w="100%" h="100%" backgroundColor="#919AA922" />;
     }
     validSignBeforeWork() {
         return (

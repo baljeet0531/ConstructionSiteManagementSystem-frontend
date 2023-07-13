@@ -54,6 +54,7 @@ export default function ToolboxForm({
         contractingCorpName: [],
         dashboardPublicMatters: '',
         toolboxHint: {},
+        signaturePermit: { workBefore: false, knockOff: false },
     });
     const [options, setOptions] = useState<IToolboxOptions>({
         toolboxHint: {},
@@ -70,6 +71,7 @@ export default function ToolboxForm({
                 contractingCorpName: d.contractingCorpName,
                 dashboardPublicMatters: d.dashboardPublicMatters,
                 toolboxHint: d.toolboxHint,
+                signaturePermit: d.toolboxSignaturePermit,
             });
 
             setOptions({
@@ -96,6 +98,8 @@ export default function ToolboxForm({
     useEffect(() => {
         f.updateAllHint();
     }, [loading]);
+
+    console.log(data);
 
     return (
         <Form>
@@ -730,6 +734,8 @@ export default function ToolboxForm({
                     <GridItem
                         rowStart={1}
                         rowEnd={3}
+                        colStart={1}
+                        colEnd={2}
                         {...titleStyle}
                         borderRight="0px"
                     />
@@ -758,6 +764,8 @@ export default function ToolboxForm({
                     <GridItem
                         rowStart={1}
                         rowEnd={3}
+                        colStart={7}
+                        colEnd={8}
                         {...titleStyle}
                         justifyContent="center"
                         borderLeft="0px"
@@ -796,9 +804,19 @@ export default function ToolboxForm({
                     >
                         收工前
                     </GridItem>
-                    <GridItem {...centerStyle}>1</GridItem>
+                    <GridItem
+                        rowStart={3}
+                        rowEnd={4}
+                        colStart={1}
+                        colEnd={2}
+                        {...centerStyle}
+                    >
+                        1
+                    </GridItem>
                     <GridItem
                         {...contentStyle}
+                        rowStart={3}
+                        rowEnd={4}
                         colStart={2}
                         colEnd={4}
                         borderRight="1px"
@@ -807,6 +825,7 @@ export default function ToolboxForm({
                         作業內容符合申請種類。
                     </GridItem>
                     <GridInputItem
+                        gridRange={[3, 4, 4, 5]}
                         fieldName="contentConformBeforeWork"
                         inputComponent={f.checkBox(
                             'contentConformBeforeWork',
@@ -815,6 +834,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[3, 4, 5, 6]}
                         fieldName="contentConformDuringWork"
                         inputComponent={f.checkBox(
                             'contentConformDuringWork',
@@ -822,8 +842,16 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px' }}
                     />
-                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem
+                        rowStart={3}
+                        rowEnd={4}
+                        colStart={6}
+                        colEnd={7}
+                        borderBottom="1px"
+                        borderRight="1px"
+                    />
                     <GridInputItem
+                        gridRange={[3, 4, 7, 8]}
                         fieldName="contentConformSupervisor"
                         inputComponent={f.checkBox(
                             'contentConformSupervisor',
@@ -831,9 +859,19 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
-                    <GridItem {...centerStyle}>2</GridItem>
+                    <GridItem
+                        {...centerStyle}
+                        rowStart={4}
+                        rowEnd={5}
+                        colStart={1}
+                        colEnd={2}
+                    >
+                        2
+                    </GridItem>
                     <GridItem
                         {...contentStyle}
+                        rowStart={4}
+                        rowEnd={5}
                         colStart={2}
                         colEnd={4}
                         borderRight="1px"
@@ -842,6 +880,7 @@ export default function ToolboxForm({
                         確實執行相關作業檢點及安全防範措施。
                     </GridItem>
                     <GridInputItem
+                        gridRange={[4, 5, 4, 5]}
                         fieldName="safetyMeasureBeforeWork"
                         inputComponent={f.checkBox(
                             'safetyMeasureBeforeWork',
@@ -850,6 +889,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[4, 5, 5, 6]}
                         fieldName="safetyMeasureDuringWork"
                         inputComponent={f.checkBox(
                             'safetyMeasureDuringWork',
@@ -858,6 +898,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[4, 5, 6, 7]}
                         fieldName="safetyMeasureKnockOff"
                         inputComponent={f.checkBox(
                             'safetyMeasureKnockOff',
@@ -866,6 +907,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[4, 5, 7, 8]}
                         fieldName="safetyMeasureSupervisor"
                         inputComponent={f.checkBox(
                             'safetyMeasureSupervisor',
@@ -873,9 +915,19 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
-                    <GridItem {...centerStyle}>3</GridItem>
+                    <GridItem
+                        {...centerStyle}
+                        rowStart={5}
+                        rowEnd={6}
+                        colStart={1}
+                        colEnd={2}
+                    >
+                        3
+                    </GridItem>
                     <GridItem
                         {...contentStyle}
+                        rowStart={5}
+                        rowEnd={6}
                         colStart={2}
                         colEnd={4}
                         borderRight="1px"
@@ -884,6 +936,7 @@ export default function ToolboxForm({
                         作業人員確實配戴/使用安全防護具、精神狀態/身體狀況正常。
                     </GridItem>
                     <GridInputItem
+                        gridRange={[5, 6, 4, 5]}
                         fieldName="staffStateBeforeWork"
                         inputComponent={f.checkBox(
                             'staffStateBeforeWork',
@@ -892,6 +945,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[5, 6, 5, 6]}
                         fieldName="staffStateDuringWork"
                         inputComponent={f.checkBox(
                             'staffStateDuringWork',
@@ -900,6 +954,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[5, 6, 6, 7]}
                         fieldName="staffStateKnockOff"
                         inputComponent={f.checkBox(
                             'staffStateKnockOff',
@@ -908,6 +963,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[5, 6, 7, 8]}
                         fieldName="staffStateSupervisor"
                         inputComponent={f.checkBox(
                             'staffStateSupervisor',
@@ -915,9 +971,19 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
-                    <GridItem {...centerStyle}>4</GridItem>
+                    <GridItem
+                        {...centerStyle}
+                        rowStart={6}
+                        rowEnd={7}
+                        colStart={1}
+                        colEnd={2}
+                    >
+                        4
+                    </GridItem>
                     <GridItem
                         {...contentStyle}
+                        rowStart={6}
+                        rowEnd={7}
                         colStart={2}
                         colEnd={4}
                         borderRight="1px"
@@ -926,6 +992,7 @@ export default function ToolboxForm({
                         作業主管確實於現場監督。
                     </GridItem>
                     <GridInputItem
+                        gridRange={[6, 7, 4, 5]}
                         fieldName="principleOnSiteBeforeWork"
                         inputComponent={f.checkBox(
                             'principleOnSiteBeforeWork',
@@ -934,6 +1001,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[6, 7, 5, 6]}
                         fieldName="principleOnSiteDuringWork"
                         inputComponent={f.checkBox(
                             'principleOnSiteDuringWork',
@@ -942,6 +1010,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[6, 7, 6, 7]}
                         fieldName="principleOnSiteKnockOff"
                         inputComponent={f.checkBox(
                             'principleOnSiteKnockOff',
@@ -950,6 +1019,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[6, 7, 7, 8]}
                         fieldName="principleOnSiteSupervisor"
                         inputComponent={f.checkBox(
                             'principleOnSiteSupervisor',
@@ -957,9 +1027,19 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
-                    <GridItem {...centerStyle}>5</GridItem>
+                    <GridItem
+                        {...centerStyle}
+                        rowStart={7}
+                        rowEnd={8}
+                        colStart={1}
+                        colEnd={2}
+                    >
+                        5
+                    </GridItem>
                     <GridItem
                         {...contentStyle}
+                        rowStart={7}
+                        rowEnd={8}
                         colStart={2}
                         colEnd={4}
                         borderRight="1px"
@@ -967,9 +1047,22 @@ export default function ToolboxForm({
                     >
                         收工前，施工地點應整理妥當，將水電氣設施及防護設備/措施復原。
                     </GridItem>
-                    <GridItem borderBottom="1px" />
-                    <GridItem borderBottom="1px" />
+                    <GridItem
+                        rowStart={7}
+                        rowEnd={8}
+                        colStart={4}
+                        colEnd={5}
+                        borderBottom="1px"
+                    />
+                    <GridItem
+                        rowStart={7}
+                        rowEnd={8}
+                        colStart={5}
+                        colEnd={6}
+                        borderBottom="1px"
+                    />
                     <GridInputItem
+                        gridRange={[7, 8, 6, 7]}
                         fieldName="restorationKnockOff"
                         inputComponent={f.checkBox(
                             'restorationKnockOff',
@@ -978,6 +1071,7 @@ export default function ToolboxForm({
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
                     <GridInputItem
+                        gridRange={[7, 8, 7, 8]}
                         fieldName="restorationSupervisor"
                         inputComponent={f.checkBox(
                             'restorationSupervisor',
@@ -985,45 +1079,97 @@ export default function ToolboxForm({
                         )}
                         style={{ borderBottom: '1px', borderRight: '1px' }}
                     />
-                    <GridItem borderLeft="1px" borderBottom="1px" />
                     <GridItem
+                        rowStart={8}
+                        rowEnd={9}
+                        colStart={1}
+                        colEnd={2}
+                        borderLeft="1px"
+                        borderBottom="1px"
+                    />
+                    <GridItem
+                        rowStart={8}
+                        rowEnd={9}
                         colStart={2}
                         colEnd={4}
                         borderBottom="1px"
                         borderRight="1px"
                         borderLeft="1px"
                     />
-                    <GridItem borderBottom="1px" />
-                    <GridItem borderBottom="1px" />
-                    <GridItem borderBottom="1px" borderRight="1px" />
-                    <GridItem borderBottom="1px" borderRight="1px" />
-                    <GridItem borderLeft="1px" borderBottom="1px" />
                     <GridItem
+                        rowStart={8}
+                        rowEnd={9}
+                        colStart={4}
+                        colEnd={7}
+                        borderBottom="1px"
+                        borderRight="1px"
+                    />
+                    <GridItem
+                        rowStart={8}
+                        rowEnd={9}
+                        colStart={7}
+                        colEnd={8}
+                        borderBottom="1px"
+                        borderRight="1px"
+                    />
+                    <GridItem
+                        rowStart={9}
+                        rowEnd={10}
+                        colStart={1}
+                        colEnd={2}
+                        borderLeft="1px"
+                        borderBottom="1px"
+                    />
+                    <GridItem
+                        rowStart={9}
+                        rowEnd={10}
                         colStart={2}
                         colEnd={4}
                         borderBottom="1px"
                         borderRight="1px"
                         borderLeft="1px"
                     />
-                    <GridItem borderBottom="1px" />
-                    <GridItem borderBottom="1px" />
-                    <GridItem borderBottom="1px" borderRight="1px" />
-                    <GridItem borderBottom="1px" borderRight="1px" />
+                    <GridItem
+                        rowStart={9}
+                        rowEnd={10}
+                        colStart={4}
+                        colEnd={7}
+                        borderBottom="1px"
+                        borderRight="1px"
+                    />
+                    <GridItem
+                        rowStart={9}
+                        rowEnd={10}
+                        colStart={7}
+                        colEnd={8}
+                        borderBottom="1px"
+                        borderRight="1px"
+                    />
                     <GridItem
                         rowStart={10}
                         rowEnd={14}
+                        colStart={1}
+                        colEnd={2}
                         {...centerStyle}
                         letterSpacing="0.5em"
                         sx={{ writingMode: 'vertical-lr' }}
                     >
                         巡視紀錄
                     </GridItem>
-                    <GridItem rowStart={10} rowEnd={14} {...contentStyle}>
+                    <GridItem
+                        rowStart={10}
+                        rowEnd={14}
+                        colStart={2}
+                        colEnd={3}
+                        {...contentStyle}
+                    >
                         {f.abnormalRecord()}
                     </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
+                        colStart={3}
+                        colEnd={4}
                         {...centerStyle}
                         borderRight="1px"
                     >
@@ -1035,6 +1181,8 @@ export default function ToolboxForm({
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
+                        colStart={4}
+                        colEnd={5}
                         borderBottom="1px"
                         pb="2px"
                     >
@@ -1057,12 +1205,14 @@ export default function ToolboxForm({
                                 }
                             />
                         ) : (
-                            f.forbidSignOverlay()
+                            f.forbidOverlay('勾選所有檢查項目後才能簽名')
                         )}
                     </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
+                        colStart={5}
+                        colEnd={6}
                         borderBottom="1px"
                         pb="2px"
                     >
@@ -1085,12 +1235,14 @@ export default function ToolboxForm({
                                 }
                             />
                         ) : (
-                            f.forbidSignOverlay()
+                            f.forbidOverlay('勾選所有檢查項目後才能簽名')
                         )}
                     </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
+                        colStart={6}
+                        colEnd={7}
                         borderBottom="1px"
                         borderRight="1px"
                         pb="2px"
@@ -1114,12 +1266,14 @@ export default function ToolboxForm({
                                 }
                             />
                         ) : (
-                            f.forbidSignOverlay()
+                            f.forbidOverlay('勾選所有檢查項目後才能簽名')
                         )}
                     </GridItem>
                     <GridItem
                         rowStart={10}
                         rowEnd={13}
+                        colStart={7}
+                        colEnd={8}
                         borderBottom="1px"
                         borderRight="1px"
                         pb="2px"
@@ -1141,20 +1295,41 @@ export default function ToolboxForm({
                                 }
                             />
                         ) : (
-                            f.forbidSignOverlay()
+                            f.forbidOverlay('勾選所有檢查項目後才能簽名')
                         )}
                     </GridItem>
-                    <GridItem {...centerStyle} borderRight="1px">
+                    <GridItem
+                        rowStart={13}
+                        rowEnd={14}
+                        colStart={3}
+                        colEnd={4}
+                        {...centerStyle}
+                        borderRight="1px"
+                    >
                         檢查時間(時/分)
                     </GridItem>
-                    <GridItem {...centerStyle} borderLeft="0px">
+                    <GridItem
+                        rowStart={13}
+                        rowEnd={14}
+                        colStart={4}
+                        colEnd={5}
+                        {...centerStyle}
+                        borderLeft="0px"
+                    >
                         {f.validSignBeforeWork()
                             ? f.checkTimeInput(
                                   signatures.contractingCorpStaffSignatureFirst
                               )
                             : f.forbidOverlay()}
                     </GridItem>
-                    <GridItem {...centerStyle} borderLeft="0px">
+                    <GridItem
+                        rowStart={13}
+                        rowEnd={14}
+                        colStart={5}
+                        colEnd={6}
+                        {...centerStyle}
+                        borderLeft="0px"
+                    >
                         {f.validSignDuringWork()
                             ? f.checkTimeInput(
                                   signatures.contractingCorpStaffSignatureSecond
@@ -1162,6 +1337,10 @@ export default function ToolboxForm({
                             : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
+                        rowStart={13}
+                        rowEnd={14}
+                        colStart={6}
+                        colEnd={7}
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
@@ -1173,6 +1352,10 @@ export default function ToolboxForm({
                             : f.forbidOverlay()}
                     </GridItem>
                     <GridItem
+                        rowStart={13}
+                        rowEnd={14}
+                        colStart={7}
+                        colEnd={8}
                         {...centerStyle}
                         borderLeft="0px"
                         borderRight="1px"
@@ -1183,6 +1366,33 @@ export default function ToolboxForm({
                               )
                             : f.forbidOverlay()}
                     </GridItem>
+                    {!data.signaturePermit.workBefore && (
+                        <GridItem
+                            rowStart={3}
+                            rowEnd={10}
+                            colStart={4}
+                            colEnd={5}
+                            borderLeft="0px"
+                            borderBottom="1px"
+                            zIndex={99}
+                        >
+                            {f.forbidOverlay('請先完成相關特作業檢點表的開工前簽名')}
+                        </GridItem>
+                    )}
+                    {!data.signaturePermit.knockOff && (
+                        <GridItem
+                            rowStart={3}
+                            rowEnd={10}
+                            colStart={6}
+                            colEnd={7}
+                            borderLeft="0px"
+                            borderRight="1px"
+                            borderBottom="1px"
+                            zIndex={99}
+                        >
+                            {f.forbidOverlay('請先完成相關特作業檢點表的收工前簽名')}
+                        </GridItem>
+                    )}
                 </Grid>
                 <Flex justifyContent="space-between">
                     <Text>
