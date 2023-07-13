@@ -7,11 +7,12 @@ export interface IToolboxHint {
 export interface IToolboxData {
     contractingCorpName: string[] | null;
     dashboardPublicMatters: string;
-    toolboxHint: IToolboxHint ;
+    toolboxHint: IToolboxHint;
+    signaturePermit: { workBefore: boolean; knockOff: boolean };
 }
 
 export interface IToolboxOptions {
-    toolboxHint: IToolboxHint ;
+    toolboxHint: IToolboxHint;
 }
 
 export type SignatureName =
@@ -19,7 +20,7 @@ export type SignatureName =
     | 'contractingCorpStaffSignatureSecond'
     | 'contractingCorpStaffSignatureThird'
     | 'systemEngineerSignature'
-    | 'host' ;
+    | 'host';
 
 export type SignatureListName =
     | 'primeContractingCorpAppearance'
@@ -34,9 +35,9 @@ export type SignatureListGQLName =
     | 'viceThirdAppearSignature';
 
 export interface IToolbox {
-    abnormal: boolean ;
-    abnormalRecord: string ;
-    area: string ;
+    abnormal: boolean;
+    abnormalRecord: string;
+    area: string;
     biologicalHazard: boolean | null;
     body: boolean | null;
     bodyBelt: boolean | null;
@@ -50,7 +51,7 @@ export interface IToolbox {
     breatheDust: boolean | null;
     breatheFiltration: boolean | null;
     chemicalBurn: boolean | null;
-    chemicalInclude: string ;
+    chemicalInclude: string;
     chemicalInhalation: boolean | null;
     chemicalNone: boolean | null;
     collapse: boolean | null;
@@ -93,7 +94,7 @@ export interface IToolbox {
     footChemical: boolean | null;
     footNormal: boolean | null;
     foreignEnterEye: boolean | null;
-    gasInclude: string ;
+    gasInclude: string;
     gasNone: boolean | null;
     hand: boolean | null;
     handCut: boolean | null;
@@ -123,7 +124,7 @@ export interface IToolbox {
     number: string | null;
     objectFall: boolean | null;
     ohterPrevention: string;
-    otherDisaster: string ;
+    otherDisaster: string;
     otherDisasterNone: boolean | null;
     outdoorHeat: boolean | null;
     oxygen: boolean | null;
@@ -159,9 +160,9 @@ export interface IToolbox {
     systemBranch: string | null;
     systemEngineerSignature: ISignature | null;
     username: string | null;
-    viceFirstContractingCorpAppearance: ISignature[] ;
-    viceSecondContractingCorpAppearance: ISignature[] ;
-    viceThirdContractingCorpAppearance: ISignature[] ;
+    viceFirstContractingCorpAppearance: ISignature[];
+    viceSecondContractingCorpAppearance: ISignature[];
+    viceThirdContractingCorpAppearance: ISignature[];
     workContent: string | null;
     workPlace: string | null;
     zone: string | null;

@@ -21,9 +21,13 @@ import {
 export const GQL_TOOLBOX_QUERY = gql`
     ${SIGNATURE_FIELDS}
     ${APPEARANCE_SIGN_FIELD}
-    query queryToolboxMeeting($siteId: String!, $number: String) {
+    query queryToolboxMeeting($siteId: String!, $number: String!) {
         contractingCorpName(siteId: $siteId)
         dashboardPublicMatters(siteId: $siteId)
+        toolboxSignaturePermit(siteId: $siteId, number: $number) {
+            workBefore
+            knockOff
+        }
         toolboxMeeting(siteId: $siteId, number: $number) {
             siteId
             number
