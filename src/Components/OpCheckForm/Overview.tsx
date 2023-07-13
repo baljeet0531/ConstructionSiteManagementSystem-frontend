@@ -106,7 +106,6 @@ export default function OpCheckOverview(props: {
 
     const navSingleOpCheckForm = (number: string, opCheckName: OpCheckName) => {
         const url = `${window.location.origin}/form/opcheck`;
-        console.log(JSON.stringify({ number: number, type: opCheckName }));
         localStorage.setItem(
             'singleOpCheckObject',
             JSON.stringify({ number: number, type: opCheckName })
