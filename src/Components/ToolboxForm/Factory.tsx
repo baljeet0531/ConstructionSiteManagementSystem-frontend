@@ -58,10 +58,10 @@ export default class FormFactory extends SharedFactory {
             hypoxia: ['oxygen'],
         };
         this.otherEnable = {
-            otherDisaster: useState<boolean | null>(false),
-            chemicalInclude: useState<boolean | null>(false),
-            gasInclude: useState<boolean | null>(false),
-            ohterPrevention: useState<boolean | null>(false),
+            otherDisaster: useState<boolean | null>(null),
+            chemicalInclude: useState<boolean | null>(null),
+            gasInclude: useState<boolean | null>(null),
+            ohterPrevention: useState<boolean | null>(null),
         };
     }
 
@@ -184,6 +184,10 @@ export default class FormFactory extends SharedFactory {
                 this.formProps.values[name] !== ''
             ) {
                 setEnable(true);
+            } else if (this.formProps.values[name] === '') {
+                setEnable(false);
+            } else {
+                setEnable(null);
             }
         }, [this.formProps.values]);
         return (
@@ -200,7 +204,9 @@ export default class FormFactory extends SharedFactory {
                         : enable === false
                         ? (target = null)
                         : (target = true);
-                    if (!target) {
+                    if (target === null) {
+                        this.formProps.setFieldValue(name, null);
+                    } else if (target === false) {
                         this.formProps.setFieldValue(name, '');
                     }
                     setEnable(target);

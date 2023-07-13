@@ -99,7 +99,7 @@ export default function ToolboxForm({
         f.updateAllHint();
     }, [loading]);
 
-    console.log(data);
+    console.log(formProps.values);
 
     return (
         <Form>
