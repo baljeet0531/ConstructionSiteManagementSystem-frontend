@@ -265,7 +265,6 @@ export default function ToolboxForm({
                     無特殊危害)
                 </Text>
                 <Grid
-                    height="270px"
                     templateColumns="200fr 120fr 462fr"
                     templateRows="repeat(7, 1fr)"
                 >
@@ -333,21 +332,24 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('hypoxia', '缺氧')}
                         {f.threeStateCheckbox('biologicalHazard', '生物性危害')}
                         {f.threeStateCheckbox('outdoorHeat', '戶外高溫')}
-                        {f.othersField('otherDisaster', '其他:')}
+                        {f.otherCheckbox('otherDisaster', '其他:')}
+                        {f.otherTextInput('otherDisaster')}
                     </GridItem>
                     <GridItem colStart={1} colEnd={3} {...centerStyle}>
                         作業區域包含以下化學品及其附屬設備管線
                     </GridItem>
                     <GridItem {...contentStyle} borderRight="1px">
                         {f.threeStateCheckbox('chemicalNone', '無')}
-                        {f.othersField('chemicalInclude', '化學品名稱:')}
+                        {f.otherCheckbox('chemicalInclude', '化學品名稱:')}
+                        {f.otherTextInput('chemicalInclude')}
                     </GridItem>
                     <GridItem colStart={1} colEnd={3} {...centerStyle}>
                         作業區域包含以下氣體及其附屬設備管線
                     </GridItem>
                     <GridItem {...contentStyle} borderRight="1px">
                         {f.threeStateCheckbox('gasNone', '無')}
-                        {f.othersField('gasInclude', '氣體名稱:')}
+                        {f.otherCheckbox('gasInclude', '氣體名稱:')}
+                        {f.otherTextInput('gasInclude')}
                     </GridItem>
                 </Grid>
                 <Text pt={1}>
@@ -355,7 +357,6 @@ export default function ToolboxForm({
                     (請逐一確認，有請「V」，無請「X」;個人防護具需功能正常方可使用)
                 </Text>
                 <Grid
-                    height="600px"
                     templateColumns="40fr 135fr 587fr"
                     templateRows="repeat(14, 1fr) 4fr"
                 >
@@ -374,7 +375,11 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             01.
                         </Text>
-                        {f.threeStateCheckbox('head', '頭部防護:')}
+                        {f.threeStateCheckbox('head', '頭部防護:', [
+                            'headWorkspace',
+                            'headElectric',
+                            'headPlastic',
+                        ])}
                     </GridItem>
                     <GridItem {...titleStyle} borderLeft="0px">
                         {f.threeStateCheckbox('headWorkspace', '工地用')}
@@ -385,7 +390,10 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             02.
                         </Text>
-                        {f.threeStateCheckbox('eye', '眼部防護:')}
+                        {f.threeStateCheckbox('eye', '眼部防護:', [
+                            'eyeMechanical',
+                            'eyeRadia',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -405,7 +413,10 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             03.
                         </Text>
-                        {f.threeStateCheckbox('ear', '耳部防護:')}
+                        {f.threeStateCheckbox('ear', '耳部防護:', [
+                            'earEarplugs',
+                            'earEarmuffs',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -419,7 +430,13 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             04.
                         </Text>
-                        {f.threeStateCheckbox('breathe', '呼吸防護:')}
+                        {f.threeStateCheckbox('breathe', '呼吸防護:', [
+                            'breatheDust',
+                            'breatheFiltration',
+                            'breatheScba',
+                            'breathePapr',
+                            'breathOxygen',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -436,7 +453,13 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             05.
                         </Text>
-                        {f.threeStateCheckbox('hand', '手部防護:')}
+                        {f.threeStateCheckbox('hand', '手部防護:', [
+                            'handCut',
+                            'handGrand',
+                            'handHeat',
+                            'handElectirc',
+                            'haneChemical',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -453,7 +476,10 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             06.
                         </Text>
-                        {f.threeStateCheckbox('foot', '足部防護:')}
+                        {f.threeStateCheckbox('foot', '足部防護:', [
+                            'footNormal',
+                            'footChemical',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -467,7 +493,12 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             07.
                         </Text>
-                        {f.threeStateCheckbox('body', '身體防護:')}
+                        {f.threeStateCheckbox('body', '身體防護:', [
+                            'bodyBelt',
+                            'bodyMask',
+                            'bodyClothing',
+                            'bodyVest',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -483,7 +514,19 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             08.
                         </Text>
-                        {f.threeStateCheckbox('fall', '墜落預防:')}
+                        {f.threeStateCheckbox('fall', '墜落預防:', [
+                            'fallTrestleLadder',
+                            'fallTravelLadder',
+                            'fallScaffold',
+                            'fallAerialVehicle',
+                            'fallSafeLine',
+                            'fallCage',
+                            'fallFence',
+                            'fallCover',
+                            'fallSafeNet',
+                            'fallWarningFence',
+                            'fallArrestor',
+                        ])}
                     </GridItem>
                     <GridItem
                         rowStart={8}
@@ -512,7 +555,11 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             09.
                         </Text>
-                        {f.threeStateCheckbox('electric', '感電預防:')}
+                        {f.threeStateCheckbox('electric', '感電預防:', [
+                            'electricBreaker',
+                            'electricShockPrevention',
+                            'electricElectroscope',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -530,7 +577,11 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             10.
                         </Text>
-                        {f.threeStateCheckbox('fire', '火災預防:')}
+                        {f.threeStateCheckbox('fire', '火災預防:', [
+                            'fireExtinguisher',
+                            'fireBlanket',
+                            'fireBackfire',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -548,7 +599,13 @@ export default function ToolboxForm({
                         <Text pl={1} w="30px">
                             11.
                         </Text>
-                        {f.threeStateCheckbox('oxygen', '缺氧預防:')}
+                        {f.threeStateCheckbox('oxygen', '缺氧預防:', [
+                            'oxygenVentilation',
+                            'oxygenLifeDetection',
+                            'oxygenGasDetection',
+                            'oxygenLifting',
+                            'oxygenRescue',
+                        ])}
                     </GridItem>
                     <GridItem
                         {...contentStyle}
@@ -567,16 +624,18 @@ export default function ToolboxForm({
                         {f.threeStateCheckbox('oxygenLifting', '吊升設備')}
                         {f.threeStateCheckbox('oxygenRescue', '搶救設備')}
                     </GridItem>
-                    <GridItem
-                        colStart={2}
-                        colEnd={4}
-                        {...contentStyle}
-                        borderRight="1px"
-                    >
+                    <GridItem {...contentStyle}>
                         <Text pl={1} w="30px">
                             12.
                         </Text>
-                        {f.othersField('ohterPrevention', '其他預防:', '500px')}
+                        {f.otherCheckbox('ohterPrevention', '其他預防:')}
+                    </GridItem>
+                    <GridItem
+                        {...contentStyle}
+                        borderLeft="0px"
+                        borderRight="1px"
+                    >
+                        {f.otherTextInput('ohterPrevention', '500px')}
                     </GridItem>
                     <GridItem
                         colStart={1}

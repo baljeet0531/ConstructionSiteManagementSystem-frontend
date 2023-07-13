@@ -30,6 +30,10 @@ export default class FormFactory extends SharedFactory {
     options: IToolboxOptions;
     setOptions: Dispatch<SetStateAction<IToolboxOptions>>;
     hintRelation: { [key: string]: string[] };
+    otherEnable: Record<
+        'otherDisaster' | 'chemicalInclude' | 'gasInclude' | 'ohterPrevention',
+        [boolean | null, Dispatch<SetStateAction<boolean | null>>]
+    >;
 
     constructor(
         formProps: FormikProps<IToolbox>,
@@ -52,6 +56,12 @@ export default class FormFactory extends SharedFactory {
             fireDisaster: ['fire'],
             explode: ['fire'],
             hypoxia: ['oxygen'],
+        };
+        this.otherEnable = {
+            otherDisaster: useState<boolean | null>(false),
+            chemicalInclude: useState<boolean | null>(false),
+            gasInclude: useState<boolean | null>(false),
+            ohterPrevention: useState<boolean | null>(false),
         };
     }
 
@@ -126,7 +136,11 @@ export default class FormFactory extends SharedFactory {
             },
         });
     }
-    threeStateCheckbox(name: keyof IToolbox, text: string) {
+    threeStateCheckbox(
+        name: keyof IToolbox,
+        text: string,
+        relatedFields?: (keyof IToolbox)[]
+    ) {
         const value = this.formProps.values[name] as boolean;
         const key = name as keyof IToolboxOptions['toolboxHint'];
         const hint = this.options.toolboxHint[key];
@@ -145,6 +159,15 @@ export default class FormFactory extends SharedFactory {
                         ? (target = null)
                         : (target = true);
                     this.formProps.setFieldValue(name, target);
+                    if (target === false && relatedFields) {
+                        relatedFields.map((n) => {
+                            this.formProps.setFieldValue(n, false);
+                        });
+                    } else if (relatedFields) {
+                        relatedFields.map((n) => {
+                            this.formProps.setFieldValue(n, null);
+                        });
+                    }
                     this.handleHint(name, target);
                 }}
                 variant={hint ? 'hint' : ''}
@@ -153,45 +176,56 @@ export default class FormFactory extends SharedFactory {
             </Checkbox>
         );
     }
-    othersField(name: keyof IToolbox, text: string, w: string = '120px') {
-        const [enable, setEnable] = useState(false);
+    otherCheckbox(name: keyof typeof this.otherEnable, text: string) {
+        const [enable, setEnable] = this.otherEnable[name];
         useEffect(() => {
             if (
                 this.formProps.values[name] !== null &&
                 this.formProps.values[name] !== ''
             ) {
                 setEnable(true);
-            } else {
-                setEnable(false);
             }
         }, [this.formProps.values]);
         return (
-            <>
-                <Checkbox
-                    pl={3}
-                    isChecked={enable}
-                    onChange={() => {
-                        if (enable) {
-                            this.formProps.setFieldValue(name, '');
-                        }
-                        setEnable(!enable);
-                    }}
-                >
-                    {text}
-                </Checkbox>
-                <Input
-                    type="text"
-                    border="0px"
-                    w={w}
-                    isDisabled={!enable}
-                    placeholder={enable ? '填寫' : ''}
-                    _placeholder={placeholderStyle}
-                    value={this.formProps.values[name] as string}
-                    onChange={(e) => {
-                        this.formProps.setFieldValue(name, e.target.value);
-                    }}
-                />
-            </>
+            <Checkbox
+                pl={3}
+                icon={<ThreeStateIcon />}
+                colorScheme={enable === false ? 'red' : 'blue'}
+                isChecked={!!enable}
+                isIndeterminate={enable === false}
+                onChange={() => {
+                    let target = null;
+                    enable
+                        ? (target = false)
+                        : enable === false
+                        ? (target = null)
+                        : (target = true);
+                    if (!target) {
+                        this.formProps.setFieldValue(name, '');
+                    }
+                    setEnable(target);
+                }}
+            >
+                {text}
+            </Checkbox>
+        );
+    }
+    otherTextInput(name: keyof typeof this.otherEnable, w: string = '120px') {
+        const [enable] = this.otherEnable[name];
+        return (
+            <Input
+                type="text"
+                border="0px"
+                w={w}
+                pl="10px"
+                isDisabled={!enable}
+                placeholder={enable ? '填寫' : ''}
+                _placeholder={placeholderStyle}
+                value={this.formProps.values[name] as string}
+                onChange={(e) => {
+                    this.formProps.setFieldValue(name, e.target.value);
+                }}
+            />
         );
     }
     checkBox(name: keyof IToolbox, disable: boolean = false) {
