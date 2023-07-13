@@ -735,7 +735,7 @@ export default function ToolboxForm({
                         borderLeft="0px"
                         borderRight="1px"
                     >
-                        放工前
+                        收工前
                     </GridItem>
                     <GridItem {...centerStyle}>1</GridItem>
                     <GridItem
@@ -1038,7 +1038,7 @@ export default function ToolboxForm({
                     >
                         {f.validSignKnockOff() ? (
                             <SignaturePad
-                                title="放工前 - 簽名"
+                                title="收工前 - 簽名"
                                 signatureName="knock-off-signature.png"
                                 handler={
                                     new SingleSignatureHandler(
