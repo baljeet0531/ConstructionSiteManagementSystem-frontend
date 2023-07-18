@@ -108,6 +108,7 @@ export default function WorkPermitFormik() {
         headPlastic: null,
         headWorkspace: null,
         heatTouch: null,
+        host: null,
         hypoxia: null,
         laborAmount: null,
         meetingDate: dayjs().format('YYYY-MM-DD'),
@@ -170,6 +171,7 @@ export default function WorkPermitFormik() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
+        host: useState<ISignature>(),
         contractingCorpStaffSignatureFirst: useState<ISignature>(),
         contractingCorpStaffSignatureSecond: useState<ISignature>(),
         contractingCorpStaffSignatureThird: useState<ISignature>(),

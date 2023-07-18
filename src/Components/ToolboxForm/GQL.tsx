@@ -21,9 +21,13 @@ import {
 export const GQL_TOOLBOX_QUERY = gql`
     ${SIGNATURE_FIELDS}
     ${APPEARANCE_SIGN_FIELD}
-    query queryToolboxMeeting($siteId: String!, $number: String) {
+    query queryToolboxMeeting($siteId: String!, $number: String!) {
         contractingCorpName(siteId: $siteId)
         dashboardPublicMatters(siteId: $siteId)
+        toolboxSignaturePermit(siteId: $siteId, number: $number) {
+            workBefore
+            knockOff
+        }
         toolboxMeeting(siteId: $siteId, number: $number) {
             siteId
             number
@@ -144,6 +148,12 @@ export const GQL_TOOLBOX_QUERY = gql`
             restorationSupervisor
             abnormal
             abnormalRecord
+            host {
+                ...gqlSignatureFields
+                accountRef {
+                    name
+                }
+            }
             contractingCorpStaffSignatureFirst {
                 ...gqlSignatureFields
             }
@@ -524,6 +534,7 @@ export function parseToolbox(
 ): IToolbox | undefined {
     if (!list[0]) return;
     const signatureColName: SignatureName[] = [
+        'host',
         'contractingCorpStaffSignatureFirst',
         'contractingCorpStaffSignatureSecond',
         'contractingCorpStaffSignatureThird',
@@ -564,7 +575,7 @@ export function parseToolbox(
     }
 
     if (!t.publicityMatters) {
-        t.publicityMatters = dashboardPublicMatters
+        t.publicityMatters = dashboardPublicMatters;
     }
 
     // Handle single singnatures

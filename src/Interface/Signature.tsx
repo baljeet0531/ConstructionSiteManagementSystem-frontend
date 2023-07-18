@@ -6,6 +6,12 @@ export interface ISignature {
     image: File | undefined;
     time: dayjs.Dayjs | undefined;
     owner: string | undefined;
+    accountRef?: {
+        username: string;
+        name?: string;
+        superuser?: boolean;
+        createdTime?: boolean;
+    }
 }
 
 export interface IGQLSignature {
@@ -13,6 +19,12 @@ export interface IGQLSignature {
     path: string;
     time: string;
     owner: string;
+    accountRef?: {
+        username: string;
+        name?: string;
+        superuser?: boolean;
+        createdTime?: boolean;
+    }
 }
 
 export type SignatureStateItem = [
@@ -36,6 +48,7 @@ export async function getSignature(sign: IGQLSignature) {
         image: undefined,
         time: dayjs(sign.time, 'YYYY-MM-DDTHH:mm:ss'),
         owner: sign.owner,
+        accountRef: sign.accountRef
     };
     if (sign.path) {
         const blob = await getImage(sign.path);
