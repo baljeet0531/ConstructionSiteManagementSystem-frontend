@@ -111,7 +111,7 @@ export default function OpCheckForm({
                     <GridItem {...unboxStyle}>施工地點：</GridItem>
                     <GridInputItem
                         fieldName="area"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
                     <GridItem {...unboxStyle} justifyContent="flex-end">
@@ -119,7 +119,7 @@ export default function OpCheckForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="zone"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
                     <GridItem {...unboxStyle} justifyContent="flex-end">
@@ -127,7 +127,7 @@ export default function OpCheckForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="department"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.textInput(true)}
                         style={{ ...unboxStyle }}
                     />
                     <GridItem {...unboxStyle} justifyContent="flex-end">
@@ -135,7 +135,9 @@ export default function OpCheckForm({
                     </GridItem>
                     <GridInputItem
                         fieldName="day"
-                        inputComponent={<Input type="date" size="sm" />}
+                        inputComponent={
+                            <Input type="date" size="sm" isDisabled />
+                        }
                         style={{ ...unboxStyle }}
                     />
                 </Grid>
