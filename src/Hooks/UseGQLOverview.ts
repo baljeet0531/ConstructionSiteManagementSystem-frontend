@@ -114,6 +114,7 @@ export const useGQLOverview = <
         tableData,
         setTableData,
         filteredPrimaryKey,
+        setFilteredPrimaryKey,
         loading,
         searchFunction,
         exportFunction,
