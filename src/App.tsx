@@ -93,6 +93,10 @@ function App() {
                     element={<Layout page="ehs_photo" />}
                 />
                 <Route
+                    path="/ehs/special-education-training"
+                    element={<Layout page="ehs_special_education_training" />}
+                />
+                <Route
                     path="/outsource/form/work-permit"
                     element={<Layout page="outsource_work_permit_form" />}
                 />
