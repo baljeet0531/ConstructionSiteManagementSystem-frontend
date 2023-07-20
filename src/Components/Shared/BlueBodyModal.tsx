@@ -80,7 +80,6 @@ export default function BlueBodyModal(props: {
                             mr={3}
                             onClick={() => {
                                 cancelButton.handleClick();
-                                onClose();
                             }}
                         >
                             {cancelButton.name}
@@ -91,7 +90,6 @@ export default function BlueBodyModal(props: {
                             height={'28px'}
                             onClick={() => {
                                 confirmButton.handleClick();
-                                onClose();
                             }}
                         >
                             {confirmButton.name}
