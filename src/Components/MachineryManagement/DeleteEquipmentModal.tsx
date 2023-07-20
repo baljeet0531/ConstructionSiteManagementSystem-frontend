@@ -55,14 +55,17 @@ export default function DeleteEquipmentModal(props: {
             confirmButton={{
                 name: '確定',
                 handleClick: () => {
-                    deleteMachinery({
-                        variables: {
-                            siteId: siteId,
-                            checkId: selectedData.map(
-                                ({ inspectionNo }) => inspectionNo
-                            ),
-                        },
-                    });
+                    if (selectedData.length) {
+                        deleteMachinery({
+                            variables: {
+                                siteId: siteId,
+                                checkId: selectedData.map(
+                                    ({ inspectionNo }) => inspectionNo
+                                ),
+                            },
+                        });
+                    }
+                    onClose();
                 },
             }}
             isOpen={isOpen}
