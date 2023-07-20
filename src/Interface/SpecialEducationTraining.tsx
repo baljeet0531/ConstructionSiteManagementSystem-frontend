@@ -1,5 +1,7 @@
+import { TItem } from '../Components/SpecialEducationTraining/SpecialEducationTraining';
+
 export interface ISpecialEducationalTraining {
-    item: string;
+    item: TItem;
     date: string;
     corp: string;
     name: string;
