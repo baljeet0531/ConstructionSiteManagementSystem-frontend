@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     Button,
     Flex,
@@ -31,6 +30,7 @@ import {
     IUpdateSpecialEducationalTraining,
     IUpdateSpecialEducationalTrainingVar,
 } from '../../Interface/SpecialEducationTraining';
+import SETDatePickerElement from './SETDatePickerElement';
 
 export const QUERY_SPECIAL_EDUCATION_TRAINING = gql`
     query SpecialEducationalTraining(
@@ -140,7 +140,7 @@ export default function SpecialEducationTraining() {
 
     const handleInput = () => {
         handleDebounceSearch(timeout, () => handleSearch(dateRange), 300, {
-            resetCondition: !searchInputRef.current?.value.trim(),
+            resetCondition: !searchInputRef.current?.value.trim() && !dateRange,
             resetFunction: () => setFilteredPrimaryKey(undefined),
         });
     };
@@ -166,37 +166,39 @@ export default function SpecialEducationTraining() {
         },
         {
             title: '項次',
-            width: 152,
+            width: 147,
             variable: 'item',
             getElement: defaultElement,
         },
         {
             title: '日期',
-            width: 135,
+            width: 160,
             variable: 'date',
-            getElement: defaultElement,
+            getElement: (props) => (
+                <SETDatePickerElement {...props} updateResult={updateResult} />
+            ),
         },
         {
             title: '承商名稱',
-            width: 135,
+            width: 130,
             variable: 'corp',
             getElement: defaultElement,
         },
         {
             title: '姓名',
-            width: 135,
+            width: 130,
             variable: 'name',
             getElement: defaultElement,
         },
         {
             title: '身分證字號',
-            width: 135,
+            width: 130,
             variable: 'idno',
             getElement: defaultElement,
         },
         {
             title: '次承商名稱',
-            width: 135,
+            width: 130,
             variable: 'viceCorp',
             getElement: defaultElement,
         },
@@ -219,7 +221,7 @@ export default function SpecialEducationTraining() {
                     <Input
                         ref={searchInputRef}
                         variant={'search'}
-                        placeholder={'搜尋身份證字號或承商'}
+                        placeholder={'搜尋姓名或承商'}
                         onChange={handleInput}
                         height={'40px'}
                     />
