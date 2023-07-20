@@ -293,16 +293,7 @@ export function getFeatureMap(site: {
         ehs_special_education_training: {
             name: '特殊教育訓練',
             path: '/ehs/special-education-training',
-            page:
-                siteId == '' ? (
-                    emptySiteIdPage
-                ) : (
-                    <SpecialEducationTraining
-                        key={siteId}
-                        siteId={siteId}
-                        siteName={siteName}
-                    />
-                ),
+            page: <SpecialEducationTraining />,
         },
         outsource_work_permit_form: {
             name: '工作許可單',
