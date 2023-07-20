@@ -1,5 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Button, Flex, Input, Text, useToast } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Input,
+    Text,
+    useDisclosure,
+    useToast,
+} from '@chakra-ui/react';
 import React from 'react';
 import { DateRangePicker } from 'rsuite';
 import { DateRange } from 'rsuite/esm/DateRangePicker';
@@ -9,15 +16,23 @@ import ReactWindowTable, {
     ISizes,
     defaultElement,
 } from '../Shared/ReactWindowTable';
-import { useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
 import { TOverviewTable } from '../../Types/TableOverview';
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
 import { handleDebounceSearch } from '../../Utils/Web';
 import { AddIcon } from '../../Icons/Icons';
+import CreateSETModal from './CreateSETModal';
+import { useGQLOverview } from '../../Hooks/UseGQLOverview';
+import {
+    ISpecialEducationalTraining,
+    IQuerySpecialEducationalTraining,
+    IQuerySpecialEducationalTrainingVar,
+    IUpdateSpecialEducationalTraining,
+    IUpdateSpecialEducationalTrainingVar,
+} from '../../Interface/SpecialEducationTraining';
 
-const QUERY_SPECIAL_EDUCATION_TRAINING = gql`
+export const QUERY_SPECIAL_EDUCATION_TRAINING = gql`
     query SpecialEducationalTraining(
         $keyWord: String
         $startDay: Date
@@ -37,7 +52,7 @@ const QUERY_SPECIAL_EDUCATION_TRAINING = gql`
         }
     }
 `;
-const UPDATE_SPECIAL_EDUCATION_TRAINING = gql`
+export const UPDATE_SPECIAL_EDUCATION_TRAINING = gql`
     mutation UpdateSpecialEducationalTraining(
         $date: Date
         $idno: String!
@@ -54,35 +69,26 @@ const UPDATE_SPECIAL_EDUCATION_TRAINING = gql`
     }
 `;
 
-interface ISpecialEducationalTraining {
-    item: string;
-    date: string;
-    corp: string;
-    name: string;
-    idno: string;
-    viceCorp: string;
-}
-
-interface IQuerySpecialEducationalTraining {
-    specialEducationalTraining: ISpecialEducationalTraining[];
-}
-interface IUpdateSpecialEducationalTraining {
-    updateSpecialEducationalTraining: {
-        ok: boolean;
-        message: string;
-    };
-}
-
 const sizes: ISizes = {
     headerHeight: 44,
     cellHeight: 44,
 };
 
-export default function SpecialEducationTraining(props: {
-    siteId: string;
-    siteName: string;
-}) {
-    const { siteId, siteName } = props;
+export type TItem = '缺氧作業' | '有機溶劑' | '高空車作業' | '電銲作業';
+export const Items: TItem[] = [
+    '缺氧作業',
+    '有機溶劑',
+    '高空車作業',
+    '電銲作業',
+];
+export const ItemsOptions = Items.map((item, index) => (
+    <option key={index} value={item}>
+        {item}
+    </option>
+));
+
+export default function SpecialEducationTraining() {
+    const { onOpen, onClose, isOpen } = useDisclosure();
     const toast = useToast();
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
     const {
@@ -90,27 +96,26 @@ export default function SpecialEducationTraining(props: {
         setTableData,
         filteredPrimaryKey,
         setFilteredPrimaryKey,
-        searchFunction,
-        updateFunction,
+        filterResult: [filterFunction],
+        updateResult,
         loading,
     } = useGQLOverview<
         ISpecialEducationalTraining,
         IQuerySpecialEducationalTraining,
-        {},
-        IUpdateSpecialEducationalTraining
+        IQuerySpecialEducationalTrainingVar,
+        IUpdateSpecialEducationalTraining,
+        IUpdateSpecialEducationalTrainingVar
     >({
-        siteId: siteId,
         gqlOverview: QUERY_SPECIAL_EDUCATION_TRAINING,
         handleData: (data) =>
             data['specialEducationalTraining'].reduce((acc, value, index) => {
-                const { item, date, idno } = value;
+                const { item, idno } = value;
                 const primaryKey = JSON.stringify({
                     item,
-                    date,
                     idno,
                 });
 
-                acc[primaryKey] = { ...value, index };
+                acc[primaryKey] = { ...value, index: index + 1 };
                 return acc;
             }, {} as TOverviewTable<ISpecialEducationalTraining & { index: number }>),
         gqlFilter: QUERY_SPECIAL_EDUCATION_TRAINING,
@@ -123,6 +128,10 @@ export default function SpecialEducationTraining(props: {
             updateSpecialEducationalTraining: { ok, message },
         }) => {
             ok && defaultSuccessToast(toast, message);
+        },
+        updateOptions: {
+            refetchQueries: [QUERY_SPECIAL_EDUCATION_TRAINING],
+            awaitRefetchQueries: true,
         },
     });
 
@@ -137,11 +146,11 @@ export default function SpecialEducationTraining(props: {
     };
 
     const handleSearch = (dateRange: DateRange | null) => {
-        searchFunction({
+        filterFunction({
             variables: {
                 keyWord: searchInputRef.current?.value,
-                start: dateRange && dayjs(dateRange[0]).format('YYYY/MM/DD'),
-                end: dateRange && dayjs(dateRange[1]).format('YYYY/MM/DD'),
+                startDay: dateRange && dayjs(dateRange[0]).format('YYYY/MM/DD'),
+                endDay: dateRange && dayjs(dateRange[1]).format('YYYY/MM/DD'),
             },
         });
     };
@@ -204,7 +213,6 @@ export default function SpecialEducationTraining(props: {
             pb={'24px'}
             gap={'11px'}
         >
-            <Text variant={'pageSiteName'}>{siteName}</Text>
             <Text variant={'pageTitle'}>特殊教育訓練</Text>
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
@@ -228,7 +236,11 @@ export default function SpecialEducationTraining(props: {
                     />
                 </Flex>
                 <Flex gap={'10px'} align={'center'}>
-                    <Button variant={'buttonBlueSolid'} leftIcon={<AddIcon />}>
+                    <Button
+                        variant={'buttonBlueSolid'}
+                        leftIcon={<AddIcon />}
+                        onClick={onOpen}
+                    >
                         新增教育訓練
                     </Button>
                 </Flex>
@@ -240,6 +252,12 @@ export default function SpecialEducationTraining(props: {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
                 sortReversed={true}
+            />
+            <CreateSETModal
+                onClose={onClose}
+                isOpen={isOpen}
+                updateResult={updateResult}
+                filterFunction={filterFunction}
             />
             {loading && <PageLoading />}
         </Flex>
