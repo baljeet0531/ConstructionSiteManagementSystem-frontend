@@ -82,6 +82,11 @@ export interface IFaultFormCheckOverviewExtend extends IFaultFormCheckOverview {
 export interface IQueryFaultFormCheck {
     faultFormCheck: IFaultFormCheckOverview[];
 }
+export interface IQueryFaultFormCheckVar {
+    siteId: string;
+    start?: string | null;
+    end?: string | null;
+}
 
 export interface IUpdateFaultFormCheck {
     updateFaultFormCheck: {
@@ -89,7 +94,6 @@ export interface IUpdateFaultFormCheck {
         message: string;
     };
 }
-
 export interface IUpdateFaultFormCheckVar {
     siteId: string;
     code: string;
