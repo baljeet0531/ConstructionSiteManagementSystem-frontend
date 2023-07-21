@@ -74,19 +74,6 @@ const sizes: ISizes = {
     cellHeight: 44,
 };
 
-export type TItem = '缺氧作業' | '有機溶劑' | '高空車作業' | '電銲作業';
-export const Items: TItem[] = [
-    '缺氧作業',
-    '有機溶劑',
-    '高空車作業',
-    '電銲作業',
-];
-export const ItemsOptions = Items.map((item, index) => (
-    <option key={index} value={item}>
-        {item}
-    </option>
-));
-
 export default function SpecialEducationTraining() {
     const { onOpen, onClose, isOpen } = useDisclosure();
     const toast = useToast();
@@ -259,7 +246,6 @@ export default function SpecialEducationTraining() {
                 onClose={onClose}
                 isOpen={isOpen}
                 updateResult={updateResult}
-                filterFunction={filterFunction}
             />
             {loading && <PageLoading />}
         </Flex>

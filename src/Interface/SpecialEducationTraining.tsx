@@ -1,4 +1,4 @@
-import { TItem } from '../Components/SpecialEducationTraining/SpecialEducationTraining';
+import { TItem } from '../Types/SpecialEducationTraining';
 
 export interface ISpecialEducationalTraining {
     item: TItem;

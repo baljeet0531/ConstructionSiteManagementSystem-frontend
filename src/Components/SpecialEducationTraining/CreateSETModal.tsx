@@ -1,13 +1,7 @@
 import React from 'react';
 import BlueBodyModal from '../Shared/BlueBodyModal';
 import { Flex, Select, Text, useToast } from '@chakra-ui/react';
-import {
-    LazyQueryExecFunction,
-    MutationTuple,
-    gql,
-    useQuery,
-} from '@apollo/client';
-import { ItemsOptions, TItem } from './SpecialEducationTraining';
+import { MutationTuple, gql, useQuery } from '@apollo/client';
 import { defaultErrorToast } from '../../Utils/DefaultToast';
 import dayjs from 'dayjs';
 import { DatePicker, InputPicker } from 'rsuite';
@@ -15,11 +9,11 @@ import { ItemDataType } from 'rsuite/esm/@types/common';
 import { CustomLoading, PageLoading } from '../Shared/Loading';
 import { TEmptyResult } from '../../Hooks/UseGQLOverview';
 import {
-    IQuerySpecialEducationalTraining,
-    IQuerySpecialEducationalTrainingVar,
     IUpdateSpecialEducationalTraining,
     IUpdateSpecialEducationalTrainingVar,
 } from '../../Interface/SpecialEducationTraining';
+import { TItem } from '../../Types/SpecialEducationTraining';
+import { ItemsOptions } from '../../Constants/SpecialEducationTraining';
 
 interface ISpecialEducationTrainingHR {
     name: string;
@@ -38,12 +32,6 @@ const QUERY_HUMAN_RESOURCE = gql`
 export default function CreateSETModal(props: {
     isOpen: boolean;
     onClose: () => void;
-    filterFunction:
-        | (() => void)
-        | LazyQueryExecFunction<
-              IQuerySpecialEducationalTraining,
-              IQuerySpecialEducationalTrainingVar
-          >;
     updateResult:
         | TEmptyResult
         | MutationTuple<
