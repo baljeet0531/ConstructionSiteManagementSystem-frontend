@@ -72,3 +72,26 @@
     right: 12px;
     top: 5px;
 }
+
+.special-education-date-picker .rs-picker-default .rs-picker-toggle.rs-btn {
+    height: 42px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    border-radius: 0px;
+    border: none;
+}
+.special-education-date-picker
+    .rs-picker-date
+    .rs-picker-toggle.rs-btn
+    .rs-picker-toggle-caret,
+.special-education-date-picker
+    .rs-picker-date
+    .rs-picker-toggle.rs-btn
+    .rs-picker-toggle-clean {
+    right: 12px;
+    top: 11px;
+}
+
+.special-education-date-picker .rs-picker-toggle-value {
+    --rs-picker-value: #1675e0;
+}

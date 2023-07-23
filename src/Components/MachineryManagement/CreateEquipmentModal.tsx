@@ -2,7 +2,10 @@ import { Flex, Input, Text, useToast } from '@chakra-ui/react';
 import React from 'react';
 import BlueBodyModal from '../Shared/BlueBodyModal';
 import { gql, useMutation } from '@apollo/client';
-import { defaultSuccessToast } from '../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
 import { QUERY_MACHINERY } from './MachineryPage';
 
 const CREATE_MACHINERY = gql`
@@ -52,9 +55,7 @@ export default function CreateEquipmentModal(props: {
     });
 
     const handleClick = () => {
-        amountRef.current &&
-            corpRef.current &&
-            machineryRef.current &&
+        if (amountRef.current && corpRef.current && machineryRef.current) {
             createMachinery({
                 variables: {
                     siteId: siteId,
@@ -63,6 +64,8 @@ export default function CreateEquipmentModal(props: {
                     amount: Number(amountRef.current.value),
                 },
             });
+            onClose();
+        } else defaultErrorToast(toast, '欄位不能為空');
     };
 
     return (

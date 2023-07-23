@@ -16,7 +16,9 @@ import {
     IFaultFormCheckOverview,
     IFaultFormCheckOverviewExtend,
     IQueryFaultFormCheck,
+    IQueryFaultFormCheckVar,
     IUpdateFaultFormCheck,
+    IUpdateFaultFormCheckVar,
 } from '../../Interface/FaultForm';
 import { useGQLOverview } from '../../Hooks/UseGQLOverview';
 import { gql } from '@apollo/client';
@@ -95,16 +97,16 @@ export default function OutsourceFaultOverview(props: {
         tableData,
         setTableData,
         filteredPrimaryKey,
-        searchFunction,
-        updateFunction,
+        filterResult: [filterFunction],
+        updateResult: [updateFunction],
         loading,
     } = useGQLOverview<
         IFaultFormCheckOverview,
         IQueryFaultFormCheck,
-        {},
-        IUpdateFaultFormCheck
+        IQueryFaultFormCheckVar,
+        IUpdateFaultFormCheck,
+        IUpdateFaultFormCheckVar
     >({
-        siteId: siteId,
         gqlOverview: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleData: (data) =>
             data['faultFormCheck'].reduce((acc, value, index) => {
@@ -117,6 +119,11 @@ export default function OutsourceFaultOverview(props: {
                 acc[primaryKey] = { ...value, index: index };
                 return acc;
             }, {} as TOverviewTable<IFaultFormCheckOverviewExtend>),
+        overviewOptions: {
+            variables: {
+                siteId,
+            },
+        },
         gqlFilter: QUERY_OUTSOURCE_FAULT_FROM_OVERVIEW,
         handleFilterKey: (data) =>
             data['faultFormCheck'].map(({ day, target, code }) =>
@@ -186,7 +193,7 @@ export default function OutsourceFaultOverview(props: {
     ];
 
     const handleSearch = (dateRange: DateRange | null) => {
-        searchFunction({
+        filterFunction({
             variables: {
                 siteId: siteId,
                 start: dateRange && dayjs(dateRange[0]).format('YYYY-MM-DD'),
