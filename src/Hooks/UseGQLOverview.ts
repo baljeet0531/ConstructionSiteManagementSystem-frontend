@@ -1,6 +1,13 @@
 /* eslint-disable no-unused-vars */
 import {
     DocumentNode,
+    LazyQueryHookOptions,
+    LazyQueryResultTuple,
+    MutationHookOptions,
+    MutationTuple,
+    OperationVariables,
+    QueryHookOptions,
+    TypedDocumentNode,
     useLazyQuery,
     useMutation,
     useQuery,
@@ -12,32 +19,47 @@ import { IExportField } from '../Interface/IGQL';
 import { defaultErrorToast } from '../Utils/DefaultToast';
 import { TOverviewTable } from '../Types/TableOverview';
 
+export type TEmptyResult = [() => void, { loading: boolean }];
+
 export const useGQLOverview = <
     TOverview,
-    TData,
-    TExport = {},
-    TUpdate = {}
+    TOverviewData,
+    TOverviewVariable = OperationVariables,
+    TUpdateData = {},
+    TUpdateVariable = OperationVariables,
+    TExportData = {},
+    TExportVariable = OperationVariables
 >(config: {
-    siteId: string;
-    gqlOverview: DocumentNode;
-    handleData: (data: TData) => TOverviewTable<TOverview>;
-    gqlFilter?: DocumentNode | undefined;
-    handleFilterKey?: ((data: TData) => string[]) | undefined;
-    gqlExport?: DocumentNode | undefined;
-    handleExportData?: ((data: TExport) => IExportField) | undefined;
-    gqlUpdate?: DocumentNode | undefined;
-    handleUpdate?: ((data: TUpdate) => void) | undefined;
+    gqlOverview:
+        | DocumentNode
+        | TypedDocumentNode<TOverviewData, TOverviewVariable>;
+    handleData: (data: TOverviewData) => TOverviewTable<TOverview>;
+    overviewOptions?: QueryHookOptions<TOverviewData, TOverviewVariable>;
+    gqlFilter?:
+        | DocumentNode
+        | TypedDocumentNode<TOverviewData, TOverviewVariable>;
+    handleFilterKey?: ((data: TOverviewData) => string[]) | undefined;
+    filterOptions?: LazyQueryHookOptions<TOverviewData, TOverviewVariable>;
+    gqlUpdate?: DocumentNode | TypedDocumentNode<TUpdateData, TUpdateVariable>;
+    handleUpdate?: ((data: TUpdateData) => void) | undefined;
+    updateOptions?: MutationHookOptions<TUpdateData, TUpdateVariable>;
+    gqlExport?: DocumentNode | TypedDocumentNode<TExportData, TExportVariable>;
+    handleExportData?: ((data: TExportData) => IExportField) | undefined;
+    exportOptions?: MutationHookOptions<TExportData, TExportVariable>;
 }) => {
     const {
-        siteId,
         gqlOverview,
         handleData,
+        overviewOptions,
         gqlFilter,
         handleFilterKey,
-        gqlExport,
-        handleExportData,
+        filterOptions,
         gqlUpdate,
         handleUpdate,
+        updateOptions,
+        gqlExport,
+        handleExportData,
+        exportOptions,
     } = config;
     const toast = useToast();
     const { fileLoading, exportFile } = useFileExport();
@@ -47,11 +69,9 @@ export const useGQLOverview = <
     const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
 
-    const { loading: queryLoading } = useQuery(gqlOverview, {
-        variables: {
-            siteId: siteId,
-        },
-        onCompleted: (data: TData) => {
+    const queryResult = useQuery(gqlOverview, {
+        ...overviewOptions,
+        onCompleted: (data: TOverviewData) => {
             const formattedData = handleData(data);
             setTableData(formattedData);
         },
@@ -61,9 +81,12 @@ export const useGQLOverview = <
         fetchPolicy: 'network-only',
     });
 
-    const [searchFunction, { loading: searchLoading }] =
+    const filterResult:
+        | LazyQueryResultTuple<TOverviewData, TOverviewVariable>
+        | TEmptyResult =
         gqlFilter && handleFilterKey
-            ? useLazyQuery<TData>(gqlFilter, {
+            ? useLazyQuery(gqlFilter, {
+                  ...filterOptions,
                   onCompleted: (data) => {
                       setFilteredPrimaryKey(handleFilterKey(data));
                   },
@@ -75,23 +98,12 @@ export const useGQLOverview = <
               })
             : [() => {}, { loading: false }];
 
-    const [exportFunction, { loading: exportLoading }] =
-        gqlExport && handleExportData
-            ? useMutation<TExport>(gqlExport, {
-                  onCompleted: (data) => {
-                      exportFile(handleExportData(data));
-                  },
-                  onError: (error) => {
-                      console.log(error);
-                      defaultErrorToast(toast);
-                  },
-                  fetchPolicy: 'network-only',
-              })
-            : [() => {}, { loading: false }];
-
-    const [updateFunction, { loading: updateLoading }] =
+    const updateResult:
+        | MutationTuple<TUpdateData, TUpdateVariable>
+        | TEmptyResult =
         gqlUpdate && handleUpdate
-            ? useMutation<TUpdate>(gqlUpdate, {
+            ? useMutation(gqlUpdate, {
+                  ...updateOptions,
                   onCompleted: (data) => {
                       handleUpdate(data);
                   },
@@ -103,20 +115,39 @@ export const useGQLOverview = <
               })
             : [() => {}, { loading: false }];
 
+    const exportResult:
+        | MutationTuple<TExportData, TExportVariable>
+        | TEmptyResult =
+        gqlExport && handleExportData
+            ? useMutation(gqlExport, {
+                  ...exportOptions,
+                  onCompleted: (data) => {
+                      exportFile(handleExportData(data));
+                  },
+                  onError: (error) => {
+                      console.log(error);
+                      defaultErrorToast(toast);
+                  },
+                  fetchPolicy: 'network-only',
+              })
+            : [() => {}, { loading: false }];
+
     const loading =
         fileLoading ||
-        queryLoading ||
-        searchLoading ||
-        exportLoading ||
-        updateLoading;
+        queryResult.loading ||
+        filterResult[1].loading ||
+        exportResult[1].loading ||
+        updateResult[1].loading;
 
     return {
         tableData,
         setTableData,
         filteredPrimaryKey,
+        setFilteredPrimaryKey,
         loading,
-        searchFunction,
-        exportFunction,
-        updateFunction,
+        queryResult,
+        filterResult,
+        exportResult,
+        updateResult,
     };
 };

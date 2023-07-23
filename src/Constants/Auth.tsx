@@ -1,6 +1,7 @@
+import { featureName } from '../Layouts/FeatureMap';
 import { TActions, TRoleFeature, TUserRole } from '../Types/Auth';
 
-export const pageToFeatureAuthMap = {
+export const pageToFeatureAuthMap: Record<featureName, string> = {
     dashboard: '總覽',
     site: '專案管理',
     organization: '人員名單',
@@ -20,6 +21,7 @@ export const pageToFeatureAuthMap = {
     ehs_fault_form: '工安表單',
     ehs_machinery_management: '機具管理',
     ehs_photo: '照片管理',
+    ehs_special_education_training: '工安表單',
     outsource_work_permit_form: '工安表單',
     outsource_toolbox_form: '工安表單',
     outsource_env_security_form: '工安表單',

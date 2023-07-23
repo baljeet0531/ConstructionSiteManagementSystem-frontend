@@ -150,6 +150,11 @@ export default function Menu(props: {
                                 fItem={featureMap.ehs_machinery_management}
                             />
                             <Feature fItem={featureMap.ehs_photo} />
+                            <Feature
+                                fItem={
+                                    featureMap.ehs_special_education_training
+                                }
+                            />
                         </AccordionPanel>
                     </AccordionItem>
                 )}

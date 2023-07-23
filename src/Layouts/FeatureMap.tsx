@@ -28,6 +28,7 @@ import EnvSecurityOverview from '../Components/EnvSecurityForm/Overview';
 import EHSFaultOverview from '../Components/EHSFaultForm/Overview';
 import OutsourceFaultOverview from '../Components/OutsourceFaultForm/Overview';
 import NoContentPage from '../Components/Shared/NoContentPage';
+import SpecialEducationTraining from '../Components/SpecialEducationTraining/SpecialEducationTraining';
 
 export type featureName =
     | 'dashboard'
@@ -49,6 +50,7 @@ export type featureName =
     | 'ehs_fault_form'
     | 'ehs_machinery_management'
     | 'ehs_photo'
+    | 'ehs_special_education_training'
     | 'outsource_work_permit_form'
     | 'outsource_toolbox_form'
     | 'outsource_env_security_form'
@@ -287,6 +289,11 @@ export function getFeatureMap(site: {
                 ) : (
                     <Photo key={siteId} siteId={siteId} siteName={siteName} />
                 ),
+        },
+        ehs_special_education_training: {
+            name: '特殊教育訓練',
+            path: '/ehs/special-education-training',
+            page: <SpecialEducationTraining />,
         },
         outsource_work_permit_form: {
             name: '工作許可單',
