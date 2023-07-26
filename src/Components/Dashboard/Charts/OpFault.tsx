@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
+import { TTimeGranularity } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import { chartStyle } from './Common/ChartOptions';
@@ -54,7 +54,7 @@ const OP_FAULT = gql`
 
 export default function OpFault(props: {
     siteId: string;
-    granularity: granularityType;
+    granularity: TTimeGranularity;
 }) {
     const { siteId, granularity } = props;
     const [data, setData] = React.useState<chartData[]>([]);

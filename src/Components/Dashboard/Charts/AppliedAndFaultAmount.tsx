@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
+import { TTimeGranularity } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import { basicChartOptions, chartStyle } from './Common/ChartOptions';
@@ -62,7 +62,7 @@ const APPLIED_AND_FAULT_AMOUNT = gql`
 
 export default function AppliedAndFaultAmount(props: {
     siteId: string;
-    granularity: granularityType;
+    granularity: TTimeGranularity;
 }) {
     const { siteId, granularity } = props;
     const [applied, setApplied] = React.useState<number[]>([]);
