@@ -22,7 +22,7 @@ import {
     TableContainer,
     Text,
 } from '@chakra-ui/react';
-import { granularityType } from './Common/ChartLayout';
+import { TTimeGranularity } from './Common/ChartLayout';
 import { RectangleIcon } from '../../../Icons/Icons';
 import { TOpCheck, TOpCheckZh } from '../../../Types/OpCheck';
 import { opCheckArray, opCheckNameMap } from '../../../Constants/OpCheck';
@@ -67,7 +67,7 @@ const tableFlexStyle: FlexProps = {
 
 export default function LaborAmountInOp(props: {
     siteId: string;
-    granularity: granularityType;
+    granularity: TTimeGranularity;
 }) {
     const { siteId, granularity } = props;
     const [data, setData] = React.useState<gqlLaborAmountInOp[]>([]);

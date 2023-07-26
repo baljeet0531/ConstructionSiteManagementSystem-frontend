@@ -45,15 +45,15 @@ const TODAY_OP = gql`
     }
 `;
 
-export default function TodayOp(props: { siteId: string; kind: TItem }) {
-    const { siteId, kind } = props;
+export default function TodayOp(props: { siteId: string; granularity: TItem }) {
+    const { siteId, granularity } = props;
     const [data, setData] = React.useState<chartData[]>([]);
     const echartsRef = React.useRef<EChartsInstance>(null);
 
     const { loading } = useQuery<gqlData>(TODAY_OP, {
         variables: {
             siteId,
-            kind: todayOpKindMap[kind],
+            kind: todayOpKindMap[granularity],
         },
         onCompleted: ({ todayOp }) => {
             setData(
@@ -103,7 +103,7 @@ export default function TodayOp(props: { siteId: string; kind: TItem }) {
             },
             {
                 ...barOptions,
-                name: `${kind}教育訓練完成人數應`,
+                name: `${granularity}教育訓練完成人數應`,
                 color: '#FCE382',
             },
         ],

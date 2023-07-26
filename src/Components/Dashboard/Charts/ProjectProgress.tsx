@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
+import { TTimeGranularity } from './Common/ChartLayout';
 import {
     basicChartOptions,
     chartStyle,
@@ -40,7 +40,7 @@ const PROJECT_PROGRESS = gql`
 
 export default function ProjectProgress(props: {
     siteId: string;
-    granularity: granularityType;
+    granularity: TTimeGranularity;
 }) {
     const { siteId, granularity } = props;
     const [data, setData] = React.useState<gqlProjectProgress[]>([]);

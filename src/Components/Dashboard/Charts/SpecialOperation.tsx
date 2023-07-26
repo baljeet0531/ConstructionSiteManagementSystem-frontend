@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { granularityType } from './Common/ChartLayout';
+import { TTimeGranularity } from './Common/ChartLayout';
 import { CustomLoading } from '../../Shared/Loading';
 import ReactECharts, { EChartsInstance } from 'echarts-for-react';
 import {
@@ -30,7 +30,7 @@ const SPECIAL_OPERATION = gql`
 
 export default function SpecialOperation(props: {
     siteId: string;
-    granularity: granularityType;
+    granularity: TTimeGranularity;
 }) {
     const { siteId, granularity } = props;
     const [data, setData] = React.useState<gqlSpecialOperation[]>([]);
