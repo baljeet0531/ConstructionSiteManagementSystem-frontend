@@ -31,7 +31,6 @@ export const TimeGranularity: TTimeGranularity[] = [
 
 export default function ChartLayout(props: {
     children: JSX.Element;
-    siteId: string;
     title: chartTitle;
     tabsName?: string[];
 }) {
