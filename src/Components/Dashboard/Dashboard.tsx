@@ -57,17 +57,12 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <ChartLayout
-                        siteId={siteId}
-                        title={'專案進度'}
-                        tabsName={TimeGranularity}
-                    >
+                    <ChartLayout title={'專案進度'} tabsName={TimeGranularity}>
                         <ProjectProgress siteId={siteId} granularity={'日'} />
                     </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'申請作業類別與缺失數'}
                         tabsName={TimeGranularity}
                     >
@@ -78,31 +73,22 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout siteId={siteId} title={'危害告知訓練'}>
+                    <ChartLayout title={'危害告知訓練'}>
                         <HazardNotify siteId={siteId} />
                     </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout
-                        siteId={siteId}
-                        title={'特殊作業'}
-                        tabsName={TimeGranularity}
-                    >
+                    <ChartLayout title={'特殊作業'} tabsName={TimeGranularity}>
                         <SpecialOperation siteId={siteId} granularity={'日'} />
                     </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout
-                        siteId={siteId}
-                        title={'今日施工作業'}
-                        tabsName={Items}
-                    >
+                    <ChartLayout title={'今日施工作業'} tabsName={Items}>
                         <TodayOp siteId={siteId} granularity={'缺氧作業'} />
                     </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'當日申請作業類別施工人數'}
                         tabsName={TimeGranularity}
                     >
@@ -111,7 +97,6 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'各承商缺失率百分比'}
                         tabsName={TimeGranularity}
                     >
@@ -120,7 +105,6 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'各項作業缺失率'}
                         tabsName={TimeGranularity}
                     >
