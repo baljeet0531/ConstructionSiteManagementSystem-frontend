@@ -15,11 +15,12 @@ import AppliedAndFaultAmount from '../AppliedAndFaultAmount';
 import FaultRate from '../FaultRate';
 import Opfault from '../OpFault';
 import HazardNotify from '../HazardNotify';
-import TodayOp, { todayOpKind } from '../TodayOp';
+import TodayOp from '../TodayOp';
 import LaborAmountInOp from '../LaborAmountInOp';
+import { TItem } from '../../../../Types/SpecialEducationTraining';
 
 export type granularityType<T = '專案進度'> = T extends '今日施工作業'
-    ? todayOpKind
+    ? TItem
     : '日' | '週' | '月' | '季' | '年';
 
 type chartTitle =
@@ -67,7 +68,7 @@ export default function ChartLayout(props: {
 
     const granularity: granularityType<typeof title>[] =
         title === '今日施工作業'
-            ? ['侷限空間', '起重吊掛']
+            ? ['缺氧作業', '有機溶劑', '高空車作業', '電銲作業']
             : ['日', '週', '月', '季', '年'];
     const tabElement = granularity.map((element, index) => (
         <Tab key={index}>{element}</Tab>

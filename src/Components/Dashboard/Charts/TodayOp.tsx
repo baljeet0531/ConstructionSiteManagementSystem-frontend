@@ -10,18 +10,19 @@ import {
 } from './Common/ChartOptions';
 import { EChartsOption } from 'echarts';
 import { Text } from '@chakra-ui/react';
+import { TItem } from '../../../Types/SpecialEducationTraining';
 
-export type todayOpKind = '侷限空間' | '起重吊掛';
-
-const todayOpKindMap: Record<todayOpKind, string> = {
-    侷限空間: 'confined',
-    起重吊掛: 'lift',
+const todayOpKindMap: Record<TItem, string> = {
+    缺氧作業: 'oxygen',
+    有機溶劑: 'organic',
+    高空車作業: 'aloft',
+    電銲作業: 'weld',
 };
 
 type gqlTodayOp = {
     corpName: string;
     total: number;
-    today: number;
+    finish: number;
 };
 
 type gqlData = {
@@ -31,7 +32,7 @@ type gqlData = {
 type chartData = {
     name: string;
     total: number;
-    today: number;
+    finish: number;
 };
 
 const TODAY_OP = gql`
@@ -39,12 +40,12 @@ const TODAY_OP = gql`
         todayOp(siteId: $siteId, kind: $kind) {
             corpName
             total
-            today
+            finish
         }
     }
 `;
 
-export default function TodayOp(props: { siteId: string; kind: todayOpKind }) {
+export default function TodayOp(props: { siteId: string; kind: TItem }) {
     const { siteId, kind } = props;
     const [data, setData] = React.useState<chartData[]>([]);
     const echartsRef = React.useRef<EChartsInstance>(null);
@@ -76,7 +77,13 @@ export default function TodayOp(props: { siteId: string; kind: todayOpKind }) {
         },
         xAxis: {
             type: 'category',
-            axisLabel: labelTextStyle,
+            axisLabel: {
+                ...labelTextStyle,
+                interval: 0,
+                rotate: -45,
+                verticalAlign: 'top',
+                margin: 4,
+            },
         },
         yAxis: [
             {
@@ -85,7 +92,7 @@ export default function TodayOp(props: { siteId: string; kind: todayOpKind }) {
             },
         ],
         dataset: {
-            dimensions: ['name', 'today', 'total'],
+            dimensions: ['name', 'finish', 'total'],
             source: data,
         },
         series: [
