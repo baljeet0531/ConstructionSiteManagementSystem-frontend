@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { TTimeGranularity } from './Common/ChartLayout';
+import { TTimeGranularity } from '../../../Types/Dashboard';
 import {
     basicChartOptions,
     chartStyle,

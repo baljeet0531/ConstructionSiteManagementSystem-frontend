@@ -22,7 +22,7 @@ import {
     TableContainer,
     Text,
 } from '@chakra-ui/react';
-import { TTimeGranularity } from './Common/ChartLayout';
+import { TTimeGranularity } from '../../../Types/Dashboard';
 import { RectangleIcon } from '../../../Icons/Icons';
 import { TOpCheck, TOpCheckZh } from '../../../Types/OpCheck';
 import { opCheckArray, opCheckNameMap } from '../../../Constants/OpCheck';

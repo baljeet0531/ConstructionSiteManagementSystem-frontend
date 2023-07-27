@@ -6,7 +6,7 @@ import { dashboardGridItemStyle } from './Style';
 import InstantInfo from './InstantInfo';
 import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
-import ChartLayout, { TimeGranularity } from './Charts/Common/ChartLayout';
+import ChartLayout from './Charts/Common/ChartLayout';
 import WeatherTime from './WeatherTime';
 import ProjectProgress from './Charts/ProjectProgress';
 import AppliedAndFaultAmount from './Charts/AppliedAndFaultAmount';
@@ -17,6 +17,7 @@ import LaborAmountInOp from './Charts/LaborAmountInOp';
 import FaultRate from './Charts/FaultRate';
 import OpFault from './Charts/OpFault';
 import { Items } from '../../Constants/SpecialEducationTraining';
+import { TimeGranularity } from '../../Constants/Dashboard';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
