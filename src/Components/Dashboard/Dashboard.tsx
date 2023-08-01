@@ -8,6 +8,16 @@ import TodoList from './TodoList';
 import PublicAwarenessInfo from './PublicAwarenessInfo';
 import ChartLayout from './Charts/Common/ChartLayout';
 import WeatherTime from './WeatherTime';
+import ProjectProgress from './Charts/ProjectProgress';
+import AppliedAndFaultAmount from './Charts/AppliedAndFaultAmount';
+import HazardNotify from './Charts/HazardNotify';
+import SpecialOperation from './Charts/SpecialOperation';
+import TodayOp from './Charts/TodayOp';
+import LaborAmountInOp from './Charts/LaborAmountInOp';
+import FaultRate from './Charts/FaultRate';
+import OpFault from './Charts/OpFault';
+import { Items } from '../../Constants/SpecialEducationTraining';
+import { TimeGranularity } from '../../Constants/Dashboard';
 
 export default function Dashboard(props: { siteId: string; siteName: string }) {
     if (!IsPermit('dashboard')) return <Navigate to="/" replace={true} />;
@@ -48,34 +58,59 @@ export default function Dashboard(props: { siteId: string; siteName: string }) {
                     <PublicAwarenessInfo siteId={siteId} />
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <ChartLayout siteId={siteId} title={'專案進度'} />
+                    <ChartLayout title={'專案進度'} tabsName={TimeGranularity}>
+                        <ProjectProgress siteId={siteId} granularity={'日'} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'申請作業類別與缺失數'}
-                    />
+                        tabsName={TimeGranularity}
+                    >
+                        <AppliedAndFaultAmount
+                            siteId={siteId}
+                            granularity={'日'}
+                        />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout siteId={siteId} title={'危害告知訓練'} />
+                    <ChartLayout title={'危害告知訓練'}>
+                        <HazardNotify siteId={siteId} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout siteId={siteId} title={'特殊作業'} />
+                    <ChartLayout title={'特殊作業'} tabsName={TimeGranularity}>
+                        <SpecialOperation siteId={siteId} granularity={'日'} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle}>
-                    <ChartLayout siteId={siteId} title={'今日施工作業'} />
+                    <ChartLayout title={'今日施工作業'} tabsName={Items}>
+                        <TodayOp siteId={siteId} granularity={'缺氧作業'} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
                     <ChartLayout
-                        siteId={siteId}
                         title={'當日申請作業類別施工人數'}
-                    />
+                        tabsName={TimeGranularity}
+                    >
+                        <LaborAmountInOp siteId={siteId} granularity={'日'} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <ChartLayout siteId={siteId} title={'各承商缺失率百分比'} />
+                    <ChartLayout
+                        title={'各承商缺失率百分比'}
+                        tabsName={TimeGranularity}
+                    >
+                        <FaultRate siteId={siteId} granularity={'日'} />
+                    </ChartLayout>
                 </GridItem>
                 <GridItem {...dashboardGridItemStyle} colSpan={2}>
-                    <ChartLayout siteId={siteId} title={'各項作業缺失率'} />
+                    <ChartLayout
+                        title={'各項作業缺失率'}
+                        tabsName={TimeGranularity}
+                    >
+                        <OpFault siteId={siteId} granularity={'日'} />
+                    </ChartLayout>
                 </GridItem>
             </Grid>
         </Flex>
