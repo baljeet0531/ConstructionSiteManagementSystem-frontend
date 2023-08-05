@@ -24,8 +24,9 @@ import {
     IWorkPermitData,
     IWorkPermitOptions,
 } from '../../Interface/WorkPermit';
+import SharedFactory from '../Shared/Factory';
 
-export default class FormFactory {
+export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IWorkPermit>;
     data: IWorkPermitData;
     setData: Dispatch<SetStateAction<IWorkPermitData>>;
@@ -51,6 +52,7 @@ export default class FormFactory {
         options: IWorkPermitOptions,
         setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>
     ) {
+        super();
         this.formProps = formProps;
         this.data = data;
         this.setData = setData;

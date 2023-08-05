@@ -1,4 +1,4 @@
-import { Input } from '@chakra-ui/react';
+import { Input, Center } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { ISignature, SignatureStateItem } from '../../Interface/Signature';
 
@@ -23,6 +23,21 @@ export default class SharedFactory {
                     setSignature({ ...signature, time: newDate } as ISignature);
                 }}
             />
+        );
+    }
+    forbidOverlay(text: string = '') {
+        return (
+            <Center
+                w="100%"
+                h="100%"
+                p={4}
+                textAlign="center"
+                color="#66708080"
+                backgroundColor="gray.100"
+                zIndex={99}
+            >
+                {text}
+            </Center>
         );
     }
 }

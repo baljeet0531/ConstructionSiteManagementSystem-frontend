@@ -484,36 +484,52 @@ export default function WorkPermitForm({
                         申請人
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
-                        <SignaturePad
-                            title="核准 - 簽名"
-                            signatureName="approved-signature.png"
-                            handler={
-                                new SingleSignatureHandler(signatures.approved)
-                            }
-                            disable={!!signatures.approved[0]?.no}
-                        />
+                        {signatures.review[0] ? (
+                            <SignaturePad
+                                title="核准 - 簽名"
+                                signatureName="approved-signature.png"
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.approved
+                                    )
+                                }
+                                disable={!!signatures.approved[0]?.no}
+                            />
+                        ) : (
+                            f.forbidOverlay('審核人員需要先簽名')
+                        )}
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
-                        <SignaturePad
-                            title="審核 - 簽名"
-                            signatureName="review-signature.png"
-                            handler={
-                                new SingleSignatureHandler(signatures.review)
-                            }
-                            disable={!!signatures.review[0]?.no}
-                        />
+                        {signatures.supplierManager[0] ? (
+                            <SignaturePad
+                                title="審核 - 簽名"
+                                signatureName="review-signature.png"
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.review
+                                    )
+                                }
+                                disable={!!signatures.review[0]?.no}
+                            />
+                        ) : (
+                            f.forbidOverlay('申請單位主管需要先簽名')
+                        )}
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px">
-                        <SignaturePad
-                            title="申請單位主管 - 簽名"
-                            signatureName="supplierManager-signature.png"
-                            handler={
-                                new SingleSignatureHandler(
-                                    signatures.supplierManager
-                                )
-                            }
-                            disable={!!signatures.supplierManager[0]?.no}
-                        />
+                        {signatures.supplier[0] ? (
+                            <SignaturePad
+                                title="申請單位主管 - 簽名"
+                                signatureName="supplierManager-signature.png"
+                                handler={
+                                    new SingleSignatureHandler(
+                                        signatures.supplierManager
+                                    )
+                                }
+                                disable={!!signatures.supplierManager[0]?.no}
+                            />
+                        ) : (
+                            f.forbidOverlay('申請人需要先簽名')
+                        )}
                     </GridItem>
                     <GridItem {...numberStyle} minH="80px" borderRight="1px">
                         <SignaturePad
