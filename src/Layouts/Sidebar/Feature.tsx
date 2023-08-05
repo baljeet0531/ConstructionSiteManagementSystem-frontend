@@ -1,6 +1,5 @@
 import { Icon } from '@chakra-ui/react';
-import { NavLink } from 'react-router-dom';
-import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import { CircleIcon } from '../../Icons/Icons';
 import { featureItem } from '../FeatureMap';
@@ -28,10 +27,17 @@ export function Feature({ fItem }: { fItem: featureItem }) {
         fontWeight: '700',
     };
 
+    const location = useLocation();
+    const currentPath = location.pathname;
+
     return (
         <NavLink
             to={`${fItem.path}`}
-            style={({ isActive }) => (isActive ? activeStyle : inActiveStyle)}
+            style={({ isActive }) =>
+                isActive || (currentPath == '/' && fItem.path === '/dashboard')
+                    ? activeStyle
+                    : inActiveStyle
+            }
         >
             {fItem.icon ? <Icon as={fItem.icon} /> : <CircleIcon />}
             {fItem.name}
