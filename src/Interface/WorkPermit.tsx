@@ -2,6 +2,7 @@ import { IGQLSignature, ISignature } from './Signature';
 import { ISiteArea } from './Site';
 export interface IWorkPermitData {
     siteAreas: ISiteArea[];
+    contractingCorpName: string[] | null;
 }
 
 export interface IWorkPermitOptions {
