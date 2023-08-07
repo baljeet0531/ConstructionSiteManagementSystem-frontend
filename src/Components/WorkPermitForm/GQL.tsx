@@ -91,18 +91,7 @@ export const GQL_WORK_PERMIT_MUTATION = gql`
 export const GQL_WORK_PERMIT_QUERY = gql`
     ${SIGNATURE_FIELDS}
     query getWorkPermit($siteId: String!, $number: String) {
-        workContent(siteId: $siteId) {
-            content {
-                name
-                system {
-                    name
-                    systemBranch {
-                        name
-                        project
-                    }
-                }
-            }
-        }
+        contractingCorpName(siteId: $siteId)
         siteAreas(siteId: $siteId) {
             name
             zone

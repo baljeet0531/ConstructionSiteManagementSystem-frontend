@@ -24,8 +24,9 @@ import {
     IWorkPermitData,
     IWorkPermitOptions,
 } from '../../Interface/WorkPermit';
+import SharedFactory from '../Shared/Factory';
 
-export default class FormFactory {
+export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IWorkPermit>;
     data: IWorkPermitData;
     setData: Dispatch<SetStateAction<IWorkPermitData>>;
@@ -51,6 +52,7 @@ export default class FormFactory {
         options: IWorkPermitOptions,
         setOptions: Dispatch<SetStateAction<IWorkPermitOptions>>
     ) {
+        super();
         this.formProps = formProps;
         this.data = data;
         this.setData = setData;
@@ -422,6 +424,42 @@ export default class FormFactory {
                     }}
                 />
             </>
+        );
+    }
+    selectContractingCorpInput(fieldName: keyof IWorkPermit) {
+        return (
+            <AutoComplete
+                openOnFocus
+                listAllValuesOnFocus
+                onChange={(value: string) => {
+                    this.formProps.setFieldValue(fieldName, value);
+                }}
+            >
+                <AutoCompleteInput
+                    border="0px"
+                    placeholder="填寫"
+                    textAlign="left"
+                    value={this.formProps.values[fieldName] as string}
+                    onChange={(e) => {
+                        const target = e.target.value;
+                        this.formProps.setFieldValue(fieldName, target);
+                    }}
+                    _placeholder={placeholderStyle}
+                />
+                <AutoCompleteList>
+                    {this.data.contractingCorpName?.map(
+                        (corp: string, cid: number) => (
+                            <AutoCompleteItem
+                                key={`option-${cid}`}
+                                value={corp}
+                                textTransform="capitalize"
+                            >
+                                {corp}
+                            </AutoCompleteItem>
+                        )
+                    )}
+                </AutoCompleteList>
+            </AutoComplete>
         );
     }
 }

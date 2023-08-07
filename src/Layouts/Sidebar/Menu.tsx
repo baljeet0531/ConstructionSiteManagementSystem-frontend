@@ -80,7 +80,7 @@ export default function Menu(props: {
             align="left"
             background="#FFFFFF"
         >
-            <Accordion>
+            <Accordion allowToggle>
                 <Feature fItem={featureMap.dashboard} />
                 <Feature fItem={featureMap.site} />
                 <Box pl={3}>
