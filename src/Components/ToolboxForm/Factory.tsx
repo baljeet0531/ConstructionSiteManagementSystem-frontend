@@ -18,9 +18,15 @@ import {
     IToolbox,
     IToolboxData,
     IToolboxOptions,
+    SignatureListName,
+    SignatureName,
 } from '../../Interface/Toolbox';
 import { ThreeStateIcon } from '../../Icons/Icons';
 import SharedFactory from '../Shared/Factory';
+import {
+    SignatureStateItem,
+    MultiSignatureStateItem,
+} from '../../Interface/Signature';
 
 export default class FormFactory extends SharedFactory {
     formProps: FormikProps<IToolbox>;
@@ -28,6 +34,8 @@ export default class FormFactory extends SharedFactory {
     setData: Dispatch<SetStateAction<IToolboxData>>;
     options: IToolboxOptions;
     setOptions: Dispatch<SetStateAction<IToolboxOptions>>;
+    signatures: Record<SignatureName, SignatureStateItem>;
+    signatureLists: Record<SignatureListName, MultiSignatureStateItem>;
     hintRelation: { [key: string]: string[] };
     otherEnable: Record<
         'otherDisaster' | 'chemicalInclude' | 'gasInclude' | 'ohterPrevention',
@@ -39,7 +47,9 @@ export default class FormFactory extends SharedFactory {
         data: IToolboxData,
         setData: Dispatch<SetStateAction<IToolboxData>>,
         options: IToolboxOptions,
-        setOptions: Dispatch<SetStateAction<IToolboxOptions>>
+        setOptions: Dispatch<SetStateAction<IToolboxOptions>>,
+        signatures: Record<SignatureName, SignatureStateItem>,
+        signatureLists: Record<SignatureListName, MultiSignatureStateItem>
     ) {
         super();
         this.formProps = formProps;
@@ -47,6 +57,8 @@ export default class FormFactory extends SharedFactory {
         this.setData = setData;
         this.options = options;
         this.setOptions = setOptions;
+        this.signatures = signatures;
+        this.signatureLists = signatureLists;
         this.hintRelation = {
             physicalFall: ['fall'],
             foreignEnterEye: ['eye'],
@@ -354,5 +366,26 @@ export default class FormFactory extends SharedFactory {
             this.formProps.values.safetyMeasureSupervisor &&
             this.formProps.values.staffStateSupervisor
         );
+    }
+    syncSignatureList(signName: SignatureName) {
+        const map = new Map<SignatureName, SignatureListName>([
+            ['primeContractStaff', 'primeContractingCorpAppearance'],
+            ['minorContractOneStaff', 'viceFirstContractingCorpAppearance'],
+            ['minorContractTwoStaff', 'viceSecondContractingCorpAppearance'],
+            ['minorContractThreeStaff', 'viceThirdContractingCorpAppearance'],
+        ]);
+
+        const listName = map.get(signName);
+        if (listName) {
+            const sign = this.signatures[signName][0];
+            const setSignatureList = this.signatureLists[listName][1];
+            setSignatureList((prev) => {
+                const next = [...prev];
+                if (sign) {
+                    next[0] = sign;
+                }
+                return next;
+            });
+        }
     }
 }
