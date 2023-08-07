@@ -136,7 +136,7 @@ export default function WorkPermitFormik() {
         oxygenVentilation: null,
         physicalFall: null,
         primeContractCorp: '',
-        primeContractStaff: '',
+        primeContractStaff: null,
         primeContractingCorpAppearance: [],
         principleOnSiteBeforeWork: false,
         principleOnSiteDuringWork: false,
@@ -171,11 +171,15 @@ export default function WorkPermitFormik() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const signatures: Record<SignatureName, SignatureStateItem> = {
-        host: useState<ISignature>(),
         contractingCorpStaffSignatureFirst: useState<ISignature>(),
         contractingCorpStaffSignatureSecond: useState<ISignature>(),
         contractingCorpStaffSignatureThird: useState<ISignature>(),
         systemEngineerSignature: useState<ISignature>(),
+        host: useState<ISignature>(),
+        primeContractStaff: useState<ISignature>(),
+        minorContractOneStaff: useState<ISignature>(),
+        minorContractTwoStaff: useState<ISignature>(),
+        minorContractThreeStaff: useState<ISignature>(),
     };
 
     const signatureLists: Record<SignatureListName, MultiSignatureStateItem> = {

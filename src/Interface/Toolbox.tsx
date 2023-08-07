@@ -20,7 +20,11 @@ export type SignatureName =
     | 'contractingCorpStaffSignatureSecond'
     | 'contractingCorpStaffSignatureThird'
     | 'systemEngineerSignature'
-    | 'host';
+    | 'host'
+    | 'primeContractStaff'
+    | 'minorContractOneStaff'
+    | 'minorContractTwoStaff'
+    | 'minorContractThreeStaff';
 
 export type SignatureListName =
     | 'primeContractingCorpAppearance'
@@ -117,9 +121,9 @@ export interface IToolbox {
     minorContractCorpOne: string | null;
     minorContractCorpThree: string | null;
     minorContractCorpTwo: string | null;
-    minorContractOneStaff: string | null;
-    minorContractThreeStaff: string | null;
-    minorContractTwoStaff: string | null;
+    minorContractOneStaff: ISignature | null;
+    minorContractThreeStaff: ISignature | null;
+    minorContractTwoStaff: ISignature | null;
     noise: boolean | null;
     number: string | null;
     objectFall: boolean | null;
@@ -135,7 +139,7 @@ export interface IToolbox {
     oxygenVentilation: boolean | null;
     physicalFall: boolean | null;
     primeContractCorp: string | null;
-    primeContractStaff: string | null;
+    primeContractStaff: ISignature | null;
     primeContractingCorpAppearance: ISignature[];
     principleOnSiteBeforeWork: boolean | null;
     principleOnSiteDuringWork: boolean | null;
