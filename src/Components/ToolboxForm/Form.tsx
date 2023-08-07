@@ -129,9 +129,9 @@ export default function ToolboxForm({
                     工具箱會議由監工單位監工於施工前針對當天工作內容及安全衛生議題進行告知或討論/協議(如最近發生的事故、作業場所的特殊危害、設備的安全操作、新的工作程序或與人員相關的作業安全)，並確實紀錄。
                 </Text>
                 <Grid
-                    height="375px"
+                    height="400px"
                     templateColumns="repeat(6, 1fr)"
-                    templateRows="repeat(3, 32fr) repeat(5, 40fr)"
+                    templateRows="repeat(3, 20fr) 90fr repeat(4, 30fr)"
                 >
                     <GridInputItem
                         gridRange={[1, 2, 1, 3]}
@@ -185,7 +185,7 @@ export default function ToolboxForm({
                                 </Text>
                             }
                             showTime={true}
-                            h="90%"
+                            h="100px"
                             disable={true}
                         />
                     </GridItem>
@@ -223,26 +223,66 @@ export default function ToolboxForm({
                         style={{ ...centerStyle, borderRight: '1px' }}
                     />
                     <GridItem {...centerStyle}>與會人員</GridItem>
-                    <GridInputItem
-                        fieldName="primeContractStaff"
-                        inputComponent={f.contractStaffInput()}
-                        style={{ ...centerStyle }}
-                    />
-                    <GridInputItem
-                        fieldName="minorContractOneStaff"
-                        inputComponent={f.contractStaffInput()}
-                        style={{ ...centerStyle }}
-                    />
-                    <GridInputItem
-                        fieldName="minorContractTwoStaff"
-                        inputComponent={f.contractStaffInput()}
-                        style={{ ...centerStyle }}
-                    />
-                    <GridInputItem
-                        fieldName="minorContractThreeStaff"
-                        inputComponent={f.contractStaffInput()}
-                        style={{ ...centerStyle, borderRight: '1px' }}
-                    />
+                    <GridItem {...centerStyle}>
+                        <SignaturePad
+                            title="主承攬商"
+                            signatureName="prime_contract_staff.png"
+                            handler={
+                                new SingleSignatureHandler(
+                                    signatures.primeContractStaff
+                                )
+                            }
+                            placeHolderText="承商監工或工安"
+                            showTime={true}
+                            h="100px"
+                            disable={!!signatures.primeContractStaff[0]?.no}
+                        />
+                    </GridItem>
+                    <GridItem {...centerStyle}>
+                        <SignaturePad
+                            title="次承攬商（1）"
+                            signatureName="minor_contract_one_staff.png"
+                            handler={
+                                new SingleSignatureHandler(
+                                    signatures.minorContractOneStaff
+                                )
+                            }
+                            placeHolderText="承商監工或工安"
+                            showTime={true}
+                            h="100px"
+                            disable={!!signatures.minorContractOneStaff[0]?.no}
+                        />
+                    </GridItem>
+                    <GridItem {...centerStyle}>
+                        <SignaturePad
+                            title="次承攬商（2）"
+                            signatureName="minor_contract_two_staff.png"
+                            handler={
+                                new SingleSignatureHandler(
+                                    signatures.minorContractTwoStaff
+                                )
+                            }
+                            placeHolderText="承商監工或工安"
+                            showTime={true}
+                            h="100px"
+                            disable={!!signatures.minorContractTwoStaff[0]?.no}
+                        />
+                    </GridItem>
+                    <GridItem {...centerStyle} borderRight={'1px'}>
+                        <SignaturePad
+                            title="次承攬商（3）"
+                            signatureName="minor_contract_three_staff.png"
+                            handler={
+                                new SingleSignatureHandler(
+                                    signatures.minorContractThreeStaff
+                                )
+                            }
+                            placeHolderText="承商監工或工安"
+                            showTime={true}
+                            h="100px"
+                            disable={!!signatures.minorContractThreeStaff[0]?.no}
+                        />
+                    </GridItem>
                     <GridItem rowStart={5} rowEnd={7} {...centerStyle}>
                         本日工作項目
                     </GridItem>

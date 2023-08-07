@@ -39,13 +39,21 @@ export const GQL_TOOLBOX_QUERY = gql`
             meetingDatetime
             meetingPlace
             primeContractCorp
-            primeContractStaff
+            primeContractStaff {
+                ...gqlSignatureFields
+            } 
             minorContractCorpOne
-            minorContractOneStaff
+            minorContractOneStaff {
+                ...gqlSignatureFields
+            }
             minorContractCorpTwo
-            minorContractTwoStaff
+            minorContractTwoStaff{
+                ...gqlSignatureFields
+            }
             minorContractCorpThree
-            minorContractThreeStaff
+            minorContractThreeStaff{
+                ...gqlSignatureFields
+            }
             workContent
             workPlace
             physicalFall
@@ -344,9 +352,9 @@ export const GQL_TOOLBOX_UPDATE = gql`
         $minorContractCorpOne: String
         $minorContractCorpThree: String
         $minorContractCorpTwo: String
-        $minorContractOneStaff: String
-        $minorContractThreeStaff: String
-        $minorContractTwoStaff: String
+        $minorContractOneStaff: signatureInput
+        $minorContractThreeStaff: signatureInput
+        $minorContractTwoStaff: signatureInput
         $noise: Boolean
         $number: String!
         $objectFall: Boolean
@@ -362,7 +370,7 @@ export const GQL_TOOLBOX_UPDATE = gql`
         $oxygenVentilation: Boolean
         $physicalFall: Boolean
         $primeContractCorp: String
-        $primeContractStaff: String
+        $primeContractStaff: signatureInput
         $primeContractingCorpAppearance: [signatureInput]
         $principleOnSiteBeforeWork: Boolean
         $principleOnSiteDuringWork: Boolean
@@ -534,11 +542,15 @@ export function parseToolbox(
 ): IToolbox | undefined {
     if (!list[0]) return;
     const signatureColName: SignatureName[] = [
-        'host',
         'contractingCorpStaffSignatureFirst',
         'contractingCorpStaffSignatureSecond',
         'contractingCorpStaffSignatureThird',
         'systemEngineerSignature',
+        'host',
+        'primeContractStaff',
+        'minorContractOneStaff',
+        'minorContractTwoStaff',
+        'minorContractThreeStaff',
     ];
     const signatureListColName: SignatureListName[] = [
         'primeContractingCorpAppearance',
