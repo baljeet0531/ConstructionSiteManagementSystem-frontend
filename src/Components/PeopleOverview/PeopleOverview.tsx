@@ -925,7 +925,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         onError: (err) => {
             console.log(err);
         },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
     });
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
