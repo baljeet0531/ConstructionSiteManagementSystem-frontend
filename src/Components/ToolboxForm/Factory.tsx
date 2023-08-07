@@ -4,7 +4,6 @@ import {
     Textarea,
     HStack,
     VStack,
-    Center,
 } from '@chakra-ui/react';
 import {
     AutoComplete,
@@ -321,21 +320,6 @@ export default class FormFactory extends SharedFactory {
                     )}
                 </AutoCompleteList>
             </AutoComplete>
-        );
-    }
-    forbidOverlay(text: string = '') {
-        return (
-            <Center
-                w="100%"
-                h="100%"
-                p={4}
-                textAlign="center"
-                color="#66708080"
-                backgroundColor="gray.100"
-                zIndex={99}
-            >
-                {text}
-            </Center>
         );
     }
     validSignBeforeWork() {
