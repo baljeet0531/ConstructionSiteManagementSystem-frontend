@@ -13,7 +13,11 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { MutationHookOptions, gql, useMutation } from '@apollo/client';
-import { ALL_HUMAN_RESOURCE, SEARCH_HUMAN } from './PeopleOverview';
+import {
+    ALL_HUMAN_RESOURCE,
+    ISelectedHuman,
+    SEARCH_HUMAN,
+} from './PeopleOverview';
 import {
     defaultErrorToast,
     defaultSuccessToast,
@@ -41,11 +45,7 @@ const DELETE_ERROR_HUMAN_RESOURCE = gql`
 export default function DeleteModal(props: {
     isOpen: boolean;
     onClose: () => void;
-    selected?: {
-        no: number | null | undefined;
-        idno: string;
-        name: string;
-    }[];
+    selected?: ISelectedHuman[];
     errorOnly: boolean;
 }) {
     const toast = useToast();

@@ -39,6 +39,7 @@ import ReactWindowTable, {
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { ActionsContext } from '../../Context/Context';
+import { TOverviewChecked, TOverviewTable } from '../../Types/TableOverview';
 
 export const ALL_HUMAN_RESOURCE = gql`
     query AllHumanresource($errlist: Boolean, $mode: String) {
@@ -136,66 +137,76 @@ const sizes: ISizes = {
 
 export interface humanTableValues {
     name: string;
-    gender: string | null | undefined;
-    birthday: string | null | undefined;
-    bloodType: string | null | undefined;
-    tel: string | null | undefined;
-    liaison: string | null | undefined;
-    emergencyTel: string | null | undefined;
-    address: string | null | undefined;
-    hazardNotifyDate: string | null | undefined;
-    supplierIndustrialSafetyNumber: string | null | undefined;
-    safetyHealthyEducationIssue: string | null | undefined;
-    safetyHealthyEducationWithdraw: string | null | undefined;
+    gender: string | null;
+    birthday: string | null;
+    bloodType: string | null;
+    tel: string | null;
+    liaison: string | null;
+    emergencyTel: string | null;
+    address: string | null;
+    hazardNotifyDate: string | null;
+    supplierIndustrialSafetyNumber: string | null;
+    safetyHealthyEducationIssue: string | null;
+    safetyHealthyEducationWithdraw: string | null;
 
-    laborInsuranceApplyDate: string | null | undefined;
-    laborAssociationDate: string | null | undefined;
-    certificationName: string | null | undefined;
-    certificationIssue: string | null | undefined;
-    certificationWithdraw: string | null | undefined;
+    laborInsuranceApplyDate: string | null;
+    laborAssociationDate: string | null;
+    certificationName: string | null;
+    certificationIssue: string | null;
+    certificationWithdraw: string | null;
 
-    accidentInsuranceStart: string | null | undefined;
-    accidentInsuranceEnd: string | null | undefined;
-    accidentInsuranceAmount: string | null | undefined;
-    accidentInsuranceSignDate: string | null | undefined;
-    accidentInsuranceCompanyName: string | null | undefined;
-    contractingCompanyName: string | null | undefined;
-    viceContractingCompanyName: string | null | undefined;
-    aCertificationDate: string | null | undefined;
-    wahCertificationDate: string | null | undefined;
-    lCertificationDate: string | null | undefined;
-    cCertificationDate: string | null | undefined;
-    hCertificationDate: string | null | undefined;
-    exCertificationDate: string | null | undefined;
-    sCertificationDate: string | null | undefined;
-    saCertificationDate: string | null | undefined;
-    osCertificationDate: string | null | undefined;
-    o2CertificationDate: string | null | undefined;
+    accidentInsuranceStart: string | null;
+    accidentInsuranceEnd: string | null;
+    accidentInsuranceAmount: string | null;
+    accidentInsuranceSignDate: string | null;
+    accidentInsuranceCompanyName: string | null;
+    contractingCompanyName: string | null;
+    viceContractingCompanyName: string | null;
+    aCertificationDate: string | null;
+    wahCertificationDate: string | null;
+    lCertificationDate: string | null;
+    cCertificationDate: string | null;
+    hCertificationDate: string | null;
+    exCertificationDate: string | null;
+    sCertificationDate: string | null;
+    saCertificationDate: string | null;
+    osCertificationDate: string | null;
+    o2CertificationDate: string | null;
     idno: string;
-    sixStatus: string | null | undefined;
-    certificationStatus: string | null | undefined;
-    aStatus: string | null | undefined;
-    wahStatus: string | null | undefined;
-    lStatus: string | null | undefined;
-    cStatus: string | null | undefined;
-    hStatus: string | null | undefined;
-    exStatus: string | null | undefined;
-    sStatus: string | null | undefined;
-    saStatus: string | null | undefined;
-    osStatus: string | null | undefined;
-    o2Status: string | null | undefined;
-    PImg: string | null | undefined;
-    LImg: string | null | undefined;
-    IDFImg: string | null | undefined;
-    IDRImg: string | null | undefined;
-    GImg: string | null | undefined;
-    F6Img: string | null | undefined;
-    R6Img: string | null | undefined;
-    HImgs: string | null | undefined;
+    sixStatus: string | null;
+    certificationStatus: string | null;
+    aStatus: string | null;
+    wahStatus: string | null;
+    lStatus: string | null;
+    cStatus: string | null;
+    hStatus: string | null;
+    exStatus: string | null;
+    sStatus: string | null;
+    saStatus: string | null;
+    osStatus: string | null;
+    o2Status: string | null;
+    PImg: string | null;
+    LImg: string | null;
+    IDFImg: string | null;
+    IDRImg: string | null;
+    GImg: string | null;
+    F6Img: string | null;
+    R6Img: string | null;
+    HImgs: string | null;
 
-    no: number | null | undefined;
-    index: number;
-    isChecked: boolean | undefined;
+    no: string | null;
+}
+
+interface IQueryPeopleOverview {
+    allHumanresource: humanTableValues[];
+}
+
+type TPeopleOverviewTable = TOverviewTable<TOverviewChecked<humanTableValues>>;
+
+export interface ISelectedHuman {
+    no: string | null;
+    idno: string;
+    name: string;
 }
 
 export default function PeopleOverview(props: { errorOnly?: boolean }) {
@@ -882,37 +893,34 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
 
     const [fileLoading, setFileLoading] = React.useState<boolean>(false);
 
-    const [tableValue, setTableValue] = React.useState<{
-        [primaryKey: string]: humanTableValues;
-    }>({});
+    const [tableValue, setTableValue] = React.useState<TPeopleOverviewTable>(
+        {}
+    );
 
     const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
     const searchInputRef = React.useRef<HTMLInputElement>(null);
     const selectModeRef = React.useRef<HTMLSelectElement>(null);
 
-    const { loading } = useQuery(ALL_HUMAN_RESOURCE, {
-        notifyOnNetworkStatusChange: true,
+    const { loading } = useQuery<IQueryPeopleOverview>(ALL_HUMAN_RESOURCE, {
         variables: {
             errlist: errorOnly,
         },
         onCompleted: ({ allHumanresource }) => {
-            const appendedHumanTable = allHumanresource.map(
-                (info: any, index: number) => {
+            setTableValue(
+                allHumanresource.reduce((acc, info, index) => {
                     Object.keys(info).forEach((key) => {
-                        if (info[key] == '0001-01-01') info[key] = '日期錯誤';
-                        else if (info[key] === null) info[key] = '';
+                        if (info[key as keyof humanTableValues] == '0001-01-01')
+                            info[key as keyof humanTableValues] = '日期錯誤';
                     });
                     const primaryKey = `${info.idno}|${info.no ?? ''}`;
-                    return {
-                        [primaryKey as string]: {
-                            ...info,
-                            index: index + 1,
-                            isChecked: false,
-                        },
+                    acc[primaryKey] = {
+                        ...info,
+                        index: index + 1,
+                        isChecked: false,
                     };
-                }
+                    return acc;
+                }, {} as TPeopleOverviewTable)
             );
-            setTableValue(Object.assign({}, ...appendedHumanTable));
         },
         onError: (err) => {
             console.log(err);
@@ -956,9 +964,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         }, 300);
     };
 
-    const [selectedHuman, setSelectedHuman] = React.useState<
-        { no: number | null | undefined; idno: string; name: string }[]
-    >([]);
+    const [selectedHuman, setSelectedHuman] = React.useState<ISelectedHuman[]>(
+        []
+    );
 
     const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
@@ -993,10 +1001,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     React.useEffect(() => {
         if (tableValue) {
             setSelectedHuman(
-                Object.values(tableValue).flatMap((info) =>
-                    info['isChecked']
-                        ? { no: info.no, idno: info.idno, name: info.name }
-                        : []
+                Object.values(tableValue).flatMap(
+                    ({ isChecked, no, idno, name }) =>
+                        isChecked ? { no, idno, name } : []
                 )
             );
         }
