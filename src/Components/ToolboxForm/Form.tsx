@@ -59,7 +59,15 @@ export default function ToolboxForm({
     const [options, setOptions] = useState<IToolboxOptions>({
         toolboxHint: {},
     });
-    const f = new FormFactory(formProps, data, setData, options, setOptions);
+    const f = new FormFactory(
+        formProps,
+        data,
+        setData,
+        options,
+        setOptions,
+        signatures,
+        signatureLists
+    );
     document.title = `工具箱會議及巡檢紀錄(${number})`;
     useQuery(GQL_TOOLBOX_QUERY, {
         variables: {
@@ -98,6 +106,22 @@ export default function ToolboxForm({
     useEffect(() => {
         f.updateAllHint();
     }, [loading]);
+
+    useEffect(() => {
+        f.syncSignatureList('primeContractStaff');
+    }, [signatures.primeContractStaff[0]]);
+
+    useEffect(() => {
+        f.syncSignatureList('minorContractOneStaff');
+    }, [signatures.minorContractOneStaff[0]]);
+
+    useEffect(() => {
+        f.syncSignatureList('minorContractTwoStaff');
+    }, [signatures.minorContractTwoStaff[0]]);
+
+    useEffect(() => {
+        f.syncSignatureList('minorContractThreeStaff');
+    }, [signatures.minorContractThreeStaff[0]]);
 
     return (
         <Form>
@@ -280,7 +304,9 @@ export default function ToolboxForm({
                             placeHolderText="承商監工或工安"
                             showTime={true}
                             h="100px"
-                            disable={!!signatures.minorContractThreeStaff[0]?.no}
+                            disable={
+                                !!signatures.minorContractThreeStaff[0]?.no
+                            }
                         />
                     </GridItem>
                     <GridItem rowStart={5} rowEnd={7} {...centerStyle}>
