@@ -1374,7 +1374,9 @@ export default function ToolboxForm({
                             borderBottom="1px"
                             zIndex={99}
                         >
-                            {f.forbidOverlay('請先完成相關特作業檢點表的開工前簽名')}
+                            {f.forbidOverlay(
+                                '請先完成相關「環安衛自主檢查表」和「特作業檢點表」的開工前簽名'
+                            )}
                         </GridItem>
                     )}
                     {!data.signaturePermit.knockOff && (
@@ -1388,7 +1390,9 @@ export default function ToolboxForm({
                             borderBottom="1px"
                             zIndex={99}
                         >
-                            {f.forbidOverlay('請先完成相關特作業檢點表的收工前簽名')}
+                            {f.forbidOverlay(
+                                '請先完成相關「環安衛自主檢查表」和「特作業檢點表」的收工前簽名'
+                            )}
                         </GridItem>
                     )}
                 </Grid>
