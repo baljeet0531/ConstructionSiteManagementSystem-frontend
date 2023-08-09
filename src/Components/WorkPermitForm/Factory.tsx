@@ -248,8 +248,9 @@ export default class FormFactory extends SharedFactory {
     }
 
     getSystemBranches() {
-        return this.formProps.values.system
-            ? Object.keys(systemConst[this.formProps.values.system])
+        const system = this.formProps.values.system;
+        return system && system in systemConst
+            ? Object.keys(systemConst[system])
             : [];
     }
 
