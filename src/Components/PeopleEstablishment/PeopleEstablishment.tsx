@@ -161,7 +161,18 @@ export default function PeopleEstablishment() {
                         data[field].ok && handleCompeleted(data[field].message);
                     },
                     onError: handleErr,
-                    refetchQueries: [ALL_HUMAN_RESOURCE],
+                    refetchQueries: [
+                        {
+                            query: ALL_HUMAN_RESOURCE,
+                            variables: { errlist: true },
+                            fetchPolicy: 'network-only',
+                        },
+                        {
+                            query: ALL_HUMAN_RESOURCE,
+                            variables: { errlist: false },
+                            fetchPolicy: 'network-only',
+                        },
+                    ],
                 });
 
                 searchHuman({
