@@ -22,7 +22,6 @@ export default function GridInputItem({
     handleValidate,
     style,
     invalidStyle,
-    // invalidMsg = 'Invalid',
     fast=false,
     ...rest
 }: GridItemProps & {
@@ -42,9 +41,8 @@ export default function GridInputItem({
     style?: GridItemProps;
     invalidStyle?: object;
     fast?: boolean;
-    // invalidMsg?: string;
 }) {
-    const field = fast ? <FastField /> : <Field />;
+    const SelectedField = fast ? FastField : Field;
     return (
         <GridItem
             {...(gridRange && {
@@ -56,7 +54,7 @@ export default function GridInputItem({
             {...rest}
             {...style}
         >
-            <field.type name={fieldName} validate={handleValidate}>
+            <SelectedField name={fieldName} validate={handleValidate}>
                 {({
                     field,
                     form,
@@ -110,7 +108,7 @@ export default function GridInputItem({
                         </InputGroup>
                     );
                 }}
-            </field.type>
+            </SelectedField>
         </GridItem>
     );
 }

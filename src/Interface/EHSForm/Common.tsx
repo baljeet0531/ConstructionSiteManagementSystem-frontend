@@ -69,7 +69,7 @@ export interface IEHSFormFillItem {
 
 export interface IEHSFormData {
     searchName: string[];
-    selectedCorp: { [key: string]: string[] };
+    selectedCorp: { [key: string]: Set<string> };
 }
 
 export interface IEHSFormOverview {
