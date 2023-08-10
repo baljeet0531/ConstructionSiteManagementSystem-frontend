@@ -126,16 +126,19 @@ export default class FormFactory {
                     fieldName={item.normal}
                     inputComponent={this.normalCheckbox(item, true)}
                     style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
                 />
                 <GridInputItem
                     fieldName={item.normal}
                     inputComponent={this.normalCheckbox(item, false)}
                     style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
                 />
                 <GridInputItem
                     fieldName={item.normal}
                     inputComponent={this.misfitCheckbox(item)}
                     style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
                 />
                 <GridInputItem
                     fieldName={item.ameliorate}
