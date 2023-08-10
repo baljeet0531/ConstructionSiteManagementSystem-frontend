@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
+import { defaultErrorToast, defaultWarningToast } from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
 import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
@@ -123,6 +123,16 @@ export default function EHSForm({
         }
         setSignList(updateList);
     }, [data.selectedCorp]);
+
+    useEffect(() => {
+        if (!formProps.isValid) {
+            defaultWarningToast(
+                toast,
+                '填寫內容不符合規定',
+                '請檢查並修改後再上傳。'
+            );
+        }
+    }, [formProps.isValid]);
 
     return (
         <Form>

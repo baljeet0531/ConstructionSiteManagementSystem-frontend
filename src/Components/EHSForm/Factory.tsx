@@ -122,15 +122,21 @@ export default class FormFactory {
                 <GridItem {...tableStyle} pl={2}>
                     <Text>{item.content}</Text>
                 </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.normalCheckbox(item, true)}
-                </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.normalCheckbox(item, false)}
-                </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.misfitCheckbox(item)}
-                </GridItem>
+                <GridInputItem
+                    fieldName={item.normal}
+                    inputComponent={this.normalCheckbox(item, true)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                />
+                <GridInputItem
+                    fieldName={item.normal}
+                    inputComponent={this.normalCheckbox(item, false)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                />
+                <GridInputItem
+                    fieldName={item.normal}
+                    inputComponent={this.misfitCheckbox(item)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                />
                 <GridInputItem
                     fieldName={item.ameliorate}
                     inputComponent={this.corpNameSelect(
