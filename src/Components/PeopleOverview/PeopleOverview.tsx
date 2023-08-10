@@ -907,7 +907,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         },
         onCompleted: ({ allHumanresource }) => {
             setTableValue(
-                allHumanresource.reduce((acc, info, index) => {
+                allHumanresource.reduce((acc, oldInfo, index) => {
+                    const info = { ...oldInfo };
                     Object.keys(info).forEach((key) => {
                         if (info[key as keyof humanTableValues] == '0001-01-01')
                             info[key as keyof humanTableValues] = '日期錯誤';
