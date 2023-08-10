@@ -6,8 +6,8 @@ export type TUserRole =
     | '工地經理'
     | '專案工程師'
     | '系統工程師'
-    | '工安人員'
-    | '外包商'
+    | '職安衛人員'
+    | '承攬商'
     | '業主';
 
 export type TActions = { C: boolean; R: boolean; U: boolean; D: boolean };
