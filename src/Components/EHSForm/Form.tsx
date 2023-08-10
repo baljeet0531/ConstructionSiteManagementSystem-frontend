@@ -23,7 +23,10 @@ import { useEffect, useState } from 'react';
 import { FormLoading } from '../Shared/Loading';
 import { EHSFormHandler } from '../../Utils/EHSForm/Handler';
 import { useQuery } from '@apollo/client';
-import { defaultErrorToast, defaultWarningToast } from '../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultWarningToast,
+} from '../../Utils/DefaultToast';
 import { baseStyle, filledStyle, unboxStyle } from './Styles';
 import SignaturePad from '../Shared/SignaturePad';
 import GridInputItem from '../Shared/GridInputItem';
@@ -66,8 +69,7 @@ export default function EHSForm({
             setData({
                 searchName: d.searchName,
                 selectedCorp: handler.getSelectedCorp(
-                    singleFormData as IEHSFormNormal | IEHSFormSpecial,
-                    d.searchName
+                    singleFormData as IEHSFormNormal | IEHSFormSpecial
                 ),
             });
             setLoading(false);
@@ -115,7 +117,7 @@ export default function EHSForm({
     useEffect(() => {
         const updateList = [];
         for (const [key, value] of Object.entries(data.selectedCorp)) {
-            if (value.length > 0) {
+            if (value.size > 0) {
                 updateList.push(key);
             } else {
                 objectSignatureHandler.removeSignature(key);

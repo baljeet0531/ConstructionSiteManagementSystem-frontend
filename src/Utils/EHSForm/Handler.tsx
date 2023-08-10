@@ -159,21 +159,18 @@ export abstract class EHSFormHandler<
         return count;
     }
 
-    getSelectedCorp(
-        values: C,
-        searchName: string[]
-    ): { [key: string]: string[] } {
-        const target = searchName.reduce(
-            (acc, cur) => ({ ...acc, [cur]: [] }),
-            {}
-        ) as { [key: string]: string[] };
+    getSelectedCorp(values: C): { [key: string]: Set<string> } {
+        const target = {} as { [key: string]: Set<string> };
 
         let key: keyof C;
         for (key in values) {
             if (key.includes('Ameliorate') && values[key]) {
                 const list = values[key] as IEHSFormTargetInItem[];
                 list.map((item) => {
-                    target[item.corpName].push(item.code);
+                    if (!target[item.corpName]) {
+                        target[item.corpName] = new Set();
+                    }
+                    target[item.corpName].add(item.code);
                 });
             }
         }
