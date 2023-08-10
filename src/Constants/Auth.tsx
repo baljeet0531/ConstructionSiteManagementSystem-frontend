@@ -38,8 +38,8 @@ export const roleFeatureToUserRoleMap: Record<TRoleFeature, TUserRole[]> = {
         '專案工程師',
         '系統工程師',
     ],
-    職安衛管理: ['系統管理員', '專案經理', '工地經理', '工安人員'],
-    承商管理: ['系統管理員', '專案經理', '工地經理', '外包商'],
+    職安衛管理: ['系統管理員', '專案經理', '工地經理', '職安衛人員'],
+    承商管理: ['系統管理員', '專案經理', '工地經理', '承攬商'],
 };
 export const pagePrefixToRoleFeatureMap: Record<string, TRoleFeature> = {
     eng: '工程管理',

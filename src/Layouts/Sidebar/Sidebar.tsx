@@ -34,8 +34,8 @@ const roleAvatarMap: Record<TUserRole, string> = {
     工地經理: SiteManager,
     專案工程師: ProjectEngineer,
     系統工程師: SystemEngineer,
-    工安人員: SecurityStaff,
-    外包商: OutSourcer,
+    職安衛人員: SecurityStaff,
+    承攬商: OutSourcer,
     業主: Owner,
 };
 
