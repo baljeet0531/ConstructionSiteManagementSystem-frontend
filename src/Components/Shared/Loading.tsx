@@ -29,6 +29,7 @@ export function FormLoading(props: CenterProps) {
         <Center
             position="fixed"
             top={0}
+            left={0}
             w="100vw"
             h="100vh"
             bg={'#D9D9D980'}
