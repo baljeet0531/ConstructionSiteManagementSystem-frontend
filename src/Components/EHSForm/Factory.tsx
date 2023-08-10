@@ -270,7 +270,11 @@ export default class FormFactory {
                       this.formProps.values as IEHSFormNormal | IEHSFormSpecial,
                       code
                   );
-        const options = this.data.searchName.map((name, index) => (
+        const corps =
+            field === 'checkTarget'
+                ? this.data.searchName
+                : this.getFilledCorp();
+        const options = corps.map((name, index) => (
             <Checkbox
                 key={`${field}-corpName-${index}`}
                 size={'sm'}
@@ -326,5 +330,12 @@ export default class FormFactory {
                 </PopoverContent>
             </Popover>
         );
+    }
+    getFilledCorp() {
+        const target: string[] = [];
+        this.formProps.values.checkTarget?.map((i) => {
+            target.push(i.corpName);
+        });
+        return target;
     }
 }
