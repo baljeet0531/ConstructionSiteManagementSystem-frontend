@@ -14,6 +14,7 @@ import {
 import { featureName, featureItem } from '../FeatureMap';
 import Admin from '../../Images/Avatars/Admin.svg';
 import ProjectManager from '../../Images/Avatars/ProjectManager.svg';
+import ProjectSecretary from '../../Images/Avatars/ProjectSecretary.svg';
 import SiteManager from '../../Images/Avatars/SiteManager.svg';
 import ProjectEngineer from '../../Images/Avatars/ProjectEngineer.svg';
 import SystemEngineer from '../../Images/Avatars/SystemEngineer.svg';
@@ -31,6 +32,7 @@ import { TUserRole } from '../../Types/Auth';
 const roleAvatarMap: Record<TUserRole, string> = {
     系統管理員: Admin,
     專案經理: ProjectManager,
+    專案秘書: ProjectSecretary,
     工地經理: SiteManager,
     專案工程師: ProjectEngineer,
     系統工程師: SystemEngineer,

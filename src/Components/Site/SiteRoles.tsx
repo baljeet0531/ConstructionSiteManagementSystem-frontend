@@ -32,6 +32,7 @@ export const QUERY_SITE_ROLES = gql`
 
 export const rolesList: TUserRole[] = [
     '專案經理',
+    '專案秘書',
     '工地經理',
     '專案工程師',
     '系統工程師',

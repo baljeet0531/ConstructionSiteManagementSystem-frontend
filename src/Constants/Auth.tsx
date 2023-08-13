@@ -61,6 +61,7 @@ export const roleFeatureToUserRoleMap: Record<TRoleFeature, TUserRole[]> = {
     工程管理: [
         '系統管理員',
         '專案經理',
+        '專案秘書',
         '工地經理',
         '專案工程師',
         '系統工程師',
