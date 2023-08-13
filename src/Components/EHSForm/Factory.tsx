@@ -147,7 +147,6 @@ export default class FormFactory {
                     )}
                     inputRightComponent={<ChevronDownIcon />}
                     style={tableStyle}
-                    fast
                 />
             </Fragment>
         );
@@ -222,6 +221,31 @@ export default class FormFactory {
                     (target) => target.corpName !== name
                 )
             );
+            for (let key in this.handler.itemGroups) {
+                this.handler.itemGroups[key].items.forEach((item) => {
+                    this.formProps.setFieldValue(
+                        item.ameliorate,
+                        (
+                            this.formProps.values[
+                                item.ameliorate as keyof IEHSForm
+                            ] as IEHSFormTargetInItem[]
+                        ).filter((target) => target.corpName !== name)
+                    );
+                    this.setData((prev) => {
+                        let selectedSet =
+                            prev.selectedCorp[name] || new Set<string>();
+                        const code = item.ameliorate.replace('Ameliorate', '');
+                        selectedSet.delete(code);
+                        return {
+                            ...prev,
+                            selectedCorp: {
+                                ...prev.selectedCorp,
+                                [name]: selectedSet,
+                            },
+                        };
+                    });
+                });
+            }
         }
     }
     handleAmeliorateOnChange(
