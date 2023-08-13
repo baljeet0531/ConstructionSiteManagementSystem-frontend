@@ -56,6 +56,7 @@ export default function Layout(props: { page: featureName }) {
     if (!cookieValue || !username) return <Navigate to={'/login'}></Navigate>;
 
     const { page } = props;
+    const { service, subService } = pageToFeatureAuthMap[page];
 
     const [sitesObject, setSitesObject] = React.useState<ISiteObject>({});
     const [selectedSiteId, setSelectedSiteId] = React.useState<string>();
@@ -136,8 +137,8 @@ export default function Layout(props: { page: featureName }) {
     } = useAuth({
         variables: {
             siteId: selectedSiteId || '',
-            service: pageToFeatureAuthMap[page],
-            subService: 'ALL',
+            service,
+            subService,
         },
     });
 
@@ -145,8 +146,8 @@ export default function Layout(props: { page: featureName }) {
         selectedSiteId &&
             refetch({
                 siteId: selectedSiteId,
-                service: pageToFeatureAuthMap[page],
-                subService: 'ALL',
+                service,
+                subService,
             });
     }, [selectedSiteId, page]);
 
