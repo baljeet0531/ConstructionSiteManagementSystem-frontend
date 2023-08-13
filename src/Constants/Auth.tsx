@@ -13,7 +13,7 @@ export const pageToFeatureAuthMap: Record<
     people_establishment: { service: '人才管理', subService: '人員資料建置' },
     project_schedule: { service: '專案管理', subService: '排程管理' },
     project_report: { service: '專案管理', subService: '進度報表' },
-    project_photo: { service: '專案管理', subService: '照片管理' },
+    project_photo: { service: '專案管理', subService: '相片管理' },
     eng_work_permit_form: { service: '工程管理', subService: '工作許可單' },
     eng_toolbox_form: { service: '工程管理', subService: '工具箱會議' },
     eng_fault_form: { service: '工程管理', subService: '工安缺失單' },
@@ -25,7 +25,7 @@ export const pageToFeatureAuthMap: Record<
         service: '工程管理',
         subService: '特殊作業自主檢點表',
     },
-    eng_photo: { service: '工程管理', subService: '照片管理' },
+    eng_photo: { service: '工程管理', subService: '相片管理' },
     ehs_form: { service: '職安衛管理', subService: '工安自主檢查' },
     ehs_fault_form: { service: '職安衛管理', subService: '工安缺失單' },
     ehs_machinery_management: {
