@@ -231,21 +231,17 @@ export default class FormFactory {
                             ] as IEHSFormTargetInItem[]
                         ).filter((target) => target.corpName !== name)
                     );
-                    this.setData((prev) => {
-                        let selectedSet =
-                            prev.selectedCorp[name] || new Set<string>();
-                        const code = item.ameliorate.replace('Ameliorate', '');
-                        selectedSet.delete(code);
-                        return {
-                            ...prev,
-                            selectedCorp: {
-                                ...prev.selectedCorp,
-                                [name]: selectedSet,
-                            },
-                        };
-                    });
                 });
             }
+            this.setData((prev) => {
+                return {
+                    ...prev,
+                    selectedCorp: {
+                        ...prev.selectedCorp,
+                        [name]: new Set<string>(),
+                    },
+                };
+            });
         }
     }
     handleAmeliorateOnChange(
