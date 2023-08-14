@@ -92,7 +92,7 @@ export default function TodayOp(props: { siteId: string; granularity: TItem }) {
             },
         ],
         dataset: {
-            dimensions: ['name', 'finish', 'total'],
+            dimensions: ['name', 'total', 'finish'],
             source: data,
         },
         series: [

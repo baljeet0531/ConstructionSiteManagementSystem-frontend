@@ -59,7 +59,7 @@ export default function EHSForm({
         variables: {
             siteId: handler.siteId,
             day: handler.day,
-            role: '外包商',
+            role: '承攬商',
         },
         onCompleted: (d) => {
             const singleFormData = handler.parse(d[handler.queryName]);

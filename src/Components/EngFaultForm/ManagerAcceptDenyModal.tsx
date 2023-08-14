@@ -50,11 +50,7 @@ export default function ManagerAcceptDenyModal(props: {
                     此檢點項目嗎？
                 </ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>
-                    確定駁回後
-                    <Mark color={'#DB504A'}>{accept ? '將會' : '將不會'}</Mark>
-                    產生工安缺失紀錄表。
-                </ModalBody>
+                <ModalBody>確定駁回後將會產生工安缺失紀錄表。</ModalBody>
                 <ModalFooter>
                     <Flex
                         align={'center'}
