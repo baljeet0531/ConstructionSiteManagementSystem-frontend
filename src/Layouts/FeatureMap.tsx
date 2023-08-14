@@ -239,7 +239,7 @@ export function getFeatureMap(site: {
                 ),
         },
         ehs_form: {
-            name: '工安自主檢查',
+            name: '工安巡迴檢查表',
             path: '/ehs/form/ehs-form',
             page:
                 siteId == '' ? (

@@ -306,7 +306,7 @@ export default function EHSOverview(props: {
             gap={'11px'}
         >
             <Text variant={'pageSiteName'}>{siteName}</Text>
-            <Text variant={'pageTitle'}>工安自主檢查</Text>
+            <Text variant={'pageTitle'}>工安巡迴檢查表</Text>
             <Flex align={'center'} justify={'space-between'}>
                 <Flex gap={'10px'} align={'center'}>
                     <DateRangePicker
