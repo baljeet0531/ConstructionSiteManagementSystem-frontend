@@ -16,6 +16,7 @@ import { EditIcon, DeleteIcon } from '../../Icons/Icons';
 
 import EditRole from './SitePopup/EditRole';
 import DeleteRole from './SitePopup/DeleteRole';
+import { TUserRole } from '../../Types/Auth';
 
 export const QUERY_SITE_ROLES = gql`
     query siteRoles($siteId: String!) {
@@ -29,13 +30,14 @@ export const QUERY_SITE_ROLES = gql`
     }
 `;
 
-export const rolesList = [
+export const rolesList: TUserRole[] = [
     '專案經理',
+    '專案秘書',
     '工地經理',
     '專案工程師',
     '系統工程師',
-    '工安人員',
-    '外包商',
+    '職安衛人員',
+    '承攬商',
     '業主',
 ];
 
