@@ -15,7 +15,7 @@ import {
 } from '../Constants/Auth';
 import { TUserRole } from '../Types/Auth';
 import { checkAuth } from '../Utils/Web';
-import { ActionsContext } from '../Context/Context';
+import { ActionsContext, RolesContext } from '../Context/Context';
 import NoContentPage from '../Components/Shared/NoContentPage';
 
 export const QUERY_ACCOUNT_SITES = gql`
@@ -167,17 +167,19 @@ export default function Layout(props: { page: featureName }) {
                 setSelectedSiteId={setSelectedSiteId}
                 featureMap={featureMap}
             />
-            <ActionsContext.Provider value={actions}>
-                <MainScreen>
-                    {loading ? (
-                        <CustomLoading />
-                    ) : checkLayoutAuth() && actions.R ? (
-                        featureMap[page].page
-                    ) : (
-                        <NoContentPage label="您沒有訪問權限" />
-                    )}
-                </MainScreen>
-            </ActionsContext.Provider>
+            <RolesContext.Provider value={selectedSiteValue?.role || ''}>
+                <ActionsContext.Provider value={actions}>
+                    <MainScreen>
+                        {loading ? (
+                            <CustomLoading />
+                        ) : checkLayoutAuth() && actions.R ? (
+                            featureMap[page].page
+                        ) : (
+                            <NoContentPage label="您沒有訪問權限" />
+                        )}
+                    </MainScreen>
+                </ActionsContext.Provider>
+            </RolesContext.Provider>
         </Flex>
     );
 }

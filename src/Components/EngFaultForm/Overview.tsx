@@ -32,6 +32,7 @@ import AcceptDenySignatureModal, {
 import { defaultSuccessToast } from '../../Utils/DefaultToast';
 import ManagerAcceptDenyModal from './ManagerAcceptDenyModal';
 import { TOverviewTable } from '../../Types/TableOverview';
+import { RolesContext } from '../../Context/Context';
 
 const QUERY_ENG_FAULT_FROM_OVERVIEW = gql`
     ${SIGNATURE_FIELDS}
@@ -101,6 +102,7 @@ export default function EngFaultOverview(props: {
 
     const { siteId, siteName } = props;
     const toast = useToast();
+    const userRole = React.useContext(RolesContext);
     const signatureDisclosure = useDisclosure();
     const managerDisclosure = useDisclosure();
     const [accept, setAccept] = React.useState<boolean>(true);
@@ -254,7 +256,8 @@ export default function EngFaultOverview(props: {
             width: 100,
             variable: 'managerStatus',
             getElement: (props) => {
-                return props.info.engineerStatus === null ? (
+                return (userRole !== '專案經理' && userRole !== '工地經理') ||
+                    props.info.engineerStatus === null ? (
                     defaultElement(props)
                 ) : (
                     <AcceptDenyElement
