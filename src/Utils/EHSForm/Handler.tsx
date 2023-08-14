@@ -17,6 +17,7 @@ import {
 } from '../../Interface/EHSForm/Common';
 import { IEHSFormNormal } from '../../Interface/EHSForm/Normal';
 import { IEHSFormSpecial } from '../../Interface/EHSForm/Special';
+import { FormikErrors } from 'formik';
 
 export abstract class EHSFormHandler<
     C extends IEHSFormNormal | IEHSFormSpecial
@@ -158,24 +159,40 @@ export abstract class EHSFormHandler<
         return count;
     }
 
-    getSelectedCorp(
-        values: C,
-        searchName: string[]
-    ): { [key: string]: string[] } {
-        const target = searchName.reduce(
-            (acc, cur) => ({ ...acc, [cur]: [] }),
-            {}
-        ) as { [key: string]: string[] };
+    getSelectedCorp(values: C): { [key: string]: Set<string> } {
+        const target = {} as { [key: string]: Set<string> };
 
         let key: keyof C;
         for (key in values) {
             if (key.includes('Ameliorate') && values[key]) {
                 const list = values[key] as IEHSFormTargetInItem[];
                 list.map((item) => {
-                    target[item.corpName].push(item.code);
+                    if (!target[item.corpName]) {
+                        target[item.corpName] = new Set();
+                    }
+                    target[item.corpName].add(item.code);
                 });
             }
         }
         return target;
+    }
+
+    validate(values: any) {
+        const errors: FormikErrors<IEHSForm> = {};
+        let flag = false;
+        Object.values(this.itemGroups).map((group) => {
+            group.items.map((item) => {
+                if (
+                    values[item.normal] === null &&
+                    values[item.misfit] === null
+                ) {
+                    errors[item.normal as keyof IEHSForm] = '必填';
+                    errors[item.misfit as keyof IEHSForm] = '必填';
+                } else {
+                    flag = true;
+                }
+            });
+        });
+        return flag ? errors : {};
     }
 }
