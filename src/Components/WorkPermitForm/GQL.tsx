@@ -92,6 +92,10 @@ export const GQL_WORK_PERMIT_QUERY = gql`
     ${SIGNATURE_FIELDS}
     query getWorkPermit($siteId: String!, $number: String) {
         contractingCorpName(siteId: $siteId)
+        nameAndTel(siteId: $siteId) {
+            name
+            tel
+        }
         siteAreas(siteId: $siteId) {
             name
             zone

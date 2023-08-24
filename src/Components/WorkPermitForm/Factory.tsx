@@ -1,4 +1,4 @@
-import { Checkbox, Flex, Input, Text } from '@chakra-ui/react';
+import { Box, Checkbox, Flex, Input, Text } from '@chakra-ui/react';
 import {
     AutoComplete,
     AutoCompleteInput,
@@ -427,23 +427,23 @@ export default class FormFactory extends SharedFactory {
             </>
         );
     }
-    selectContractingCorpInput(fieldName: keyof IWorkPermit) {
+    selectContractingCorpInput() {
         return (
             <AutoComplete
                 openOnFocus
                 listAllValuesOnFocus
                 onChange={(value: string) => {
-                    this.formProps.setFieldValue(fieldName, value);
+                    this.formProps.setFieldValue('supervisorCorp', value);
                 }}
             >
                 <AutoCompleteInput
                     border="0px"
                     placeholder="填寫"
                     textAlign="left"
-                    value={this.formProps.values[fieldName] as string}
+                    value={this.formProps.values['supervisorCorp'] as string}
                     onChange={(e) => {
                         const target = e.target.value;
-                        this.formProps.setFieldValue(fieldName, target);
+                        this.formProps.setFieldValue('supervisorCorp', target);
                     }}
                     _placeholder={placeholderStyle}
                 />
@@ -456,6 +456,54 @@ export default class FormFactory extends SharedFactory {
                                 textTransform="capitalize"
                             >
                                 {corp}
+                            </AutoCompleteItem>
+                        )
+                    )}
+                </AutoCompleteList>
+            </AutoComplete>
+        );
+    }
+    selectSupervisorInput() {
+        return (
+            <AutoComplete
+                openOnFocus
+                listAllValuesOnFocus
+                onChange={(value: string) => {
+                    const target = JSON.parse(value) as {
+                        name: string;
+                        tel: string;
+                    };
+                    target.name &&
+                        this.formProps.setFieldValue('supervisor', target.name);
+                    target.tel &&
+                        this.formProps.setFieldValue('tel', target.tel);
+                }}
+            >
+                <AutoCompleteInput
+                    border="0px"
+                    placeholder="填寫"
+                    textAlign="left"
+                    value={this.formProps.values['supervisor'] as string}
+                    onChange={(e) => {
+                        const target = e.target.value;
+                        this.formProps.setFieldValue('supervisor', target);
+                    }}
+                    _placeholder={placeholderStyle}
+                />
+                <AutoCompleteList>
+                    {this.data.nameAndTel?.map(
+                        (item: { name: string; tel: string }, cid: number) => (
+                            <AutoCompleteItem
+                                key={`option-${cid}`}
+                                value={JSON.stringify(item)}
+                                textTransform="capitalize"
+                            >
+                                <Box>
+                                    <Text>{item.name}</Text>
+                                    <Text fontSize="xs" color="gray.400">
+                                        {item.tel || '沒有電話號碼'}
+                                    </Text>
+                                </Box>
                             </AutoCompleteItem>
                         )
                     )}
