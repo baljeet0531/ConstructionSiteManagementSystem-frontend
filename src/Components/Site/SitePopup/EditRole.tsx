@@ -52,6 +52,7 @@ export default function EditRole(props: {
     siteName: string;
     roleDetails: {
         name: string;
+        tel: string;
         role: string;
         username: string;
     };
@@ -59,12 +60,12 @@ export default function EditRole(props: {
     setRerender: Function;
 }) {
     const { siteId, siteName, roleDetails, setShowPopup, setRerender } = props;
-    const { username } = roleDetails;
+    const { username, tel } = roleDetails;
 
     const toast = useToast();
     const password = React.useRef<HTMLInputElement>(null);
     const passwordAgain = React.useRef<HTMLInputElement>(null);
-    const tel = React.useRef<HTMLInputElement>(null);
+    const telRef = React.useRef<HTMLInputElement>(null);
 
     const [name, setName] = React.useState<string>(roleDetails.name);
     const [role, setRole] = React.useState<string>(roleDetails.role);
@@ -228,7 +229,8 @@ export default function EditRole(props: {
                                 _placeholder={{
                                     color: '#66708080',
                                 }}
-                                ref={tel}
+                                ref={telRef}
+                                defaultValue={tel}
                             ></Input>
                         </Flex>
                         <Flex justify={'space-between'} h="36px">
@@ -321,7 +323,7 @@ export default function EditRole(props: {
                                             name: name,
                                             role: role,
                                             username: username,
-                                            tel: tel.current?.value,
+                                            tel: telRef.current?.value,
                                         },
                                     });
                                 } else if (
@@ -342,7 +344,7 @@ export default function EditRole(props: {
                                             name: name,
                                             role: role,
                                             username: username,
-                                            tel: tel.current?.value,
+                                            tel: telRef.current?.value,
                                             password: password.current.value,
                                         },
                                     });
