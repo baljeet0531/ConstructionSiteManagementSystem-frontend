@@ -59,6 +59,7 @@ export default function WorkPermitForm({
     const [data, setData] = useState<IWorkPermitData>({
         siteAreas: [],
         contractingCorpName: [],
+        nameAndTel: [],
     });
     const [options, setOptions] = useState<IWorkPermitOptions>({
         zones: [],
@@ -78,6 +79,7 @@ export default function WorkPermitForm({
             setData({
                 siteAreas: d.siteAreas,
                 contractingCorpName: d.contractingCorpName,
+                nameAndTel: d.nameAndTel,
             });
 
             const singleFormData = parseWorkPermit(
@@ -294,9 +296,7 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[6, 7, 3, 6]}
                         fieldName="supervisorCorp"
-                        inputComponent={f.selectContractingCorpInput(
-                            'supervisorCorp'
-                        )}
+                        inputComponent={f.selectContractingCorpInput()}
                         inputRightComponent={<ChevronDownIcon />}
                         style={{ ...lastStyle }}
                     />
@@ -305,7 +305,7 @@ export default function WorkPermitForm({
                     <GridInputItem
                         gridRange={[7, 8, 3, 4]}
                         fieldName="supervisor"
-                        inputComponent={f.textInput()}
+                        inputComponent={f.selectSupervisorInput()}
                         style={{ ...contentStyle }}
                     />
                     <GridItem {...contentStyle}>聯絡電話：</GridItem>

@@ -3,6 +3,7 @@ import { ISiteArea } from './Site';
 export interface IWorkPermitData {
     siteAreas: ISiteArea[];
     contractingCorpName: string[] | null;
+    nameAndTel: { name: string; tel: string }[] | null;
 }
 
 export interface IWorkPermitOptions {
