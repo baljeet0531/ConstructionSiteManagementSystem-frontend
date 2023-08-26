@@ -18,19 +18,18 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
+    useToast,
 } from '@chakra-ui/react';
 
-import {
-    ApolloCache,
-    DefaultContext,
-    gql,
-    MutationHookOptions,
-    OperationVariables,
-    useMutation,
-} from '@apollo/client';
+import { gql, MutationHookOptions, useMutation } from '@apollo/client';
 import { QUERY_SITE } from './Site';
 import { Cookies } from 'react-cookie';
 import { QUERY_ACCOUNT_SITES } from '../../Layouts/Layout';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import { FormLoading } from '../Shared/Loading';
 
 const DELETE_SITE = gql`
     mutation deleteSite($siteId: String!) {
@@ -72,16 +71,25 @@ export default function Site(props: {
     } = props;
     const { siteId, name: siteName, archived } = siteDetails;
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast();
 
-    const mutationOptions: MutationHookOptions<
-        any,
-        OperationVariables,
-        DefaultContext,
-        ApolloCache<any>
-    > = {
+    const mutationOptions: MutationHookOptions<{
+        deleteSite?: { ok: boolean };
+        activeSite?: { ok: boolean };
+    }> = {
         variables: { siteId: siteId },
-        onError: (error) => {
-            console.log(error);
+        onCompleted: (d) => {
+            if (d.deleteSite?.ok || d.activeSite?.ok) {
+                onClose();
+                defaultSuccessToast(
+                    toast,
+                    d.deleteSite ? '成功凍結' : '成功解除'
+                );
+            } else defaultErrorToast(toast);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
         },
         refetchQueries: [
             { query: QUERY_SITE },
@@ -93,11 +101,19 @@ export default function Site(props: {
                 },
             },
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     };
 
-    const [deleteSite] = useMutation(DELETE_SITE, mutationOptions);
+    const [deleteSite, { loading: deleteLoading }] = useMutation(
+        DELETE_SITE,
+        mutationOptions
+    );
 
-    const [activeSite] = useMutation(ACTIVE_SITE, mutationOptions);
+    const [activeSite, { loading: activeLoading }] = useMutation(
+        ACTIVE_SITE,
+        mutationOptions
+    );
 
     return (
         <Box
@@ -162,66 +178,73 @@ export default function Site(props: {
                     </Button>
                 </Center>
             )}
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-                <ModalOverlay />
-                <ModalContent
-                    maxWidth={'380px'}
-                    maxHeight={'266px'}
-                    minHeight={'266px'}
-                    padding={'30px 45px'}
-                >
-                    <ModalHeader padding={0}>
-                        <Flex direction={'column'} width={'100%'}>
-                            <Text
-                                fontStyle={'normal'}
-                                fontWeight={700}
-                                fontSize={'20px'}
-                                lineHeight={'20px'}
-                                color={'#667080'}
-                            >
-                                {archived
-                                    ? '確定解除凍結以下專案？'
-                                    : '確定凍結以下專案？'}
-                            </Text>
-                        </Flex>
-                    </ModalHeader>
-                    <ModalBody bg={'#E3ECFF'} borderRadius={'10px'} mt={'20px'}>
-                        <Center
-                            width={'100%'}
-                            height={'102px'}
-                            overflowX={'auto'}
-                        >
-                            <Text color={'#667080'}>{siteName}</Text>
-                        </Center>
-                    </ModalBody>
-
-                    <ModalFooter padding={0}>
-                        <Flex
+            {deleteLoading || activeLoading ? (
+                <FormLoading />
+            ) : (
+                <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                    <ModalOverlay />
+                    <ModalContent
+                        maxWidth={'380px'}
+                        maxHeight={'266px'}
+                        minHeight={'266px'}
+                        padding={'30px 45px'}
+                    >
+                        <ModalHeader padding={0}>
+                            <Flex direction={'column'} width={'100%'}>
+                                <Text
+                                    fontStyle={'normal'}
+                                    fontWeight={700}
+                                    fontSize={'20px'}
+                                    lineHeight={'20px'}
+                                    color={'#667080'}
+                                >
+                                    {archived
+                                        ? '確定解除凍結以下專案？'
+                                        : '確定凍結以下專案？'}
+                                </Text>
+                            </Flex>
+                        </ModalHeader>
+                        <ModalBody
+                            bg={'#E3ECFF'}
+                            borderRadius={'10px'}
                             mt={'20px'}
-                            justify={'space-between'}
-                            width={'100%'}
                         >
-                            <Button
-                                variant={'buttonGrayOutline'}
-                                size={'xs'}
-                                onClick={onClose}
+                            <Center
+                                width={'100%'}
+                                height={'102px'}
+                                overflowX={'auto'}
                             >
-                                取消
-                            </Button>
-                            <Button
-                                variant={'buttonGrayOutline'}
-                                size={'xs'}
-                                onClick={() => {
-                                    archived ? activeSite() : deleteSite();
-                                    onClose();
-                                }}
+                                <Text color={'#667080'}>{siteName}</Text>
+                            </Center>
+                        </ModalBody>
+
+                        <ModalFooter padding={0}>
+                            <Flex
+                                mt={'20px'}
+                                justify={'space-between'}
+                                width={'100%'}
                             >
-                                確定
-                            </Button>
-                        </Flex>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+                                <Button
+                                    variant={'buttonGrayOutline'}
+                                    size={'xs'}
+                                    onClick={onClose}
+                                >
+                                    取消
+                                </Button>
+                                <Button
+                                    variant={'buttonGrayOutline'}
+                                    size={'xs'}
+                                    onClick={() => {
+                                        archived ? activeSite() : deleteSite();
+                                    }}
+                                >
+                                    確定
+                                </Button>
+                            </Flex>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            )}
         </Box>
     );
 }

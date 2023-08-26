@@ -1,8 +1,13 @@
 import React from 'react';
 import { gql, useMutation } from '@apollo/client';
 
-import { Center, Flex, Text, Button } from '@chakra-ui/react';
+import { Center, Flex, Text, Button, useToast } from '@chakra-ui/react';
 import { QUERY_SITE_AREAS } from '../SiteAreas';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const DELETE_AREA = gql`
     mutation DeleteSiteArea($siteId: String!, $name: String!) {
@@ -18,16 +23,30 @@ export default function DeleteArea(props: {
     siteId: string;
     siteName: string;
 }) {
+    const toast = useToast();
     const { setShowPopup, areaName, siteId, siteName } = props;
-    const [deleteSiteArea, { data, error }] = useMutation(DELETE_AREA, {
+    const [deleteSiteArea, { loading }] = useMutation<{
+        deleteSiteArea: { ok: boolean };
+    }>(DELETE_AREA, {
+        onCompleted: ({ deleteSiteArea: { ok } }) => {
+            if (ok) {
+                setShowPopup(false);
+                defaultSuccessToast(toast, '成功刪除');
+            } else defaultErrorToast(toast);
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
         refetchQueries: [
             { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
-    if (error) console.log(`${error.message}`);
-    if (data) console.log(data);
-
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
@@ -96,7 +115,6 @@ export default function DeleteArea(props: {
                                         name: areaName,
                                     },
                                 });
-                                setShowPopup(false);
                             }}
                         >
                             確定

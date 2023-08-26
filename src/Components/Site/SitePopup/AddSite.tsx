@@ -16,6 +16,11 @@ import {
 import { QUERY_SITE } from '../Site';
 import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const ADD_SITE = gql`
     mutation CreateSite(
@@ -58,11 +63,19 @@ export default function AddSite(props: { setShowPopup: Function }) {
     const startTime = React.useRef<HTMLInputElement>(null);
     const endTime = React.useRef<HTMLInputElement>(null);
 
-    const [addSite, { data, error }] = useMutation(ADD_SITE, {
+    const [addSite, { loading }] = useMutation(ADD_SITE, {
+        onCompleted: () => {
+            setShowPopup(false);
+            defaultSuccessToast(toast, '成功新增');
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
         refetchQueries: [{ query: QUERY_SITE }],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
-    if (error) console.log(`${error.message}`);
-    if (data) console.log(data);
 
     const citySelect = Object.keys(CityData).map((cityName, index) => {
         return (
@@ -82,7 +95,9 @@ export default function AddSite(props: { setShowPopup: Function }) {
             );
         });
 
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
@@ -342,7 +357,6 @@ export default function AddSite(props: { setShowPopup: Function }) {
                                                 city: city + district,
                                             },
                                         });
-                                        setShowPopup(false);
                                     }
                                 } else {
                                     toast({

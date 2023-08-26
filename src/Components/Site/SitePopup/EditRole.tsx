@@ -17,6 +17,11 @@ import { ShowPasswordIcon } from '../../../Icons/Icons';
 import { rolesList } from '../SiteRoles';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const UPDATE_SITE_ROLE = gql`
     mutation updateSiteRole(
@@ -57,7 +62,6 @@ export default function EditRole(props: {
     const { username } = roleDetails;
 
     const toast = useToast();
-    // const nameInput = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
     const passwordAgain = React.useRef<HTMLInputElement>(null);
     const tel = React.useRef<HTMLInputElement>(null);
@@ -67,15 +71,19 @@ export default function EditRole(props: {
     const [show, setShow] = React.useState(false);
     const [showAgain, setShowAgain] = React.useState(false);
 
-    const [updateSiteRole] = useMutation(UPDATE_SITE_ROLE, {
+    const [updateSiteRole, { loading }] = useMutation(UPDATE_SITE_ROLE, {
         onCompleted: () => {
             setShowPopup(false);
             setRerender((rerender: Boolean) => !rerender);
+            defaultSuccessToast(toast, '成功編輯');
         },
         onError: (error) => {
             console.log(error);
+            defaultErrorToast(toast);
         },
         refetchQueries: [QUERY_ACCOUNT_SITES],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
 
     function showPassword() {
@@ -92,7 +100,9 @@ export default function EditRole(props: {
         );
     });
 
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}

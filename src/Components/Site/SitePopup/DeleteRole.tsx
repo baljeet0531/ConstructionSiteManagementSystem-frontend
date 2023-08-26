@@ -4,7 +4,11 @@ import { Center, Flex, Text, Button, useToast } from '@chakra-ui/react';
 import { gql, useMutation } from '@apollo/client';
 import { QUERY_SITE_ROLES } from '../SiteRoles';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
-import { defaultErrorToast } from '../../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const DELETE_SITE_ROLE = gql`
     mutation DeleteSiteRole($siteId: String!, $username: String!) {
@@ -24,9 +28,14 @@ export default function DeleteRole(props: {
     const { setShowPopup, siteId, siteName, name, username } = props;
 
     const toast = useToast();
-    const [deleteSiteRole] = useMutation(DELETE_SITE_ROLE, {
-        onCompleted: () => {
-            setShowPopup(false);
+    const [deleteSiteRole, { loading }] = useMutation<{
+        deleteSiteRole: { ok: boolean };
+    }>(DELETE_SITE_ROLE, {
+        onCompleted: ({ deleteSiteRole: { ok } }) => {
+            if (ok) {
+                setShowPopup(false);
+                defaultSuccessToast(toast, '成功刪除');
+            } else defaultErrorToast(toast);
         },
         onError: (err) => {
             console.log(err);
@@ -36,9 +45,13 @@ export default function DeleteRole(props: {
             { query: QUERY_SITE_ROLES, variables: { siteId: siteId } },
             QUERY_ACCOUNT_SITES,
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
 
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
