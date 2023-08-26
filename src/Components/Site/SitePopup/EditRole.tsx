@@ -23,6 +23,7 @@ const UPDATE_SITE_ROLE = gql`
         $siteId: String!
         $name: String!
         $role: String!
+        $tel: String!
         $username: String!
         $password: String
     ) {
@@ -31,6 +32,7 @@ const UPDATE_SITE_ROLE = gql`
             name: $name
             role: $role
             username: $username
+            tel: $tel
             password: $password
         ) {
             siteRole {
@@ -58,6 +60,7 @@ export default function EditRole(props: {
     // const nameInput = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
     const passwordAgain = React.useRef<HTMLInputElement>(null);
+    const tel = React.useRef<HTMLInputElement>(null);
 
     const [name, setName] = React.useState<string>(roleDetails.name);
     const [role, setRole] = React.useState<string>(roleDetails.role);
@@ -204,6 +207,28 @@ export default function EditRole(props: {
                                 lineHeight={'20px'}
                                 p="8px 12px"
                             >
+                                電話
+                            </Text>
+                            <Input
+                                width={'60%'}
+                                type={'tel'}
+                                variant={'outline'}
+                                bg={'#FFFFFF'}
+                                placeholder={'0912345678'}
+                                _placeholder={{
+                                    color: '#66708080',
+                                }}
+                                ref={tel}
+                            ></Input>
+                        </Flex>
+                        <Flex justify={'space-between'} h="36px">
+                            <Text
+                                width={'35%'}
+                                fontWeight={'400'}
+                                fontSize={'14px'}
+                                lineHeight={'20px'}
+                                p="8px 12px"
+                            >
                                 新密碼
                             </Text>
                             <InputGroup width={'60%'}>
@@ -286,6 +311,7 @@ export default function EditRole(props: {
                                             name: name,
                                             role: role,
                                             username: username,
+                                            tel: tel.current?.value,
                                         },
                                     });
                                 } else if (
@@ -306,6 +332,7 @@ export default function EditRole(props: {
                                             name: name,
                                             role: role,
                                             username: username,
+                                            tel: tel.current?.value,
                                             password: password.current.value,
                                         },
                                     });

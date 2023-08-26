@@ -45,12 +45,14 @@ const CREATE_ACCOUNT = gql`
         $password: String!
         $superuser: Boolean = false
         $username: String!
+        $tel: String!
     ) {
         createAccount(
             name: $name
             password: $password
             superuser: $superuser
             username: $username
+            tel: $tel
         ) {
             ok
             message
@@ -92,6 +94,7 @@ export default function AddRole(props: {
     const nameRef = React.useRef<HTMLInputElement>(null);
     const password = React.useRef<HTMLInputElement>(null);
     const passwordAgain = React.useRef<HTMLInputElement>(null);
+    const tel = React.useRef<HTMLInputElement>(null);
     const [show, setShow] = React.useState(false);
     const [showAgain, setShowAgain] = React.useState(false);
 
@@ -480,6 +483,28 @@ export default function AddRole(props: {
                                         lineHeight={'20px'}
                                         p="8px 12px"
                                     >
+                                        電話
+                                    </Text>
+                                    <Input
+                                        width={'60%'}
+                                        type={'tel'}
+                                        variant={'outline'}
+                                        bg={'#FFFFFF'}
+                                        placeholder={'0912345678'}
+                                        _placeholder={{
+                                            color: '#66708080',
+                                        }}
+                                        ref={tel}
+                                    ></Input>
+                                </Flex>
+                                <Flex justify={'flex-start'} h="36px">
+                                    <Text
+                                        width={'35%'}
+                                        fontWeight={'400'}
+                                        fontSize={'14px'}
+                                        lineHeight={'20px'}
+                                        p="8px 12px"
+                                    >
                                         密碼
                                     </Text>
                                     <InputGroup width={'60%'}>
@@ -587,6 +612,7 @@ export default function AddRole(props: {
                                                     password:
                                                         password.current?.value,
                                                     username: account,
+                                                    tel: tel.current?.value,
                                                 },
                                             });
                                         }
