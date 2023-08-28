@@ -17,7 +17,12 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
+import {
+    AddIcon,
+    ArrowDropDownIcon,
+    DeleteIcon,
+    LaunchIcon,
+} from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
@@ -35,7 +40,12 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 import { TOverviewTable } from '../../Types/TableOverview';
 import { IGQLSignature } from '../../Interface/Signature';
-import { defaultErrorToast } from '../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import BlueBodyModal from '../Shared/BlueBodyModal';
+import { IMutationData } from '../../Interface/IGQL';
 
 export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(
@@ -135,6 +145,16 @@ const EXPORT_WORK_PERMIT = gql`
         }
     }
 `;
+
+const DELETE_WORK_PERMIT = gql`
+    mutation DeleteWorkPermit($number: [String]!, $siteId: String!) {
+        deleteWorkPermit(number: $number, siteId: $siteId) {
+            ok
+            message
+        }
+    }
+`;
+
 export interface workPermit {
     siteId: string;
     number: string;
@@ -197,6 +217,7 @@ export default function WorkPermitFormOverview(props: {
     const { siteId, siteName } = props;
     const toast = useToast();
     const { onToggle } = useDisclosure();
+    const deleteDisclosure = useDisclosure();
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem(
@@ -492,6 +513,26 @@ export default function WorkPermitFormOverview(props: {
         }
     );
 
+    const [deleteWorkPermit, { loading: deleteLoading }] = useMutation<{
+        deleteWorkPermit: IMutationData;
+    }>(DELETE_WORK_PERMIT, {
+        onCompleted: ({ deleteWorkPermit: { ok, message } }) => {
+            if (ok) {
+                deleteDisclosure.onClose();
+                defaultSuccessToast(toast, '成功刪除');
+            } else {
+                defaultErrorToast(toast, message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        refetchQueries: [QUERY_WORK_PERMIT],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
+    });
+
     const actions = React.useContext(ActionsContext);
 
     const handleSearch = (value: DateRange | null) => {
@@ -659,6 +700,15 @@ export default function WorkPermitFormOverview(props: {
                     >
                         輸出
                     </Button>
+                    <Button
+                        variant={'buttonGrayOutline'}
+                        leftIcon={<DeleteIcon />}
+                        onClick={() => {
+                            deleteDisclosure.onOpen();
+                        }}
+                    >
+                        刪除
+                    </Button>
                 </Flex>
             </Flex>
             <ReactWindowTable
@@ -668,7 +718,45 @@ export default function WorkPermitFormOverview(props: {
                 sizes={sizes}
                 filteredPrimaryKey={filteredPrimaryKey}
             />
-            {(loading || searchLoading || exportLoading) && <PageLoading />}
+            <BlueBodyModal
+                title="確認刪除以下單號?"
+                cancelButton={{
+                    name: '取消刪除',
+                    handleClick: () => {
+                        deleteDisclosure.onClose();
+                    },
+                }}
+                confirmButton={{
+                    name: '確定刪除',
+                    handleClick: () => {
+                        deleteWorkPermit({
+                            variables: {
+                                number: Object.values(tableData).flatMap(
+                                    ({ isChecked, number }) =>
+                                        isChecked ? number : []
+                                ),
+                                siteId,
+                            },
+                        });
+                    },
+                }}
+                isOpen={deleteDisclosure.isOpen}
+                onClose={deleteDisclosure.onClose}
+                modalSize="xs"
+                bodyStyle={{
+                    padding: '10px',
+                    minHeight: 'unset',
+                }}
+            >
+                <Flex direction={'column'} align={'center'}>
+                    {Object.values(tableData).flatMap(({ isChecked, number }) =>
+                        isChecked ? <Text key={number}>{number}</Text> : []
+                    )}
+                </Flex>
+            </BlueBodyModal>
+            {(loading || searchLoading || exportLoading || deleteLoading) && (
+                <PageLoading />
+            )}
         </Flex>
     );
 }
