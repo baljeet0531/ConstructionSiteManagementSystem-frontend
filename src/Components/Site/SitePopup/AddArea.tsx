@@ -14,7 +14,11 @@ import {
 } from '@chakra-ui/react';
 import { CloseIcon } from '../../../Icons/Icons';
 import { QUERY_SITE_AREAS } from '../SiteAreas';
-import { defaultErrorToast } from '../../../Utils/DefaultToast';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const ADD_SITE_AREA = gql`
     mutation CreateSiteArea(
@@ -42,16 +46,23 @@ export default function AddArea(props: {
     const areaName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>(['']);
 
-    const [addSiteArea, { data, error }] = useMutation(ADD_SITE_AREA, {
+    const [addSiteArea, { loading }] = useMutation(ADD_SITE_AREA, {
+        onCompleted: () => {
+            setShowPopup(false);
+            defaultSuccessToast(toast, '成功新增');
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
         refetchQueries: [
             { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
 
-    if (error) console.log(`${error.message}`);
-    if (data) console.log(data);
-
-    const zoneElements = zoneList.map((zonename, index) => {
+    const zoneElements = zoneList.map((zoneName, index) => {
         return (
             <Flex justify={'flex-start'} h="36px" key={index}>
                 <Text
@@ -84,7 +95,7 @@ export default function AddArea(props: {
                             variant="outline"
                             bg={'#FFFFFF'}
                             type={'text'}
-                            value={zonename}
+                            value={zoneName}
                             autoFocus
                             onChange={(e) => {
                                 setZoneList([
@@ -117,7 +128,9 @@ export default function AddArea(props: {
         );
     });
 
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
@@ -211,7 +224,6 @@ export default function AddArea(props: {
                                             zone: zoneListFiltered,
                                         },
                                     });
-                                    setShowPopup(false);
                                 } else {
                                     defaultErrorToast(
                                         toast,
