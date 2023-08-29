@@ -343,13 +343,23 @@ export default function WorkPermitFormOverview(props: {
                 const diff = now.diff(workEnd, 'day');
                 return (
                     <Box style={style} {...dataCellStyle}>
-                        {tableData[`${info['number']}異`] ? (
-                            ''
-                        ) : info['modified'] ? (
+                        {info['number'].endsWith('異') ? (
                             '異動單'
                         ) : diff > 0 ? (
                             ''
-                        ) : info['applied'] ? (
+                        ) : !info['applied'] ? (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], false);
+                                }}
+                            >
+                                申請
+                            </Button>
+                        ) : !info['modified'] ? (
                             <Button
                                 variant={'buttonBlueSolid'}
                                 height={'20px'}
@@ -364,17 +374,7 @@ export default function WorkPermitFormOverview(props: {
                                 異動
                             </Button>
                         ) : (
-                            <Button
-                                variant={'buttonBlueSolid'}
-                                height={'20px'}
-                                width={'36px'}
-                                fontSize={'10px'}
-                                onClick={() => {
-                                    navSingleWorkPermit(info['number'], false);
-                                }}
-                            >
-                                申請
-                            </Button>
+                            ''
                         )}
                     </Box>
                 );
