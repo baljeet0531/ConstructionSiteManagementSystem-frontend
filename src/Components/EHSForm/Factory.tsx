@@ -122,15 +122,24 @@ export default class FormFactory {
                 <GridItem {...tableStyle} pl={2}>
                     <Text>{item.content}</Text>
                 </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.normalCheckbox(item, true)}
-                </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.normalCheckbox(item, false)}
-                </GridItem>
-                <GridItem {...tableStyle} justifyContent="center">
-                    {this.misfitCheckbox(item)}
-                </GridItem>
+                <GridInputItem
+                    fieldName={item.normal}
+                    inputComponent={this.normalCheckbox(item, true)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
+                />
+                <GridInputItem
+                    fieldName={item.normal}
+                    inputComponent={this.normalCheckbox(item, false)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
+                />
+                <GridInputItem
+                    fieldName={item.misfit}
+                    inputComponent={this.misfitCheckbox(item)}
+                    style={{ ...tableStyle, justifyContent: 'center' }}
+                    fast
+                />
                 <GridInputItem
                     fieldName={item.ameliorate}
                     inputComponent={this.corpNameSelect(
@@ -156,27 +165,23 @@ export default class FormFactory {
                     checked === true
                         ? this.formProps.setFieldValue(item.normal, target)
                         : this.formProps.setFieldValue(item.normal, null);
-                    target !== true || checked !== true
-                        ? this.clearAmeliorate(item)
-                        : '';
-                    target === true && checked === true
-                        ? this.clearAmeliorate(item)
-                        : '';
+                    this.clearAmeliorate(item);
                 }}
             />
         );
     }
     clearAmeliorate(item: IEHSFormFillItem) {
-        const selected = this.data.selectedCorp;
-        const newSelected = {} as { [k: string]: string[] };
-        for (let key in selected) {
-            const corpList = selected[key];
-            newSelected[key] = corpList.filter((code) => code !== item.code);
-        }
         this.formProps.setFieldValue(item.ameliorate, []);
-        this.setData({
-            ...this.data,
-            selectedCorp: newSelected,
+        this.setData((prev) => {
+            const newSelected = {} as { [k: string]: Set<string> };
+            Object.keys(prev.selectedCorp).map((k) => {
+                newSelected[k] = prev.selectedCorp[k];
+                newSelected[k].delete(item.code);
+            });
+            return {
+                ...prev,
+                selectedCorp: newSelected,
+            };
         });
     }
     misfitCheckbox(item: IEHSFormFillItem) {
@@ -216,6 +221,27 @@ export default class FormFactory {
                     (target) => target.corpName !== name
                 )
             );
+            for (let key in this.handler.itemGroups) {
+                this.handler.itemGroups[key].items.forEach((item) => {
+                    this.formProps.setFieldValue(
+                        item.ameliorate,
+                        (
+                            this.formProps.values[
+                                item.ameliorate as keyof IEHSForm
+                            ] as IEHSFormTargetInItem[]
+                        ).filter((target) => target.corpName !== name)
+                    );
+                });
+            }
+            this.setData((prev) => {
+                return {
+                    ...prev,
+                    selectedCorp: {
+                        ...prev.selectedCorp,
+                        [name]: new Set<string>(),
+                    },
+                };
+            });
         }
     }
     handleAmeliorateOnChange(
@@ -226,29 +252,35 @@ export default class FormFactory {
         const checked = e.target.checked;
         const target = this.formProps.values[field] as IEHSFormTargetInItem[];
         const code = field.replace('Ameliorate', '');
-        let selectedList = this.data.selectedCorp[name];
-        if (checked) {
-            const selected = {
-                corpName: name,
-                siteId: this.formProps.values.siteId,
-                day: this.formProps.values.day,
-                code: code,
+
+        this.setData((prev) => {
+            let selectedSet = prev.selectedCorp[name] || new Set<string>();
+            if (checked) {
+                const selected = {
+                    corpName: name,
+                    siteId: this.formProps.values.siteId,
+                    day: this.formProps.values.day,
+                    code: code,
+                };
+                this.formProps.setFieldValue(field, [
+                    ...(target ?? []),
+                    selected,
+                ]);
+                selectedSet.add(code);
+            } else {
+                this.formProps.setFieldValue(
+                    field,
+                    target.filter((target) => target.corpName !== name)
+                );
+                selectedSet.delete(code);
+            }
+            return {
+                ...prev,
+                selectedCorp: {
+                    ...prev.selectedCorp,
+                    [name]: selectedSet,
+                },
             };
-            this.formProps.setFieldValue(field, [...(target ?? []), selected]);
-            selectedList.push(code);
-        } else {
-            this.formProps.setFieldValue(
-                field,
-                target.filter((target) => target.corpName !== name)
-            );
-            selectedList = selectedList.filter((i) => i !== code);
-        }
-        this.setData({
-            ...this.data,
-            selectedCorp: {
-                ...this.data.selectedCorp,
-                [name]: selectedList,
-            },
         });
     }
     corpNameSelect(field: keyof IEHSForm) {
@@ -264,7 +296,11 @@ export default class FormFactory {
                       this.formProps.values as IEHSFormNormal | IEHSFormSpecial,
                       code
                   );
-        const options = this.data.searchName.map((name, index) => (
+        const corps =
+            field === 'checkTarget'
+                ? this.data.searchName
+                : this.getFilledCorp();
+        const options = corps.map((name, index) => (
             <Checkbox
                 key={`${field}-corpName-${index}`}
                 size={'sm'}
@@ -320,5 +356,12 @@ export default class FormFactory {
                 </PopoverContent>
             </Popover>
         );
+    }
+    getFilledCorp() {
+        const target: string[] = [];
+        this.formProps.values.checkTarget?.map((i) => {
+            target.push(i.corpName);
+        });
+        return target;
     }
 }

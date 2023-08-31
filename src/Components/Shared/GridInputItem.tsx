@@ -7,7 +7,7 @@ import {
     InputRightElement,
     GridItemProps,
 } from '@chakra-ui/react';
-import { Field, FieldInputProps, FormikProps } from 'formik';
+import { FastField, Field, FieldInputProps, FormikProps } from 'formik';
 import { ReactElement } from 'react';
 import Pin from './Pin';
 
@@ -22,7 +22,7 @@ export default function GridInputItem({
     handleValidate,
     style,
     invalidStyle,
-    // invalidMsg = 'Invalid',
+    fast=false,
     ...rest
 }: GridItemProps & {
     fieldName: string;
@@ -40,8 +40,9 @@ export default function GridInputItem({
     handleValidate?: Function;
     style?: GridItemProps;
     invalidStyle?: object;
-    // invalidMsg?: string;
+    fast?: boolean;
 }) {
+    const SelectedField = fast ? FastField : Field;
     return (
         <GridItem
             {...(gridRange && {
@@ -53,7 +54,7 @@ export default function GridInputItem({
             {...rest}
             {...style}
         >
-            <Field name={fieldName} validate={handleValidate}>
+            <SelectedField name={fieldName} validate={handleValidate}>
                 {({
                     field,
                     form,
@@ -107,7 +108,7 @@ export default function GridInputItem({
                         </InputGroup>
                     );
                 }}
-            </Field>
+            </SelectedField>
         </GridItem>
     );
 }

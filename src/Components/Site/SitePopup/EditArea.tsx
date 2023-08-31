@@ -10,9 +10,15 @@ import {
     InputRightElement,
     Button,
     IconButton,
+    useToast,
 } from '@chakra-ui/react';
 import { CloseIcon } from '../../../Icons/Icons';
 import { QUERY_SITE_AREAS } from '../SiteAreas';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const UPDATE_SITE_AREA = gql`
     mutation UpdateSiteArea(
@@ -45,18 +51,26 @@ export default function EditArea(props: {
 }) {
     const { setShowPopup, siteId, siteName, areaName, zone } = props;
 
+    const toast = useToast();
     const areaNewName = React.useRef<HTMLInputElement>(null);
     const [zoneList, setZoneList] = React.useState<string[]>([...zone, '']);
 
-    const [updateSiteArea, { data, error }] = useMutation(UPDATE_SITE_AREA, {
+    const [updateSiteArea, { loading }] = useMutation(UPDATE_SITE_AREA, {
+        onCompleted: () => {
+            setShowPopup(false);
+            defaultSuccessToast(toast, '成功編輯');
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
         refetchQueries: [
             { query: QUERY_SITE_AREAS, variables: { siteId: siteId } },
         ],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
-    if (error) console.log(`${error.message}`);
-    if (data) console.log(data);
-
-    const zoneElements = zoneList.map((zonename, index) => {
+    const zoneElements = zoneList.map((zoneName, index) => {
         return (
             <Flex justify={'flex-start'} h="36px" key={index}>
                 <Text
@@ -89,7 +103,7 @@ export default function EditArea(props: {
                             variant="outline"
                             bg={'#FFFFFF'}
                             type={'text'}
-                            value={zonename}
+                            value={zoneName}
                             autoFocus
                             onChange={(e) => {
                                 setZoneList([
@@ -122,7 +136,9 @@ export default function EditArea(props: {
         );
     });
 
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
@@ -230,7 +246,6 @@ export default function EditArea(props: {
                                         },
                                     });
                                 }
-                                setShowPopup(false);
                             }}
                         >
                             確定修改

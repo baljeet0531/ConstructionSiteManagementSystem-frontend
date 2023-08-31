@@ -1,10 +1,12 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import {
+    Box,
     Button,
     Checkbox,
     Flex,
     Grid,
+    Link,
     Popover,
     PopoverArrow,
     PopoverBody,
@@ -15,8 +17,12 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { IsPermit } from '../../Mockdata/Mockdata';
-import WPOverViewTable from './WPOverviewTable';
-import { AddIcon, ArrowDropDownIcon, LaunchIcon } from '../../Icons/Icons';
+import {
+    AddIcon,
+    ArrowDropDownIcon,
+    DeleteIcon,
+    LaunchIcon,
+} from '../../Icons/Icons';
 import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { Cookies } from 'react-cookie';
 import { exportFile } from '../../Utils/Resources';
@@ -24,6 +30,22 @@ import { PageLoading } from '../Shared/Loading';
 import DateRangePicker, { DateRange } from 'rsuite/esm/DateRangePicker';
 import dayjs from 'dayjs';
 import { ActionsContext } from '../../Context/Context';
+import ReactWindowTable, {
+    CheckboxElement,
+    IColumnMap,
+    ISizes,
+    SignatureStatusElement,
+    dataCellStyle,
+    defaultElement,
+} from '../Shared/ReactWindowTable';
+import { TOverviewTable } from '../../Types/TableOverview';
+import { IGQLSignature } from '../../Interface/Signature';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../Utils/DefaultToast';
+import BlueBodyModal from '../Shared/BlueBodyModal';
+import { IMutationData } from '../../Interface/IGQL';
 
 export const QUERY_WORK_PERMIT = gql`
     query WorkPermit(
@@ -123,6 +145,16 @@ const EXPORT_WORK_PERMIT = gql`
         }
     }
 `;
+
+const DELETE_WORK_PERMIT = gql`
+    mutation DeleteWorkPermit($number: [String]!, $siteId: String!) {
+        deleteWorkPermit(number: $number, siteId: $siteId) {
+            ok
+            message
+        }
+    }
+`;
+
 export interface workPermit {
     siteId: string;
     number: string;
@@ -159,31 +191,23 @@ export interface workPermit {
 }
 
 export interface workPermitRef extends workPermit {
-    approvedRef: {
-        path: string;
-        time: string;
-        owner: string;
-    };
-    reviewRef: {
-        path: string;
-        time: string;
-        owner: string;
-    };
-    supplierManagerRef: {
-        path: string;
-        time: string;
-        owner: string;
-    };
-    supplierRef: {
-        path: string;
-        time: string;
-        owner: string;
-    };
+    approvedRef: IGQLSignature;
+    reviewRef: IGQLSignature;
+    supplierManagerRef: IGQLSignature;
+    supplierRef: IGQLSignature;
 }
 
 export interface workPermitChecked extends workPermitRef {
     isChecked: boolean;
 }
+
+type gqlData = { workPermit: workPermitRef[] };
+
+const sizes: ISizes = {
+    headerHeight: 44,
+    cellHeight: 44,
+};
+
 export default function WorkPermitFormOverview(props: {
     siteId: string;
     siteName: string;
@@ -193,6 +217,7 @@ export default function WorkPermitFormOverview(props: {
     const { siteId, siteName } = props;
     const toast = useToast();
     const { onToggle } = useDisclosure();
+    const deleteDisclosure = useDisclosure();
     const navSingleWorkPermit = (number: string, modified: boolean) => {
         const url = `${window.location.origin}/form/work-permit`;
         localStorage.setItem(
@@ -202,10 +227,10 @@ export default function WorkPermitFormOverview(props: {
         window.open(url, '_blank');
     };
 
-    const [overviewTableData, setOverviewTableData] = React.useState<{
-        [primaryKey: string]: workPermitChecked;
-    }>({});
-    const [searchResultNumber, setSearchResultNumber] =
+    const [tableData, setTableData] = React.useState<
+        TOverviewTable<workPermitChecked>
+    >({});
+    const [filteredPrimaryKey, setFilteredPrimaryKey] =
         React.useState<string[]>();
 
     const [dateRange, setDateRange] = React.useState<DateRange | null>(null);
@@ -223,20 +248,172 @@ export default function WorkPermitFormOverview(props: {
         { name: '儀控系統', isChecked: false },
     ]);
 
-    const { loading, startPolling } = useQuery(QUERY_WORK_PERMIT, {
+    const columnMap: IColumnMap<workPermitChecked>[] = [
+        {
+            title: '日期',
+            width: 99,
+            variable: 'supplyDate',
+            getElement: defaultElement,
+        },
+        {
+            title: '單號',
+            width: 83,
+            variable: 'number',
+            getElement: ({ style, info: { number, modified } }) => (
+                <Box style={style} {...dataCellStyle}>
+                    <Link
+                        onClick={() => {
+                            navSingleWorkPermit(number, modified);
+                        }}
+                    >
+                        {number}
+                    </Link>
+                </Box>
+            ),
+        },
+        {
+            title: '系統',
+            width: 100,
+            variable: 'system',
+            getElement: defaultElement,
+        },
+        {
+            title: '系統分類',
+            width: 100,
+            variable: 'systemBranch',
+            getElement: defaultElement,
+        },
+        {
+            title: '施工項目',
+            width: 100,
+            variable: 'project',
+            getElement: defaultElement,
+        },
+        {
+            title: '施工廠區',
+            width: 95,
+            variable: 'area',
+            getElement: defaultElement,
+        },
+        {
+            title: '簽核狀態',
+            width: 180,
+            variable: 'signStatus',
+            getElement: (props) => {
+                const {
+                    approvedRef,
+                    reviewRef,
+                    supplierManagerRef,
+                    supplierRef,
+                } = props.info;
+                const signatureFieldList = [
+                    {
+                        signature: approvedRef,
+                        fieldLabel: '核准',
+                    },
+                    {
+                        signature: reviewRef,
+                        fieldLabel: '審核',
+                    },
+                    {
+                        signature: supplierManagerRef,
+                        fieldLabel: '申請單位主管',
+                    },
+                    {
+                        signature: supplierRef,
+                        fieldLabel: '申請人',
+                    },
+                ];
+
+                return (
+                    <SignatureStatusElement
+                        getElementProps={props}
+                        signatureFieldList={signatureFieldList}
+                    ></SignatureStatusElement>
+                );
+            },
+        },
+        {
+            title: '申請/異動',
+            width: 70,
+            variable: 'appliedOrModified',
+            getElement: ({ style, info }) => {
+                const now = dayjs();
+                const workEnd = dayjs(info['workEnd'].split('T')[0]);
+                const diff = now.diff(workEnd, 'day');
+                return (
+                    <Box style={style} {...dataCellStyle}>
+                        {info['number'].endsWith('異') ? (
+                            '異動單'
+                        ) : diff > 0 ? (
+                            ''
+                        ) : !info['applied'] ? (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], false);
+                                }}
+                            >
+                                申請
+                            </Button>
+                        ) : !info['modified'] ? (
+                            <Button
+                                variant={'buttonBlueSolid'}
+                                height={'20px'}
+                                width={'36px'}
+                                fontSize={'10px'}
+                                bg={'#DB504A'}
+                                _hover={{ bg: '#DB504A77' }}
+                                onClick={() => {
+                                    navSingleWorkPermit(info['number'], true);
+                                }}
+                            >
+                                異動
+                            </Button>
+                        ) : (
+                            ''
+                        )}
+                    </Box>
+                );
+            },
+        },
+        {
+            title: '全選',
+            width: 50,
+            variable: 'isChecked',
+            getElement: (props) => (
+                <CheckboxElement
+                    getElementProps={props}
+                    setTableData={setTableData}
+                    primaryKey={props.info.number}
+                />
+            ),
+        },
+    ];
+
+    const { loading, startPolling } = useQuery<gqlData>(QUERY_WORK_PERMIT, {
         variables: {
             siteId: siteId,
         },
-        onCompleted: ({ workPermit }: { workPermit: workPermit[] }) => {
-            const workPermitHashed = workPermit.map((info) => ({
-                [info['number']]: { ...info, isCheck: false },
-            }));
-            setOverviewTableData(Object.assign({}, ...workPermitHashed));
+        onCompleted: ({ workPermit }) => {
+            setTableData(
+                workPermit.reduce((acc, info) => {
+                    acc[info.number] = {
+                        ...info,
+                        isChecked: false,
+                    };
+                    return acc;
+                }, {} as TOverviewTable<workPermitChecked>)
+            );
             startPolling(3000);
         },
         onError: (err) => {
             console.log(err);
         },
+        fetchPolicy: 'network-only',
     });
 
     const handleSearchCheckboxClick = (
@@ -297,20 +474,19 @@ export default function WorkPermitFormOverview(props: {
         onError: (err) => {
             console.log(err);
         },
+        fetchPolicy: 'network-only',
     });
 
-    const [searchWorkPermit, { loading: searchLoading }] = useLazyQuery(
-        QUERY_WORK_PERMIT,
-        {
-            onCompleted: ({ workPermit }: { workPermit: workPermitRef[] }) => {
-                setSearchResultNumber(workPermit.map((info) => info['number']));
+    const [searchWorkPermit, { loading: searchLoading }] =
+        useLazyQuery<gqlData>(QUERY_WORK_PERMIT, {
+            onCompleted: ({ workPermit }) => {
+                setFilteredPrimaryKey(workPermit.map((info) => info['number']));
             },
             onError: (err) => {
                 console.log(err);
             },
             fetchPolicy: 'network-only',
-        }
-    );
+        });
 
     const [exportWorkPermit, { loading: exportLoading }] = useMutation(
         EXPORT_WORK_PERMIT,
@@ -324,7 +500,6 @@ export default function WorkPermitFormOverview(props: {
                     path: string;
                 };
             }) => {
-                console.log(exportWorkPermit);
                 if (exportWorkPermit.ok) {
                     const { path, message } = exportWorkPermit;
                     await exportFile(path, message, toast);
@@ -332,10 +507,31 @@ export default function WorkPermitFormOverview(props: {
             },
             onError: (err) => {
                 console.log(err);
+                defaultErrorToast(toast);
             },
             fetchPolicy: 'network-only',
         }
     );
+
+    const [deleteWorkPermit, { loading: deleteLoading }] = useMutation<{
+        deleteWorkPermit: IMutationData;
+    }>(DELETE_WORK_PERMIT, {
+        onCompleted: ({ deleteWorkPermit: { ok, message } }) => {
+            if (ok) {
+                deleteDisclosure.onClose();
+                defaultSuccessToast(toast, '成功刪除');
+            } else {
+                defaultErrorToast(toast, message);
+            }
+        },
+        onError: (err) => {
+            console.log(err);
+            defaultErrorToast(toast);
+        },
+        refetchQueries: [QUERY_WORK_PERMIT],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
+    });
 
     const actions = React.useContext(ActionsContext);
 
@@ -489,8 +685,8 @@ export default function WorkPermitFormOverview(props: {
                         variant={'buttonGrayOutline'}
                         onClick={() => {
                             const selectedNumber = Object.values(
-                                overviewTableData
-                            ).flatMap((info: workPermitChecked) =>
+                                tableData
+                            ).flatMap((info) =>
                                 info.isChecked ? info.number : []
                             );
                             exportWorkPermit({
@@ -504,15 +700,63 @@ export default function WorkPermitFormOverview(props: {
                     >
                         輸出
                     </Button>
+                    <Button
+                        variant={'buttonGrayOutline'}
+                        leftIcon={<DeleteIcon />}
+                        onClick={() => {
+                            deleteDisclosure.onOpen();
+                        }}
+                    >
+                        刪除
+                    </Button>
                 </Flex>
             </Flex>
-            <WPOverViewTable
-                searchResultNumber={searchResultNumber}
-                overviewTableData={overviewTableData}
-                setOverviewTableData={setOverviewTableData}
-                navSingleWorkPermit={navSingleWorkPermit}
-            ></WPOverViewTable>
-            {(loading || searchLoading || exportLoading) && <PageLoading />}
+            <ReactWindowTable
+                tableData={tableData}
+                setTableData={setTableData}
+                columnMap={columnMap}
+                sizes={sizes}
+                filteredPrimaryKey={filteredPrimaryKey}
+            />
+            <BlueBodyModal
+                title="確認刪除以下單號?"
+                cancelButton={{
+                    name: '取消刪除',
+                    handleClick: () => {
+                        deleteDisclosure.onClose();
+                    },
+                }}
+                confirmButton={{
+                    name: '確定刪除',
+                    handleClick: () => {
+                        deleteWorkPermit({
+                            variables: {
+                                number: Object.values(tableData).flatMap(
+                                    ({ isChecked, number }) =>
+                                        isChecked ? number : []
+                                ),
+                                siteId,
+                            },
+                        });
+                    },
+                }}
+                isOpen={deleteDisclosure.isOpen}
+                onClose={deleteDisclosure.onClose}
+                modalSize="xs"
+                bodyStyle={{
+                    padding: '10px',
+                    minHeight: 'unset',
+                }}
+            >
+                <Flex direction={'column'} align={'center'}>
+                    {Object.values(tableData).flatMap(({ isChecked, number }) =>
+                        isChecked ? <Text key={number}>{number}</Text> : []
+                    )}
+                </Flex>
+            </BlueBodyModal>
+            {(loading || searchLoading || exportLoading || deleteLoading) && (
+                <PageLoading />
+            )}
         </Flex>
     );
 }

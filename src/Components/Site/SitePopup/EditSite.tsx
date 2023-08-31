@@ -17,6 +17,11 @@ import { QUERY_SITE } from '../Site';
 import { AddFileIcon } from '../../../Icons/Icons';
 import { CityData } from '../../../Constants/CityData';
 import { QUERY_ACCOUNT_SITES } from '../../../Layouts/Layout';
+import {
+    defaultErrorToast,
+    defaultSuccessToast,
+} from '../../../Utils/DefaultToast';
+import { FormLoading } from '../../Shared/Loading';
 
 const UPDATE_SITE = gql`
     mutation updateSite(
@@ -74,11 +79,19 @@ export default function EditSite(props: {
     const startTime = React.useRef<HTMLInputElement>(null);
     const endTime = React.useRef<HTMLInputElement>(null);
 
-    const [editSite, { data, error }] = useMutation(UPDATE_SITE, {
+    const [editSite, { loading }] = useMutation(UPDATE_SITE, {
+        onCompleted: () => {
+            setShowPopup(false);
+            defaultSuccessToast(toast, '成功編輯');
+        },
+        onError: (error) => {
+            console.log(error);
+            defaultErrorToast(toast);
+        },
         refetchQueries: [{ query: QUERY_SITE }, QUERY_ACCOUNT_SITES],
+        onQueryUpdated: (observableQuery) => observableQuery.refetch(),
+        fetchPolicy: 'network-only',
     });
-    if (error) console.log(`${error.message}`);
-    if (data) console.log(data);
 
     const citySelect = Object.keys(CityData).map((cityName, index) => {
         return (
@@ -97,7 +110,9 @@ export default function EditSite(props: {
                 </option>
             );
         });
-    return (
+    return loading ? (
+        <FormLoading />
+    ) : (
         <Center
             position={'absolute'}
             top={0}
@@ -383,7 +398,6 @@ export default function EditSite(props: {
                                             city: city + district,
                                         },
                                     });
-                                    setShowPopup(false);
                                 }
                             }}
                         >
