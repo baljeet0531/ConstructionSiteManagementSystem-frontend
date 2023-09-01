@@ -13,16 +13,13 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { MutationHookOptions, gql, useMutation } from '@apollo/client';
-import {
-    ALL_HUMAN_RESOURCE,
-    ISelectedHuman,
-    SEARCH_HUMAN,
-} from './PeopleOverview';
+import { ALL_HUMAN_RESOURCE, SEARCH_HUMAN } from './PeopleOverview';
 import {
     defaultErrorToast,
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 import { PageLoading } from '../Shared/Loading';
+import { ISelectedHuman } from '../../Interface/PeopleManagement';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
