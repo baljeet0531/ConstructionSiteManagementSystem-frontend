@@ -45,6 +45,8 @@ import {
     ISelectedHuman,
     humanTableValues,
 } from '../../Interface/PeopleManagement';
+import MultiReviewModal from './MultiReviewModal';
+import { CheckIcon } from '@chakra-ui/icons';
 
 export const ALL_HUMAN_RESOURCE = gql`
     query AllHumanresource($errlist: Boolean, $mode: String) {
@@ -651,7 +653,8 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const deleteDisclosure = useDisclosure();
+    const multiReviewDisclosure = useDisclosure();
     const username: string = new Cookies().get('username');
 
     const [fileLoading, setFileLoading] = React.useState<boolean>(false);
@@ -842,6 +845,19 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             編輯
                         </Button>
                     )}
+                    {actions.U && (
+                        <Button
+                            leftIcon={<CheckIcon />}
+                            variant={'buttonGrayOutline'}
+                            h={'36px'}
+                            onClick={() => {
+                                selectedHuman.length &&
+                                    multiReviewDisclosure.onOpen();
+                            }}
+                        >
+                            批量審查
+                        </Button>
+                    )}
                     {!errorOnly && (
                         <Button
                             leftIcon={<LaunchIcon />}
@@ -869,7 +885,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             leftIcon={<DeleteIcon />}
                             variant={'buttonGrayOutline'}
                             h={'36px'}
-                            onClick={onOpen}
+                            onClick={() => {
+                                selectedHuman.length &&
+                                    deleteDisclosure.onOpen();
+                            }}
                         >
                             刪除
                         </Button>
@@ -900,11 +919,16 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 </TabPanels>
             </Tabs>
             <DeleteModal
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={deleteDisclosure.isOpen}
+                onClose={deleteDisclosure.onClose}
                 selected={tableValue && selectedHuman}
                 errorOnly={errorOnly}
             ></DeleteModal>
+            <MultiReviewModal
+                isOpen={multiReviewDisclosure.isOpen}
+                onClose={multiReviewDisclosure.onClose}
+                selected={tableValue && selectedHuman}
+            ></MultiReviewModal>
             {(loading || exportLoading || fileLoading) && <PageLoading />}
         </Flex>
     );
