@@ -815,19 +815,17 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             onChange={handleDebounceSearch}
                         />
                     </InputGroup>
-                    {!errorOnly && (
-                        <Select
-                            variant={'formOutline'}
-                            ref={selectModeRef}
-                            onChange={() => {
-                                searchHuman(getSearchHumanVar());
-                            }}
-                        >
-                            <option value={undefined}>全部</option>
-                            <option value="即將到期">即將到期</option>
-                            <option value="已過期">已過期</option>
-                        </Select>
-                    )}
+                    <Select
+                        variant={'formOutline'}
+                        ref={selectModeRef}
+                        onChange={() => {
+                            searchHuman(getSearchHumanVar());
+                        }}
+                    >
+                        <option value={undefined}>全部</option>
+                        <option value="即將到期">即將到期</option>
+                        <option value="已過期">已過期</option>
+                    </Select>
                 </Flex>
 
                 <Flex gap={'10px'} align={'center'}>
