@@ -40,13 +40,14 @@ import ReactWindowTable, {
 } from '../Shared/ReactWindowTable';
 import { ActionsContext } from '../../Context/Context';
 import { TOverviewChecked, TOverviewTable } from '../../Types/TableOverview';
-import { TCertCode, TCertTitle } from '../../Types/PeopleManagement';
+import { TCertTitle } from '../../Types/PeopleManagement';
 import {
     ISelectedHuman,
     humanTableValues,
 } from '../../Interface/PeopleManagement';
 import MultiReviewModal from './MultiReviewModal';
 import { CheckIcon } from '@chakra-ui/icons';
+import { CertTitleToCodeMap } from '../../Constants/PeopleManagement';
 
 export const ALL_HUMAN_RESOURCE = gql`
     query AllHumanresource($errlist: Boolean, $mode: String) {
@@ -118,7 +119,6 @@ export const ALL_HUMAN_RESOURCE = gql`
             reviewStaff
             idno
             sixStatus
-            certificationStatus
             aStatus
             boshStatus
             aosStatus
@@ -174,28 +174,6 @@ interface gqlData {
 }
 
 type TPeopleOverviewTable = TOverviewTable<TOverviewChecked<humanTableValues>>;
-
-const CertTitleToCodeMap: Record<
-    TCertTitle,
-    { code: TCertCode; expiredYear: number }
-> = {
-    高空作業車操作人員: { code: 'a', expiredYear: 3 },
-    乙級職業安全管理員: { code: 'bosh', expiredYear: 3 },
-    甲級職業安全管理師: { code: 'aos', expiredYear: 3 },
-    甲級職業衛生管理師: { code: 'aoh', expiredYear: 3 },
-    急救人員: { code: 'fr', expiredYear: 3 },
-    '缺氧(侷限)作業主管證照': { code: 'o2', expiredYear: 3 },
-    有機溶劑作業主管證照: { code: 'os', expiredYear: 3 },
-    施工架組配作業主管證照: { code: 'sa', expiredYear: 3 },
-    營造作業主管證照: { code: 's', expiredYear: 3 },
-    作業主管證照: { code: 'ma', expiredYear: 3 },
-    屋頂作業主管: { code: 'r', expiredYear: 3 },
-    鋼構組配作業主管: { code: 'ssa', expiredYear: 3 },
-    模板支撐作業主管: { code: 'fs', expiredYear: 3 },
-    露天開挖作業主管: { code: 'pe', expiredYear: 3 },
-    擋土支撐作業主管: { code: 'rs', expiredYear: 3 },
-    粉塵作業主管: { code: 'dw', expiredYear: 3 },
-};
 
 export default function PeopleOverview(props: { errorOnly?: boolean }) {
     if (!IsPermit('people_overview')) return <Navigate to="/" replace={true} />;
