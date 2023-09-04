@@ -39,6 +39,15 @@ import ReactWindowTable, {
     getElementProps,
 } from '../Shared/ReactWindowTable';
 import { ActionsContext } from '../../Context/Context';
+import { TOverviewChecked, TOverviewTable } from '../../Types/TableOverview';
+import { TCertTitle } from '../../Types/PeopleManagement';
+import {
+    ISelectedHuman,
+    humanTableValues,
+} from '../../Interface/PeopleManagement';
+import MultiReviewModal from './MultiReviewModal';
+import { CheckIcon } from '@chakra-ui/icons';
+import { CertTitleToCodeMap } from '../../Constants/PeopleManagement';
 
 export const ALL_HUMAN_RESOURCE = gql`
     query AllHumanresource($errlist: Boolean, $mode: String) {
@@ -58,8 +67,6 @@ export const ALL_HUMAN_RESOURCE = gql`
             laborInsuranceApplyDate
             laborAssociationDate
             certificationName
-            certificationIssue
-            certificationWithdraw
             accidentInsuranceStartOne
             accidentInsuranceStartTwo
             accidentInsuranceStartThree
@@ -78,28 +85,56 @@ export const ALL_HUMAN_RESOURCE = gql`
             contractingCompanyName
             viceContractingCompanyName
             aCertificationDate
-            wahCertificationDate
-            lCertificationDate
-            cCertificationDate
-            hCertificationDate
-            exCertificationDate
-            sCertificationDate
-            saCertificationDate
-            osCertificationDate
+            boshCertificationDate
+            aosCertificationDate
+            aohCertificationDate
+            frCertificationDate
             o2CertificationDate
+            osCertificationDate
+            saCertificationDate
+            sCertificationDate
+            ssaCertificationDate
+            maCertificationDate
+            rCertificationDate
+            fsCertificationDate
+            peCertificationDate
+            rsCertificationDate
+            dwCertificationDate
+            aWithdrawDate
+            boshWithdrawDate
+            aosWithdrawDate
+            aohWithdrawDate
+            frWithdrawDate
+            o2WithdrawDate
+            osWithdrawDate
+            saWithdrawDate
+            sWithdrawDate
+            maWithdrawDate
+            rWithdrawDate
+            ssaWithdrawDate
+            fsWithdrawDate
+            peWithdrawDate
+            rsWithdrawDate
+            dwWithdrawDate
+            reviewStaff
             idno
             sixStatus
-            certificationStatus
             aStatus
-            wahStatus
-            lStatus
-            cStatus
-            hStatus
-            exStatus
-            sStatus
-            saStatus
-            osStatus
+            boshStatus
+            aosStatus
+            aohStatus
+            frStatus
             o2Status
+            osStatus
+            saStatus
+            sStatus
+            maStatus
+            rStatus
+            ssaStatus
+            fsStatus
+            peStatus
+            rsStatus
+            dwStatus
             no
         }
     }
@@ -134,69 +169,11 @@ const sizes: ISizes = {
     },
 };
 
-export interface humanTableValues {
-    name: string;
-    gender: string | null | undefined;
-    birthday: string | null | undefined;
-    bloodType: string | null | undefined;
-    tel: string | null | undefined;
-    liaison: string | null | undefined;
-    emergencyTel: string | null | undefined;
-    address: string | null | undefined;
-    hazardNotifyDate: string | null | undefined;
-    supplierIndustrialSafetyNumber: string | null | undefined;
-    safetyHealthyEducationIssue: string | null | undefined;
-    safetyHealthyEducationWithdraw: string | null | undefined;
-
-    laborInsuranceApplyDate: string | null | undefined;
-    laborAssociationDate: string | null | undefined;
-    certificationName: string | null | undefined;
-    certificationIssue: string | null | undefined;
-    certificationWithdraw: string | null | undefined;
-
-    accidentInsuranceStart: string | null | undefined;
-    accidentInsuranceEnd: string | null | undefined;
-    accidentInsuranceAmount: string | null | undefined;
-    accidentInsuranceSignDate: string | null | undefined;
-    accidentInsuranceCompanyName: string | null | undefined;
-    contractingCompanyName: string | null | undefined;
-    viceContractingCompanyName: string | null | undefined;
-    aCertificationDate: string | null | undefined;
-    wahCertificationDate: string | null | undefined;
-    lCertificationDate: string | null | undefined;
-    cCertificationDate: string | null | undefined;
-    hCertificationDate: string | null | undefined;
-    exCertificationDate: string | null | undefined;
-    sCertificationDate: string | null | undefined;
-    saCertificationDate: string | null | undefined;
-    osCertificationDate: string | null | undefined;
-    o2CertificationDate: string | null | undefined;
-    idno: string;
-    sixStatus: string | null | undefined;
-    certificationStatus: string | null | undefined;
-    aStatus: string | null | undefined;
-    wahStatus: string | null | undefined;
-    lStatus: string | null | undefined;
-    cStatus: string | null | undefined;
-    hStatus: string | null | undefined;
-    exStatus: string | null | undefined;
-    sStatus: string | null | undefined;
-    saStatus: string | null | undefined;
-    osStatus: string | null | undefined;
-    o2Status: string | null | undefined;
-    PImg: string | null | undefined;
-    LImg: string | null | undefined;
-    IDFImg: string | null | undefined;
-    IDRImg: string | null | undefined;
-    GImg: string | null | undefined;
-    F6Img: string | null | undefined;
-    R6Img: string | null | undefined;
-    HImgs: string | null | undefined;
-
-    no: number | null | undefined;
-    index: number;
-    isChecked: boolean | undefined;
+interface gqlData {
+    allHumanresource: humanTableValues[];
 }
+
+type TPeopleOverviewTable = TOverviewTable<TOverviewChecked<humanTableValues>>;
 
 export default function PeopleOverview(props: { errorOnly?: boolean }) {
     if (!IsPermit('people_overview')) return <Navigate to="/" replace={true} />;
@@ -229,6 +206,73 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         ></CheckboxElement>
     );
 
+    const CertColumnMap = (certTitle: TCertTitle) => {
+        const { code, expiredYear } = CertTitleToCodeMap[certTitle];
+        const upperCode = code.toUpperCase();
+        const certWidth = certTitle === '作業主管證照' ? 153 : 204;
+        const column = [
+            {
+                title: '編號',
+                width: 40,
+                variable: 'index',
+                getElement: defaultElement,
+            },
+            {
+                title: '姓名',
+                width: 70,
+                variable: 'name',
+                getElement: defaultElement,
+            },
+            {
+                title: '身分證字號',
+                width: 103,
+                variable: 'idno',
+                getElement: defaultElement,
+            },
+        ];
+
+        if (certTitle === '作業主管證照')
+            column.push({
+                title: `${certTitle}名稱`,
+                width: certWidth,
+                variable: 'certificationName',
+                getElement: defaultElement,
+            });
+
+        column.push(
+            ...[
+                {
+                    title: `${certTitle}\n發證日期 (${upperCode})`,
+                    width: certWidth + 1,
+                    variable: `${code}CertificationDate`,
+                    getElement: defaultElement,
+                },
+                {
+                    title: `${certTitle}\n回訓日期 (${upperCode})`,
+                    width: certWidth + 1,
+                    variable: `${code}WithdrawDate`,
+                    getElement: defaultElement,
+                },
+                {
+                    title: `${certTitle}\n期效狀況 (期效${expiredYear}年)`,
+                    width: certWidth,
+                    variable: `${code}Status`,
+                    getElement: CertStatusElement,
+                },
+                {
+                    title: '全選',
+                    width: 50,
+                    variable: 'isChecked',
+                    getElement: customCheckboxElement,
+                },
+            ]
+        );
+
+        return {
+            [certTitle]: column,
+        };
+    };
+
     const tabColumnMap: { [tab: string]: IColumnMap[] } = {
         個資: [
             {
@@ -247,6 +291,12 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 title: '身分證字號',
                 width: 103,
                 variable: 'idno',
+                getElement: defaultElement,
+            },
+            {
+                title: '審查人員',
+                width: 70,
+                variable: 'reviewStaff',
                 getElement: defaultElement,
             },
             {
@@ -287,7 +337,7 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
             },
             {
                 title: '聯絡地址',
-                width: 164,
+                width: 94,
                 variable: 'address',
                 getElement: defaultElement,
             },
@@ -396,56 +446,6 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 width: 155,
                 variable: 'viceContractingCompanyName',
                 getElement: defaultElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
-        主管證照名稱: [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '主管證照名稱',
-                width: 155,
-                variable: 'certificationName',
-                getElement: defaultElement,
-            },
-            {
-                title: '主管證照\n發證/回訓日期',
-                width: 152,
-                variable: 'certificationIssue',
-                getElement: defaultElement,
-            },
-            {
-                title: '主管證照\n應回訓日期\n(兩年減一天)',
-                width: 152,
-                variable: 'certificationWithdraw',
-                getElement: defaultElement,
-            },
-            {
-                title: '主管證照期效狀況(期效2年)',
-                width: 155,
-                variable: 'certificationStatus',
-                getElement: CertStatusElement,
             },
             {
                 title: '全選',
@@ -622,302 +622,55 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 getElement: customCheckboxElement,
             },
         ],
-        '施工作業證照\n高空車/施工架': [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '高空工作車\n發證/回訓日期 (A)',
-                width: 154,
-                variable: 'aCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '高空工作車\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'aStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '高處(施工架)\n發證/回訓日期 (WAH)',
-                width: 154,
-                variable: 'wahCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '高處(施工架)\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'wahStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
-        '施工作業證照\n吊掛/局限空間': [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '吊掛作業\n發證/回訓日期 (L)',
-                width: 154,
-                variable: 'lCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '吊掛作業\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'lStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '侷限空間\n發證/回訓日期 (C)',
-                width: 154,
-                variable: 'cCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '侷限空間\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'cStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
-        '施工作業證照\n有機溶劑/防爆區': [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '有機溶劑\n發證/回訓日期 (H)',
-                width: 154,
-                variable: 'hCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '有機溶劑\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'hStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '防爆區\n(Ex)',
-                width: 154,
-                variable: 'exCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '防爆區\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'exStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
-        '作業主管證照\n營造/施工架': [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '營造業業主管\n(S)',
-                width: 154,
-                variable: 'sCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '營造業業主管\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'sStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '施工架作業主管\n(SA)',
-                width: 154,
-                variable: 'saCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '施工架作業主管\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'saStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
-        '作業主管證照\n有機/缺氧': [
-            {
-                title: '編號',
-                width: 40,
-                variable: 'index',
-                getElement: defaultElement,
-            },
-            {
-                title: '姓名',
-                width: 70,
-                variable: 'name',
-                getElement: defaultElement,
-            },
-            {
-                title: '身分證字號',
-                width: 103,
-                variable: 'idno',
-                getElement: defaultElement,
-            },
-            {
-                title: '有機溶劑作業主管\n(OS)',
-                width: 154,
-                variable: 'osCertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '有機溶劑作業主管\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'osStatus',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '缺氧作業主管\n(O2)',
-                width: 154,
-                variable: 'o2CertificationDate',
-                getElement: defaultElement,
-            },
-            {
-                title: '缺氧作業主管\n期效狀況 (期效3年)',
-                width: 153,
-                variable: 'o2Status',
-                getElement: CertStatusElement,
-            },
-            {
-                title: '全選',
-                width: 50,
-                variable: 'isChecked',
-                getElement: customCheckboxElement,
-            },
-        ],
+        ...Object.keys(CertTitleToCodeMap).reduce(
+            (acc, title) => ({ ...acc, ...CertColumnMap(title as TCertTitle) }),
+            {}
+        ),
     };
 
     const { errorOnly = false } = props;
     const toast = useToast();
     const navigate = useNavigate();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const deleteDisclosure = useDisclosure();
+    const multiReviewDisclosure = useDisclosure();
     const username: string = new Cookies().get('username');
 
     const [fileLoading, setFileLoading] = React.useState<boolean>(false);
 
-    const [tableValue, setTableValue] = React.useState<{
-        [primaryKey: string]: humanTableValues;
-    }>({});
+    const [tableValue, setTableValue] = React.useState<TPeopleOverviewTable>(
+        {}
+    );
 
     const [searchPrimaryKey, setSearchPrimaryKey] = React.useState<string[]>();
     const searchInputRef = React.useRef<HTMLInputElement>(null);
     const selectModeRef = React.useRef<HTMLSelectElement>(null);
 
-    const { loading } = useQuery(ALL_HUMAN_RESOURCE, {
-        notifyOnNetworkStatusChange: true,
+    const { loading } = useQuery<gqlData>(ALL_HUMAN_RESOURCE, {
         variables: {
             errlist: errorOnly,
         },
         onCompleted: ({ allHumanresource }) => {
-            const appendedHumanTable = allHumanresource.map(
-                (info: any, index: number) => {
+            setTableValue(
+                allHumanresource.reduce((acc, oldInfo, index) => {
+                    const info = { ...oldInfo };
                     Object.keys(info).forEach((key) => {
-                        if (info[key] == '0001-01-01') info[key] = '日期錯誤';
-                        else if (info[key] === null) info[key] = '';
+                        if (info[key as keyof humanTableValues] == '0001-01-01')
+                            info[key as keyof humanTableValues] = '日期錯誤';
                     });
                     const primaryKey = `${info.idno}|${info.no ?? ''}`;
-                    return {
-                        [primaryKey as string]: {
-                            ...info,
-                            index: index + 1,
-                            isChecked: false,
-                        },
+                    acc[primaryKey] = {
+                        ...info,
+                        index: index + 1,
+                        isChecked: false,
                     };
-                }
+                    return acc;
+                }, {} as TPeopleOverviewTable)
             );
-            setTableValue(Object.assign({}, ...appendedHumanTable));
         },
         onError: (err) => {
             console.log(err);
         },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
     });
 
     const [searchHuman] = useLazyQuery(SEARCH_HUMAN, {
@@ -956,9 +709,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
         }, 300);
     };
 
-    const [selectedHuman, setSelectedHuman] = React.useState<
-        { no: number | null | undefined; idno: string; name: string }[]
-    >([]);
+    const [selectedHuman, setSelectedHuman] = React.useState<ISelectedHuman[]>(
+        []
+    );
 
     const [exportHumanResource, { loading: exportLoading }] = useMutation(
         EXPORT_HUMAN_RESOURCE,
@@ -993,10 +746,9 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
     React.useEffect(() => {
         if (tableValue) {
             setSelectedHuman(
-                Object.values(tableValue).flatMap((info) =>
-                    info['isChecked']
-                        ? { no: info.no, idno: info.idno, name: info.name }
-                        : []
+                Object.values(tableValue).flatMap(
+                    ({ isChecked, no, idno, name }) =>
+                        isChecked ? { no, idno, name } : []
                 )
             );
         }
@@ -1041,19 +793,17 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             onChange={handleDebounceSearch}
                         />
                     </InputGroup>
-                    {!errorOnly && (
-                        <Select
-                            variant={'formOutline'}
-                            ref={selectModeRef}
-                            onChange={() => {
-                                searchHuman(getSearchHumanVar());
-                            }}
-                        >
-                            <option value={undefined}>全部</option>
-                            <option value="即將到期">即將到期</option>
-                            <option value="已過期">已過期</option>
-                        </Select>
-                    )}
+                    <Select
+                        variant={'formOutline'}
+                        ref={selectModeRef}
+                        onChange={() => {
+                            searchHuman(getSearchHumanVar());
+                        }}
+                    >
+                        <option value={undefined}>全部</option>
+                        <option value="即將到期">即將到期</option>
+                        <option value="已過期">已過期</option>
+                    </Select>
                 </Flex>
 
                 <Flex gap={'10px'} align={'center'}>
@@ -1069,6 +819,19 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             }}
                         >
                             編輯
+                        </Button>
+                    )}
+                    {actions.U && (
+                        <Button
+                            leftIcon={<CheckIcon />}
+                            variant={'buttonGrayOutline'}
+                            h={'36px'}
+                            onClick={() => {
+                                selectedHuman.length &&
+                                    multiReviewDisclosure.onOpen();
+                            }}
+                        >
+                            批量審查
                         </Button>
                     )}
                     {!errorOnly && (
@@ -1098,7 +861,10 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                             leftIcon={<DeleteIcon />}
                             variant={'buttonGrayOutline'}
                             h={'36px'}
-                            onClick={onOpen}
+                            onClick={() => {
+                                selectedHuman.length &&
+                                    deleteDisclosure.onOpen();
+                            }}
                         >
                             刪除
                         </Button>
@@ -1129,11 +895,16 @@ export default function PeopleOverview(props: { errorOnly?: boolean }) {
                 </TabPanels>
             </Tabs>
             <DeleteModal
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={deleteDisclosure.isOpen}
+                onClose={deleteDisclosure.onClose}
                 selected={tableValue && selectedHuman}
                 errorOnly={errorOnly}
             ></DeleteModal>
+            <MultiReviewModal
+                isOpen={multiReviewDisclosure.isOpen}
+                onClose={multiReviewDisclosure.onClose}
+                selected={tableValue && selectedHuman}
+            ></MultiReviewModal>
             {(loading || exportLoading || fileLoading) && <PageLoading />}
         </Flex>
     );

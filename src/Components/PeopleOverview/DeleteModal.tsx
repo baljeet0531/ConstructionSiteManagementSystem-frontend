@@ -19,6 +19,7 @@ import {
     defaultSuccessToast,
 } from '../../Utils/DefaultToast';
 import { PageLoading } from '../Shared/Loading';
+import { ISelectedHuman } from '../../Interface/PeopleManagement';
 
 const DELETE_HUMAN_RESOURCE = gql`
     mutation DeleteHumanResource($idno: [String!]) {
@@ -41,11 +42,7 @@ const DELETE_ERROR_HUMAN_RESOURCE = gql`
 export default function DeleteModal(props: {
     isOpen: boolean;
     onClose: () => void;
-    selected?: {
-        no: number | null | undefined;
-        idno: string;
-        name: string;
-    }[];
+    selected?: ISelectedHuman[];
     errorOnly: boolean;
 }) {
     const toast = useToast();

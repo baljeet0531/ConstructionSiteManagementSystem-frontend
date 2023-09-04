@@ -56,9 +56,6 @@ export default function PeopleEstablishment() {
         laborAssociationDate: '',
 
         certificationName: '',
-        certificationIssue: '',
-        certificationWithdraw: '',
-        certificationStatus: '',
 
         accidentInsuranceStartOne: '',
         accidentInsuranceEndOne: '',
@@ -82,25 +79,54 @@ export default function PeopleEstablishment() {
         viceContractingCompanyName: '',
 
         aCertificationDate: '',
-        aStatus: '',
-        wahCertificationDate: '',
-        wahStatus: '',
-        lCertificationDate: '',
-        lStatus: '',
-        cCertificationDate: '',
-        cStatus: '',
-        hCertificationDate: '',
-        hStatus: '',
-        exCertificationDate: '',
-        exStatus: '',
-        sCertificationDate: '',
-        sStatus: '',
-        saCertificationDate: '',
-        saStatus: '',
-        osCertificationDate: '',
-        osStatus: '',
+        boshCertificationDate: '',
+        aosCertificationDate: '',
+        aohCertificationDate: '',
+        frCertificationDate: '',
         o2CertificationDate: '',
+        osCertificationDate: '',
+        saCertificationDate: '',
+        sCertificationDate: '',
+        ssaCertificationDate: '',
+        maCertificationDate: '',
+        rCertificationDate: '',
+        fsCertificationDate: '',
+        peCertificationDate: '',
+        rsCertificationDate: '',
+        dwCertificationDate: '',
+        aWithdrawDate: '',
+        boshWithdrawDate: '',
+        aosWithdrawDate: '',
+        aohWithdrawDate: '',
+        frWithdrawDate: '',
+        o2WithdrawDate: '',
+        osWithdrawDate: '',
+        saWithdrawDate: '',
+        sWithdrawDate: '',
+        maWithdrawDate: '',
+        rWithdrawDate: '',
+        ssaWithdrawDate: '',
+        fsWithdrawDate: '',
+        peWithdrawDate: '',
+        rsWithdrawDate: '',
+        dwWithdrawDate: '',
+
+        aStatus: '',
+        boshStatus: '',
+        aosStatus: '',
+        aohStatus: '',
+        frStatus: '',
         o2Status: '',
+        osStatus: '',
+        saStatus: '',
+        sStatus: '',
+        maStatus: '',
+        rStatus: '',
+        ssaStatus: '',
+        fsStatus: '',
+        peStatus: '',
+        rsStatus: '',
+        dwStatus: '',
     };
 
     const [fileStates, setFileStates] =
@@ -115,7 +141,8 @@ export default function PeopleEstablishment() {
         UPDATE_HUMAN_RESOURCE
     );
 
-    const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
+    const [searchHuman, { loading: searchLoading }] =
+        useLazyQuery(SEARCH_HUMAN);
 
     const authActions = React.useContext(ActionsContext);
 
@@ -130,7 +157,7 @@ export default function PeopleEstablishment() {
                 for (let props in values) {
                     if (
                         values[props as keyof formValues] != '' &&
-                        props.slice(-6, 0) != 'Status'
+                        props.slice(-6) != 'Status'
                     ) {
                         filteredValues[props] =
                             values[props as keyof formValues];
@@ -161,12 +188,24 @@ export default function PeopleEstablishment() {
                         data[field].ok && handleCompeleted(data[field].message);
                     },
                     onError: handleErr,
-                    refetchQueries: [ALL_HUMAN_RESOURCE],
+                    refetchQueries: [
+                        {
+                            query: ALL_HUMAN_RESOURCE,
+                            variables: { errlist: true },
+                            fetchPolicy: 'network-only',
+                        },
+                        {
+                            query: ALL_HUMAN_RESOURCE,
+                            variables: { errlist: false },
+                            fetchPolicy: 'network-only',
+                        },
+                    ],
                 });
 
                 searchHuman({
                     variables: { context: filteredValues.idno },
                     onCompleted: ({ searchHuman }) => {
+                        actions.setSubmitting(false);
                         searchHuman.length == 0
                             ? createHumanResource(
                                   mutationOptions('createHumanResource')
@@ -180,10 +219,10 @@ export default function PeopleEstablishment() {
                     onError: (err) => {
                         console.log(err);
                         defaultErrorToast(toast);
+                        actions.setSubmitting(false);
                     },
                     fetchPolicy: 'network-only',
                 });
-                actions.setSubmitting(false);
             }}
         >
             {(props) => {
@@ -194,7 +233,9 @@ export default function PeopleEstablishment() {
                         setFileStates={setFileStates}
                         humanToBeUpdated={humanToBeUpdated}
                         setHumanToBeUpdated={setHumanToBeUpdated}
-                        submitLoading={createLoading || updateLoading}
+                        submitLoading={
+                            createLoading || updateLoading || searchLoading
+                        }
                     ></FormPage>
                 );
             }}
