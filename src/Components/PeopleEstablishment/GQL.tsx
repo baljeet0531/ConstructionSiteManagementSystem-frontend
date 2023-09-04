@@ -11,6 +11,7 @@ const HRMutationInputType = `(
     $BOSHRImg: Upload
     $DWFImg: Upload
     $DWRImg: Upload
+    $F6Img: Upload
     $FRFImg: Upload
     $FRRImg: Upload
     $FSFImg: Upload
@@ -31,6 +32,7 @@ const HRMutationInputType = `(
     $PEFImg: Upload
     $PERImg: Upload
     $PImg: Upload
+    $R6Img: Upload
     $RFImg: Upload
     $RRImg: Upload
     $RSFImg: Upload
@@ -119,6 +121,7 @@ const HRMutationInputVar = `(
     BOSHRImg: $BOSHRImg
     DWFImg: $DWFImg
     DWRImg: $DWRImg
+    F6Img: $F6Img
     FRFImg: $FRFImg
     FRRImg: $FRRImg
     FSFImg: $FSFImg
@@ -139,6 +142,7 @@ const HRMutationInputVar = `(
     PEFImg: $PEFImg
     PERImg: $PERImg
     PImg: $PImg
+    R6Img: $R6Img
     RFImg: $RFImg
     RRImg: $RRImg
     RSFImg: $RSFImg
