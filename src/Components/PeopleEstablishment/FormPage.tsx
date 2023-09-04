@@ -46,9 +46,9 @@ type formFileUrls = {
 
 const imageTypeArray: imageType[] = [
     'F6Img',
-    'G1Img',
-    'G2Img',
-    'G3Img',
+    'G1Imgs',
+    'G2Imgs',
+    'G3Imgs',
     'HImgs',
     'IDFImg',
     'IDRImg',
@@ -990,7 +990,7 @@ export default function FormPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="G1Img"
+                                fieldName="G1Imgs"
                                 formlabel="團保(1)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -998,7 +998,7 @@ export default function FormPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="G2Img"
+                                fieldName="G2Imgs"
                                 formlabel="團保(2)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}
@@ -1006,7 +1006,7 @@ export default function FormPage(props: {
                             ></GridFileItem>
                             <GridFileItem
                                 colSpan={3}
-                                fieldName="G3Img"
+                                fieldName="G3Imgs"
                                 formlabel="團保(3)"
                                 fileStates={fileStates}
                                 setFileStates={setFileStates}

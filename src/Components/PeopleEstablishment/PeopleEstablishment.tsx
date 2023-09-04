@@ -141,7 +141,8 @@ export default function PeopleEstablishment() {
         UPDATE_HUMAN_RESOURCE
     );
 
-    const [searchHuman] = useLazyQuery(SEARCH_HUMAN);
+    const [searchHuman, { loading: searchLoading }] =
+        useLazyQuery(SEARCH_HUMAN);
 
     const authActions = React.useContext(ActionsContext);
 
@@ -156,7 +157,7 @@ export default function PeopleEstablishment() {
                 for (let props in values) {
                     if (
                         values[props as keyof formValues] != '' &&
-                        props.slice(-6, 0) != 'Status'
+                        props.slice(-6) != 'Status'
                     ) {
                         filteredValues[props] =
                             values[props as keyof formValues];
@@ -204,6 +205,7 @@ export default function PeopleEstablishment() {
                 searchHuman({
                     variables: { context: filteredValues.idno },
                     onCompleted: ({ searchHuman }) => {
+                        actions.setSubmitting(false);
                         searchHuman.length == 0
                             ? createHumanResource(
                                   mutationOptions('createHumanResource')
@@ -217,10 +219,10 @@ export default function PeopleEstablishment() {
                     onError: (err) => {
                         console.log(err);
                         defaultErrorToast(toast);
+                        actions.setSubmitting(false);
                     },
                     fetchPolicy: 'network-only',
                 });
-                actions.setSubmitting(false);
             }}
         >
             {(props) => {
@@ -231,7 +233,9 @@ export default function PeopleEstablishment() {
                         setFileStates={setFileStates}
                         humanToBeUpdated={humanToBeUpdated}
                         setHumanToBeUpdated={setHumanToBeUpdated}
-                        submitLoading={createLoading || updateLoading}
+                        submitLoading={
+                            createLoading || updateLoading || searchLoading
+                        }
                     ></FormPage>
                 );
             }}

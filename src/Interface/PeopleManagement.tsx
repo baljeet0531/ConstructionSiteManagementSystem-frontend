@@ -88,9 +88,9 @@ export interface formValues extends IPeopleManagement {
 
 export interface formFiles {
     F6Img?: File;
-    G1Img?: File;
-    G2Img?: File;
-    G3Img?: File;
+    G1Imgs?: File;
+    G2Imgs?: File;
+    G3Imgs?: File;
     HImgs: (File | undefined)[];
     IDFImg?: File;
     IDRImg?: File;
