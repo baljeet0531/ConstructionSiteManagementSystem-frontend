@@ -3,21 +3,24 @@ import { gql } from '@apollo/client';
 const HRMutationInputType = `(
     $AFImg: Upload
     $ARImg: Upload
-    $CFImg: Upload
-    $CRImg: Upload
-    $EXFImg: Upload
-    $EXRImg: Upload
-    $F6Img: Upload
-    $G1Img: Upload
-    $G2Img: Upload
-    $G3Img: Upload
-    $HFImg: Upload
-    $HRImg: Upload
+    $AOHFImg: Upload
+    $AOHRImg: Upload
+    $AOSFImg: Upload
+    $AOSRImg: Upload
+    $BOSHFImg: Upload
+    $BOSHRImg: Upload
+    $DWFImg: Upload
+    $DWRImg: Upload
+    $FRFImg: Upload
+    $FRRImg: Upload
+    $FSFImg: Upload
+    $FSRImg: Upload
+    $G1Imgs: Upload
+    $G2Imgs: Upload
+    $G3Imgs: Upload
     $HImgs: [Upload]
     $IDFImg: Upload
     $IDRImg: Upload
-    $LFImg: Upload
-    $LRImg: Upload
     $LImg: Upload
     $MAFImg: Upload
     $MARImg: Upload
@@ -25,15 +28,21 @@ const HRMutationInputType = `(
     $O2RImg: Upload
     $OSFImg: Upload
     $OSRImg: Upload
+    $PEFImg: Upload
+    $PERImg: Upload
     $PImg: Upload
-    $R6Img: Upload
+    $RFImg: Upload
+    $RRImg: Upload
+    $RSFImg: Upload
+    $RSRImg: Upload
     $SAFImg: Upload
     $SARImg: Upload
     $SFImg: Upload
     $SRImg: Upload
-    $WAHFImg: Upload
-    $WAHRImg: Upload
+    $SSAFImg: Upload
+    $SSARImg: Upload
     $aCertificationDate: Date
+    $aWithdrawDate: Date
     $accidentInsuranceAmountOne: String
     $accidentInsuranceAmountThree: String
     $accidentInsuranceAmountTwo: String
@@ -50,54 +59,76 @@ const HRMutationInputType = `(
     $accidentInsuranceStartThree: Date
     $accidentInsuranceStartTwo: Date
     $address: String
+    $aohCertificationDate: Date
+    $aohWithdrawDate: Date
+    $aosCertificationDate: Date
+    $aosWithdrawDate: Date
     $birthday: Date
     $bloodType: String
-    $cCertificationDate: Date
-    $certificationIssue: Date
+    $boshCertificationDate: Date
+    $boshWithdrawDate: Date
     $certificationName: String
-    $certificationWithdraw: Date
     $contractingCompanyName: String
+    $dwCertificationDate: Date
+    $dwWithdrawDate: Date
     $emergencyTel: String
-    $exCertificationDate: Date
+    $frCertificationDate: Date
+    $frWithdrawDate: Date
+    $fsCertificationDate: Date
+    $fsWithdrawDate: Date
     $gender: String
-    $hCertificationDate: Date
     $hazardNotifyDate: Date
     $idno: String!
-    $lCertificationDate: Date
     $laborAssociationDate: Date
     $laborInsuranceApplyDate: Date
     $liaison: String
+    $maCertificationDate: Date
+    $maWithdrawDate: Date
     $name: String!
     $o2CertificationDate: Date
+    $o2WithdrawDate: Date
     $osCertificationDate: Date
+    $osWithdrawDate: Date
+    $peCertificationDate: Date
+    $peWithdrawDate: Date
+    $rCertificationDate: Date
+    $rWithdrawDate: Date
+    $rsCertificationDate: Date
+    $rsWithdrawDate: Date
     $sCertificationDate: Date
+    $sWithdrawDate: Date
     $saCertificationDate: Date
+    $saWithdrawDate: Date
     $safetyHealthyEducationIssue: Date
     $safetyHealthyEducationWithdraw: Date
+    $ssaCertificationDate: Date
+    $ssaWithdrawDate: Date
     $supplierIndustrialSafetyNumber: String
     $tel: String
     $viceContractingCompanyName: String
-    $wahCertificationDate: Date
 )`;
 
 const HRMutationInputVar = `(
     AFImg: $AFImg
+    AOHFImg: $AOHFImg
+    AOHRImg: $AOHRImg
+    AOSFImg: $AOSFImg
+    AOSRImg: $AOSRImg
     ARImg: $ARImg
-    CFImg: $CFImg
-    CRImg: $CRImg
-    EXFImg: $EXFImg
-    EXRImg: $EXRImg
-    F6Img: $F6Img
-    G1Img: $G1Img
-    G2Img: $G2Img
-    G3Img: $G3Img
-    HFImg: $HFImg
-    HRImg: $HRImg
+    BOSHFImg: $BOSHFImg
+    BOSHRImg: $BOSHRImg
+    DWFImg: $DWFImg
+    DWRImg: $DWRImg
+    FRFImg: $FRFImg
+    FRRImg: $FRRImg
+    FSFImg: $FSFImg
+    FSRImg: $FSRImg
+    G1Imgs: $G1Imgs
+    G2Imgs: $G2Imgs
+    G3Imgs: $G3Imgs
     HImgs: $HImgs
     IDFImg: $IDFImg
     IDRImg: $IDRImg
-    LFImg: $LFImg
-    LRImg: $LRImg
     LImg: $LImg
     MAFImg: $MAFImg
     MARImg: $MARImg
@@ -105,15 +136,21 @@ const HRMutationInputVar = `(
     O2RImg: $O2RImg
     OSFImg: $OSFImg
     OSRImg: $OSRImg
+    PEFImg: $PEFImg
+    PERImg: $PERImg
     PImg: $PImg
-    R6Img: $R6Img
+    RFImg: $RFImg
+    RRImg: $RRImg
+    RSFImg: $RSFImg
+    RSRImg: $RSRImg
     SAFImg: $SAFImg
     SARImg: $SARImg
     SFImg: $SFImg
     SRImg: $SRImg
-    WAHFImg: $WAHFImg
-    WAHRImg: $WAHRImg
+    SSAFImg: $SSAFImg
+    SSARImg: $SSARImg
     aCertificationDate: $aCertificationDate
+    aWithdrawDate: $aWithdrawDate
     accidentInsuranceAmountOne: $accidentInsuranceAmountOne
     accidentInsuranceAmountThree: $accidentInsuranceAmountThree
     accidentInsuranceAmountTwo: $accidentInsuranceAmountTwo
@@ -130,34 +167,53 @@ const HRMutationInputVar = `(
     accidentInsuranceStartThree: $accidentInsuranceStartThree
     accidentInsuranceStartTwo: $accidentInsuranceStartTwo
     address: $address
+    aohCertificationDate: $aohCertificationDate
+    aohWithdrawDate: $aohWithdrawDate
+    aosCertificationDate: $aosCertificationDate
+    aosWithdrawDate: $aosWithdrawDate
     birthday: $birthday
     bloodType: $bloodType
-    cCertificationDate: $cCertificationDate
-    certificationIssue: $certificationIssue
+    boshCertificationDate: $boshCertificationDate
+    boshWithdrawDate: $boshWithdrawDate
     certificationName: $certificationName
-    certificationWithdraw: $certificationWithdraw
     contractingCompanyName: $contractingCompanyName
+    dwCertificationDate: $dwCertificationDate
+    dwWithdrawDate: $dwWithdrawDate
     emergencyTel: $emergencyTel
-    exCertificationDate: $exCertificationDate
+    frCertificationDate: $frCertificationDate
+    frWithdrawDate: $frWithdrawDate
+    fsCertificationDate: $fsCertificationDate
+    fsWithdrawDate: $fsWithdrawDate
     gender: $gender
-    hCertificationDate: $hCertificationDate
     hazardNotifyDate: $hazardNotifyDate
     idno: $idno
-    lCertificationDate: $lCertificationDate
     laborAssociationDate: $laborAssociationDate
     laborInsuranceApplyDate: $laborInsuranceApplyDate
     liaison: $liaison
+    maCertificationDate: $maCertificationDate
+    maWithdrawDate: $maWithdrawDate
     name: $name
     o2CertificationDate: $o2CertificationDate
+    o2WithdrawDate: $o2WithdrawDate
     osCertificationDate: $osCertificationDate
+    osWithdrawDate: $osWithdrawDate
+    peCertificationDate: $peCertificationDate
+    peWithdrawDate: $peWithdrawDate
+    rCertificationDate: $rCertificationDate
+    rWithdrawDate: $rWithdrawDate
+    rsCertificationDate: $rsCertificationDate
+    rsWithdrawDate: $rsWithdrawDate
     sCertificationDate: $sCertificationDate
+    sWithdrawDate: $sWithdrawDate
     saCertificationDate: $saCertificationDate
+    saWithdrawDate: $saWithdrawDate
     safetyHealthyEducationIssue: $safetyHealthyEducationIssue
     safetyHealthyEducationWithdraw: $safetyHealthyEducationWithdraw
+    ssaCertificationDate: $ssaCertificationDate
+    ssaWithdrawDate: $ssaWithdrawDate
     supplierIndustrialSafetyNumber: $supplierIndustrialSafetyNumber
     tel: $tel
     viceContractingCompanyName: $viceContractingCompanyName
-    wahCertificationDate: $wahCertificationDate
 )`;
 
 export const CREATE_HUMAN_RESOURCE = gql`
