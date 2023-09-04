@@ -55,7 +55,9 @@ export default function GridFileItem(
             {
                 <FormControl>
                     <Flex align={'flex-start'}>
-                        <Text variant={'formlabel'}>{formlabel}</Text>
+                        <Text variant={'formlabel'} textAlign={'center'}>
+                            {formlabel}
+                        </Text>
                         <FileInput
                             height={height}
                             setFileStates={setFileStates}
